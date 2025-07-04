@@ -659,27 +659,26 @@
                 return;
             }
             
-            // Create WhatsApp message
-            const message = `Bună ziua! Am văzut site-ul adinstalgaz.ro și vreau să programez o verificare.
+            // Create message
+            const message = `Programare verificare gaz - AdInstalGaz.ro
 
 Nume: ${data.nume}
-Telefon: ${data.telefon}
-Adresa instalației: ${data.adresa}
+Tel: ${data.telefon}
+Adresa: ${data.adresa}
 Serviciu: ${data.serviciu}
-Data preferată: ${data.data || 'Nu am specificat'}
-Email: ${data.email || 'Nu am furnizat'}
-Detalii: ${data.mesaj || 'Nu am detalii suplimentare'}
-
-Mulțumesc!`;
+Data: ${data.data || 'Flexibila'}`;
             
-            // Create WhatsApp link
-            const whatsappURL = `https://wa.me/40762614401?text=${encodeURIComponent(message)}`;
+            // Create WhatsApp link with simpler message
+            const simpleMessage = `Programare verificare gaz: ${data.nume}, ${data.telefon}, ${data.adresa}`;
+            const whatsappURL = `https://wa.me/40762614401?text=${encodeURIComponent(simpleMessage)}`;
             
             // Open WhatsApp
             window.open(whatsappURL, '_blank');
             
-            // Show success message
-            showAlternativeSuccess('WhatsApp', '📱');
+            // Show success message immediately
+            setTimeout(() => {
+                showWhatsAppSuccess(message);
+            }, 500);
         }
         
         // SMS submission handler
@@ -712,7 +711,79 @@ Data: ${data.data || 'Flexibilă'}`;
             showAlternativeSuccess('SMS', '💬');
         }
         
-        // Alternative success message
+        // WhatsApp specific success message
+        function showWhatsAppSuccess(fullMessage) {
+            const messageForClipboard = fullMessage;
+            const messageForDisplay = fullMessage.replace(/\n/g, '<br>');
+            
+            const successHTML = `
+                <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 2rem; border-radius: 10px; text-align: center; margin: 2rem 0;">
+                    <h3 style="color: #155724; margin-bottom: 1rem;">📱 WhatsApp deschis!</h3>
+                    <p style="margin-bottom: 1rem;"><strong>Copiază și lipește acest mesaj în WhatsApp:</strong></p>
+                    <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 1rem; border-radius: 5px; margin: 1rem 0; font-family: monospace; font-size: 0.9rem; text-align: left;">
+                        ${messageForDisplay}
+                    </div>
+                    <div style="margin: 1rem 0;">
+                        <button onclick="copyMessage('${messageForClipboard.replace(/'/g, "\\'")}', this)" style="background: #25D366; color: white; padding: 0.5rem 1rem; border: none; border-radius: 5px; cursor: pointer;">
+                            📋 Copiază Mesajul
+                        </button>
+                    </div>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #6c757d;">
+                        1. Mergi în WhatsApp la conversația cu <strong>0762 614 401</strong><br>
+                        2. Lipește mesajul (Ctrl+V) și trimite<br>
+                        3. Vei primi răspuns în 24 ore!
+                    </p>
+                </div>
+            `;
+            
+            // Remove existing messages
+            const form = document.querySelector('#programare form');
+            const existingMessage = form.nextElementSibling;
+            if (existingMessage && existingMessage.style && existingMessage.style.background) {
+                existingMessage.remove();
+            }
+            
+            // Add new success message
+            form.insertAdjacentHTML('afterend', successHTML);
+            
+            // Scroll to success message
+            setTimeout(() => {
+                const successDiv = form.nextElementSibling;
+                if (successDiv) {
+                    successDiv.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 100);
+        }
+        
+        // Simple copy function
+        function copyMessage(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = '✅ Copiat!';
+                button.style.background = '#28a745';
+                setTimeout(() => {
+                    button.textContent = '📋 Copiază Mesajul';
+                    button.style.background = '#25D366';
+                }, 2000);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    button.textContent = '✅ Copiat!';
+                    button.style.background = '#28a745';
+                    setTimeout(() => {
+                        button.textContent = '📋 Copiază Mesajul';
+                        button.style.background = '#25D366';
+                    }, 2000);
+                } catch (err) {
+                    alert('Selectează textul de mai sus și copiază manual (Ctrl+C)');
+                }
+                document.body.removeChild(textArea);
+            });
+        }
         function showAlternativeSuccess(method, icon) {
             const successHTML = `
                 <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 2rem; border-radius: 10px; text-align: center; margin: 2rem 0;">
