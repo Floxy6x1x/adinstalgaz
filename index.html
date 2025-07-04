@@ -265,6 +265,11 @@
             background: #1e3c72;
         }
 
+        .submit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
         .contact-info-section {
             background: #1e3c72;
             color: white;
@@ -617,8 +622,6 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
     <script>
         // Form submission handler
         function submitForm(event) {
@@ -657,13 +660,13 @@ Trimis de pe site-ul www.adinstalgaz.ro
             // Open email client
             window.location.href = mailtoLink;
             
-            // Show success message with instructions
+            // Show success message after delay
             setTimeout(() => {
                 // Reset button
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
                 
-                // Show detailed success message
+                // Create success message
                 const successHTML = `
                     <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 2rem; border-radius: 10px; text-align: center; margin: 2rem 0;">
                         <h3 style="color: #155724; margin-bottom: 1rem;">✅ Cererea a fost pregătită cu succes!</h3>
@@ -672,23 +675,25 @@ Trimis de pe site-ul www.adinstalgaz.ro
                         <p style="background: #fff; padding: 1rem; border-radius: 5px; margin: 1rem 0;"><strong>Apăsați "SEND" în email pentru a trimite cererea!</strong></p>
                         <p style="margin-bottom: 1rem;">Veți primi răspuns în maximum 24 de ore la telefon: <strong>0762 614 401</strong></p>
                         <p style="font-size: 0.9rem; color: #6c757d;">Dacă email-ul nu s-a deschis, contactați-ne direct la telefon.</p>
-                        <p style="background: #e7f3ff; padding: 1rem; border-radius: 5px; margin: 1rem 0; font-size: 0.9rem;">
-                            <strong>💡 Tip:</strong> Pentru confirmări automate, vom adăuga funcționalitate avansată după publicarea site-ului.
-                        </p>
                     </div>
                 `;
                 
-                // Insert success message after form
+                // Remove existing success message if any
                 const form = event.target;
                 const existingMessage = form.nextElementSibling;
                 if (existingMessage && existingMessage.style && existingMessage.style.background) {
                     existingMessage.remove();
                 }
+                
+                // Add new success message
                 form.insertAdjacentHTML('afterend', successHTML);
                 
                 // Scroll to success message
                 setTimeout(() => {
-                    form.nextElementSibling.scrollIntoView({ behavior: 'smooth' });
+                    const successDiv = form.nextElementSibling;
+                    if (successDiv) {
+                        successDiv.scrollIntoView({ behavior: 'smooth' });
+                    }
                 }, 100);
                 
                 // Reset form
