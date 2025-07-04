@@ -282,6 +282,12 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
         }
+        
+        a[href^="tel:"]:hover {
+            background: #e55a2b !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+        }
 
         .contact-info-section {
             background: #1e3c72;
@@ -377,7 +383,34 @@
     <header>
         <div class="container">
             <div class="header-content">
-                <div class="logo">AD INSTAL GAZ SRL</div>
+                <div class="logo" style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Flacără de gaz -->
+                            <path d="M50 15 C60 25, 65 35, 65 45 C65 55, 60 65, 50 65 C40 65, 35 55, 35 45 C35 35, 40 25, 50 15 Z" fill="url(#flameGradient)"/>
+                            
+                            <!-- Țeavă/conducta -->
+                            <rect x="20" y="70" width="60" height="8" rx="4" fill="#2a5298"/>
+                            <rect x="15" y="78" width="70" height="6" rx="3" fill="#1e3c72"/>
+                            
+                            <!-- Cheie franceză stilizată -->
+                            <path d="M25 50 L35 50 L35 45 L40 45 L40 55 L35 55 L35 50 L30 50 L30 60 L25 60 Z" fill="#ff6b35"/>
+                            
+                            <!-- Gradient pentru flacără -->
+                            <defs>
+                                <linearGradient id="flameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#ff8c42;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ffa726;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.8rem; font-weight: bold; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">AD INSTAL GAZ</div>
+                        <div style="font-size: 0.7rem; color: #e2e8f0; font-weight: 500; letter-spacing: 1px;">SRL • AUTORIZAT ANRE</div>
+                    </div>
+                </div>
                 <div class="contact-info">
                     <div class="contact-item">
                         <span>📞</span>
@@ -536,7 +569,7 @@
             <div class="contact-section">
                 <div class="contact-form" id="programare">
                     <h3>Programează o Verificare</h3>
-                    <form onsubmit="submitForm(event)">
+                    <form>
                         <div class="form-group">
                             <label for="nume">Nume Complet *</label>
                             <input type="text" id="nume" name="nume" required>
@@ -576,17 +609,18 @@
                             <label for="mesaj">Detalii Suplimentare</label>
                             <textarea id="mesaj" name="mesaj" rows="4" placeholder="Descrieți tipul instalației, urgența, etc."></textarea>
                         </div>
-                        <button type="submit" class="submit-btn">📧 Trimite prin Email</button>
-                        
                         <div style="margin-top: 1rem; text-align: center;">
-                            <p style="margin-bottom: 1rem; font-weight: bold; color: #1e3c72;">SAU trimite direct prin:</p>
-                            <div style="display: flex; gap: 1rem; justify-content: center;">
-                                <button type="button" onclick="sendWhatsApp(event)" class="whatsapp-btn" style="background: #25D366; color: white; padding: 0.8rem 1.5rem; border: none; border-radius: 25px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s;">
+                            <p style="margin-bottom: 1rem; font-weight: bold; color: #1e3c72;">Alege metoda de contact preferată:</p>
+                            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                <button type="button" onclick="sendWhatsApp(event)" class="whatsapp-btn" style="background: #25D366; color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s; justify-content: center; flex: 1; min-width: 150px;">
                                     📱 WhatsApp
                                 </button>
-                                <button type="button" onclick="sendSMS(event)" class="sms-btn" style="background: #007AFF; color: white; padding: 0.8rem 1.5rem; border: none; border-radius: 25px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s;">
+                                <button type="button" onclick="sendSMS(event)" class="sms-btn" style="background: #007AFF; color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s; justify-content: center; flex: 1; min-width: 150px;">
                                     💬 SMS
                                 </button>
+                                <a href="tel:+40762614401" style="background: #ff6b35; color: white; padding: 1rem 2rem; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s; justify-content: center; flex: 1; text-decoration: none; min-width: 150px;">
+                                    📞 Sună Direct
+                                </a>
                             </div>
                         </div>
                     </form>
@@ -648,12 +682,18 @@
     </footer>
 
     <script>
-        // Clear success messages function
+        // Clear success messages function - improved
         function clearSuccessMessages() {
+            const successMessages = document.querySelectorAll('[data-success-message]');
+            successMessages.forEach(msg => msg.remove());
+            
+            // Also check for any div with background styling that might be a success message
             const form = document.querySelector('#programare form');
-            const existingMessage = form.nextElementSibling;
-            if (existingMessage && existingMessage.style && existingMessage.style.background) {
-                existingMessage.remove();
+            if (form && form.nextElementSibling) {
+                const next = form.nextElementSibling;
+                if (next.style && next.style.background && next.style.background.includes('#d4edda')) {
+                    next.remove();
+                }
             }
         }
 
