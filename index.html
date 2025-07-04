@@ -659,26 +659,32 @@
                 return;
             }
             
-            // Create message
-            const message = `Programare verificare gaz - AdInstalGaz.ro
-
+            // Create SHORT message for WhatsApp (works better)
+            const message = `Programare verificare gaz:
 Nume: ${data.nume}
 Tel: ${data.telefon}
 Adresa: ${data.adresa}
 Serviciu: ${data.serviciu}
 Data: ${data.data || 'Flexibila'}`;
             
-            // Create WhatsApp link with simpler message
-            const simpleMessage = `Programare verificare gaz: ${data.nume}, ${data.telefon}, ${data.adresa}`;
-            const whatsappURL = `https://wa.me/40762614401?text=${encodeURIComponent(simpleMessage)}`;
+            // Detect mobile device
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            // Open WhatsApp
-            window.open(whatsappURL, '_blank');
+            // Create WhatsApp link
+            const whatsappURL = `https://wa.me/40762614401?text=${encodeURIComponent(message)}`;
             
-            // Show success message immediately
+            if (isMobile) {
+                // On mobile, open WhatsApp directly - should work better
+                window.location.href = whatsappURL;
+            } else {
+                // On desktop, open in new tab
+                window.open(whatsappURL, '_blank');
+            }
+            
+            // Show success message
             setTimeout(() => {
-                showWhatsAppSuccess(message);
-            }, 500);
+                showMobileWhatsAppSuccess(message, isMobile);
+            }, 1000);
         }
         
         // SMS submission handler
@@ -711,27 +717,31 @@ Data: ${data.data || 'Flexibilă'}`;
             showAlternativeSuccess('SMS', '💬');
         }
         
-        // WhatsApp specific success message
-        function showWhatsAppSuccess(fullMessage) {
-            const messageForClipboard = fullMessage;
-            const messageForDisplay = fullMessage.replace(/\n/g, '<br>');
+        // Mobile-friendly WhatsApp success message
+        function showMobileWhatsAppSuccess(fullMessage, isMobile) {
+            const instructions = isMobile ? 
+                `<p style="margin: 1rem 0; font-weight: bold; color: #25D366;">
+                    📱 INSTRUCȚIUNI MOBILE:<br>
+                    1. Apasă LUNG pe textul de jos<br>
+                    2. Selectează TOT textul<br>
+                    3. Apasă "Copiază"<br>
+                    4. Mergi în WhatsApp și lipește
+                </p>` :
+                `<p style="margin: 1rem 0; font-weight: bold; color: #25D366;">
+                    💻 INSTRUCȚIUNI DESKTOP:<br>
+                    Click pe casetă → Ctrl+C → WhatsApp → Ctrl+V
+                </p>`;
             
             const successHTML = `
                 <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 2rem; border-radius: 10px; text-align: center; margin: 2rem 0;">
                     <h3 style="color: #155724; margin-bottom: 1rem;">📱 WhatsApp deschis!</h3>
-                    <p style="margin-bottom: 1rem;"><strong>Copiază și lipește acest mesaj în WhatsApp:</strong></p>
-                    <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 1rem; border-radius: 5px; margin: 1rem 0; font-family: monospace; font-size: 0.9rem; text-align: left;">
-                        ${messageForDisplay}
-                    </div>
-                    <div style="margin: 1rem 0;">
-                        <button onclick="copyMessage('${messageForClipboard.replace(/'/g, "\\'")}', this)" style="background: #25D366; color: white; padding: 0.5rem 1rem; border: none; border-radius: 5px; cursor: pointer;">
-                            📋 Copiază Mesajul
-                        </button>
-                    </div>
+                    <p style="margin-bottom: 1rem;"><strong>Dacă mesajul nu apare automat în WhatsApp:</strong></p>
+                    ${instructions}
+                    <textarea readonly onclick="this.select()" style="width: 100%; height: 120px; padding: 1rem; border: 2px solid #25D366; border-radius: 5px; font-family: Arial; font-size: 0.9rem; background: #f8f9fa; resize: none; cursor: pointer; -webkit-user-select: all; -moz-user-select: all; -ms-user-select: all; user-select: all;">${fullMessage}</textarea>
                     <p style="margin-top: 1rem; font-size: 0.9rem; color: #6c757d;">
-                        1. Mergi în WhatsApp la conversația cu <strong>0762 614 401</strong><br>
-                        2. Lipește mesajul (Ctrl+V) și trimite<br>
-                        3. Vei primi răspuns în 24 ore!
+                        <strong>Apoi mergi în WhatsApp:</strong><br>
+                        📞 <strong>0762 614 401</strong> → Lipește mesajul → Send<br>
+                        📞 SAU sună direct: <strong>0762 614 401</strong>
                     </p>
                 </div>
             `;
@@ -753,36 +763,6 @@ Data: ${data.data || 'Flexibilă'}`;
                     successDiv.scrollIntoView({ behavior: 'smooth' });
                 }
             }, 100);
-        }
-        
-        // Simple copy function
-        function copyMessage(text, button) {
-            navigator.clipboard.writeText(text).then(() => {
-                button.textContent = '✅ Copiat!';
-                button.style.background = '#28a745';
-                setTimeout(() => {
-                    button.textContent = '📋 Copiază Mesajul';
-                    button.style.background = '#25D366';
-                }, 2000);
-            }).catch(() => {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    button.textContent = '✅ Copiat!';
-                    button.style.background = '#28a745';
-                    setTimeout(() => {
-                        button.textContent = '📋 Copiază Mesajul';
-                        button.style.background = '#25D366';
-                    }, 2000);
-                } catch (err) {
-                    alert('Selectează textul de mai sus și copiază manual (Ctrl+C)');
-                }
-                document.body.removeChild(textArea);
-            });
         }
         function showAlternativeSuccess(method, icon) {
             const successHTML = `
