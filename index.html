@@ -648,6 +648,15 @@
     </footer>
 
     <script>
+        // Clear success messages function
+        function clearSuccessMessages() {
+            const form = document.querySelector('#programare form');
+            const existingMessage = form.nextElementSibling;
+            if (existingMessage && existingMessage.style && existingMessage.style.background) {
+                existingMessage.remove();
+            }
+        }
+
         // WhatsApp submission handler
         function sendWhatsApp(event) {
             const form = event.target.closest('form');
@@ -659,6 +668,9 @@
                 alert('Te rog să completezi toate câmpurile obligatorii (*)');
                 return;
             }
+            
+            // Remove any existing success messages first
+            clearSuccessMessages();
             
             // Create SHORT message for WhatsApp (works better)
             const message = `Programare verificare gaz:
@@ -702,6 +714,9 @@ Data: ${data.data || 'Flexibila'}`;
                 alert('Te rog să completezi toate câmpurile obligatorii (*)');
                 return;
             }
+            
+            // Remove any existing success messages first
+            clearSuccessMessages();
             
             // Create SMS message (shorter for SMS)
             const message = `Programare verificare gaz AdInstalGaz.ro
@@ -770,6 +785,11 @@ Data: ${data.data || 'Flexibilă'}`;
                     successDiv.scrollIntoView({ behavior: 'smooth' });
                 }
             }, 100);
+            
+            // Auto-remove success message after 10 seconds
+            setTimeout(() => {
+                clearSuccessMessages();
+            }, 10000);
         }
         function showAlternativeSuccess(method, icon) {
             const successHTML = `
@@ -874,6 +894,11 @@ Trimis de pe site-ul www.adinstalgaz.ro
                         successDiv.scrollIntoView({ behavior: 'smooth' });
                     }
                 }, 100);
+                
+                // Auto-remove success message after 10 seconds
+                setTimeout(() => {
+                    clearSuccessMessages();
+                }, 10000);
                 
             }, 1000);
         }
