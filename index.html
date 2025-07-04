@@ -1,1 +1,695 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Instal Gaz SRL - Instalații Gaze, Branșamente, Verificări Tehnice | Teleorman</title>
+    <meta name="description" content="Servicii complete instalații gaze: proiectare și execuție branșamente, instalații utilizare, verificări tehnice, revizii centrale termice în județul Teleorman. Autorizați ANRE.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation */
+        nav {
+            background: #1a365d;
+            padding: 0.5rem 0;
+            margin-top: 80px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #2a5298;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(30, 60, 114, 0.8), rgba(42, 82, 152, 0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23f0f4f8" width="1200" height="600"/><g fill="%23e2e8f0"><circle cx="200" cy="150" r="50"/><circle cx="800" cy="400" r="60"/><circle cx="1000" cy="200" r="40"/></g></svg>');
+            color: white;
+            padding: 8rem 0 4rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            background: #ff6b35;
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .cta-button:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Sections */
+        .section {
+            padding: 4rem 0;
+        }
+
+        .section:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #1e3c72;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            border-left: 4px solid #2a5298;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .service-card h3 {
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .service-card .price {
+            color: #ff6b35;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: #2a5298;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        /* Contact Form */
+        .contact-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #1e3c72;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2a5298;
+        }
+
+        .submit-btn {
+            background: #2a5298;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: #1e3c72;
+        }
+
+        .contact-info-section {
+            background: #1e3c72;
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+        }
+
+        .contact-info-section h3 {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            background: #2a5298;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #1a365d;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .contact-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .contact-section {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 6rem 0 3rem;
+            }
+
+            nav {
+                margin-top: 120px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">AD INSTAL GAZ SRL</div>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <span>📞</span>
+                        <span>0762 614 401</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>📧</span>
+                        <span>gavrila_1971@yahoo.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <span>📍</span>
+                        <span>Rosiori de Vede, Teleorman</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul class="nav-links">
+                <li><a href="#acasa">Acasă</a></li>
+                <li><a href="#servicii">Servicii</a></li>
+                <li><a href="#despre">Despre Noi</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="#programare">Programare</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="acasa" class="hero">
+        <div class="container">
+            <h1 class="animate-in">Instalații și Verificări Sisteme de Gaze</h1>
+            <p class="animate-in">Servicii complete autorizate ANRE: proiectare, execuție, verificări tehnice și revizii pentru instalații de gaze și centrale termice în județul Teleorman. Echipă cu experiență și echipamente moderne.</p>
+            <a href="#programare" class="cta-button animate-in">Programează Verificarea</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicii" class="section">
+        <div class="container">
+            <h2>Serviciile Noastre</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <h3>🏗️ Proiectare Branșamente Gaz</h3>
+                    <p>Servicii complete de proiectare pentru branșamente gaz naturale. Elaborăm documentația tehnică necesară obținerii avizelor și autorizațiilor.</p>
+                    <div class="price">De la 200 RON</div>
+                </div>
+                <div class="service-card">
+                    <h3>⚡ Execuție Branșamente Gaz</h3>
+                    <p>Execuția profesională a branșamentelor de gaz naturale conform proiectelor autorizate. Echipă specializată și echipamente moderne.</p>
+                    <div class="price">De la 800 RON</div>
+                </div>
+                <div class="service-card">
+                    <h3>🔧 Instalații de Utilizare Gaz</h3>
+                    <p>Montarea și punerea în funcțiune a instalațiilor interioare de gaz pentru locuințe, spații comerciale și industriale.</p>
+                    <div class="price">De la 300 RON</div>
+                </div>
+                <div class="service-card">
+                    <h3>🔧 Verificare Tehnică Periodică</h3>
+                    <p>Verificări obligatorii pentru instalațiile de gaze conform reglementărilor în vigoare. Efectuăm verificări complete pentru siguranța instalației.</p>
+                    <div class="price">De la 80 RON</div>
+                </div>
+                <div class="service-card">
+                    <h3>🏠 Verificare la Racordare</h3>
+                    <p>Verificări tehnice necesare pentru obținerea avizului de racordare la rețeaua de distribuție gaze naturale.</p>
+                    <div class="price">De la 120 RON</div>
+                </div>
+                <div class="service-card">
+                    <h3>📋 Verificare pentru Autorizații</h3>
+                    <p>Verificări tehnice necesare pentru obținerea sau reînnoirea autorizațiilor de funcționare a instalațiilor de gaze.</p>
+                    <div class="price">De la 100 RON</div>
+                </div>
+                <div class="service-card">
+                    <h3>🌡️ Revizii Centrale Termice</h3>
+                    <p>Revizii periodice și verificări tehnice pentru centrale termice pe gaz. Mentenanță preventivă și reparații.</p>
+                    <div class="price">De la 120 RON</div>
+                </div>
+                <div class="service-card">
+                    <h3>🔨 Verificare Post-Reparații</h3>
+                    <p>Verificări după efectuarea lucrărilor de reparații sau modificări la instalațiile de gaze existente.</p>
+                    <div class="price">De la 90 RON</div>
+                </div>
+                <div class="service-card">
+                    <h3>🚨 Servicii de Urgență</h3>
+                    <p>Intervenții rapide pentru verificări urgente și situații speciale. Disponibili 24/7 pentru cazuri de urgență.</p>
+                    <div class="price">Tarif personalizat</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+        <div class="container">
+            <h2>De Ce Să Ne Alegeți</h2>
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">✅</div>
+                    <h3>Autorizați ANRE</h3>
+                    <p>Suntem autorizați oficial de ANRE pentru efectuarea verificărilor tehnice sisteme de gaze</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Răspuns Rapid</h3>
+                    <p>Programare în maximum 48 de ore și intervenție rapidă pentru toate tipurile de verificări</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Echipamente Moderne</h3>
+                    <p>Utilizăm doar echipamente de ultimă generație pentru măsurători precise și verificări complete</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">👨‍🔧</div>
+                    <h3>Echipă Experimentată</h3>
+                    <p>Tehnicienii noștri au peste 10 ani experiență în domeniul instalațiilor de gaze</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📋</div>
+                    <h3>Rapoarte Complete</h3>
+                    <p>Furnizăm rapoarte detaliate și toate documentele necesare pentru conformitate</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💰</div>
+                    <h3>Tarife Competitive</h3>
+                    <p>Oferte transparente și tarife competitive pentru toate serviciile noastre</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="despre" class="section">
+        <div class="container">
+            <h2>Despre Ad Instal Gaz SRL</h2>
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+                    Cu sediul în Rosiori de Vede, județul Teleorman, <strong>Ad Instal Gaz SRL</strong> este o companie cu servicii complete în domeniul instalațiilor de gaze: proiectare, execuție branșamente, instalații de utilizare, verificări tehnice și revizii centrale termice. Suntem autorizați ANRE cu o experiență solidă în domeniu.
+                </p>
+                <p style="font-size: 1.1rem; margin-bottom: 2rem;">
+                    Echipa noastră de specialiști certificați oferă servicii integrate - de la proiectarea branșamentelor până la execuția instalațiilor și verificările periodice pentru toate tipurile de instalații de gaze - de la cele rezidențiale până la cele industriale complexe.
+                </p>
+                <p style="font-size: 1.1rem;">
+                    Misiunea noastră este să oferim soluții complete și sigure pentru instalațiile de gaze din județul Teleorman prin servicii profesionale, la cheie, rapide și de încredere.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Booking Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2>Contact & Programare</h2>
+            <div class="contact-section">
+                <div class="contact-form" id="programare">
+                    <h3>Programează o Verificare</h3>
+                    <form onsubmit="submitForm(event)">
+                        <div class="form-group">
+                            <label for="nume">Nume Complet *</label>
+                            <input type="text" id="nume" name="nume" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefon">Telefon *</label>
+                            <input type="tel" id="telefon" name="telefon" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="serviciu">Tip Serviciu *</label>
+                            <select id="serviciu" name="serviciu" required>
+                                <option value="">Selectează serviciul</option>
+                                <option value="proiectare-bransamente">Proiectare Branșamente Gaz</option>
+                                <option value="executie-bransamente">Execuție Branșamente Gaz</option>
+                                <option value="instalatii-utilizare">Instalații de Utilizare Gaz</option>
+                                <option value="verificare-periodica">Verificare Tehnică Periodică</option>
+                                <option value="verificare-racordare">Verificare la Racordare</option>
+                                <option value="verificare-autorizatii">Verificare pentru Autorizații</option>
+                                <option value="revizii-centrale">Revizii Centrale Termice</option>
+                                <option value="verificare-reparatii">Verificare Post-Reparații</option>
+                                <option value="urgenta">Serviciu de Urgență</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="adresa">Adresa Instalației *</label>
+                            <input type="text" id="adresa" name="adresa" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="data">Data Preferată</label>
+                            <input type="date" id="data" name="data">
+                        </div>
+                        <div class="form-group">
+                            <label for="mesaj">Detalii Suplimentare</label>
+                            <textarea id="mesaj" name="mesaj" rows="4" placeholder="Descrieți tipul instalației, urgența, etc."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Trimite Cererea de Programare</button>
+                    </form>
+                </div>
+
+                <div class="contact-info-section">
+                    <h3>Informații de Contact</h3>
+                    <div class="info-item">
+                        <div class="info-icon">📞</div>
+                        <div>
+                            <strong>Telefon:</strong><br>
+                            0762 614 401
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">📧</div>
+                        <div>
+                            <strong>Email:</strong><br>
+                            gavrila_1971@yahoo.com
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div>
+                            <strong>Adresa:</strong><br>
+                            Str. Mărășești, Nr.97<br>
+                            Rosiori de Vede, Teleorman
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">🌍</div>
+                        <div>
+                            <strong>Zona de Acoperire:</strong><br>
+                            Județul Teleorman și localitățile învecinate
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">🕒</div>
+                        <div>
+                            <strong>Program:</strong><br>
+                            Luni - Vineri: 08:00 - 18:00<br>
+                            Sâmbătă: 08:00 - 14:00<br>
+                            Urgențe: 24/7
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Ad Instal Gaz SRL. Toate drepturile rezervate. | Autorizație ANRE | Teleorman</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">
+                Servicii complete instalații gaze: proiectare, execuție, verificări tehnice și revizii | Rosiori de Vede, Teleorman
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Form submission handler
+        function submitForm(event) {
+            event.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            // Create email body
+            const emailBody = `
+Cerere de programare verificare tehnică gaze:
+
+Nume: ${data.nume}
+Telefon: ${data.telefon}
+Email: ${data.email || 'Nu a fost furnizat'}
+Serviciu: ${data.serviciu}
+Adresa instalației: ${data.adresa}
+Data preferată: ${data.data || 'Nu a fost specificată'}
+Detalii: ${data.mesaj || 'Nu au fost furnizate detalii suplimentare'}
+
+Trimis de pe site-ul www.adinstalgaz.ro
+            `.trim();
+            
+            // Create mailto link
+            const subject = encodeURIComponent('Cerere Programare Verificare Gaze - ' + data.nume);
+            const body = encodeURIComponent(emailBody);
+            const mailtoLink = `mailto:gavrila_1971@yahoo.com?subject=${subject}&body=${body}`;
+            
+            // Open email client
+            window.location.href = mailtoLink;
+            
+            // Show confirmation
+            alert('Cererea dvs. a fost pregătită în programul de email. Vă mulțumim!');
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Set minimum date to today
+        document.getElementById('data').min = new Date().toISOString().split('T')[0];
+
+        // Animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.service-card, .feature').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
