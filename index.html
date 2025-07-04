@@ -270,6 +270,18 @@
             cursor: not-allowed;
         }
 
+        .whatsapp-btn:hover {
+            background: #20BA5A !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+        }
+
+        .sms-btn:hover {
+            background: #0056CC !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
         .contact-info-section {
             background: #1e3c72;
             color: white;
@@ -563,7 +575,19 @@
                             <label for="mesaj">Detalii Suplimentare</label>
                             <textarea id="mesaj" name="mesaj" rows="4" placeholder="Descrieți tipul instalației, urgența, etc."></textarea>
                         </div>
-                        <button type="submit" class="submit-btn">Trimite Cererea de Programare</button>
+                        <button type="submit" class="submit-btn">📧 Trimite prin Email</button>
+                        
+                        <div style="margin-top: 1rem; text-align: center;">
+                            <p style="margin-bottom: 1rem; font-weight: bold; color: #1e3c72;">SAU trimite direct prin:</p>
+                            <div style="display: flex; gap: 1rem; justify-content: center;">
+                                <button type="button" onclick="sendWhatsApp(event)" class="whatsapp-btn" style="background: #25D366; color: white; padding: 0.8rem 1.5rem; border: none; border-radius: 25px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s;">
+                                    📱 WhatsApp
+                                </button>
+                                <button type="button" onclick="sendSMS(event)" class="sms-btn" style="background: #007AFF; color: white; padding: 0.8rem 1.5rem; border: none; border-radius: 25px; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s;">
+                                    💬 SMS
+                                </button>
+                            </div>
+                        </div>
                     </form>
                 </div>
 
@@ -623,7 +647,101 @@
     </footer>
 
     <script>
-        // Form submission handler
+        // WhatsApp submission handler
+        function sendWhatsApp(event) {
+            const form = event.target.closest('form');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Validate required fields
+            if (!data.nume || !data.telefon || !data.serviciu || !data.adresa) {
+                alert('Te rog să completezi toate câmpurile obligatorii (*)');
+                return;
+            }
+            
+            // Create WhatsApp message
+            const message = `Bună ziua! Am văzut site-ul adinstalgaz.ro și vreau să programez o verificare.
+
+Nume: ${data.nume}
+Telefon: ${data.telefon}
+Adresa instalației: ${data.adresa}
+Serviciu: ${data.serviciu}
+Data preferată: ${data.data || 'Nu am specificat'}
+Email: ${data.email || 'Nu am furnizat'}
+Detalii: ${data.mesaj || 'Nu am detalii suplimentare'}
+
+Mulțumesc!`;
+            
+            // Create WhatsApp link
+            const whatsappURL = `https://wa.me/40762614401?text=${encodeURIComponent(message)}`;
+            
+            // Open WhatsApp
+            window.open(whatsappURL, '_blank');
+            
+            // Show success message
+            showAlternativeSuccess('WhatsApp', '📱');
+        }
+        
+        // SMS submission handler
+        function sendSMS(event) {
+            const form = event.target.closest('form');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            // Validate required fields
+            if (!data.nume || !data.telefon || !data.serviciu || !data.adresa) {
+                alert('Te rog să completezi toate câmpurile obligatorii (*)');
+                return;
+            }
+            
+            // Create SMS message (shorter for SMS)
+            const message = `Programare verificare gaz AdInstalGaz.ro
+Nume: ${data.nume}
+Tel: ${data.telefon}
+Adresa: ${data.adresa}
+Serviciu: ${data.serviciu}
+Data: ${data.data || 'Flexibilă'}`;
+            
+            // Create SMS link
+            const smsURL = `sms:+40762614401?body=${encodeURIComponent(message)}`;
+            
+            // Open SMS
+            window.location.href = smsURL;
+            
+            // Show success message
+            showAlternativeSuccess('SMS', '💬');
+        }
+        
+        // Alternative success message
+        function showAlternativeSuccess(method, icon) {
+            const successHTML = `
+                <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 2rem; border-radius: 10px; text-align: center; margin: 2rem 0;">
+                    <h3 style="color: #155724; margin-bottom: 1rem;">${icon} Cererea pregătită pentru ${method}!</h3>
+                    <p style="margin-bottom: 1rem;"><strong>S-a deschis aplicația ${method}!</strong></p>
+                    <p style="background: #fff; padding: 1rem; border-radius: 5px; margin: 1rem 0;"><strong>Apăsați "SEND" în aplicația ${method} pentru a trimite!</strong></p>
+                    <p style="margin-bottom: 1rem;">Veți primi răspuns în maximum 24 de ore la telefon: <strong>0762 614 401</strong></p>
+                    <p style="font-size: 0.9rem; color: #6c757d;">Mult mai simplu decât email-ul! 😊</p>
+                </div>
+            `;
+            
+            // Remove existing messages
+            const form = document.querySelector('#programare form');
+            const existingMessage = form.nextElementSibling;
+            if (existingMessage && existingMessage.style && existingMessage.style.background) {
+                existingMessage.remove();
+            }
+            
+            // Add new success message
+            form.insertAdjacentHTML('afterend', successHTML);
+            
+            // Scroll to success message
+            setTimeout(() => {
+                const successDiv = form.nextElementSibling;
+                if (successDiv) {
+                    successDiv.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 100);
+        }
         function submitForm(event) {
             event.preventDefault();
             
