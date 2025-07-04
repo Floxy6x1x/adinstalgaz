@@ -682,11 +682,12 @@ Data: ${data.data || 'Flexibila'}`;
                 window.open(whatsappURL, '_blank');
             }
             
+            // Clear form immediately
+            form.reset();
+            
             // Show success message
             setTimeout(() => {
                 showMobileWhatsAppSuccess(message, isMobile);
-                // Reset form after success message
-                form.reset();
             }, 1000);
         }
         
@@ -716,13 +717,11 @@ Data: ${data.data || 'Flexibilă'}`;
             // Open SMS
             window.location.href = smsURL;
             
+            // Clear form immediately
+            form.reset();
+            
             // Show success message
             showAlternativeSuccess('SMS', '💬');
-            
-            // Reset form after SMS
-            setTimeout(() => {
-                form.reset();
-            }, 1000);
         }
         
         // Mobile-friendly WhatsApp success message
@@ -837,6 +836,9 @@ Trimis de pe site-ul www.adinstalgaz.ro
             // Open email client
             window.location.href = mailtoLink;
             
+            // Clear form immediately
+            event.target.reset();
+            
             // Show success message after delay
             setTimeout(() => {
                 // Reset button
@@ -872,9 +874,6 @@ Trimis de pe site-ul www.adinstalgaz.ro
                         successDiv.scrollIntoView({ behavior: 'smooth' });
                     }
                 }, 100);
-                
-                // Reset form
-                event.target.reset();
                 
             }, 1000);
         }
