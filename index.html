@@ -626,6 +626,12 @@
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData);
             
+            // Show loading state
+            const submitBtn = event.target.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Se trimite...';
+            submitBtn.disabled = true;
+            
             // Create email body
             const emailBody = `
 Cerere de programare verificare tehnică gaze:
@@ -649,11 +655,37 @@ Trimis de pe site-ul www.adinstalgaz.ro
             // Open email client
             window.location.href = mailtoLink;
             
-            // Show confirmation
-            alert('Cererea dvs. a fost pregătită în programul de email. Vă mulțumim!');
-            
-            // Reset form
-            event.target.reset();
+            // Show success message with instructions
+            setTimeout(() => {
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                
+                // Show detailed success message
+                const successHTML = `
+                    <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 2rem; border-radius: 10px; text-align: center; margin: 2rem 0;">
+                        <h3 style="color: #155724; margin-bottom: 1rem;">✅ Cererea a fost pregătită cu succes!</h3>
+                        <p style="margin-bottom: 1rem;"><strong>PASUL URMĂTOR:</strong></p>
+                        <p style="margin-bottom: 1rem;">S-a deschis programul dvs. de email cu mesajul pregătit.</p>
+                        <p style="background: #fff; padding: 1rem; border-radius: 5px; margin: 1rem 0;"><strong>Apăsați "SEND" în email pentru a trimite cererea!</strong></p>
+                        <p style="margin-bottom: 1rem;">Veți primi răspuns în maximum 24 de ore la telefon: <strong>0762 614 401</strong></p>
+                        <p style="font-size: 0.9rem; color: #6c757d;">Dacă email-ul nu s-a deschis, contactați-ne direct la telefon.</p>
+                    </div>
+                `;
+                
+                // Insert success message after form
+                const form = event.target;
+                form.insertAdjacentHTML('afterend', successHTML);
+                
+                // Scroll to success message
+                setTimeout(() => {
+                    form.nextElementSibling.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+                
+                // Reset form
+                event.target.reset();
+                
+            }, 1000);
         }
 
         // Smooth scrolling for navigation links
