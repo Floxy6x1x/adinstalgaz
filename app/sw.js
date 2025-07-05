@@ -1,11 +1,9 @@
 // Service Worker pentru Ad Instal Gaz PWA
-const CACHE_NAME = 'adinstalgaz-v1.1';
+const CACHE_NAME = 'adinstalgaz-v1.2';
 const STATIC_FILES = [
     './',
     './index.html',
     './manifest.json',
-    './icon-192x192.png',
-    './icon-512x512.png',
     'https://cdn.tailwindcss.com',
     'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
     'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
