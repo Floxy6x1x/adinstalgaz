@@ -1,1 +1,1387 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Instal Gaz SRL - Management Business</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkFkIEluc3RhbCBHYXogU1JMIiwKICAic2hvcnRfbmFtZSI6ICJBZEluc3RhbEdheiIsCiAgImRlc2NyaXB0aW9uIjogIk1hbmFnZW1lbnQgQnVzaW5lc3MgcGVudHJ1IEFkIEluc3RhbCBHYXogU1JMIiwKICAic3RhcnRfdXJsIjogIi4vIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjNmNGY2IiwKICAidGhlbWVfY29sb3IiOiAiIzFlM2M3MiIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbCw8c3ZnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zycgdmlld0JveD0nMCAwIDEwMCAxMDAnPjx0ZXh0IHk9Jy45ZW0nIGZvbnQtc2l6ZT0nOTAnPvCfko08L3RleHQ+PC9zdmc+IiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWwsPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz48dGV4dCB5PScuOWVtJyBmb250LXNpemU9JzkwJz7wn5KNPHRleHQ+PC9zdmc+IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AdInstalGaz">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+        import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+        
+        // Firebase config - Înlocuiește cu configurația ta reală
+        const firebaseConfig = {
+            // DEMO CONFIG - Înlocuiește cu configurația ta reală
+            apiKey: "demo-key",
+            authDomain: "adinstalgaz-demo.firebaseapp.com", 
+            projectId: "adinstalgaz-demo",
+            storageBucket: "adinstalgaz-demo.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "demo-app-id"
+        };
+        
+        // Initialize Firebase
+        window.firebaseApp = initializeApp(firebaseConfig);
+        window.db = getFirestore(window.firebaseApp);
+        window.auth = getAuth(window.firebaseApp);
+        
+        // Make Firebase functions available globally
+        window.firebaseFunctions = {
+            collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, serverTimestamp,
+            signInAnonymously, onAuthStateChanged
+        };
+    </script>
+    
+    <!-- Libraries for Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f3f4f6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Sync Status */
+        .sync-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1001;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .sync-status.online {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .sync-status.offline {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .sync-status.syncing {
+            border-color: #f59e0b;
+            background: #fffbeb;
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6b7280;
+        }
+
+        .sync-dot.online {
+            background: #10b981;
+        }
+
+        .sync-dot.offline {
+            background: #ef4444;
+        }
+
+        .sync-dot.syncing {
+            background: #f59e0b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* PWA Install Banner */
+        .install-banner {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            z-index: 1002;
+        }
+
+        .install-banner.show {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .install-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .install-text {
+            flex: 1;
+        }
+
+        .install-text h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .install-text p {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .install-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .install-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.875rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .install-btn.primary {
+            background: white;
+            color: #3b82f6;
+        }
+
+        .install-btn.secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .header-text h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-text p {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+
+        .header-date {
+            text-align: right;
+        }
+
+        .header-date p:first-child {
+            font-size: 0.9rem;
+            color: #e2e8f0;
+        }
+
+        .header-date p:last-child {
+            font-weight: 600;
+        }
+
+        /* Navigation */
+        .nav {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background: #f3f4f6;
+            color: #374151;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-button:hover {
+            background: #e5e7eb;
+        }
+
+        .nav-button.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .nav-button .icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Dashboard */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .last-update {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-card.special {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            color: white;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card.special .stat-label {
+            color: #bfdbfe;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .stat-card.special .stat-value {
+            color: white;
+        }
+
+        .stat-subtext {
+            font-size: 0.75rem;
+            color: #bfdbfe;
+            margin-top: 0.25rem;
+        }
+
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 1rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #111827;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #111827;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .modal-close:hover {
+            color: #374151;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Lists */
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: #dbeafe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #1d4ed8;
+        }
+
+        .list-content {
+            flex: 1;
+        }
+
+        .list-title {
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 0.25rem;
+        }
+
+        .list-subtitle {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                margin: 1rem;
+            }
+
+            .install-banner {
+                bottom: 10px;
+                left: 10px;
+                right: 10px;
+            }
+
+            .install-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .install-buttons {
+                justify-content: center;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .font-medium { font-weight: 500; }
+        .font-bold { font-weight: bold; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mt-4 { margin-top: 1rem; }
+        .gap-4 { gap: 1rem; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+    </style>
+</head>
+<body>
+    <!-- Sync Status -->
+    <div id="sync-status" class="sync-status offline">
+        <div class="sync-dot offline" id="sync-dot"></div>
+        <span id="sync-text">Offline</span>
+    </div>
+
+    <!-- PWA Install Banner -->
+    <div id="install-banner" class="install-banner">
+        <div class="install-content">
+            <div class="install-text">
+                <h4>📱 Instalează aplicația</h4>
+                <p>Folosește Ad Instal Gaz ca aplicație nativă pe telefon sau desktop!</p>
+            </div>
+            <div class="install-buttons">
+                <button class="install-btn primary" onclick="installPWA()">Instalează</button>
+                <button class="install-btn secondary" onclick="dismissInstallBanner()">Mai târziu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 15 C60 25, 65 35, 65 45 C65 55, 60 65, 50 65 C40 65, 35 55, 35 45 C35 35, 40 25, 50 15 Z" fill="url(#flameGradient)"/>
+                            <rect x="20" y="70" width="60" height="8" rx="4" fill="#2a5298"/>
+                            <rect x="15" y="78" width="70" height="6" rx="3" fill="#1e3c72"/>
+                            <path d="M25 50 L35 50 L35 45 L40 45 L40 55 L35 55 L35 50 L30 50 L30 60 L25 60 Z" fill="#ff6b35"/>
+                            <defs>
+                                <linearGradient id="flameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#ff8c42;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#ffa726;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="header-text">
+                        <h1>Ad Instal Gaz SRL</h1>
+                        <p>Management Business • PWA</p>
+                    </div>
+                </div>
+                <div class="header-date">
+                    <p>Astăzi</p>
+                    <p id="current-date"></p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <div class="nav-container">
+                <button class="nav-button active" onclick="showSection('dashboard')" id="nav-dashboard">
+                    <span class="icon">📊</span>
+                    Dashboard
+                </button>
+                <button class="nav-button" onclick="showSection('clients')" id="nav-clients">
+                    <span class="icon">👥</span>
+                    Clienți
+                </button>
+                <button class="nav-button" onclick="showSection('appointments')" id="nav-appointments">
+                    <span class="icon">📅</span>
+                    Programări
+                </button>
+                <button class="nav-button" onclick="showSection('workplan')" id="nav-workplan">
+                    <span class="icon">📋</span>
+                    Fișa Mâine
+                </button>
+                <button class="nav-button" onclick="showSection('reminders')" id="nav-reminders">
+                    <span class="icon">🔔</span>
+                    Reminder-e
+                </button>
+                <button class="nav-button" onclick="showSection('reports')" id="nav-reports">
+                    <span class="icon">📄</span>
+                    Rapoarte
+                </button>
+                <button class="nav-button" onclick="showSection('sync')" id="nav-sync">
+                    <span class="icon">☁️</span>
+                    Cloud Sync
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">Dashboard</h2>
+                    <div class="last-update">
+                        Ultima actualizare: <span id="last-update-time"></span>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-content">
+                                <div class="stat-label">Total Clienți</div>
+                                <div class="stat-value" id="total-clients">0</div>
+                            </div>
+                            <div class="stat-icon">👥</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-content">
+                                <div class="stat-label">Programări Luna</div>
+                                <div class="stat-value" id="month-appointments">0</div>
+                            </div>
+                            <div class="stat-icon">📅</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-content">
+                                <div class="stat-label">În Așteptare</div>
+                                <div class="stat-value" id="pending-appointments">0</div>
+                            </div>
+                            <div class="stat-icon">⏳</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-content">
+                                <div class="stat-label">Venituri Luna</div>
+                                <div class="stat-value" id="month-revenue">0 RON</div>
+                            </div>
+                            <div class="stat-icon">💰</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card special">
+                        <div class="stat-header">
+                            <div class="stat-content">
+                                <div class="stat-label">Mâine</div>
+                                <div class="stat-value" id="tomorrow-tasks">0</div>
+                                <div class="stat-subtext">activități</div>
+                            </div>
+                            <div class="stat-icon">🔔</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Cards -->
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Programări Recente</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="recent-appointments">
+                                <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                                    Nu există programări încă
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Clienți Noi</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="recent-clients">
+                                <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                                    Nu există clienți încă
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cloud Sync Section -->
+            <section id="sync" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">☁️ Cloud Sync</h2>
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="forceSyncToCloud()">
+                            <span>⬆️</span>
+                            Sync la Cloud
+                        </button>
+                        <button class="btn btn-success" onclick="forceSyncFromCloud()">
+                            <span>⬇️</span>
+                            Sync din Cloud
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📊 Status Sincronizare</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="background: #f9fafb; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                    <div>
+                                        <div style="font-weight: 500; color: #374151;">Status Conexiune:</div>
+                                        <div id="connection-status" style="color: #dc2626;">Offline</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 500; color: #374151;">Ultima Sincronizare:</div>
+                                        <div id="last-sync" style="color: #6b7280;">Niciodată</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;" id="sync-clients-count">0</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Clienți în Cloud</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="sync-appointments-count">0</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Programări în Cloud</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;" id="sync-reminders-count">0</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Reminder-e în Cloud</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">⚙️ Configurare Firebase</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                <h4 style="color: #d97706; font-weight: 600; margin-bottom: 0.5rem;">🔧 Setup Necesar</h4>
+                                <p style="color: #d97706; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                                    Pentru a folosi sincronizarea cloud, trebuie să configurezi Firebase:
+                                </p>
+                                <ol style="color: #d97706; font-size: 0.875rem; margin-left: 1rem;">
+                                    <li>Creează un proiect pe <a href="https://console.firebase.google.com" target="_blank" style="color: #2563eb;">Firebase Console</a></li>
+                                    <li>Activează Firestore Database</li>
+                                    <li>Activează Authentication (Anonymous)</li>
+                                    <li>Copiază configurația în cod</li>
+                                </ol>
+                            </div>
+                            
+                            <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 1rem;">
+                                <h4 style="color: #0c4a6e; font-weight: 600; margin-bottom: 0.5rem;">✨ Beneficii Cloud Sync</h4>
+                                <ul style="color: #0c4a6e; font-size: 0.875rem; margin-left: 1rem;">
+                                    <li>Sincronizare automată între dispozitive</li>
+                                    <li>Backup automat al datelor</li>
+                                    <li>Acces de pe orice dispozitiv</li>
+                                    <li>Colaborare în timp real</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Alte secțiuni vor fi adăugate aici -->
+            <section id="clients" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">Clienți (<span id="clients-count">0</span>)</h2>
+                    <button class="btn btn-primary" onclick="showModal('addClientModal')">
+                        <span>➕</span>
+                        Adaugă Client
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <div id="clients-list">
+                            <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                                Nu aveți clienți încă
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="appointments" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">Programări (<span id="appointments-count">0</span>)</h2>
+                    <button class="btn btn-primary" onclick="showModal('addAppointmentModal')">
+                        <span>➕</span>
+                        Programare Nouă
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <div id="appointments-list">
+                            <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                                Nu aveți programări încă
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="workplan" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">📋 Fișa de Lucru - Mâine</h2>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                            Secțiunea Fișa de Lucru va fi disponibilă în curând
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reminders" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">Reminder-e & Notificări</h2>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                            Secțiunea Reminder-e va fi disponibilă în curând
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="reports" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">Rapoarte & Statistici</h2>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                            Secțiunea Rapoarte va fi disponibilă în curând
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal pentru adăugare client -->
+    <div id="addClientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Adaugă Client Nou</h3>
+                <button class="modal-close" onclick="hideModal('addClientModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nume Complet *</label>
+                    <input type="text" class="form-input" id="client-name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Telefon *</label>
+                    <input type="tel" class="form-input" id="client-phone" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="client-email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Adresa *</label>
+                    <textarea class="form-input form-textarea" id="client-address" required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('addClientModal')">Anulează</button>
+                <button class="btn btn-primary" onclick="addClient()">Salvează</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pentru adăugare programare -->
+    <div id="addAppointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Programare Nouă</h3>
+                <button class="modal-close" onclick="hideModal('addAppointmentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Nume Client *</label>
+                    <input type="text" class="form-input" id="appointment-client-name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Telefon *</label>
+                    <input type="tel" class="form-input" id="appointment-phone" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Serviciu *</label>
+                    <select class="form-select" id="appointment-service" required>
+                        <option value="">Selectează serviciul</option>
+                        <option value="Verificări instalații gaz">Verificări instalații gaz</option>
+                        <option value="Revizii instalații gaz">Revizii instalații gaz</option>
+                        <option value="Verificări centrale termice">Verificări centrale termice</option>
+                        <option value="Revizii centrale termice">Revizii centrale termice</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Data *</label>
+                    <input type="date" class="form-input" id="appointment-date" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ora *</label>
+                    <input type="time" class="form-input" id="appointment-time" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('addAppointmentModal')">Anulează</button>
+                <button class="btn btn-primary" onclick="addAppointment()">Salvează</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let appData = {
+            clients: [],
+            appointments: [],
+            reminders: []
+        };
+
+        let isOnline = navigator.onLine;
+        let deferredPrompt = null;
+        let installBannerDismissed = localStorage.getItem('installBannerDismissed') === 'true';
+
+        // PWA Installation
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (!installBannerDismissed) {
+                document.getElementById('install-banner').classList.add('show');
+            }
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((result) => {
+                    if (result.outcome === 'accepted') {
+                        console.log('PWA installată cu succes');
+                        dismissInstallBanner();
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        function dismissInstallBanner() {
+            document.getElementById('install-banner').classList.remove('show');
+            localStorage.setItem('installBannerDismissed', 'true');
+            installBannerDismissed = true;
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('Service Worker înregistrat cu succes:', registration);
+                })
+                .catch(error => {
+                    console.log('Eroare la înregistrarea Service Worker:', error);
+                });
+        }
+
+        // Online/Offline Detection
+        window.addEventListener('online', () => {
+            isOnline = true;
+            updateSyncStatus();
+        });
+
+        window.addEventListener('offline', () => {
+            isOnline = false;
+            updateSyncStatus();
+        });
+
+        function updateSyncStatus() {
+            const statusEl = document.getElementById('sync-status');
+            const dotEl = document.getElementById('sync-dot');
+            const textEl = document.getElementById('sync-text');
+            const connectionStatusEl = document.getElementById('connection-status');
+
+            if (isOnline) {
+                statusEl.className = 'sync-status online';
+                dotEl.className = 'sync-dot online';
+                textEl.textContent = 'Online';
+                if (connectionStatusEl) connectionStatusEl.textContent = 'Online';
+            } else {
+                statusEl.className = 'sync-status offline';
+                dotEl.className = 'sync-dot offline';
+                textEl.textContent = 'Offline';
+                if (connectionStatusEl) connectionStatusEl.textContent = 'Offline';
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateUI();
+            updateDateTime();
+            updateSyncStatus();
+            setInterval(updateDateTime, 60000);
+        });
+
+        // Date and time functions
+        function updateDateTime() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ro-RO');
+            const timeStr = now.toLocaleTimeString('ro-RO', {hour: '2-digit', minute: '2-digit'});
+            
+            document.getElementById('current-date').textContent = dateStr;
+            document.getElementById('last-update-time').textContent = timeStr;
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            document.getElementById('nav-' + sectionId).classList.add('active');
+            
+            updateUI();
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+            clearModalInputs(modalId);
+        }
+
+        function clearModalInputs(modalId) {
+            const modal = document.getElementById(modalId);
+            const inputs = modal.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+        }
+
+        // Client functions
+        function addClient() {
+            const name = document.getElementById('client-name').value.trim();
+            const phone = document.getElementById('client-phone').value.trim();
+            const email = document.getElementById('client-email').value.trim();
+            const address = document.getElementById('client-address').value.trim();
+
+            if (!name || !phone || !address) {
+                alert('Te rog să completezi toate câmpurile obligatorii!');
+                return;
+            }
+
+            const newClient = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                email: email,
+                address: address,
+                createdAt: new Date().toISOString()
+            };
+
+            appData.clients.push(newClient);
+            saveData();
+            updateUI();
+            hideModal('addClientModal');
+        }
+
+        // Appointment functions
+        function addAppointment() {
+            const clientName = document.getElementById('appointment-client-name').value.trim();
+            const phone = document.getElementById('appointment-phone').value.trim();
+            const service = document.getElementById('appointment-service').value;
+            const date = document.getElementById('appointment-date').value;
+            const time = document.getElementById('appointment-time').value;
+
+            if (!clientName || !phone || !service || !date || !time) {
+                alert('Te rog să completezi toate câmpurile obligatorii!');
+                return;
+            }
+
+            const newAppointment = {
+                id: Date.now(),
+                clientName: clientName,
+                phone: phone,
+                service: service,
+                date: date,
+                time: time,
+                status: 'programat',
+                createdAt: new Date().toISOString()
+            };
+
+            appData.appointments.push(newAppointment);
+            saveData();
+            updateUI();
+            hideModal('addAppointmentModal');
+        }
+
+        // Data persistence
+        function saveData() {
+            localStorage.setItem('adinstalgaz_data', JSON.stringify(appData));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('adinstalgaz_data');
+            if (saved) {
+                appData = JSON.parse(saved);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('total-clients').textContent = appData.clients.length;
+            document.getElementById('clients-count').textContent = appData.clients.length;
+            document.getElementById('appointments-count').textContent = appData.appointments.length;
+            document.getElementById('month-appointments').textContent = appData.appointments.length;
+            document.getElementById('pending-appointments').textContent = appData.appointments.filter(apt => apt.status === 'programat').length;
+            
+            renderClients();
+            renderAppointments();
+        }
+
+        function renderClients() {
+            const container = document.getElementById('clients-list');
+            
+            if (appData.clients.length === 0) {
+                container.innerHTML = '<p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">Nu aveți clienți încă</p>';
+                return;
+            }
+
+            container.innerHTML = appData.clients.map(client => `
+                <div class="list-item">
+                    <div class="avatar">${client.name.charAt(0).toUpperCase()}</div>
+                    <div class="list-content">
+                        <div class="list-title">${client.name}</div>
+                        <div class="list-subtitle">📞 ${client.phone} • 📍 ${client.address}</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="window.open('tel:${client.phone}')" style="padding: 0.4rem; font-size: 0.75rem;">
+                        📞
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function renderAppointments() {
+            const container = document.getElementById('appointments-list');
+            
+            if (appData.appointments.length === 0) {
+                container.innerHTML = '<p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">Nu aveți programări încă</p>';
+                return;
+            }
+
+            container.innerHTML = appData.appointments.map(apt => `
+                <div class="list-item">
+                    <div class="avatar">${apt.clientName.charAt(0).toUpperCase()}</div>
+                    <div class="list-content">
+                        <div class="list-title">${apt.clientName} - ${apt.service}</div>
+                        <div class="list-subtitle">📅 ${new Date(apt.date).toLocaleDateString('ro-RO')} • ⏰ ${apt.time}</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="window.open('tel:${apt.phone}')" style="padding: 0.4rem; font-size: 0.75rem;">
+                        📞
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Cloud sync functions (demo)
+        function forceSyncToCloud() {
+            if (!isOnline) {
+                alert('❌ Nu ești conectat la internet!');
+                return;
+            }
+            alert('✅ Funcția de sincronizare va fi activă după configurarea Firebase!');
+        }
+
+        function forceSyncFromCloud() {
+            if (!isOnline) {
+                alert('❌ Nu ești conectat la internet!');
+                return;
+            }
+            alert('✅ Funcția de sincronizare va fi activă după configurarea Firebase!');
+        }
+
+        // Set minimum date for date inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => {
+                input.min = today;
+            });
+        });
+    </script>
+</body>
+</html>
