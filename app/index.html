@@ -6,8 +6,7 @@
     <title>Ad Instal Gaz SRL - Management</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e40af">
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
-    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <!-- Removed icon links that cause 404 errors -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -59,9 +58,8 @@
     <header class="bg-blue-600 text-white p-4 shadow-lg">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <!-- Logo (fallback dacă nu există icon-192x192.png) -->
-                <img src="icon-192x192.png" alt="Logo" class="w-10 h-10 rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="logo-placeholder" style="display:none;">AG</div>
+                <!-- Logo CSS (nu mai caută fișier PNG) -->
+                <div class="logo-placeholder">AG</div>
                 <div>
                     <h1 class="text-xl font-bold">Ad Instal Gaz SRL</h1>
                     <p class="text-sm opacity-75">Gavrila - 📞 0762614402</p>
@@ -1078,7 +1076,7 @@
 
         function sendWhatsAppReminder(phone, name, date, time, service) {
             const message = encodeURIComponent(`Bună ziua ${name}! Vă reamintim de programarea dumneavoastră pentru ${service} pe data de ${date} la ora ${time}. Mulțumim! - Ad Instal Gaz SRL`);
-            window.open(`https://wa.me/4${phone.replace(/^0/, '')}?text=${message}`);
+            window.open(`https://wa.me/40${phone.replace(/^0/, '')}?text=${message}`);
         }
 
         function deleteAppointment(aptId) {
@@ -1224,7 +1222,7 @@
         function sendReminderWhatsApp(phone, name, message) {
             const whatsappMessage = message || `Bună ziua ${name}! Vă contactez de la Ad Instal Gaz SRL.`;
             const encodedMessage = encodeURIComponent(whatsappMessage);
-            window.open(`https://wa.me/4${phone.replace(/^0/, '')}?text=${encodedMessage}`);
+            window.open(`https://wa.me/40${phone.replace(/^0/, '')}?text=${encodedMessage}`);
         }
 
         function markReminderComplete(reminderId) {
