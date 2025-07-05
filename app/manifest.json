@@ -2,7 +2,7 @@
   "name": "Ad Instal Gaz SRL - Management Business",
   "short_name": "AdInstalGaz",
   "description": "Aplicație PWA pentru managementul business-ului Ad Instal Gaz SRL",
-  "start_url": "/adinstalgaz/app/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f3f4f6",
   "theme_color": "#1e3c72",
