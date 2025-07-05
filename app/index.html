@@ -262,6 +262,26 @@
             transform: translateY(-2px);
         }
 
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #dd6b20;
+            transform: translateY(-2px);
+        }
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -776,10 +796,55 @@
                     <h3 style="color: #4a5568; margin-bottom: 15px;">📱 Notificări & Firebase</h3>
                     <button class="btn btn-primary" onclick="verificaNotificariAutomated()" style="margin-bottom: 10px; width: 100%;">📱 Verifică Notificări</button>
                     <button class="btn btn-secondary" onclick="sincronizareCuFirestore()" style="margin-bottom: 10px; width: 100%;">🔥 Sync Firebase</button>
-                    <button class="btn btn-secondary" onclick="trimiteNotificariInMasa()" style="width: 100%;">📢 Notificări în Masă</button>
+                    <button class="btn btn-secondary" onclick="trimiteNotificariInMasa()" style="margin-bottom: 10px; width: 100%;">📢 Notificări în Masă</button>
+                    <button class="btn btn-success" onclick="testeazaWhatsApp()" style="margin-bottom: 10px; width: 100%; background: #25d366; color: white;">💬 Test WhatsApp</button>
                     <div style="margin-top: 10px; padding: 10px; background: #f0fff4; border-radius: 6px; border-left: 3px solid #38a169;">
-                        <small style="color: #22543d;">Firebase: <span id="firebaseStatus">Verificare...</span></small>
+                        <small style="color: #22543d;">Firebase: <span id="firebaseStatus">Verificare...</span></small><br>
+                        <small style="color: #22543d;">Telefon firmă: <strong>${CONFIGURARI_FIRMA.telefon}</strong></small><br>
+                        <small style="color: #22543d;">WhatsApp: <strong>Activ ✅</strong></small>
                     </div>
+                </div>
+            </div>
+
+            <!-- Secțiune pentru preview mesaje -->
+            <div class="form-container" style="margin-top: 30px;">
+                <h3 style="color: #4a5568; margin-bottom: 15px;">📋 Exemple Mesaje SMS & WhatsApp</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                    <div style="background: #f7fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #4299e1;">
+                        <h4 style="color: #2b6cb0; margin-bottom: 10px;">🔔 Expirare Revizie</h4>
+                        <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; white-space: pre-line;">${messageTemplates.expirareRevizie('Popescu Ion', '7', 'Verificare Instalație Gaz')}</div>
+                    </div>
+                    <div style="background: #fef5e7; padding: 15px; border-radius: 8px; border-left: 4px solid #ed8936;">
+                        <h4 style="color: #c05621; margin-bottom: 10px;">💰 Plată Pendentă</h4>
+                        <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; white-space: pre-line;">${messageTemplates.plataPendenta('Ionescu Maria', '250', 'Revizie Instalație Gaz')}</div>
+                    </div>
+                    <div style="background: #f0fff4; padding: 15px; border-radius: 8px; border-left: 4px solid #38a169;">
+                        <h4 style="color: #22543d; margin-bottom: 10px;">✅ Confirmare Programare</h4>
+                        <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; white-space: pre-line;">${messageTemplates.confirmareProgramare('Georgescu Andrei', '15.12.2024 10:00', 'Verificare Centrală', 'Alexandria, Str. Libertății 12')}</div>
+                    </div>
+                    <div style="background: #fed7d7; padding: 15px; border-radius: 8px; border-left: 4px solid #f56565;">
+                        <h4 style="color: #742a2a; margin-bottom: 10px;">🚨 Problemă Tehnică (WhatsApp)</h4>
+                        <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; white-space: pre-line;">🚨 ATENȚIE - ${CONFIGURARI_FIRMA.nume}
+
+Bună ziua Popescu Ion!
+
+Am fost notificați despre următoarea problemă:
+⚠️ Scăpare de gaz
+
+🔧 Vă rugăm să:
+• Nu folosiți instalația până la verificare
+• Aerisiți încăperea
+• Sunați URGENT la ${CONFIGURARI_FIRMA.telefon}
+
+${CONFIGURARI_FIRMA.nume} - Intervenție Rapidă</div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 15px; background: #ebf8ff; border-radius: 8px; border-left: 4px solid #4299e1;">
+                    <p style="color: #2a4365; margin: 0;"><strong>🎯 Cum funcționează:</strong></p>
+                    <p style="color: #2a4365; margin: 5px 0 0 0;">• <strong>📱 SMS</strong> → mesaj simulat (vezi în consolă F12)</p>
+                    <p style="color: #2a4365; margin: 5px 0 0 0;">• <strong>💬 WhatsApp</strong> → deschide WhatsApp Web cu mesajul pregătit</p>
+                    <p style="color: #2a4365; margin: 5px 0 0 0;">• <strong>Probleme urgente</strong> → trimite automat pe WhatsApp</p>
+                    <p style="color: #2a4365; margin: 5px 0 0 0;">• <strong>Test WhatsApp</strong> → butonul "💬 Test WhatsApp" în dashboard</p>
                 </div>
             </div>
         </section>
@@ -791,6 +856,15 @@
             <!-- Alerts Section -->
             <div class="alerts-section">
                 <div id="alerteAbonati"></div>
+                
+                <!-- Alertă pentru notificări -->
+                <div class="alert alert-info" style="border-left: 4px solid #4299e1;">
+                    <strong>📱 Notificări SMS & WhatsApp Active!</strong><br>
+                    • <strong>SMS:</strong> Click pe 📱 SMS pentru notificare clasică<br>
+                    • <strong>WhatsApp:</strong> Click pe 💬 WA pentru mesaj WhatsApp instant<br>
+                    • <strong>Vezi mesajele:</strong> Apasă F12 → Console pentru a vedea conținutul<br>
+                    • <strong>Telefon firmă:</strong> ${CONFIGURARI_FIRMA.telefon} (schimbă în CONFIGURARI_FIRMA)
+                </div>
             </div>
 
             <!-- Lists Section -->
@@ -1116,7 +1190,26 @@
                                 <option value="Instalații Gaz + Centrală">🔥 Pachet Complet Gaz + Centrală</option>
                                 <option value="Urmărire">📞 Urmărire Client</option>
                                 <option value="Facturare">💰 Facturare</option>
+                                <option value="Problemă Tehnică">⚠️ Problemă Tehnică</option>
                                 <option value="Altele">📝 Altele</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Problemă Specifică (pentru reminder tehnic)</label>
+                            <select class="form-select" id="problemaSpecifica">
+                                <option value="">Selectează problema</option>
+                                <option value="Scăpare de gaz">🚨 Scăpare de gaz</option>
+                                <option value="Centrala nu pornește">❄️ Centrala nu pornește</option>
+                                <option value="Presiune scăzută">📉 Presiune scăzută în instalație</option>
+                                <option value="Miros de gaz">👃 Miros de gaz în cameră</option>
+                                <option value="Ventil defect">🔧 Ventil defect</option>
+                                <option value="Țeavă spartă">💥 Țeavă spartă</option>
+                                <option value="Detector gaz defect">🔔 Detector gaz defect</option>
+                                <option value="Ventilație blocată">🌪️ Ventilație blocată</option>
+                                <option value="Racord uzat">🔗 Racord uzat</option>
+                                <option value="Revizie expirată">⏰ Revizie expirată</option>
+                                <option value="Documentație lipsă">📄 Documentație lipsă</option>
+                                <option value="Altă problemă">❓ Altă problemă</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -1262,31 +1355,58 @@
         // SISTEM NOTIFICĂRI AUTOMATE
         // ===========================================
 
+        // ===========================================
+        // CONFIGURĂRI FIRMĂ
+        // ===========================================
+        
+        const CONFIGURARI_FIRMA = {
+            nume: 'GazTech Services',
+            telefon: '0762614402', // NUMĂRUL FIRMEI
+            email: 'contact@gaztech.ro',
+            adresa: 'Alexandria, Teleorman',
+            website: 'www.gaztech.ro'
+        };
+
         // Template-uri de mesaje
         const messageTemplates = {
-            expirareRevizie: (nume, zile, servicii, telefon) => 
+            expirareRevizie: (nume, zile, servicii) => 
                 `🔔 Bună ziua ${nume}!\n\n` +
                 `Revizia dumneavoastră pentru ${servicii} expiră în ${zile} zile.\n\n` +
-                `Pentru reprogramare, sunați la 📞 ${telefon || '0721234567'}.\n\n` +
-                `GazTech Services - Servicii profesionale de instalații gaz`,
+                `Pentru reprogramare, sunați la 📞 ${CONFIGURARI_FIRMA.telefon}\n\n` +
+                `${CONFIGURARI_FIRMA.nume} - Servicii profesionale de instalații gaz`,
 
             plataPendenta: (nume, suma, servicii) => 
                 `💰 Bună ziua ${nume}!\n\n` +
                 `Aveți de plătit suma de ${suma} Lei pentru:\n${servicii}\n\n` +
-                `Vă rugăm să efectuați plata în cel mai scurt timp.\n\n` +
-                `GazTech Services - Mulțumim!`,
+                `Pentru plată: 📞 ${CONFIGURARI_FIRMA.telefon}\n\n` +
+                `${CONFIGURARI_FIRMA.nume} - Mulțumim!`,
 
             confirmareProgramare: (nume, data, serviciu, adresa) => 
                 `✅ Bună ziua ${nume}!\n\n` +
                 `Confirmăm programarea pentru ${serviciu}\n` +
                 `📅 Data: ${data}\n📍 Adresa: ${adresa}\n\n` +
-                `GazTech Services`,
+                `Informații: 📞 ${CONFIGURARI_FIRMA.telefon}\n` +
+                `${CONFIGURARI_FIRMA.nume}`,
 
             revizieCompletata: (nume, serviciu, valabilitate) => 
                 `✅ Bună ziua ${nume}!\n\n` +
                 `Revizia pentru ${serviciu} a fost finalizată cu succes!\n` +
                 `📋 Valabilitate: ${valabilitate}\n\n` +
-                `GazTech Services - Mulțumim pentru încredere!`
+                `${CONFIGURARI_FIRMA.nume} - Mulțumim pentru încredere!\n` +
+                `📞 ${CONFIGURARI_FIRMA.telefon}`,
+
+            abonatNou: (nume, servicii) =>
+                `✅ Bună ziua ${nume}!\n\n` +
+                `Vă confirmăm înregistrarea în sistemul ${CONFIGURARI_FIRMA.nume}.\n` +
+                `📋 Servicii contractate: ${servicii}\n\n` +
+                `Pentru informații: 📞 ${CONFIGURARI_FIRMA.telefon}\n` +
+                `${CONFIGURARI_FIRMA.nume} - Mulțumim pentru încredere!`,
+
+            reminderGeneral: (nume, serviciu, zile) =>
+                `🔔 Reminder ${CONFIGURARI_FIRMA.nume}\n\n` +
+                `Bună ziua ${nume}!\n` +
+                `${serviciu} programat în ${zile} zile.\n\n` +
+                `Contact: 📞 ${CONFIGURARI_FIRMA.telefon}`
         };
 
         // Funcție pentru trimitere SMS (simulare)
@@ -1318,6 +1438,30 @@
             }
         }
 
+        // FUNCȚIE NOUĂ PENTRU WHATSAPP
+        function trimiteWhatsApp(telefon, mesaj) {
+            // Curăță numărul de telefon (elimină 0 și adaugă +40)
+            const telefonCurat = telefon.replace(/^0/, '+40').replace(/\s+/g, '');
+            
+            // Encode mesajul pentru URL
+            const mesajEncoded = encodeURIComponent(mesaj);
+            
+            // Creează link-ul WhatsApp
+            const linkWhatsApp = `https://wa.me/${telefonCurat}?text=${mesajEncoded}`;
+            
+            // Deschide WhatsApp în tab nou
+            window.open(linkWhatsApp, '_blank');
+            
+            console.log(`📱 WHATSAPP către ${telefon}:`);
+            console.log('='.repeat(50));
+            console.log(mesaj);
+            console.log('='.repeat(50));
+            console.log(`🔗 Link: ${linkWhatsApp}`);
+            
+            showNotification(`📱 WhatsApp deschis pentru ${telefon}`, 'success');
+            return { success: true, whatsappLink: linkWhatsApp };
+        }
+
         // Funcție pentru notificare expirare revizie
         async function notificaExpirareRevizie(abonat) {
             const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'servicii contractate';
@@ -1328,9 +1472,14 @@
             const mesaj = messageTemplates.expirareRevizie(
                 abonat.nume,
                 zileRamase,
-                servicii,
-                '0721234567'
+                servicii
             );
+            
+            // Afișează mesajul în consolă pentru demonstrație
+            console.log('📱 MESAJ TRIMIS:');
+            console.log('='.repeat(50));
+            console.log(mesaj);
+            console.log('='.repeat(50));
             
             return await trimiteNotificare(abonat.telefon, mesaj, 'SMS');
         }
@@ -1352,6 +1501,11 @@
             const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'servicii contractate';
             const mesaj = messageTemplates.plataPendenta(abonat.nume, costTotal, servicii);
             
+            console.log('📱 MESAJ PLATĂ TRIMIS:');
+            console.log('='.repeat(50));
+            console.log(mesaj);
+            console.log('='.repeat(50));
+            
             return await trimiteNotificare(abonat.telefon, mesaj, 'SMS');
         }
 
@@ -1369,6 +1523,11 @@
                 programare.tipServiciu,
                 adresa
             );
+            
+            console.log('📱 CONFIRMARE PROGRAMARE:');
+            console.log('='.repeat(50));
+            console.log(mesaj);
+            console.log('='.repeat(50));
             
             return await trimiteNotificare(abonat.telefon, mesaj, 'SMS');
         }
@@ -1902,6 +2061,15 @@
                 abonat.numarNotificari = (abonat.numarNotificari || 0) + 1;
                 saveData();
                 
+                // Afișează mesajul și în interfață
+                afiseazaMesajInInterfata('SMS Expirare Trimis', 
+                    messageTemplates.expirareRevizie(
+                        abonat.nume, 
+                        Math.ceil((new Date(abonat.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24)),
+                        abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'servicii'
+                    )
+                );
+                
                 // Sincronizează cu Firebase
                 if (db) {
                     await salveazaInFirestore('subscribers', abonat.id, abonat);
@@ -1909,6 +2077,54 @@
                 
                 updateListaAbonati();
             }
+        }
+
+        // FUNCȚIE NOUĂ PENTRU WHATSAPP EXPIRARE
+        function trimiteWhatsAppExpirare(idAbonat) {
+            const abonat = abonati.find(a => a.id === idAbonat);
+            if (!abonat) return;
+            
+            const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'servicii contractate';
+            const dataExpirare = new Date(abonat.dataExpirare);
+            const astazi = new Date();
+            const zileRamase = Math.ceil((dataExpirare - astazi) / (1000 * 60 * 60 * 24));
+            
+            const mesaj = messageTemplates.expirareRevizie(abonat.nume, zileRamase, servicii);
+            
+            // Trimite pe WhatsApp
+            trimiteWhatsApp(abonat.telefon, mesaj);
+            
+            // Marchează ca trimis
+            abonat.ultimaNotificare = new Date().toISOString();
+            abonat.numarNotificari = (abonat.numarNotificari || 0) + 1;
+            saveData();
+            
+            updateListaAbonati();
+        }
+
+        // FUNCȚIE PENTRU WHATSAPP PROBLEMĂ TEHNICĂ
+        function trimiteWhatsAppProblema(idAbonat, problema) {
+            const abonat = abonati.find(a => a.id === idAbonat);
+            if (!abonat) return;
+            
+            const mesajProblema = `🚨 ATENȚIE - ${CONFIGURARI_FIRMA.nume}\n\n` +
+                `Bună ziua ${abonat.nume}!\n\n` +
+                `Am fost notificați despre următoarea problemă:\n` +
+                `⚠️ ${problema}\n\n` +
+                `🔧 Vă rugăm să:\n` +
+                `• Nu folosiți instalația până la verificare\n` +
+                `• Aerisiți încăperea\n` +
+                `• Sunați URGENT la ${CONFIGURARI_FIRMA.telefon}\n\n` +
+                `${CONFIGURARI_FIRMA.nume} - Intervenție Rapidă`;
+            
+            trimiteWhatsApp(abonat.telefon, mesajProblema);
+            
+            // Marchează ca trimis
+            abonat.ultimaNotificare = new Date().toISOString();
+            abonat.numarNotificari = (abonat.numarNotificari || 0) + 1;
+            saveData();
+            
+            updateListaAbonati();
         }
 
         async function trimiteNotificarePlata(idAbonat) {
@@ -1921,12 +2137,71 @@
                 abonat.numarNotificari = (abonat.numarNotificari || 0) + 1;
                 saveData();
                 
+                // Afișează mesajul și în interfață
+                let costTotal = 0;
+                if (abonat.serviciiContractate) {
+                    abonat.serviciiContractate.forEach(serviciu => {
+                        switch(serviciu) {
+                            case 'Verificare Instalație Gaz': costTotal += 150; break;
+                            case 'Revizie Instalație Gaz': costTotal += 250; break;
+                            case 'Verificare Centrală': costTotal += 150; break;
+                            case 'Instalații Gaz + Centrală': costTotal += 250; break;
+                        }
+                    });
+                }
+                
+                afiseazaMesajInInterfata('Notificare Plată Trimisă', 
+                    messageTemplates.plataPendenta(
+                        abonat.nume, 
+                        costTotal,
+                        abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'servicii'
+                    )
+                );
+                
                 if (db) {
                     await salveazaInFirestore('subscribers', abonat.id, abonat);
                 }
                 
                 updateListaAbonati();
             }
+        }
+
+        // Funcție pentru afișarea mesajului în interfață
+        function afiseazaMesajInInterfata(titlu, mesaj) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; z-index: 3000; left: 0; top: 0; 
+                width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+                display: flex; align-items: center; justify-content: center;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 16px; max-width: 500px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="color: #2d3748; margin-bottom: 20px;">📱 ${titlu}</h3>
+                    <div style="background: #f7fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #4299e1; white-space: pre-line; font-family: monospace; font-size: 14px; color: #2d3748;">
+${mesaj}
+                    </div>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button onclick="this.closest('.modal-overlay').remove()" style="padding: 10px 20px; background: #4299e1; color: white; border: none; border-radius: 6px; cursor: pointer;">Închide</button>
+                    </div>
+                </div>
+            `;
+            
+            modal.className = 'modal-overlay';
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            };
+            
+            document.body.appendChild(modal);
+            
+            // Auto-remove după 10 secunde
+            setTimeout(() => {
+                if (modal && modal.parentNode) {
+                    modal.remove();
+                }
+            }, 10000);
         }
 
         // FUNCȚII PENTRU NOTIFICĂRI ÎN MASĂ
@@ -1966,6 +2241,18 @@
             
             saveData();
             showNotification(`✅ ${trimiseCuSucces}/${abonatiDeNotificat.length} notificări trimise cu succes!`, 'success');
+        }
+
+        // FUNCȚIE TEST WHATSAPP
+        function testeazaWhatsApp() {
+            const mesajTest = `🧪 Test WhatsApp - ${CONFIGURARI_FIRMA.nume}\n\n` +
+                `Acesta este un mesaj de test pentru a verifica funcționarea WhatsApp.\n\n` +
+                `Dacă primiți acest mesaj, sistemul funcționează corect!\n\n` +
+                `📞 ${CONFIGURARI_FIRMA.telefon}\n` +
+                `${CONFIGURARI_FIRMA.nume}`;
+            
+            // Folosește numărul firmei pentru test
+            trimiteWhatsApp(CONFIGURARI_FIRMA.telefon, mesajTest);
         }
 
         // Verificare status Firebase
@@ -2335,14 +2622,15 @@
                 creeazaReminderAutomat(abonatNou);
             }
 
-            // NOTIFICARE AUTOMATĂ PENTRU ABONAT NOU
+            <!-- NOTIFICARE AUTOMATĂ PENTRU ABONAT NOU -->
             setTimeout(async () => {
                 const servicii = serviciiContractate.join(', ');
-                const mesaj = `✅ Bună ziua ${nume}!\n\n` +
-                    `Vă confirmăm înregistrarea în sistemul GazTech Services.\n` +
-                    `📋 Servicii contractate: ${servicii}\n` +
-                    `📞 Pentru informații: 0721234567\n\n` +
-                    `Mulțumim pentru încredere!`;
+                const mesaj = messageTemplates.abonatNou(nume, servicii);
+                
+                console.log('📱 MESAJ ABONAT NOU:');
+                console.log('='.repeat(50));
+                console.log(mesaj);
+                console.log('='.repeat(50));
                 
                 await trimiteNotificare(telefon, mesaj, 'SMS');
                 abonatNou.numarNotificari = 1;
@@ -2415,10 +2703,10 @@
                             <th>Servicii</th>
                             <th>Data Revizie</th>
                             <th>Data Expirare</th>
-                            <th>Documente</th>
-                            <th>Notificări</th>
+                            <th>Documente & Acțiuni</th>
+                            <th>Notificări Trimise</th>
                             <th>Status</th>
-                            <th>Acțiuni</th>
+                            <th>Editare</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -2460,9 +2748,23 @@
                                 <button class="btn btn-secondary btn-small" onclick="gestioneazaDocumente(${abonat.id})" title="Gestionează documente">
                                     📎 ${numarDocumente}
                                 </button>
-                                <button class="btn btn-primary btn-small" onclick="trimiteNotificareExpirare(${abonat.id})" title="Trimite notificare expirare">
-                                    📱
+                                <button class="btn btn-primary btn-small" onclick="trimiteNotificareExpirare(${abonat.id})" title="📱 SMS Expirare">
+                                    📱 SMS
                                 </button>
+                                <button class="btn btn-success btn-small" onclick="trimiteWhatsAppExpirare(${abonat.id})" title="💬 WhatsApp Expirare" style="background: #25d366; color: white;">
+                                    💬 WA
+                                </button>
+                                <button class="btn btn-warning btn-small" onclick="trimiteNotificarePlata(${abonat.id})" title="💰 Notificare plată" style="background: #f6ad55; color: white;">
+                                    💰
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="text-align: center;">
+                                <span class="status-badge status-pending" style="font-size: 10px;">
+                                    📱 ${abonat.numarNotificari || 0}
+                                </span>
+                                ${abonat.ultimaNotificare ? `<br><small style="color: #718096; font-size: 10px;">${new Date(abonat.ultimaNotificare).toLocaleDateString('ro-RO')}</small>` : ''}
                             </div>
                         </td>
                         <td><span class="status-badge status-active">${abonat.status}</span></td>
@@ -2622,6 +2924,7 @@
         function adaugaReminder() {
             const clientId = document.getElementById('clientReminder').value;
             const tip = document.getElementById('tipReminder').value;
+            const problemaSpecifica = document.getElementById('problemaSpecifica').value;
             const data = document.getElementById('dataReminder').value;
             const prioritate = document.getElementById('prioritateReminder').value;
             const mesaj = document.getElementById('mesajReminder').value.trim();
@@ -2631,28 +2934,46 @@
                 return;
             }
 
+            // Construiește mesajul final
+            let mesajFinal = mesaj;
+            if (problemaSpecifica && tip === 'Problemă Tehnică') {
+                mesajFinal = `${problemaSpecifica}${mesaj ? ' - ' + mesaj : ''}`;
+            }
+
             const reminderNou = {
                 id: Date.now(),
                 clientId,
                 clientNume: clientId === 'nou' ? 'Client Nou' : abonati.find(a => a.id == clientId)?.nume || 'Client Necunoscut',
                 tip,
+                problemaSpecifica: problemaSpecifica || null,
                 data,
                 prioritate,
-                mesaj,
+                mesaj: mesajFinal,
                 status: 'Activ',
                 dataCreare: new Date().toISOString()
             };
 
             remindere.push(reminderNou);
+            
+            // TRIMITE AUTOMAT PE WHATSAPP DACĂ E PROBLEMĂ TEHNICĂ URGENTĂ
+            if (tip === 'Problemă Tehnică' && prioritate === 'Urgentă' && problemaSpecifica) {
+                setTimeout(() => {
+                    if (clientId !== 'nou') {
+                        trimiteWhatsAppProblema(clientId, problemaSpecifica);
+                    }
+                }, 500);
+            }
+
             saveData();
             resetFormReminder();
             
-            showNotification('Reminder-ul a fost adăugat cu succes!', 'success');
+            showNotification(`Reminder adăugat cu succes! ${tip === 'Problemă Tehnică' && prioritate === 'Urgentă' ? '📱 WhatsApp trimis automat!' : ''}`, 'success');
         }
 
         function resetFormReminder() {
             document.getElementById('clientReminder').value = '';
             document.getElementById('tipReminder').value = '';
+            document.getElementById('problemaSpecifica').value = '';
             document.getElementById('dataReminder').value = '';
             document.getElementById('prioritateReminder').value = 'Joasă';
             document.getElementById('mesajReminder').value = '';
@@ -2678,6 +2999,7 @@
                         <tr>
                             <th>Client</th>
                             <th>Tip</th>
+                            <th>Problemă</th>
                             <th>Data</th>
                             <th>Prioritate</th>
                             <th>Mesaj</th>
@@ -2690,16 +3012,19 @@
             remindere.forEach(reminder => {
                 const dataFormatata = new Date(reminder.data).toLocaleString('ro-RO');
                 const clasaUrgenta = reminder.tipAutomat === 'revizie' ? 'urgent-reminder' : '';
+                const problemaAfisata = reminder.problemaSpecifica || '-';
                 
                 html += `
                     <tr class="${clasaUrgenta}">
                         <td><strong>${reminder.clientNume}</strong></td>
                         <td>${reminder.tip}${reminder.tipAutomat === 'revizie' ? ' 🔄' : ''}</td>
+                        <td><small style="color: ${reminder.problemaSpecifica && reminder.problemaSpecifica.includes('🚨') ? '#e53e3e' : '#4a5568'};">${problemaAfisata}</small></td>
                         <td>${dataFormatata}</td>
                         <td><span class="status-badge ${getPriorityClass(reminder.prioritate)}">${reminder.prioritate}</span></td>
                         <td><small>${reminder.mesaj || '-'}</small></td>
                         <td>
                             <div class="action-buttons">
+                                ${reminder.problemaSpecifica ? `<button class="btn btn-success btn-small" onclick="trimiteWhatsAppProblema('${reminder.clientId}', '${reminder.problemaSpecifica}')" title="💬 Trimite pe WhatsApp" style="background: #25d366; color: white;">💬 WA</button>` : ''}
                                 <button class="btn btn-secondary btn-small" onclick="editaReminder(${reminder.id})" title="Editează">✏️</button>
                                 <button class="btn btn-danger btn-small" onclick="stergeReminder(${reminder.id})" title="Șterge">🗑️</button>
                             </div>
