@@ -1,27 +1,72 @@
 {
-  "name": "Ad Instal Gaz SRL - Management Business",
-  "short_name": "AdInstalGaz",
-  "description": "Aplicație PWA pentru managementul business-ului Ad Instal Gaz SRL",
-  "start_url": ".",
-  "scope": ".",
+  "name": "Ad Instal Gaz SRL - Management",
+  "short_name": "Ad Instal Gaz",
+  "description": "Aplicație de management pentru Ad Instal Gaz SRL - clienți, programări, reminder-uri și documente",
+  "start_url": "./",
   "display": "standalone",
-  "background_color": "#f3f4f6",
-  "theme_color": "#1e3c72",
+  "background_color": "#1e40af",
+  "theme_color": "#1e40af",
   "orientation": "portrait-primary",
-  "categories": ["business", "productivity"],
+  "scope": "./",
   "lang": "ro",
+  "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>",
+      "src": "./icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>",
-      "sizes": "512x512", 
-      "type": "image/svg+xml",
+      "src": "./icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Adaugă Client",
+      "short_name": "Client Nou",
+      "description": "Adaugă un client nou în sistem",
+      "url": "./?action=add-client",
+      "icons": [
+        {
+          "src": "./icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Programare Nouă",
+      "short_name": "Programare",
+      "description": "Creează o programare nouă",
+      "url": "./?action=add-appointment",
+      "icons": [
+        {
+          "src": "./icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Scanează Document",
+      "short_name": "Scanare",
+      "description": "Scanează un document nou",
+      "url": "./?action=scan-document",
+      "icons": [
+        {
+          "src": "./icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "dir": "ltr",
+  "serviceworker": {
+    "src": "./sw.js",
+    "scope": "./"
+  }
 }
