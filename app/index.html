@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GazTech Services - Aplicație Gestionare Abonați</title>
+    <meta name="description" content="Aplicație profesională pentru gestionarea abonaților și reviziilor GazTech Services">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="GazTech Services">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkdhelRlY2ggU2VydmljZXMiLAogICJzaG9ydF9uYW1lIjogIkdhelRlY2giLAogICJkZXNjcmlwdGlvbiI6ICJBcGxpY2F0aWUgcHJvZmVzaW9uYWxhIHBlbnRydSBnZXN0aW9uYXJlYSBhYm9uYXRpbG9yIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmZmZmZmYiLAogICJ0aGVtZV9jb2xvciI6ICIjNjY3ZWVhIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M00zVnZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQXhNREFnTVRBd0lpQm1hV3hzUFNJalEyWkNPU0krUEhKbFkzUWdlRDBpTVRBaUlIazlJakV3SWlCM2FXUjBhRDBpT0RBaUlHaGxhV2RvZEQwaU9EQWlJSEo0UFNJMElpQm1hV3hzUFNJalpEQTVOakl6SW02OGZpQThMM0psWTNRK1BIUmxlSFFnZUQwaU5UQWlJSGs5SWpNMUlpQjBaWGgwTFdGdVkyaHZjajBpYldsa1pHeGxJaUJtYjI1MExXWmhiV2xzZVQwaWMyRnVjeTF6WlhKcFppSWdZMnh2Y2owaUkyWm1abVptWmlJZ1ptOXVkQzF6YVhwbFBTSXhPVGRKVWlJK1F6d3ZkR1Y0ZEQ0OEwzTjJaejQ9IiwKICAgICAgInNpemVzIjogIjEwMHgxMDAiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBmaWxsPSIjNjY3ZWVhIj4KPHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iODAiIGhlaWdodD0iODAiIHJ4PSI0IiBmaWxsPSIjZDA5NjIzIi8+Cjx0ZXh0IHg9IjUwIiB5PSIzNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGNvbG9yPSIjZmZmZmZmIiBmb250LXNpemU9IjE5cHgiPkc8L3RleHQ+CjwvbW9yPgo+">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
@@ -859,11 +871,11 @@ ${CONFIGURARI_FIRMA.nume} - Intervenție Rapidă</div>
                 
                 <!-- Alertă pentru notificări -->
                 <div class="alert alert-info" style="border-left: 4px solid #4299e1;">
-                    <strong>📱 Notificări SMS & WhatsApp Active!</strong><br>
-                    • <strong>SMS:</strong> Click pe 📱 SMS pentru notificare clasică<br>
-                    • <strong>WhatsApp:</strong> Click pe 💬 WA pentru mesaj WhatsApp instant<br>
-                    • <strong>Vezi mesajele:</strong> Apasă F12 → Console pentru a vedea conținutul<br>
-                    • <strong>Telefon firmă:</strong> ${CONFIGURARI_FIRMA.telefon} (schimbă în CONFIGURARI_FIRMA)
+                    <strong>📱 Notificări Profesionale Active!</strong><br>
+                    • <strong>📱 SMS:</strong> Click pe 📱 SMS pentru notificări expirări/plăți<br>
+                    • <strong>💬 WhatsApp:</strong> Click pe 💬 WA pentru mesaje business instant<br>
+                    • <strong>🚨 Automat:</strong> WhatsApp pentru revizii expirate (urgent)<br>
+                    • <strong>Telefon firmă:</strong> ${CONFIGURARI_FIRMA.telefon} (în toate mesajele)
                 </div>
             </div>
 
@@ -1151,6 +1163,15 @@ ${CONFIGURARI_FIRMA.nume} - Intervenție Rapidă</div>
             <!-- Alerts Section -->
             <div class="alerts-section">
                 <div id="alerteRemindere"></div>
+                
+                <!-- Alertă pentru remindere -->
+                <div class="alert alert-success" style="border-left: 4px solid #38a169;">
+                    <strong>📋 Sistem Remindere Profesional!</strong><br>
+                    • <strong>Expirări:</strong> Urmărire verificări și revizii care expiră<br>
+                    • <strong>Plăți:</strong> Remindere pentru facturi și plăți pendente<br>
+                    • <strong>WhatsApp automat:</strong> Mesaje pentru revizii expirate (urgent)<br>
+                    • <strong>Dropdown:</strong> 12 tipuri de detalii pentru remindere complete
+                </div>
             </div>
 
             <!-- Lists Section -->
@@ -1184,32 +1205,34 @@ ${CONFIGURARI_FIRMA.nume} - Intervenție Rapidă</div>
                             <label class="form-label">Tip Reminder</label>
                             <select class="form-select" id="tipReminder">
                                 <option value="">Selectează tipul</option>
-                                <option value="Verificare Instalație Gaz">🔍 Verificare Instalație Gaz</option>
-                                <option value="Revizie Instalație Gaz">🔧 Revizie Instalație Gaz</option>
-                                <option value="Verificare Centrală">🏠 Verificare Centrală</option>
-                                <option value="Instalații Gaz + Centrală">🔥 Pachet Complet Gaz + Centrală</option>
-                                <option value="Urmărire">📞 Urmărire Client</option>
+                                <option value="Verificare Instalație Gaz">🔍 Verificare Instalație Gaz - Expirare</option>
+                                <option value="Revizie Instalație Gaz">🔧 Revizie Instalație Gaz - Expirare</option>
+                                <option value="Verificare Centrală">🏠 Verificare Centrală - Expirare</option>
+                                <option value="Instalații Gaz + Centrală">🔥 Pachet Complet - Expirare</option>
+                                <option value="Urmărire Plată">📞 Urmărire Plată</option>
                                 <option value="Facturare">💰 Facturare</option>
-                                <option value="Problemă Tehnică">⚠️ Problemă Tehnică</option>
+                                <option value="Reprogramare">📅 Reprogramare Necesară</option>
+                                <option value="Documentație">📄 Documentație Lipsă</option>
+                                <option value="Confirmare">✅ Confirmare Serviciu</option>
                                 <option value="Altele">📝 Altele</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Problemă Specifică (pentru reminder tehnic)</label>
+                            <label class="form-label">Detalii Reminder</label>
                             <select class="form-select" id="problemaSpecifica">
-                                <option value="">Selectează problema</option>
-                                <option value="Scăpare de gaz">🚨 Scăpare de gaz</option>
-                                <option value="Centrala nu pornește">❄️ Centrala nu pornește</option>
-                                <option value="Presiune scăzută">📉 Presiune scăzută în instalație</option>
-                                <option value="Miros de gaz">👃 Miros de gaz în cameră</option>
-                                <option value="Ventil defect">🔧 Ventil defect</option>
-                                <option value="Țeavă spartă">💥 Țeavă spartă</option>
-                                <option value="Detector gaz defect">🔔 Detector gaz defect</option>
-                                <option value="Ventilație blocată">🌪️ Ventilație blocată</option>
-                                <option value="Racord uzat">🔗 Racord uzat</option>
-                                <option value="Revizie expirată">⏰ Revizie expirată</option>
-                                <option value="Documentație lipsă">📄 Documentație lipsă</option>
-                                <option value="Altă problemă">❓ Altă problemă</option>
+                                <option value="">Selectează detaliile</option>
+                                <option value="Expirare în 30 zile">⏰ Expirare în 30 zile</option>
+                                <option value="Expirare în 7 zile">🔴 Expirare în 7 zile</option>
+                                <option value="Expirat - Reprogramare urgentă">🚨 Expirat - Reprogramare urgentă</option>
+                                <option value="Factură neplătită">💳 Factură neplătită</option>
+                                <option value="Plată parțială">💰 Plată parțială</option>
+                                <option value="Programare amânată">📅 Programare amânată</option>
+                                <option value="Documente incomplete">📄 Documente incomplete</option>
+                                <option value="Confirmare necesară">✅ Confirmare necesară</option>
+                                <option value="Client nou - urmărire">👤 Client nou - urmărire</option>
+                                <option value="Feedback serviciu">⭐ Feedback serviciu</option>
+                                <option value="Contact telefonic">📞 Contact telefonic</option>
+                                <option value="Altele">❓ Altele</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -2102,22 +2125,59 @@ ${CONFIGURARI_FIRMA.nume} - Intervenție Rapidă</div>
             updateListaAbonati();
         }
 
-        // FUNCȚIE PENTRU WHATSAPP PROBLEMĂ TEHNICĂ
-        function trimiteWhatsAppProblema(idAbonat, problema) {
+        // FUNCȚIE PENTRU WHATSAPP EXPIRARE/PLATĂ
+        function trimiteWhatsAppReminder(idAbonat, tipReminder, detalii) {
             const abonat = abonati.find(a => a.id === idAbonat);
             if (!abonat) return;
             
-            const mesajProblema = `🚨 ATENȚIE - ${CONFIGURARI_FIRMA.nume}\n\n` +
-                `Bună ziua ${abonat.nume}!\n\n` +
-                `Am fost notificați despre următoarea problemă:\n` +
-                `⚠️ ${problema}\n\n` +
-                `🔧 Vă rugăm să:\n` +
-                `• Nu folosiți instalația până la verificare\n` +
-                `• Aerisiți încăperea\n` +
-                `• Sunați URGENT la ${CONFIGURARI_FIRMA.telefon}\n\n` +
-                `${CONFIGURARI_FIRMA.nume} - Intervenție Rapidă`;
+            let mesajReminder = '';
             
-            trimiteWhatsApp(abonat.telefon, mesajProblema);
+            // Mesaje pentru expirări
+            if (tipReminder.includes('Expirare') || tipReminder.includes('Verificare') || tipReminder.includes('Revizie')) {
+                const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'serviciile contractate';
+                
+                if (detalii.includes('Expirat')) {
+                    mesajReminder = `🚨 URGENT - ${CONFIGURARI_FIRMA.nume}\n\n` +
+                        `Bună ziua ${abonat.nume}!\n\n` +
+                        `Verificarea/Revizia pentru ${servicii} a EXPIRAT.\n\n` +
+                        `🔧 Pentru reprogramare urgentă:\n` +
+                        `📞 Sunați la ${CONFIGURARI_FIRMA.telefon}\n\n` +
+                        `Este obligatoriu să refaceți verificarea conform legii!\n\n` +
+                        `${CONFIGURARI_FIRMA.nume}`;
+                } else {
+                    const zileText = detalii.includes('30') ? '30 de zile' : '7 zile';
+                    mesajReminder = messageTemplates.expirareRevizie(abonat.nume, zileText, servicii);
+                }
+            }
+            
+            // Mesaje pentru plăți
+            else if (tipReminder.includes('Plată') || tipReminder.includes('Facturare')) {
+                let costTotal = 0;
+                if (abonat.serviciiContractate) {
+                    abonat.serviciiContractate.forEach(serviciu => {
+                        switch(serviciu) {
+                            case 'Verificare Instalație Gaz': costTotal += 150; break;
+                            case 'Revizie Instalație Gaz': costTotal += 250; break;
+                            case 'Verificare Centrală': costTotal += 150; break;
+                            case 'Instalații Gaz + Centrală': costTotal += 250; break;
+                        }
+                    });
+                }
+                const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'serviciile efectuate';
+                mesajReminder = messageTemplates.plataPendenta(abonat.nume, costTotal, servicii);
+            }
+            
+            // Mesaje generale
+            else {
+                mesajReminder = `📋 ${CONFIGURARI_FIRMA.nume}\n\n` +
+                    `Bună ziua ${abonat.nume}!\n\n` +
+                    `Reminder: ${tipReminder}\n` +
+                    `Detalii: ${detalii}\n\n` +
+                    `Pentru informații:\n📞 ${CONFIGURARI_FIRMA.telefon}\n\n` +
+                    `${CONFIGURARI_FIRMA.nume}`;
+            }
+            
+            trimiteWhatsApp(abonat.telefon, mesajReminder);
             
             // Marchează ca trimis
             abonat.ultimaNotificare = new Date().toISOString();
@@ -2936,7 +2996,7 @@ ${mesaj}
 
             // Construiește mesajul final
             let mesajFinal = mesaj;
-            if (problemaSpecifica && tip === 'Problemă Tehnică') {
+            if (problemaSpecifica) {
                 mesajFinal = `${problemaSpecifica}${mesaj ? ' - ' + mesaj : ''}`;
             }
 
@@ -2955,11 +3015,12 @@ ${mesaj}
 
             remindere.push(reminderNou);
             
-            // TRIMITE AUTOMAT PE WHATSAPP DACĂ E PROBLEMĂ TEHNICĂ URGENTĂ
-            if (tip === 'Problemă Tehnică' && prioritate === 'Urgentă' && problemaSpecifica) {
+            // TRIMITE AUTOMAT PE WHATSAPP DACĂ E EXPIRARE URGENTĂ
+            if ((problemaSpecifica && problemaSpecifica.includes('Expirat')) || 
+                (prioritate === 'Urgentă' && (tip.includes('Verificare') || tip.includes('Revizie')))) {
                 setTimeout(() => {
                     if (clientId !== 'nou') {
-                        trimiteWhatsAppProblema(clientId, problemaSpecifica);
+                        trimiteWhatsAppReminder(clientId, tip, problemaSpecifica || tip);
                     }
                 }, 500);
             }
@@ -2967,7 +3028,8 @@ ${mesaj}
             saveData();
             resetFormReminder();
             
-            showNotification(`Reminder adăugat cu succes! ${tip === 'Problemă Tehnică' && prioritate === 'Urgentă' ? '📱 WhatsApp trimis automat!' : ''}`, 'success');
+            const messageExtra = (problemaSpecifica && problemaSpecifica.includes('Expirat')) ? '📱 WhatsApp trimis automat!' : '';
+            showNotification(`Reminder adăugat cu succes! ${messageExtra}`, 'success');
         }
 
         function resetFormReminder() {
@@ -3024,7 +3086,7 @@ ${mesaj}
                         <td><small>${reminder.mesaj || '-'}</small></td>
                         <td>
                             <div class="action-buttons">
-                                ${reminder.problemaSpecifica ? `<button class="btn btn-success btn-small" onclick="trimiteWhatsAppProblema('${reminder.clientId}', '${reminder.problemaSpecifica}')" title="💬 Trimite pe WhatsApp" style="background: #25d366; color: white;">💬 WA</button>` : ''}
+                                ${reminder.problemaSpecifica ? `<button class="btn btn-success btn-small" onclick="trimiteWhatsAppReminder('${reminder.clientId}', '${reminder.tip}', '${reminder.problemaSpecifica}')" title="💬 Trimite pe WhatsApp" style="background: #25d366; color: white;">💬 WA</button>` : ''}
                                 <button class="btn btn-secondary btn-small" onclick="editaReminder(${reminder.id})" title="Editează">✏️</button>
                                 <button class="btn btn-danger btn-small" onclick="stergeReminder(${reminder.id})" title="Șterge">🗑️</button>
                             </div>
@@ -3746,6 +3808,55 @@ ${mesaj}
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', async function() {
+            // Înregistrare Service Worker pentru PWA
+            if ('serviceWorker' in navigator) {
+                try {
+                    // Service Worker inline pentru PWA
+                    const swCode = `
+                        const CACHE_NAME = 'gaztech-v1';
+                        const urlsToCache = ['/'];
+                        
+                        self.addEventListener('install', event => {
+                            event.waitUntil(
+                                caches.open(CACHE_NAME)
+                                    .then(cache => cache.addAll(urlsToCache))
+                            );
+                        });
+                        
+                        self.addEventListener('fetch', event => {
+                            event.respondWith(
+                                caches.match(event.request)
+                                    .then(response => {
+                                        if (response) {
+                                            return response;
+                                        }
+                                        return fetch(event.request);
+                                    })
+                            );
+                        });
+                    `;
+                    
+                    const blob = new Blob([swCode], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(blob);
+                    
+                    await navigator.serviceWorker.register(swUrl);
+                    console.log('✅ PWA Service Worker înregistrat cu succes!');
+                    
+                    // Afișează prompt pentru instalare PWA
+                    window.addEventListener('beforeinstallprompt', (e) => {
+                        e.preventDefault();
+                        showNotification('📱 Poți instala GazTech ca aplicație pe telefon!', 'info');
+                        
+                        setTimeout(() => {
+                            e.prompt();
+                        }, 3000);
+                    });
+                    
+                } catch (error) {
+                    console.warn('⚠️ Service Worker nu s-a putut înregistra:', error);
+                }
+            }
+
             // Verifică statusul Firebase
             verificaStatusFirebase();
             
@@ -3781,15 +3892,17 @@ ${mesaj}
                 setInterval(sincronizareCuFirestore, 2 * 60 * 1000);
             }
             
-            console.log('✅ GazTech Services s-a încărcat complet cu NOTIFICĂRI & FIREBASE!');
+            console.log('✅ GazTech Services s-a încărcat complet cu NOTIFICĂRI & PWA!');
             console.log('📊 Abonați:', abonati.length);
             console.log('📅 Programări:', programari.length);
             console.log('🔔 Remindere:', remindere.length);
             console.log('🔄 Sincronizare: ACTIVĂ');
             console.log('📎 Gestionare documente: COMPLETĂ');
             console.log('💾 Backup: DISPONIBIL');
-            console.log('📱 Notificări automate: ACTIVE');
+            console.log('📱 Notificări expirări/plăți: ACTIVE');
+            console.log('💬 WhatsApp: INTEGRAT');
             console.log('🔥 Firebase:', db ? 'CONECTAT' : 'OFFLINE');
+            console.log('📱 PWA: Service Worker înregistrat');
         });
 
         // Error handling
