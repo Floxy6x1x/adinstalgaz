@@ -624,6 +624,11 @@
             const syncStatus = document.getElementById('sync-status');
             const syncText = document.getElementById('sync-text');
             
+            if (!syncStatus || !syncText) {
+                console.log('Sync status elements not found');
+                return;
+            }
+            
             syncStatus.className = `sync-status sync-${status}`;
             syncText.textContent = text;
             syncStatus.classList.remove('hidden');
@@ -704,25 +709,45 @@
         }
 
         function loadBusinessInfo() {
-            if (businessInfo.name) {
-                document.getElementById('business-name').value = businessInfo.name || 'Ad Instal Gaz SRL';
-                document.getElementById('business-phone').value = businessInfo.phone || '0762614402';
-                document.getElementById('business-email').value = businessInfo.email || 'gavrila_1971@yahoo.com';
-                document.getElementById('business-address').value = businessInfo.address || 'Str. Mărășești, Nr.97';
-                document.getElementById('business-owner').value = businessInfo.owner || 'Gavrila';
-                document.getElementById('business-cui').value = businessInfo.cui || '';
-            }
+            if (!businessInfo.name) return;
+            
+            const businessNameEl = document.getElementById('business-name');
+            const businessPhoneEl = document.getElementById('business-phone');
+            const businessEmailEl = document.getElementById('business-email');
+            const businessAddressEl = document.getElementById('business-address');
+            const businessOwnerEl = document.getElementById('business-owner');
+            const businessCuiEl = document.getElementById('business-cui');
+            
+            if (businessNameEl) businessNameEl.value = businessInfo.name || 'Ad Instal Gaz SRL';
+            if (businessPhoneEl) businessPhoneEl.value = businessInfo.phone || '0762614402';
+            if (businessEmailEl) businessEmailEl.value = businessInfo.email || 'gavrila_1971@yahoo.com';
+            if (businessAddressEl) businessAddressEl.value = businessInfo.address || 'Str. Mărășești, Nr.97';
+            if (businessOwnerEl) businessOwnerEl.value = businessInfo.owner || 'Gavrila';
+            if (businessCuiEl) businessCuiEl.value = businessInfo.cui || '';
         }
 
         function loadDashboard() {
-            document.getElementById('total-clients').textContent = clients.length;
+            // Verifică dacă elementele există înainte de a le actualiza
+            const totalClientsEl = document.getElementById('total-clients');
+            const todayAppointmentsEl = document.getElementById('today-appointments');
+            const activeRemindersEl = document.getElementById('active-reminders');
+            const expiredServicesEl = document.getElementById('expired-services');
+            const expiryWarningsEl = document.getElementById('expiry-warnings');
+            const scheduleContainerEl = document.getElementById('today-schedule');
+            
+            if (!totalClientsEl || !todayAppointmentsEl || !activeRemindersEl || !expiredServicesEl) {
+                console.log('Dashboard elements not found, skipping update');
+                return;
+            }
+            
+            totalClientsEl.textContent = clients.length;
             
             const today = new Date().toISOString().split('T')[0];
             const todayAppointments = appointments.filter(apt => apt.date === today);
-            document.getElementById('today-appointments').textContent = todayAppointments.length;
+            todayAppointmentsEl.textContent = todayAppointments.length;
             
             const activeReminders = reminders.filter(rem => new Date(rem.date) >= new Date());
-            document.getElementById('active-reminders').textContent = activeReminders.length;
+            activeRemindersEl.textContent = activeReminders.length;
             
             // Calculate expired services
             const now = new Date();
@@ -750,97 +775,99 @@
                 }
             });
             
-            document.getElementById('expired-services').textContent = expiredCount;
+            expiredServicesEl.textContent = expiredCount;
             
-            // Show expiry warnings
-            const expiryWarnings = document.getElementById('expiry-warnings');
-            let warningsHTML = '';
-            
-            if (expiredServices.length > 0) {
-                warningsHTML += `
-                    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-4">
-                        <h3 class="text-lg font-semibold text-red-800 mb-3">🚨 Servicii EXPIRATE (${expiredServices.length})</h3>
-                        <div class="space-y-2">
-                `;
+            // Show expiry warnings only if element exists
+            if (expiryWarningsEl) {
+                let warningsHTML = '';
                 
-                expiringServices.forEach(service => {
-                    const serviceIcon = service.service.includes('instalații gaz') ? '🔥' : '🏠';
+                if (expiredServices.length > 0) {
                     warningsHTML += `
-                        <div class="flex justify-between items-center bg-white p-3 rounded border">
-                            <div>
-                                <span class="font-medium">${service.clientName}</span>
-                                <span class="text-gray-600">- ${serviceIcon} ${service.service}</span>
-                                <span class="text-red-600 font-medium">(Expirat cu ${service.daysOverdue} zile)</span>
-                            </div>
-                            <button onclick="contactForRenewal('${service.clientPhone}', '${service.clientName}', '${service.service}')" 
-                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
-                                📱 Contactează
-                            </button>
-                        </div>
+                        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-4">
+                            <h3 class="text-lg font-semibold text-red-800 mb-3">🚨 Servicii EXPIRATE (${expiredServices.length})</h3>
+                            <div class="space-y-2">
                     `;
-                });
-                
-                warningsHTML += `</div></div>`;
-            }
-            
-            if (expiringServices.length > 0) {
-                warningsHTML += `
-                    <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg mb-4">
-                        <h3 class="text-lg font-semibold text-orange-800 mb-3">⚠️ Servicii care expiră în următoarele 60 de zile (${expiringServices.length})</h3>
-                        <div class="space-y-2">
-                `;
-                
-                expiringServices.forEach(service => {
-                    const serviceIcon = service.service.includes('instalații gaz') ? '🔥' : '🏠';
-                    warningsHTML += `
-                        <div class="flex justify-between items-center bg-white p-3 rounded border">
-                            <div>
-                                <span class="font-medium">${service.clientName}</span>
-                                <span class="text-gray-600">- ${serviceIcon} ${service.service}</span>
-                                <span class="text-orange-600 font-medium">(${service.daysUntilExpiry} zile rămase)</span>
-                            </div>
-                            <button onclick="contactForRenewal('${service.clientPhone}', '${service.clientName}', '${service.service}')" 
-                                    class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded text-sm">
-                                📱 Contactează
-                            </button>
-                        </div>
-                    `;
-                });
-                
-                warningsHTML += `</div></div>`;
-            }
-            
-            if (warningsHTML === '') {
-                warningsHTML = `
-                    <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
-                        <p class="text-green-800">✅ Nu există servicii expirate sau care expiră în curând!</p>
-                    </div>
-                `;
-            }
-            
-            expiryWarnings.innerHTML = warningsHTML;
-            
-            // Load today's schedule
-            const scheduleContainer = document.getElementById('today-schedule');
-            if (todayAppointments.length === 0) {
-                scheduleContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Nu ai programări pentru astăzi</p>';
-            } else {
-                scheduleContainer.innerHTML = todayAppointments.map(apt => {
-                    const serviceIcon = apt.service && apt.service.includes('instalații gaz') ? '🔥' : '🏠';
-                    return `
-                        <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
-                            <div class="flex justify-between items-center">
+                    
+                    expiredServices.forEach(service => {
+                        const serviceIcon = service.service.includes('instalații gaz') ? '🔥' : '🏠';
+                        warningsHTML += `
+                            <div class="flex justify-between items-center bg-white p-3 rounded border">
                                 <div>
-                                    <h4 class="font-semibold">${apt.clientName}</h4>
-                                    <p class="text-sm text-gray-600">${apt.time} - ${serviceIcon} ${apt.service}</p>
-                                    <p class="text-sm text-gray-500">${apt.address}</p>
-                                    ${apt.servicePrice ? `<p class="text-sm text-gray-600">💰 ${apt.servicePrice} RON</p>` : ''}
+                                    <span class="font-medium">${service.clientName}</span>
+                                    <span class="text-gray-600">- ${serviceIcon} ${service.service}</span>
+                                    <span class="text-red-600 font-medium">(Expirat cu ${service.daysOverdue} zile)</span>
                                 </div>
-                                <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">${apt.status}</span>
+                                <button onclick="contactForRenewal('${service.clientPhone}', '${service.clientName}', '${service.service}')" 
+                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                                    📱 Contactează
+                                </button>
                             </div>
+                        `;
+                    });
+                    
+                    warningsHTML += `</div></div>`;
+                }
+                
+                if (expiringServices.length > 0) {
+                    warningsHTML += `
+                        <div class="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg mb-4">
+                            <h3 class="text-lg font-semibold text-orange-800 mb-3">⚠️ Servicii care expiră în următoarele 60 de zile (${expiringServices.length})</h3>
+                            <div class="space-y-2">
+                    `;
+                    
+                    expiringServices.forEach(service => {
+                        const serviceIcon = service.service.includes('instalații gaz') ? '🔥' : '🏠';
+                        warningsHTML += `
+                            <div class="flex justify-between items-center bg-white p-3 rounded border">
+                                <div>
+                                    <span class="font-medium">${service.clientName}</span>
+                                    <span class="text-gray-600">- ${serviceIcon} ${service.service}</span>
+                                    <span class="text-orange-600 font-medium">(${service.daysUntilExpiry} zile rămase)</span>
+                                </div>
+                                <button onclick="contactForRenewal('${service.clientPhone}', '${service.clientName}', '${service.service}')" 
+                                        class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded text-sm">
+                                    📱 Contactează
+                                </button>
+                            </div>
+                        `;
+                    });
+                    
+                    warningsHTML += `</div></div>`;
+                }
+                
+                if (warningsHTML === '') {
+                    warningsHTML = `
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                            <p class="text-green-800">✅ Nu există servicii expirate sau care expiră în curând!</p>
                         </div>
                     `;
-                }).join('');
+                }
+                
+                expiryWarningsEl.innerHTML = warningsHTML;
+            }
+            
+            // Load today's schedule only if element exists
+            if (scheduleContainerEl) {
+                if (todayAppointments.length === 0) {
+                    scheduleContainerEl.innerHTML = '<p class="text-gray-500 text-center py-8">Nu ai programări pentru astăzi</p>';
+                } else {
+                    scheduleContainerEl.innerHTML = todayAppointments.map(apt => {
+                        const serviceIcon = apt.service && apt.service.includes('instalații gaz') ? '🔥' : '🏠';
+                        return `
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h4 class="font-semibold">${apt.clientName}</h4>
+                                        <p class="text-sm text-gray-600">${apt.time} - ${serviceIcon} ${apt.service}</p>
+                                        <p class="text-sm text-gray-500">${apt.address}</p>
+                                        ${apt.servicePrice ? `<p class="text-sm text-gray-600">💰 ${apt.servicePrice} RON</p>` : ''}
+                                    </div>
+                                    <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">${apt.status}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
             }
         }
 
@@ -848,9 +875,9 @@
             let message = '';
             
             if (service.includes('Verificare') && service.includes('instalații gaz')) {
-                message = `Bună ziua ${name}! V-am contactat deoarece verificarea anuală a instalației de gaz a expirat sau va expira în curând. Verificarea este obligatorie conform Ordinului 34/2017. Vă rugăm să ne contactați urgent pentru programare. - Ad Instal Gaz SRL`;
+                message = `Bună ziua ${name}! V-am contactat deoarece verificarea anuală a instalațiilor de gaz a expirat sau va expira în curând. Verificarea este obligatorie conform Ordinului 34/2017. Vă rugăm să ne contactați urgent pentru programare. - Ad Instal Gaz SRL`;
             } else if (service.includes('Revizie') && service.includes('instalații gaz')) {
-                message = `Bună ziua ${name}! V-am contactat deoarece revizia tehnică (la 4 ani) a instalației de gaz a expirat sau va expira în curând. Revizia este obligatorie conform legislației în vigoare. Contactați-ne urgent! - Ad Instal Gaz SRL`;
+                message = `Bună ziua ${name}! V-am contactat deoarece revizia tehnică (la 4 ani) a instalațiilor de gaz a expirat sau va expira în curând. Revizia este obligatorie conform legislației în vigoare. Contactați-ne urgent! - Ad Instal Gaz SRL`;
             } else if (service.includes('Verificare') && service.includes('centrale')) {
                 message = `Bună ziua ${name}! V-am contactat deoarece verificarea anuală a centralei termice a expirat sau va expira în curând. Verificarea este obligatorie pentru siguranța funcționării. Programați urgent! - Ad Instal Gaz SRL`;
             } else if (service.includes('Revizie') && service.includes('centrale')) {
@@ -885,38 +912,64 @@
                 });
             });
 
-            // Main action buttons
-            document.getElementById('add-client-btn').addEventListener('click', showAddClientModal);
-            document.getElementById('add-appointment-btn').addEventListener('click', showAddAppointmentModal);
-            document.getElementById('scan-document-btn').addEventListener('click', startCamera);
-            document.getElementById('floating-add').addEventListener('click', showQuickActionsMenu);
+            // Main action buttons - verifică dacă există elementele
+            const addClientBtn = document.getElementById('add-client-btn');
+            const addAppointmentBtn = document.getElementById('add-appointment-btn');
+            const scanDocumentBtn = document.getElementById('scan-document-btn');
+            const floatingAddBtn = document.getElementById('floating-add');
+            
+            if (addClientBtn) addClientBtn.addEventListener('click', showAddClientModal);
+            if (addAppointmentBtn) addAppointmentBtn.addEventListener('click', showAddAppointmentModal);
+            if (scanDocumentBtn) scanDocumentBtn.addEventListener('click', startCamera);
+            if (floatingAddBtn) floatingAddBtn.addEventListener('click', showQuickActionsMenu);
 
             // Export buttons
-            document.getElementById('export-clients-btn').addEventListener('click', exportClientsExcel);
-            document.getElementById('export-appointments-btn').addEventListener('click', exportAppointmentsExcel);
+            const exportClientsBtn = document.getElementById('export-clients-btn');
+            const exportAppointmentsBtn = document.getElementById('export-appointments-btn');
+            
+            if (exportClientsBtn) exportClientsBtn.addEventListener('click', exportClientsExcel);
+            if (exportAppointmentsBtn) exportAppointmentsBtn.addEventListener('click', exportAppointmentsExcel);
 
             // Modal close
-            document.getElementById('modal-overlay').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('modal-overlay')) {
-                    closeModal();
-                }
-            });
+            const modalOverlay = document.getElementById('modal-overlay');
+            if (modalOverlay) {
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) {
+                        closeModal();
+                    }
+                });
+            }
 
             // Search functionality
-            document.getElementById('client-search').addEventListener('input', filterClients);
+            const clientSearch = document.getElementById('client-search');
+            if (clientSearch) {
+                clientSearch.addEventListener('input', filterClients);
+            }
 
             // Camera controls
-            document.getElementById('capture-btn').addEventListener('click', captureDocument);
-            document.getElementById('close-camera-btn').addEventListener('click', stopCamera);
+            const captureBtn = document.getElementById('capture-btn');
+            const closeCameraBtn = document.getElementById('close-camera-btn');
+            
+            if (captureBtn) captureBtn.addEventListener('click', captureDocument);
+            if (closeCameraBtn) closeCameraBtn.addEventListener('click', stopCamera);
 
             // Settings
-            document.getElementById('business-form').addEventListener('submit', saveBusinessInfo);
-            document.getElementById('export-data-btn').addEventListener('click', exportData);
-            document.getElementById('import-data-btn').addEventListener('click', () => {
-                document.getElementById('import-file').click();
-            });
-            document.getElementById('import-file').addEventListener('change', importData);
-            document.getElementById('clear-data-btn').addEventListener('click', clearAllData);
+            const businessForm = document.getElementById('business-form');
+            const exportDataBtn = document.getElementById('export-data-btn');
+            const importDataBtn = document.getElementById('import-data-btn');
+            const importFile = document.getElementById('import-file');
+            const clearDataBtn = document.getElementById('clear-data-btn');
+            
+            if (businessForm) businessForm.addEventListener('submit', saveBusinessInfo);
+            if (exportDataBtn) exportDataBtn.addEventListener('click', exportData);
+            if (importDataBtn) {
+                importDataBtn.addEventListener('click', () => {
+                    const importFileEl = document.getElementById('import-file');
+                    if (importFileEl) importFileEl.click();
+                });
+            }
+            if (importFile) importFile.addEventListener('change', importData);
+            if (clearDataBtn) clearDataBtn.addEventListener('click', clearAllData);
         }
 
         // Export Functions
@@ -1209,6 +1262,11 @@
 
         function loadClients() {
             const clientsList = document.getElementById('clients-list');
+            if (!clientsList) {
+                console.log('Clients list element not found');
+                return;
+            }
+            
             if (clients.length === 0) {
                 clientsList.innerHTML = '<p class="text-gray-500 text-center py-8">Nu ai încă clienți adăugați</p>';
                 return;
@@ -1241,14 +1299,21 @@
         }
 
         function filterClients() {
-            const searchTerm = document.getElementById('client-search').value.toLowerCase();
+            const searchInput = document.getElementById('client-search');
+            const clientsList = document.getElementById('clients-list');
+            
+            if (!searchInput || !clientsList) {
+                console.log('Client search elements not found');
+                return;
+            }
+            
+            const searchTerm = searchInput.value.toLowerCase();
             const filteredClients = clients.filter(client => 
                 client.name.toLowerCase().includes(searchTerm) ||
                 client.phone.includes(searchTerm) ||
                 client.address.toLowerCase().includes(searchTerm)
             );
             
-            const clientsList = document.getElementById('clients-list');
             if (filteredClients.length === 0) {
                 clientsList.innerHTML = '<p class="text-gray-500 text-center py-8">Nu s-au găsit clienți</p>';
                 return;
@@ -1461,7 +1526,7 @@
                 servicePrice: servicePrice ? parseFloat(servicePrice) : null,
                 paymentStatus: paymentStatus,
                 certificateType: certificateType || null,
-                serviceCategory: service.includes('instalații gaz') ? 'instalații gaz' : service.includes('centrale') ? 'centrale' : 'altul'
+                serviceCategory: service.includes('gaz') ? 'gaz' : service.includes('centrale') ? 'centrale' : 'altul'
             };
             
             appointments.push(appointment);
@@ -1521,9 +1586,9 @@
             const expiryDateStr = expiryDate.toLocaleDateString('ro-RO');
             
             if (service.includes('Verificare') && service.includes('instalații gaz')) {
-                return `Bună ziua ${clientName}! Vă informăm că pe data de ${expiryDateStr} expiră certificatul de verificare pentru instalația de gaz. Vă rugăm să ne contactați pentru programarea verificării anuale obligatorii. - Ad Instal Gaz SRL`;
+                return `Bună ziua ${clientName}! Vă informăm că pe data de ${expiryDateStr} expiră certificatul de verificare pentru instalațiile de gaz. Vă rugăm să ne contactați pentru programarea verificării anuale obligatorii. - Ad Instal Gaz SRL`;
             } else if (service.includes('Revizie') && service.includes('instalații gaz')) {
-                return `Bună ziua ${clientName}! Vă informăm că pe data de ${expiryDateStr} expiră certificatul de revizie pentru instalația de gaz. Revizia tehnică la 4 ani este obligatorie conform legii. Contactați-ne pentru programare. - Ad Instal Gaz SRL`;
+                return `Bună ziua ${clientName}! Vă informăm că pe data de ${expiryDateStr} expiră certificatul de revizie pentru instalațiile de gaz. Revizia tehnică la 4 ani este obligatorie conform legii. Contactați-ne pentru programare. - Ad Instal Gaz SRL`;
             } else if (service.includes('Verificare') && service.includes('centrale')) {
                 return `Bună ziua ${clientName}! Vă informăm că pe data de ${expiryDateStr} expiră certificatul de verificare pentru centrala termică. Verificarea anuală este obligatorie pentru siguranța dumneavoastră. - Ad Instal Gaz SRL`;
             } else if (service.includes('Revizie') && service.includes('centrale')) {
@@ -1535,6 +1600,11 @@
 
         function loadAppointments() {
             const appointmentsList = document.getElementById('appointments-list');
+            if (!appointmentsList) {
+                console.log('Appointments list element not found');
+                return;
+            }
+            
             if (appointments.length === 0) {
                 appointmentsList.innerHTML = '<p class="text-gray-500 text-center py-8">Nu ai încă programări</p>';
                 return;
@@ -1562,7 +1632,7 @@
                 
                 // Determine service category icon
                 let serviceIcon = '🔧';
-                if (apt.service && apt.service.includes('instalații gaz')) {
+                if (apt.service && apt.service.includes('gaz')) {
                     serviceIcon = '🔥';
                 } else if (apt.service && apt.service.includes('centrale')) {
                     serviceIcon = '🏠';
@@ -1634,9 +1704,9 @@
             let message = '';
             
             if (service.includes('Verificare') && service.includes('instalații gaz')) {
-                message = `Bună ziua ${name}! Vă confirmăm programarea pentru verificarea anuală a instalației de gaz pe data de ${date} la ora ${time}. Verificarea este obligatorie conform Ordinului 34/2017. Vă așteptăm! - Ad Instal Gaz SRL`;
+                message = `Bună ziua ${name}! Vă confirmăm programarea pentru verificarea anuală a instalațiilor de gaz pe data de ${date} la ora ${time}. Verificarea este obligatorie conform Ordinului 34/2017. Vă așteptăm! - Ad Instal Gaz SRL`;
             } else if (service.includes('Revizie') && service.includes('instalații gaz')) {
-                message = `Bună ziua ${name}! Vă confirmăm programarea pentru revizia tehnică (la 4 ani) a instalației de gaz pe data de ${date} la ora ${time}. Revizia este obligatorie conform legislației în vigoare. - Ad Instal Gaz SRL`;
+                message = `Bună ziua ${name}! Vă confirmăm programarea pentru revizia tehnică (la 4 ani) a instalațiilor de gaz pe data de ${date} la ora ${time}. Revizia este obligatorie conform legislației în vigoare. - Ad Instal Gaz SRL`;
             } else if (service.includes('Verificare') && service.includes('centrale')) {
                 message = `Bună ziua ${name}! Vă confirmăm programarea pentru verificarea anuală a centralei termice pe data de ${date} la ora ${time}. Verificarea este obligatorie pentru siguranța funcționării. - Ad Instal Gaz SRL`;
             } else if (service.includes('Revizie') && service.includes('centrale')) {
@@ -1804,7 +1874,7 @@
                     if (selectedClient) {
                         document.getElementById('reminder-client').value = selectedClient.name;
                         document.getElementById('reminder-phone').value = selectedClient.phone;
-                        document.getElementById('reminder-message').value = `Bună ziua ${selectedClient.name}! Vă contactez de la Ad Instal Gaz SRL pentru a vă aminti de revizia anuală a instalațiilor de gaz.`;
+                        document.getElementById('reminder-message').value = `Bună ziua ${selectedClient.name}! Vă contactez de la Ad Instal Gaz SRL pentru a vă aminti de revizia anuală.`;
                     }
                 }
             });
@@ -2110,6 +2180,12 @@
         }
 
         function checkNotifications() {
+            const notificationCount = document.getElementById('notification-count');
+            if (!notificationCount) {
+                console.log('Notification count element not found');
+                return;
+            }
+            
             const today = new Date().toISOString().split('T')[0];
             const todayReminders = reminders.filter(rem => rem.date === today);
             const overdueReminders = reminders.filter(rem => new Date(rem.date) < new Date());
@@ -2117,8 +2193,10 @@
             const totalNotifications = todayReminders.length + overdueReminders.length;
             
             if (totalNotifications > 0) {
-                document.getElementById('notification-count').textContent = totalNotifications;
-                document.getElementById('notification-count').classList.remove('hidden');
+                notificationCount.textContent = totalNotifications;
+                notificationCount.classList.remove('hidden');
+            } else {
+                notificationCount.classList.add('hidden');
             }
         }
 
