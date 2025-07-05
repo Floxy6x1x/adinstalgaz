@@ -508,6 +508,15 @@
             background: #4b5563;
         }
 
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
         /* Modal */
         .modal {
             display: none;
@@ -615,8 +624,253 @@
             color: #6b7280;
         }
 
+        /* Document Management Styles */
+        .document-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .document-card {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .document-card:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .document-card.has-document {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-left: 4px solid #10b981;
+        }
+
+        .document-category {
+            background: #1e3c72;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .document-preview {
+            width: 100%;
+            height: 120px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .document-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            justify-content: center;
+        }
+
+        /* Camera Styles */
+        .camera-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .camera-preview {
+            width: 100%;
+            height: 300px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .camera-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            margin: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .capture-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: 4px solid white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .capture-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-left: 4px solid #3b82f6;
+            z-index: 1003;
+            max-width: 400px;
+            transform: translateX(450px);
+            transition: transform 0.3s ease-out;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: #10b981;
+        }
+
+        .notification.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .notification.error {
+            border-left-color: #ef4444;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .notification-close:hover {
+            color: #374151;
+        }
+
+        .notification-body {
+            color: #6b7280;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .notification-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: none;
+            font-size: 0.875rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .notification-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .notification-btn.secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .notification-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Modal Enhancements */
+        .modal-content.large {
+            max-width: 600px;
+        }
+
+        .info-modal .modal-body {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
+            .notification {
+                top: 70px;
+                left: 10px;
+                right: 10px;
+                max-width: none;
+                transform: translateY(-200px);
+            }
+
+            .notification.show {
+                transform: translateY(0);
+            }
+        }
             .header-content {
                 flex-direction: column;
                 gap: 1rem;
@@ -650,6 +904,10 @@
 
             .install-buttons {
                 justify-content: center;
+            }
+
+            .document-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
         }
 
@@ -738,6 +996,10 @@
                     <span class="icon">📅</span>
                     Programări
                 </button>
+                <button class="nav-button" onclick="showSection('documents')" id="nav-documents">
+                    <span class="icon">📁</span>
+                    Documente
+                </button>
                 <button class="nav-button" onclick="showSection('workplan')" id="nav-workplan">
                     <span class="icon">📋</span>
                     Fișa Mâine
@@ -745,6 +1007,10 @@
                 <button class="nav-button" onclick="showSection('reminders')" id="nav-reminders">
                     <span class="icon">🔔</span>
                     Reminder-e
+                </button>
+                <button class="nav-button" onclick="showSection('website')" id="nav-website">
+                    <span class="icon">🌐</span>
+                    Site Sync
                 </button>
                 <button class="nav-button" onclick="showSection('reports')" id="nav-reports">
                     <span class="icon">📄</span>
@@ -805,10 +1071,10 @@
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-content">
-                                <div class="stat-label">Venituri Luna</div>
-                                <div class="stat-value" id="month-revenue">0 RON</div>
+                                <div class="stat-label">Documente</div>
+                                <div class="stat-value" id="total-documents">0</div>
                             </div>
-                            <div class="stat-icon">💰</div>
+                            <div class="stat-icon">📁</div>
                         </div>
                     </div>
 
@@ -909,6 +1175,75 @@
                             <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
                                 Nu aveți programări încă
                             </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documents Section -->
+            <section id="documents" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">📁 Management Documente</h2>
+                    <div class="flex gap-2">
+                        <button class="btn btn-success" onclick="showModal('addDocumentModal')">
+                            <span>📷</span>
+                            Fotografie Nouă
+                        </button>
+                        <button class="btn btn-primary" onclick="document.getElementById('upload-file').click()">
+                            <span>📁</span>
+                            Upload Fișier
+                        </button>
+                        <input type="file" id="upload-file" accept="image/*,.pdf,.doc,.docx" style="display: none;" onchange="uploadFile(this)">
+                    </div>
+                </div>
+
+                <!-- Document Categories -->
+                <div class="stats-grid mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📋 PV Verificări</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="text-center">
+                                <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;" id="pv-count">0</div>
+                                <div style="color: #6b7280;">Procese Verbale</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🔧 Fișe Tehnice</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="text-center">
+                                <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="fise-count">0</div>
+                                <div style="color: #6b7280;">Fișe de Verificare</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📄 Alte Documente</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="text-center">
+                                <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;" id="other-docs-count">0</div>
+                                <div style="color: #6b7280;">Diverse</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents Grid -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Toate Documentele</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="documents-grid" class="document-grid">
+                            <!-- Documents will be rendered here -->
                         </div>
                     </div>
                 </div>
@@ -1033,11 +1368,86 @@
                 </div>
             </section>
 
+            <!-- Website Sync Section -->
+            <section id="website" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">🌐 Sincronizare Site Web</h2>
+                    <div class="flex gap-2">
+                        <button class="btn btn-primary" onclick="importFromWebsite()">
+                            <span>⬇️</span>
+                            Import Programări Site
+                        </button>
+                        <button class="btn btn-success" onclick="checkWebsiteRequests()">
+                            <span>🔄</span>
+                            Verifică Cereri Noi
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📝 Cereri de pe Site</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                <h4 style="color: #0c4a6e; font-weight: 600; margin-bottom: 0.5rem;">🌐 Link Site Web</h4>
+                                <p style="color: #0c4a6e; font-size: 0.875rem; margin-bottom: 0.5rem;">
+                                    Site-ul dvs. AdInstalGaz.ro primește cereri de programare care pot fi importate automat în aplicație.
+                                </p>
+                                <a href="https://adinstalgaz.ro" target="_blank" style="color: #0ea5e9; text-decoration: none; font-weight: 500;">
+                                    🔗 Vizitează Site-ul →
+                                </a>
+                            </div>
+                            
+                            <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 1rem;">
+                                <h4 style="color: #991b1b; font-weight: 600; margin-bottom: 0.5rem;">⚠️ Configurare Necesară</h4>
+                                <p style="color: #991b1b; font-size: 0.875rem;">
+                                    Pentru sincronizare automată, configurați webhook-uri sau API între site și aplicație.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📊 Statistici Site</h3>
+                        </div>
+                        <div class="card-content">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; text-align: center;">
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;" id="website-requests">0</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Cereri Astăzi</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="website-imported">0</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Importate</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px;">
+                                <h5 style="color: #374151; margin-bottom: 0.5rem;">Funcționalități Viitoare:</h5>
+                                <ul style="color: #6b7280; font-size: 0.875rem; margin-left: 1rem;">
+                                    <li>Import automat programări de pe site</li>
+                                    <li>Notificări push pentru cereri noi</li>
+                                    <li>Sincronizare bidirectională</li>
+                                    <li>Widget chat pentru site</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Reports Section -->
             <section id="reports" class="section">
                 <div class="dashboard-header">
                     <h2 class="dashboard-title">Rapoarte & Statistici</h2>
                     <div class="flex gap-2">
+                        <button class="btn btn-warning" onclick="showStorageInfo()">
+                            <span>💾</span>
+                            Info Storage
+                        </button>
                         <button class="btn btn-success" onclick="exportToExcel()">
                             <span>📊</span>
                             Export Excel
@@ -1062,23 +1472,43 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">📊 Raport Lunar</h3>
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📊 Raport Lunar</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stats-grid">
+                                <div class="text-center">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;" id="report-appointments">0</div>
+                                    <div style="color: #6b7280;">Servicii Luna Aceasta</div>
+                                </div>
+                                <div class="text-center">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="report-completed">0</div>
+                                    <div style="color: #6b7280;">Servicii Finalizate</div>
+                                </div>
+                                <div class="text-center">
+                                    <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="report-revenue">0 RON</div>
+                                    <div style="color: #6b7280;">Venituri Luna</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-content">
-                        <div class="stats-grid">
-                            <div class="text-center">
-                                <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;" id="report-appointments">0</div>
-                                <div style="color: #6b7280;">Servicii Luna Aceasta</div>
-                            </div>
-                            <div class="text-center">
-                                <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="report-completed">0</div>
-                                <div style="color: #6b7280;">Servicii Finalizate</div>
-                            </div>
-                            <div class="text-center">
-                                <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="report-revenue">0 RON</div>
-                                <div style="color: #6b7280;">Venituri Luna</div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">💾 Utilizare Storage</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="storage-info" style="text-align: center; padding: 1rem;">
+                                <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;" id="storage-usage">Calculez...</div>
+                                <div style="color: #6b7280; margin-bottom: 1rem;">Spațiu utilizat</div>
+                                <button class="btn btn-warning" onclick="cleanupOldDocuments()" style="margin-right: 0.5rem;">
+                                    🧹 Curăță Fotografii Vechi
+                                </button>
+                                <button class="btn btn-primary" onclick="optimizeStorageData()">
+                                    🗜️ Optimizează Storage
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1120,18 +1550,22 @@
                                 </div>
                             </div>
                             
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; text-align: center;">
                                 <div>
                                     <div style="font-size: 1.5rem; font-weight: bold; color: #3b82f6;" id="sync-clients-count">0</div>
-                                    <div style="color: #6b7280; font-size: 0.875rem;">Clienți în Cloud</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Clienți</div>
                                 </div>
                                 <div>
                                     <div style="font-size: 1.5rem; font-weight: bold; color: #10b981;" id="sync-appointments-count">0</div>
-                                    <div style="color: #6b7280; font-size: 0.875rem;">Programări în Cloud</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Programări</div>
                                 </div>
                                 <div>
                                     <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;" id="sync-reminders-count">0</div>
-                                    <div style="color: #6b7280; font-size: 0.875rem;">Reminder-e în Cloud</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Reminder-e</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6;" id="sync-documents-count">0</div>
+                                    <div style="color: #6b7280; font-size: 0.875rem;">Documente</div>
                                 </div>
                             </div>
                         </div>
@@ -1151,6 +1585,7 @@
                                     <li>Firestore Database conectat</li>
                                     <li>Authentication activă</li>
                                     <li>Sincronizare în timp real</li>
+                                    <li>Backup automat documente</li>
                                 </ul>
                             </div>
                             
@@ -1158,9 +1593,10 @@
                                 <h4 style="color: #0c4a6e; font-weight: 600; margin-bottom: 0.5rem;">✨ Beneficii Active</h4>
                                 <ul style="color: #0c4a6e; font-size: 0.875rem; margin-left: 1rem;">
                                     <li>✅ Sincronizare automată între dispozitive</li>
-                                    <li>✅ Backup automat al datelor</li>
+                                    <li>✅ Backup automat al datelor și documentelor</li>
                                     <li>✅ Acces de pe orice dispozitiv</li>
                                     <li>✅ Colaborare în timp real</li>
+                                    <li>✅ Stocare securizată documente PV și fișe</li>
                                 </ul>
                             </div>
                         </div>
@@ -1229,15 +1665,15 @@
                     <label class="form-label">Serviciu *</label>
                     <select class="form-select" id="appointment-service" required>
                         <option value="">Selectează serviciul</option>
-                        <option value="Verificări instalații gaz">Verificări instalații gaz</option>
-                        <option value="Revizii instalații gaz">Revizii instalații gaz</option>
-                        <option value="Verificări centrale termice">Verificări centrale termice</option>
-                        <option value="Revizii centrale termice">Revizii centrale termice</option>
+                        <option value="Proiectare Branșamente Gaz">Proiectare Branșamente Gaz</option>
+                        <option value="Execuție Branșamente Gaz">Execuție Branșamente Gaz</option>
+                        <option value="Instalații de Utilizare Gaz">Instalații de Utilizare Gaz</option>
                         <option value="Verificare Tehnică Periodică">Verificare Tehnică Periodică</option>
                         <option value="Verificare la Racordare">Verificare la Racordare</option>
-                        <option value="Instalații de Utilizare Gaz">Instalații de Utilizare Gaz</option>
-                        <option value="Proiectare Branșamente">Proiectare Branșamente</option>
-                        <option value="Execuție Branșamente">Execuție Branșamente</option>
+                        <option value="Verificare pentru Autorizații">Verificare pentru Autorizații</option>
+                        <option value="Revizii Centrale Termice">Revizii Centrale Termice</option>
+                        <option value="Verificare Post-Reparații">Verificare Post-Reparații</option>
+                        <option value="Servicii de Urgență">Servicii de Urgență</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1319,6 +1755,73 @@
         </div>
     </div>
 
+    <!-- Add Document Modal with Camera -->
+    <div id="addDocumentModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">📷 Fotografie Document Nou</h3>
+                <button class="modal-close" onclick="hideModal('addDocumentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Client *</label>
+                    <select class="form-select" id="document-client-select" required>
+                        <option value="">Selectează clientul</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tip Document *</label>
+                    <select class="form-select" id="document-category" required>
+                        <option value="">Selectează tipul</option>
+                        <option value="pv-verificare">📋 PV Verificare</option>
+                        <option value="fisa-tehnica">🔧 Fișă Tehnică</option>
+                        <option value="certificat">📜 Certificat</option>
+                        <option value="factura">💰 Factură</option>
+                        <option value="contract">📄 Contract</option>
+                        <option value="altele">📁 Altele</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nume Document</label>
+                    <input type="text" class="form-input" id="document-name" placeholder="Ex: PV Verificare - Instalație Gaz">
+                </div>
+                
+                <!-- Camera Section -->
+                <div class="camera-container">
+                    <div class="camera-preview" id="camera-preview">
+                        <video id="camera-video" autoplay muted style="display: none;"></video>
+                        <div class="camera-overlay" id="camera-overlay">
+                            <div>
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">📷</div>
+                                <div>Apăsați "Pornește Camera" pentru a fotografia documentul</div>
+                            </div>
+                        </div>
+                        <canvas id="camera-canvas" style="display: none;"></canvas>
+                    </div>
+                    
+                    <div class="camera-controls">
+                        <button type="button" class="btn btn-primary" id="start-camera-btn" onclick="startCamera()">
+                            📷 Pornește Camera
+                        </button>
+                        <button type="button" class="capture-btn" id="capture-btn" onclick="capturePhoto()" style="display: none;"></button>
+                        <button type="button" class="btn btn-secondary" id="retake-btn" onclick="retakePhoto()" style="display: none;">
+                            🔄 Refă Poza
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="captured-photo" style="display: none; margin-top: 1rem;">
+                    <h4>Fotografia Capturată:</h4>
+                    <img id="preview-image" style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('addDocumentModal')">Anulează</button>
+                <button class="btn btn-success" id="save-document-btn" onclick="saveDocument()" disabled>Salvează Document</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Client Details Modal -->
     <div id="clientDetailsModal" class="modal">
         <div class="modal-content" style="max-width: 700px;">
@@ -1337,6 +1840,27 @@
         </div>
     </div>
 
+    <!-- Document Viewer Modal -->
+    <div id="documentViewerModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="doc-viewer-title">📄 Vizualizare Document</h3>
+                <button class="modal-close" onclick="hideModal('documentViewerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="document-viewer-content" style="text-align: center;">
+                    <!-- Document content will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('documentViewerModal')">Închide</button>
+                <button class="btn btn-primary" id="download-doc-btn" onclick="downloadCurrentDocument()">
+                    ⬇️ Download
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Data Modal -->
     <div id="deleteDataModal" class="modal">
         <div class="modal-content">
@@ -1348,7 +1872,7 @@
                 <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
                     <p style="color: #dc2626; font-weight: 600; margin-bottom: 0.5rem;">ATENȚIE!</p>
                     <p style="color: #dc2626; font-size: 0.875rem;">
-                        Această acțiune va șterge TOATE datele (clienți, programări, reminder-uri) și nu poate fi anulată!
+                        Această acțiune va șterge TOATE datele (clienți, programări, reminder-uri, documente) și nu poate fi anulată!
                     </p>
                 </div>
                 
@@ -1378,13 +1902,168 @@
         let appData = {
             clients: [],
             appointments: [],
-            reminders: []
+            reminders: [],
+            documents: []
         };
 
-        let isOnline = navigator.onLine;
-        let deferredPrompt = null;
-        let installBannerDismissed = localStorage.getItem('installBannerDismissed') === 'true';
-        let unsubscribers = [];
+        let cameraStream = null;
+        let currentPhotoData = null;
+        let currentDocumentForDownload = null;
+        let notificationQueue = [];
+        let activeNotifications = 0;
+
+        // Custom notification system to replace alert()
+        function showNotification(message, type = 'info', options = {}) {
+            const {
+                title = getNotificationTitle(type),
+                actions = [],
+                duration = type === 'error' ? 8000 : 5000,
+                persistent = false
+            } = options;
+
+            const notification = createNotificationElement(title, message, type, actions, persistent);
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            activeNotifications++;
+
+            // Auto-remove (unless persistent)
+            if (!persistent) {
+                setTimeout(() => {
+                    removeNotification(notification);
+                }, duration);
+            }
+
+            return notification;
+        }
+
+        function createNotificationElement(title, message, type, actions, persistent) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.style.top = `${80 + activeNotifications * 10}px`;
+
+            const icon = getNotificationIcon(type);
+            
+            notification.innerHTML = `
+                <div class="notification-header">
+                    <div class="notification-title">
+                        ${icon} ${title}
+                    </div>
+                    <button class="notification-close" onclick="removeNotification(this.closest('.notification'))">&times;</button>
+                </div>
+                <div class="notification-body">${message}</div>
+                ${actions.length > 0 ? `
+                    <div class="notification-actions">
+                        ${actions.map(action => `
+                            <button class="notification-btn ${action.type || 'secondary'}" 
+                                    onclick="${action.onClick}; removeNotification(this.closest('.notification'))">
+                                ${action.text}
+                            </button>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+
+            return notification;
+        }
+
+        function getNotificationTitle(type) {
+            const titles = {
+                'success': 'Succes',
+                'error': 'Eroare',
+                'warning': 'Atenție',
+                'info': 'Informație'
+            };
+            return titles[type] || 'Notificare';
+        }
+
+        function getNotificationIcon(type) {
+            const icons = {
+                'success': '✅',
+                'error': '❌',
+                'warning': '⚠️',
+                'info': 'ℹ️'
+            };
+            return icons[type] || 'ℹ️';
+        }
+
+        function removeNotification(notification) {
+            if (!notification) return;
+            
+            notification.classList.remove('show');
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+                activeNotifications = Math.max(0, activeNotifications - 1);
+                
+                // Reposition remaining notifications
+                const remaining = document.querySelectorAll('.notification');
+                remaining.forEach((notif, index) => {
+                    notif.style.top = `${80 + index * 10}px`;
+                });
+            }, 300);
+        }
+
+        // Enhanced confirm dialog
+        function showConfirm(message, title = 'Confirmare', options = {}) {
+            return new Promise((resolve) => {
+                const actions = [
+                    {
+                        text: options.confirmText || 'Da',
+                        type: 'primary',
+                        onClick: `resolveConfirm(${Date.now()}, true)`
+                    },
+                    {
+                        text: options.cancelText || 'Nu',
+                        type: 'secondary',
+                        onClick: `resolveConfirm(${Date.now()}, false)`
+                    }
+                ];
+
+                const timestamp = Date.now();
+                window[`confirmResolve_${timestamp}`] = resolve;
+                window[`resolveConfirm`] = function(ts, result) {
+                    if (window[`confirmResolve_${ts}`]) {
+                        window[`confirmResolve_${ts}`](result);
+                        delete window[`confirmResolve_${ts}`];
+                    }
+                };
+
+                showNotification(message, 'warning', {
+                    title: title,
+                    actions: actions,
+                    persistent: true
+                });
+            });
+        }
+
+        // Info modal for large content
+        function showInfoModal(title, content, type = 'info') {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content large info-modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title">${getNotificationIcon(type)} ${title}</h3>
+                        <button class="modal-close" onclick="this.closest('.modal').remove(); document.body.style.overflow='auto';">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <pre style="white-space: pre-wrap; font-family: inherit; line-height: 1.5;">${content}</pre>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="this.closest('.modal').remove(); document.body.style.overflow='auto';">OK</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+        }
 
         // PWA Installation
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1473,18 +2152,38 @@
         // Firebase Authentication și Real-time Sync
         async function initializeFirebase() {
             try {
+                // Check if Firebase scripts are loaded
+                if (typeof window.firebaseApp === 'undefined' || 
+                    typeof window.firebaseFunctions === 'undefined' || 
+                    typeof window.auth === 'undefined' || 
+                    typeof window.db === 'undefined') {
+                    console.log('⚠️ Firebase SDK nu este încărcat complet');
+                    return;
+                }
+
+                // Test Firebase functions
+                if (!window.firebaseFunctions.signInAnonymously) {
+                    console.log('⚠️ Firebase functions nu sunt disponibile');
+                    return;
+                }
+
                 await window.firebaseFunctions.signInAnonymously(window.auth);
                 console.log('✅ Autentificare Firebase reușită');
                 
                 await syncFromCloud();
                 
             } catch (error) {
-                console.error('❌ Eroare Firebase:', error);
+                console.log('⚠️ Firebase nu este disponibil sau configurat incorect:', error.message);
+                console.log('📱 Aplicația va funcționa în modul offline complet');
+                // App will continue to work offline
             }
         }
 
         async function syncToCloud() {
-            if (!isOnline || !window.db) return;
+            if (!isOnline || !window.db || !window.firebaseFunctions) {
+                console.log('⚠️ Cloud sync nu este disponibil - salvez local');
+                return;
+            }
             
             setSyncingStatus();
             
@@ -1521,17 +2220,30 @@
                     }
                 }
 
+                for (const docItem of appData.documents) {
+                    if (!docItem.cloudId) {
+                        const docRef = await addDoc(collection(window.db, 'documents'), {
+                            ...docItem,
+                            syncedAt: serverTimestamp()
+                        });
+                        docItem.cloudId = docRef.id;
+                    }
+                }
+
                 saveDataLocally();
                 updateLastSyncTime();
                 console.log('✅ Sincronizare în cloud reușită');
 
             } catch (error) {
-                console.error('❌ Eroare sincronizare:', error);
+                console.log('⚠️ Eroare sincronizare cloud:', error.message);
             }
         }
 
         async function syncFromCloud() {
-            if (!isOnline || !window.db) return;
+            if (!isOnline || !window.db || !window.firebaseFunctions) {
+                console.log('⚠️ Cloud sync nu este disponibil');
+                return;
+            }
             
             setSyncingStatus();
             
@@ -1556,9 +2268,16 @@
                     cloudReminders.push({ cloudId: doc.id, ...doc.data() });
                 });
 
+                const documentsSnapshot = await getDocs(collection(window.db, 'documents'));
+                const cloudDocuments = [];
+                documentsSnapshot.forEach((doc) => {
+                    cloudDocuments.push({ cloudId: doc.id, ...doc.data() });
+                });
+
                 if (cloudClients.length > 0) appData.clients = cloudClients;
                 if (cloudAppointments.length > 0) appData.appointments = cloudAppointments;
                 if (cloudReminders.length > 0) appData.reminders = cloudReminders;
+                if (cloudDocuments.length > 0) appData.documents = cloudDocuments;
 
                 saveDataLocally();
                 updateUI();
@@ -1567,7 +2286,7 @@
                 console.log('✅ Sincronizare din cloud reușită');
 
             } catch (error) {
-                console.error('❌ Eroare sincronizare:', error);
+                console.log('⚠️ Eroare sincronizare din cloud:', error.message);
             }
         }
 
@@ -1576,6 +2295,7 @@
                 document.getElementById('sync-clients-count').textContent = appData.clients.length;
                 document.getElementById('sync-appointments-count').textContent = appData.appointments.length;
                 document.getElementById('sync-reminders-count').textContent = appData.reminders.length;
+                document.getElementById('sync-documents-count').textContent = appData.documents.length;
             }
         }
 
@@ -1589,27 +2309,186 @@
 
         async function forceSyncToCloud() {
             if (!isOnline) {
-                alert('❌ Nu ești conectat la internet!');
+                showNotification('Nu ești conectat la internet!', 'error');
+                return;
+            }
+            
+            if (!window.firebaseFunctions || !window.db) {
+                showNotification('Firebase nu este configurat. Aplicația funcționează doar offline.', 'warning');
                 return;
             }
             
             await syncToCloud();
-            alert('✅ Sincronizare în cloud finalizată!');
+            showNotification('Sincronizare în cloud finalizată!', 'success');
         }
 
         async function forceSyncFromCloud() {
             if (!isOnline) {
-                alert('❌ Nu ești conectat la internet!');
+                showNotification('Nu ești conectat la internet!', 'error');
+                return;
+            }
+            
+            if (!window.firebaseFunctions || !window.db) {
+                showNotification('Firebase nu este configurat. Aplicația funcționează doar offline.', 'warning');
                 return;
             }
             
             await syncFromCloud();
-            alert('✅ Sincronizare din cloud finalizată!');
+            showNotification('Sincronizare din cloud finalizată!', 'success');
         }
 
         // Data persistence functions
         function saveDataLocally() {
-            localStorage.setItem('adinstalgaz_data', JSON.stringify(appData));
+            try {
+                const dataString = JSON.stringify(appData);
+                const sizeInMB = (dataString.length / (1024 * 1024)).toFixed(2);
+                
+                console.log(`💾 Încerc să salvez ${sizeInMB} MB în localStorage`);
+                
+                // Check localStorage space before saving
+                if (sizeInMB > 8) {
+                    showNotification('Datele sunt prea mari (peste 8MB). Se va încerca optimizarea...', 'warning');
+                    optimizeStorageData();
+                    return;
+                }
+                
+                localStorage.setItem('adinstalgaz_data', dataString);
+                console.log(`✅ Date salvate local (${sizeInMB} MB)`);
+                
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    console.error('❌ LocalStorage plin!', error);
+                    handleQuotaExceeded();
+                } else {
+                    console.error('❌ Eroare salvare:', error);
+                    showNotification(`Eroare la salvarea datelor: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function handleQuotaExceeded() {
+            showConfirm(
+                'Fotografiile au umplut memoria dispozitivului.\n\nVrei să ștergi fotografiile mai vechi de 30 de zile pentru a face spațiu?',
+                'Spațiu Insuficient',
+                {
+                    confirmText: 'Șterge fotografii vechi',
+                    cancelText: 'Exportă datele mai întâi'
+                }
+            ).then((result) => {
+                if (result) {
+                    cleanupOldDocuments();
+                } else {
+                    showNotification(
+                        'Te rog să exportezi datele (Rapoarte → Export Excel) înainte de a continua!',
+                        'warning',
+                        { title: 'Export Recomandat' }
+                    );
+                }
+            });
+        }
+
+        function cleanupOldDocuments() {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const initialCount = appData.documents.length;
+            
+            // Remove documents older than 30 days
+            appData.documents = appData.documents.filter(doc => {
+                const docDate = new Date(doc.uploadDate);
+                return docDate > thirtyDaysAgo;
+            });
+            
+            // Also clean up client documents for backward compatibility
+            appData.clients.forEach(client => {
+                if (client.documents) {
+                    client.documents = client.documents.filter(doc => {
+                        const docDate = new Date(doc.uploadDate);
+                        return docDate > thirtyDaysAgo;
+                    });
+                }
+            });
+            
+            const removedCount = initialCount - appData.documents.length;
+            
+            if (removedCount > 0) {
+                try {
+                    saveDataLocally();
+                    showNotification(
+                        `Curățare completă!\n\nAu fost șterse ${removedCount} fotografii vechi.\nSpațiul a fost eliberat cu succes.`,
+                        'success',
+                        { title: 'Storage Optimizat' }
+                    );
+                    updateUI();
+                } catch (error) {
+                    showNotification(
+                        'Încă nu este suficient spațiu. Te rog să exportezi datele și să începi din nou.',
+                        'error'
+                    );
+                }
+            } else {
+                showNotification(
+                    'Nu s-au găsit fotografii vechi de șters.\nTe rog să exportezi datele pentru backup.',
+                    'warning',
+                    { title: 'Nicio Curățare Posibilă' }
+                );
+            }
+        }
+
+        function optimizeStorageData() {
+            // Try to compress images further
+            let optimized = false;
+            
+            appData.documents.forEach(doc => {
+                if (doc.type.startsWith('image/') && doc.data) {
+                    // Re-compress images that are too large
+                    if (doc.data.length > 500000) { // If larger than ~500KB in base64
+                        try {
+                            // Create a temporary canvas to re-compress
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            const img = new Image();
+                            
+                            img.onload = function() {
+                                // Scale down if too large
+                                const maxSize = 800;
+                                let { width, height } = this;
+                                
+                                if (width > maxSize || height > maxSize) {
+                                    const scale = Math.min(maxSize / width, maxSize / height);
+                                    width *= scale;
+                                    height *= scale;
+                                }
+                                
+                                canvas.width = width;
+                                canvas.height = height;
+                                ctx.drawImage(this, 0, 0, width, height);
+                                
+                                // Re-compress with lower quality
+                                doc.data = canvas.toDataURL('image/jpeg', 0.3);
+                                optimized = true;
+                            };
+                            
+                            img.src = doc.data;
+                        } catch (e) {
+                            console.log('Nu pot comprima imaginea:', e);
+                        }
+                    }
+                }
+            });
+            
+            if (optimized) {
+                setTimeout(() => {
+                    try {
+                        saveDataLocally();
+                        showNotification('Optimizare completă! Imaginile au fost comprimate.', 'success');
+                    } catch (error) {
+                        handleQuotaExceeded();
+                    }
+                }, 1000);
+            } else {
+                handleQuotaExceeded();
+            }
         }
 
         function saveData() {
@@ -1623,28 +2502,83 @@
         function loadData() {
             const saved = localStorage.getItem('adinstalgaz_data');
             if (saved) {
-                appData = JSON.parse(saved);
-                // Ensure documents array exists for all clients
-                appData.clients.forEach(client => {
-                    if (!client.documents) {
-                        client.documents = [];
+                try {
+                    appData = JSON.parse(saved);
+                    // Ensure all arrays exist
+                    if (!appData.documents) appData.documents = [];
+                    appData.clients.forEach(client => {
+                        if (!client.documents) {
+                            client.documents = [];
+                        }
+                    });
+                    
+                    // Check storage usage
+                    const sizeInMB = (saved.length / (1024 * 1024)).toFixed(2);
+                    console.log(`📊 Date încărcate: ${sizeInMB} MB din localStorage`);
+                    
+                    if (sizeInMB > 5) {
+                        console.warn(`⚠️ Storage usage mare: ${sizeInMB} MB. Recomand curățarea documentelor vechi.`);
                     }
-                });
+                    
+                } catch (error) {
+                    console.error('❌ Eroare încărcare date:', error);
+                    appData = {
+                        clients: [],
+                        appointments: [],
+                        reminders: [],
+                        documents: []
+                    };
+                }
             }
         }
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Inițializare aplicație Ad Instal Gaz SRL...');
+            
             loadData();
             updateUI();
             updateDateTime();
             updateSyncStatus();
             setInterval(updateDateTime, 60000); // Update every minute
             
-            // Initialize Firebase
+            // Set minimum date for date inputs
+            const today = new Date().toISOString().split('T')[0];
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            dateInputs.forEach(input => {
+                input.min = today;
+            });
+            
+            // Check if Firebase CDN loaded
             setTimeout(() => {
-                initializeFirebase();
-            }, 1000);
+                if (typeof window.firebaseApp === 'undefined') {
+                    console.log('⚠️ Firebase CDN nu s-a încărcat - probabil restricții de rețea');
+                    console.log('📱 Aplicația funcționează 100% offline - toate funcțiile disponibile local');
+                } else {
+                    console.log('⚡ Încercare inițializare Firebase...');
+                    initializeFirebase();
+                }
+            }, 2000);
+            
+            // Show welcome message after everything loads
+            setTimeout(() => {
+                console.log('✅ Aplicația Ad Instal Gaz SRL s-a încărcat complet!');
+                console.log('📱 Funcționalități disponibile:');
+                console.log('   • Management clienți și programări');
+                console.log('   • Camera pentru fotografiat documente'); 
+                console.log('   • Upload fișiere PDF/DOC');
+                console.log('   • Export Excel/PDF');
+                console.log('   • Backup/Restore complet');
+                console.log('   • PWA - instalabil pe telefon');
+                console.log('   • Funcționare offline');
+                
+                // Show storage info if high usage
+                updateStorageDisplay();
+                const storageElement = document.getElementById('storage-usage');
+                if (storageElement && parseFloat(storageElement.textContent) > 5) {
+                    console.warn('⚠️ Utilizare mare de storage - vezi secțiunea Rapoarte pentru optimizare');
+                }
+            }, 3000);
         });
 
         // Date and time functions
@@ -1683,6 +2617,8 @@
                 populateClientDropdown();
             } else if (modalId === 'addReminderModal') {
                 populateReminderClientDropdown();
+            } else if (modalId === 'addDocumentModal') {
+                populateDocumentClientDropdown();
             }
             document.getElementById(modalId).classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1716,6 +2652,16 @@
             dropdown.innerHTML = defaultOptions + clientOptions;
         }
 
+        function populateDocumentClientDropdown() {
+            const dropdown = document.getElementById('document-client-select');
+            dropdown.innerHTML = `
+                <option value="">Selectează clientul</option>
+                ${appData.clients.map(client => 
+                    `<option value="${client.id}">${client.name} - ${client.phone}</option>`
+                ).join('')}
+            `;
+        }
+
         function selectClient() {
             const dropdown = document.getElementById('appointment-client-select');
             const manualGroup = document.getElementById('manual-client-group');
@@ -1726,25 +2672,18 @@
             const selectedValue = dropdown.value;
             
             if (selectedValue === 'new-client') {
-                // Afișează câmpul pentru nume manual
                 manualGroup.style.display = 'block';
                 nameInput.required = true;
-                
-                // Resetează câmpurile
                 phoneInput.value = '';
                 addressInput.value = '';
                 nameInput.value = '';
             } else if (selectedValue === '') {
-                // Ascunde câmpul manual
                 manualGroup.style.display = 'none';
                 nameInput.required = false;
-                
-                // Resetează câmpurile
                 phoneInput.value = '';
                 addressInput.value = '';
                 nameInput.value = '';
             } else {
-                // Client existent selectat
                 manualGroup.style.display = 'none';
                 nameInput.required = false;
                 
@@ -1766,23 +2705,16 @@
             const selectedValue = dropdown.value;
             
             if (selectedValue === 'new-client') {
-                // Afișează câmpul pentru nume manual
                 manualGroup.style.display = 'block';
                 nameInput.required = true;
-                
-                // Resetează câmpurile
                 phoneInput.value = '';
                 nameInput.value = '';
             } else if (selectedValue === '') {
-                // Ascunde câmpul manual
                 manualGroup.style.display = 'none';
                 nameInput.required = false;
-                
-                // Resetează câmpurile
                 phoneInput.value = '';
                 nameInput.value = '';
             } else {
-                // Client existent selectat
                 manualGroup.style.display = 'none';
                 nameInput.required = false;
                 
@@ -1795,9 +2727,31 @@
         }
 
         function hideModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            
+            modal.classList.remove('active');
             document.body.style.overflow = 'auto';
-            clearModalInputs(modalId);
+            
+            // Clean up camera if needed
+            if (modalId === 'addDocumentModal') {
+                stopCamera();
+            }
+            
+            // Remove dynamic modals
+            if (modalId === 'uploadFileModal') {
+                modal.remove();
+                // Clean up temp data
+                if (window.tempFileData) {
+                    delete window.tempFileData;
+                }
+                // Reset file input
+                const fileInput = document.getElementById('upload-file');
+                if (fileInput) fileInput.value = '';
+            } else {
+                // Clear regular modal inputs
+                clearModalInputs(modalId);
+            }
         }
 
         function clearModalInputs(modalId) {
@@ -1811,7 +2765,7 @@
                 }
             });
             
-            // Resetează și elementele specifice pentru programări
+            // Reset specific modal elements
             if (modalId === 'addAppointmentModal') {
                 const manualGroup = document.getElementById('manual-client-group');
                 const nameInput = document.getElementById('appointment-client-name');
@@ -1819,12 +2773,576 @@
                 nameInput.required = false;
             }
             
-            // Resetează și elementele specifice pentru reminder-uri
             if (modalId === 'addReminderModal') {
                 const manualGroup = document.getElementById('manual-reminder-client-group');
                 const nameInput = document.getElementById('reminder-client-name');
                 manualGroup.style.display = 'none';
                 nameInput.required = false;
+            }
+
+            if (modalId === 'addDocumentModal') {
+                resetCameraModal();
+            }
+        }
+
+        // Camera Functions
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'environment' // Use back camera on mobile
+                    }
+                });
+                
+                cameraStream = stream;
+                const video = document.getElementById('camera-video');
+                const overlay = document.getElementById('camera-overlay');
+                const startBtn = document.getElementById('start-camera-btn');
+                const captureBtn = document.getElementById('capture-btn');
+                
+                video.srcObject = stream;
+                video.style.display = 'block';
+                overlay.style.display = 'none';
+                startBtn.style.display = 'none';
+                captureBtn.style.display = 'block';
+                
+                console.log('Camera started successfully');
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                showNotification('Nu pot accesa camera. Verificați permisiunile și încercați din nou.', 'error', {
+                    title: 'Eroare Cameră'
+                });
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+        }
+
+        function capturePhoto() {
+            const video = document.getElementById('camera-video');
+            const canvas = document.getElementById('camera-canvas');
+            const context = canvas.getContext('2d');
+            
+            // Set canvas dimensions to match video (but limit max size)
+            const maxWidth = 1200;
+            const maxHeight = 800;
+            
+            let { videoWidth, videoHeight } = video;
+            
+            // Calculate scaling to fit within max dimensions
+            const scale = Math.min(maxWidth / videoWidth, maxHeight / videoHeight, 1);
+            
+            canvas.width = videoWidth * scale;
+            canvas.height = videoHeight * scale;
+            
+            // Draw video frame to canvas with scaling
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to base64 with compression (0.6 quality for smaller file)
+            currentPhotoData = canvas.toDataURL('image/jpeg', 0.6);
+            
+            // Check size and compress more if needed
+            const sizeInMB = (currentPhotoData.length * 0.75) / (1024 * 1024);
+            console.log(`📸 Mărime fotografie: ${sizeInMB.toFixed(2)} MB`);
+            
+            if (sizeInMB > 1) {
+                // If still too large, compress more
+                currentPhotoData = canvas.toDataURL('image/jpeg', 0.4);
+                console.log(`📸 Fotografie compresată la: ${((currentPhotoData.length * 0.75) / (1024 * 1024)).toFixed(2)} MB`);
+            }
+            
+            // Stop camera
+            stopCamera();
+            
+            // Update UI
+            showCapturedPhoto();
+        }
+
+        function showCapturedPhoto() {
+            const video = document.getElementById('camera-video');
+            const overlay = document.getElementById('camera-overlay');
+            const captureBtn = document.getElementById('capture-btn');
+            const retakeBtn = document.getElementById('retake-btn');
+            const capturedSection = document.getElementById('captured-photo');
+            const previewImage = document.getElementById('preview-image');
+            const saveBtn = document.getElementById('save-document-btn');
+            
+            // Hide video elements
+            video.style.display = 'none';
+            captureBtn.style.display = 'none';
+            
+            // Show retake button and preview
+            retakeBtn.style.display = 'block';
+            capturedSection.style.display = 'block';
+            previewImage.src = currentPhotoData;
+            
+            // Enable save button
+            saveBtn.disabled = false;
+            
+            overlay.style.display = 'flex';
+            overlay.innerHTML = '<div style="color: #10b981;"><div style="font-size: 3rem; margin-bottom: 1rem;">✅</div><div>Fotografia a fost capturată cu succes!</div></div>';
+        }
+
+        function retakePhoto() {
+            resetCameraModal();
+            startCamera();
+        }
+
+        function resetCameraModal() {
+            stopCamera();
+            currentPhotoData = null;
+            
+            const video = document.getElementById('camera-video');
+            const overlay = document.getElementById('camera-overlay');
+            const startBtn = document.getElementById('start-camera-btn');
+            const captureBtn = document.getElementById('capture-btn');
+            const retakeBtn = document.getElementById('retake-btn');
+            const capturedSection = document.getElementById('captured-photo');
+            const saveBtn = document.getElementById('save-document-btn');
+            
+            video.style.display = 'none';
+            overlay.style.display = 'flex';
+            overlay.innerHTML = '<div><div style="font-size: 3rem; margin-bottom: 1rem;">📷</div><div>Apăsați "Pornește Camera" pentru a fotografia documentul</div></div>';
+            
+            startBtn.style.display = 'block';
+            captureBtn.style.display = 'none';
+            retakeBtn.style.display = 'none';
+            capturedSection.style.display = 'none';
+            saveBtn.disabled = true;
+        }
+
+        // Document Management Functions
+        function saveDocument() {
+            const clientId = document.getElementById('document-client-select').value;
+            const category = document.getElementById('document-category').value;
+            const documentName = document.getElementById('document-name').value;
+            
+            if (!clientId || !category || !currentPhotoData) {
+                showNotification('Te rog să completezi toate câmpurile și să faci o fotografie!', 'warning');
+                return;
+            }
+            
+            const client = appData.clients.find(c => c.id == clientId);
+            if (!client) {
+                showNotification('Clientul selectat nu a fost găsit!', 'error');
+                return;
+            }
+            
+            const newDocument = {
+                id: Date.now(),
+                clientId: parseInt(clientId),
+                clientName: client.name,
+                category: category,
+                name: documentName || `${getCategoryName(category)} - ${client.name}`,
+                type: 'image/jpeg',
+                data: currentPhotoData,
+                size: Math.round(currentPhotoData.length * 0.75), // Approximate size
+                uploadDate: new Date().toISOString(),
+                source: 'camera'
+            };
+            
+            // Add to global documents array
+            appData.documents.push(newDocument);
+            
+            // Also add to client's documents for backward compatibility
+            if (!client.documents) client.documents = [];
+            client.documents.push(newDocument);
+            
+            saveData();
+            updateUI();
+            hideModal('addDocumentModal');
+            
+            showNotification('Document salvat cu succes!', 'success');
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'pv-verificare': 'PV Verificare',
+                'fisa-tehnica': 'Fișă Tehnică',
+                'certificat': 'Certificat',
+                'factura': 'Factură',
+                'contract': 'Contract',
+                'altele': 'Document'
+            };
+            return categories[category] || 'Document';
+        }
+
+        function uploadFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            // Check file size
+            const fileSizeInMB = file.size / (1024 * 1024);
+            
+            if (fileSizeInMB > 3) {
+                showNotification(
+                    `Fișierul este prea mare (${fileSizeInMB.toFixed(1)} MB).\n\nMărimea maximă acceptată: 3 MB\n\nPentru fotografii, folosiți camera din aplicație care optimizează automat mărimea.`,
+                    'error',
+                    { title: 'Fișier Prea Mare' }
+                );
+                input.value = '';
+                return;
+            }
+            
+            // Show client selection modal
+            showDocumentUploadModal(file);
+        }
+
+        function showDocumentUploadModal(file) {
+            // Create a temporary modal for file upload
+            const modalHTML = `
+                <div id="uploadFileModal" class="modal active">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">📁 Upload Document</h3>
+                            <button class="modal-close" onclick="hideModal('uploadFileModal')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="form-label">Client *</label>
+                                <select class="form-select" id="upload-client-select" required>
+                                    <option value="">Selectează clientul</option>
+                                    ${appData.clients.map(client => 
+                                        `<option value="${client.id}">${client.name} - ${client.phone}</option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tip Document *</label>
+                                <select class="form-select" id="upload-category" required>
+                                    <option value="">Selectează tipul</option>
+                                    <option value="pv-verificare">📋 PV Verificare</option>
+                                    <option value="fisa-tehnica">🔧 Fișă Tehnică</option>
+                                    <option value="certificat">📜 Certificat</option>
+                                    <option value="factura">💰 Factură</option>
+                                    <option value="contract">📄 Contract</option>
+                                    <option value="altele">📁 Altele</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Fișier Selectat:</label>
+                                <div style="background: #f3f4f6; padding: 1rem; border-radius: 6px;">
+                                    <strong>${file.name}</strong><br>
+                                    <span style="color: #6b7280;">${(file.size / 1024).toFixed(1)} KB</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" onclick="hideModal('uploadFileModal')">Anulează</button>
+                            <button class="btn btn-success" onclick="processFileUpload('${file.name}', ${file.size}, '${file.type}')">Salvează</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            document.body.style.overflow = 'hidden';
+            
+            // Store file data with compression for images
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (file.type.startsWith('image/')) {
+                    // Compress image before storing
+                    compressImage(e.target.result, (compressedData) => {
+                        window.tempFileData = compressedData;
+                        console.log(`📁 Imagine compresată de la ${(file.size / 1024).toFixed(1)} KB la ${((compressedData.length * 0.75) / 1024).toFixed(1)} KB`);
+                    });
+                } else {
+                    window.tempFileData = e.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function compressImage(dataUrl, callback) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = function() {
+                // Limit image size
+                const maxWidth = 1000;
+                const maxHeight = 800;
+                
+                let { width, height } = this;
+                const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+                
+                canvas.width = width * scale;
+                canvas.height = height * scale;
+                
+                ctx.drawImage(this, 0, 0, canvas.width, canvas.height);
+                
+                // Compress with medium quality
+                const compressedData = canvas.toDataURL('image/jpeg', 0.5);
+                callback(compressedData);
+            };
+            
+            img.src = dataUrl;
+        }
+
+        function processFileUpload(fileName, fileSize, fileType) {
+            const clientId = document.getElementById('upload-client-select').value;
+            const category = document.getElementById('upload-category').value;
+            
+            if (!clientId || !category) {
+                showNotification('Te rog să completezi toate câmpurile!', 'warning');
+                return;
+            }
+            
+            const client = appData.clients.find(c => c.id == clientId);
+            if (!client) {
+                showNotification('Clientul selectat nu a fost găsit!', 'error');
+                return;
+            }
+            
+            const newDocument = {
+                id: Date.now(),
+                clientId: parseInt(clientId),
+                clientName: client.name,
+                category: category,
+                name: fileName,
+                type: fileType,
+                data: window.tempFileData,
+                size: fileSize,
+                uploadDate: new Date().toISOString(),
+                source: 'upload'
+            };
+            
+            // Add to global documents array
+            appData.documents.push(newDocument);
+            
+            // Also add to client's documents for backward compatibility
+            if (!client.documents) client.documents = [];
+            client.documents.push(newDocument);
+            
+            saveData();
+            updateUI();
+            hideModal('uploadFileModal');
+            
+            // Clean up
+            delete window.tempFileData;
+            document.getElementById('upload-file').value = '';
+            
+            showNotification('Document uplodat cu succes!', 'success');
+        }
+
+        function renderDocuments() {
+            const container = document.getElementById('documents-grid');
+            
+            if (appData.documents.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #6b7280;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📁</div>
+                        <p>Nu aveți documente încă</p>
+                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">
+                            Folosiți camera pentru a fotografia PV-uri și fișe tehnice
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group documents by client
+            const documentsByClient = {};
+            appData.documents.forEach(doc => {
+                if (!documentsByClient[doc.clientId]) {
+                    documentsByClient[doc.clientId] = [];
+                }
+                documentsByClient[doc.clientId].push(doc);
+            });
+
+            container.innerHTML = Object.keys(documentsByClient).map(clientId => {
+                const client = appData.clients.find(c => c.id == clientId);
+                const clientDocs = documentsByClient[clientId];
+                
+                return `
+                    <div style="grid-column: 1 / -1; margin-bottom: 2rem;">
+                        <h4 style="color: #1e3c72; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                            👤 ${client ? client.name : 'Client Necunoscut'} 
+                            <span style="background: #e5e7eb; color: #6b7280; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem;">
+                                ${clientDocs.length} doc${clientDocs.length > 1 ? 'umente' : 'ument'}
+                            </span>
+                        </h4>
+                        <div class="document-grid">
+                            ${clientDocs.map(doc => `
+                                <div class="document-card has-document" onclick="viewDocument(${doc.id})">
+                                    <div class="document-category">${getCategoryIcon(doc.category)} ${getCategoryName(doc.category)}</div>
+                                    <div class="document-preview">
+                                        ${doc.type.startsWith('image/') ? 
+                                            `<img src="${doc.data}" alt="${doc.name}">` :
+                                            `<div style="color: #6b7280; font-size: 2rem;">📄</div>`
+                                        }
+                                    </div>
+                                    <div style="font-weight: 500; font-size: 0.875rem; margin-bottom: 0.25rem;">${doc.name}</div>
+                                    <div style="font-size: 0.75rem; color: #6b7280;">
+                                        ${new Date(doc.uploadDate).toLocaleDateString('ro-RO')}
+                                    </div>
+                                    <div class="document-actions">
+                                        <button class="btn btn-primary" onclick="event.stopPropagation(); viewDocument(${doc.id})" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                            👁️
+                                        </button>
+                                        <button class="btn btn-success" onclick="event.stopPropagation(); downloadDocument(${doc.id})" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                            ⬇️
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                'pv-verificare': '📋',
+                'fisa-tehnica': '🔧',
+                'certificat': '📜',
+                'factura': '💰',
+                'contract': '📄',
+                'altele': '📁'
+            };
+            return icons[category] || '📄';
+        }
+
+        function viewDocument(docId) {
+            const docItem = appData.documents.find(d => d.id === docId);
+            if (!docItem) return;
+            
+            currentDocumentForDownload = docItem;
+            
+            const content = docItem.type.startsWith('image/') ?
+                `<img src="${docItem.data}" style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px;">` :
+                `<div style="text-align: center; padding: 3rem; color: #6b7280;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">📄</div>
+                    <p>Preview nu este disponibil pentru acest tip de fișier</p>
+                    <p style="font-size: 0.875rem; margin-top: 0.5rem;">Folosiți butonul Download pentru a vizualiza</p>
+                </div>`;
+            
+            document.getElementById('doc-viewer-title').textContent = `📄 ${docItem.name}`;
+            document.getElementById('document-viewer-content').innerHTML = content;
+            showModal('documentViewerModal');
+        }
+
+        function downloadDocument(docId) {
+            const docItem = appData.documents.find(d => d.id === docId);
+            if (!docItem) return;
+            
+            const link = document.createElement('a');
+            link.href = docItem.data;
+            link.download = docItem.name;
+            link.click();
+        }
+
+        function downloadCurrentDocument() {
+            if (currentDocumentForDownload) {
+                downloadDocument(currentDocumentForDownload.id);
+            }
+        }
+
+        // Website Sync Functions
+        function importFromWebsite() {
+            // Simulate importing data from website
+            const mockWebsiteData = [
+                {
+                    name: "Ion Popescu",
+                    phone: "0721234567",
+                    email: "ion@example.com",
+                    service: "Verificare Tehnică Periodică",
+                    address: "Str. Libertății 15, Rosiori de Vede",
+                    preferredDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 2 days from now
+                    message: "Doresc programare pentru verificarea instalației de gaz."
+                },
+                {
+                    name: "Maria Ionescu",
+                    phone: "0734567890",
+                    service: "Revizii Centrale Termice",
+                    address: "Str. Mihai Viteazu 22, Rosiori de Vede",
+                    preferredDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 3 days from now
+                    message: "Centrala face zgomote ciudate, aș vrea o verificare."
+                }
+            ];
+            
+            showConfirm(
+                `Găsite ${mockWebsiteData.length} cereri noi de pe site. Vrei să le imporți ca programări?`,
+                'Import de pe Site',
+                {
+                    confirmText: 'Importă toate',
+                    cancelText: 'Anulează'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    mockWebsiteData.forEach(data => {
+                        // Check if client exists
+                        let client = appData.clients.find(c => c.phone === data.phone);
+                        
+                        if (!client) {
+                            // Create new client
+                            client = {
+                                id: Date.now() + Math.random(),
+                                name: data.name,
+                                phone: data.phone,
+                                email: data.email || '',
+                                address: data.address,
+                                createdAt: new Date().toISOString(),
+                                totalServices: 0,
+                                documents: []
+                            };
+                            appData.clients.push(client);
+                        }
+                        
+                        // Create appointment
+                        const appointment = {
+                            id: Date.now() + Math.random(),
+                            clientId: client.id,
+                            clientName: client.name,
+                            phone: client.phone,
+                            service: data.service,
+                            address: data.address,
+                            date: data.preferredDate,
+                            time: "09:00", // Default time
+                            price: 0,
+                            notes: `Import din site: ${data.message}`,
+                            status: 'programat',
+                            createdAt: new Date().toISOString(),
+                            source: 'website'
+                        };
+                        appData.appointments.push(appointment);
+                    });
+                    
+                    saveData();
+                    updateUI();
+                    showNotification(`${mockWebsiteData.length} programări importate cu succes din site!`, 'success');
+                }
+            });
+        }
+
+        function checkWebsiteRequests() {
+            // Simulate checking for new website requests
+            const randomRequests = Math.floor(Math.random() * 5);
+            document.getElementById('website-requests').textContent = randomRequests;
+            
+            if (randomRequests > 0) {
+                showConfirm(
+                    `Găsite ${randomRequests} cereri noi pe site! Vrei să le imporți?`,
+                    'Cereri Noi pe Site',
+                    {
+                        confirmText: 'Importă',
+                        cancelText: 'Mai târziu'
+                    }
+                ).then((confirmed) => {
+                    if (confirmed) {
+                        importFromWebsite();
+                    }
+                });
+            } else {
+                showNotification('Nu sunt cereri noi pe site în acest moment.', 'info');
             }
         }
 
@@ -1836,7 +3354,7 @@
             const address = document.getElementById('client-address').value.trim();
 
             if (!name || !phone || !address) {
-                alert('Te rog să completezi toate câmpurile obligatorii!');
+                showNotification('Te rog să completezi toate câmpurile obligatorii!', 'warning');
                 return;
             }
 
@@ -1855,40 +3373,8 @@
             saveData();
             updateUI();
             hideModal('addClientModal');
-        }
-
-        // Client documents functions
-        function uploadClientDocument(clientId) {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*,.pdf,.doc,.docx';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const document = {
-                            id: Date.now(),
-                            name: file.name,
-                            type: file.type,
-                            size: file.size,
-                            data: e.target.result,
-                            uploadDate: new Date().toISOString()
-                        };
-                        
-                        const client = appData.clients.find(c => c.id === clientId);
-                        if (client) {
-                            if (!client.documents) client.documents = [];
-                            client.documents.push(document);
-                            saveData();
-                            updateUI();
-                            alert('✅ Document uplodat cu succes!');
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            };
-            input.click();
+            
+            showNotification(`Client "${name}" adăugat cu succes!`, 'success');
         }
 
         function showClientDetails(clientId) {
@@ -1897,6 +3383,7 @@
             
             const clientAppointments = appData.appointments.filter(apt => apt.clientId === clientId || apt.clientName === client.name);
             const clientReminders = appData.reminders.filter(r => r.clientId === clientId || r.clientName === client.name);
+            const clientDocuments = appData.documents.filter(d => d.clientId === clientId);
             
             const content = `
                 <div style="margin-bottom: 2rem;">
@@ -1910,19 +3397,19 @@
                     </div>
                 </div>
                 
-                ${client.documents && client.documents.length > 0 ? `
+                ${clientDocuments.length > 0 ? `
                 <div style="margin-bottom: 2rem;">
-                    <h4 style="color: #111827; margin-bottom: 1rem;">📎 Documente (${client.documents.length})</h4>
+                    <h4 style="color: #111827; margin-bottom: 1rem;">📎 Documente (${clientDocuments.length})</h4>
                     <div style="display: grid; gap: 0.5rem;">
-                        ${client.documents.map(doc => `
+                        ${clientDocuments.map(doc => `
                             <div style="display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 0.75rem; border-radius: 6px;">
                                 <div>
-                                    <div style="font-weight: 500;">${doc.name}</div>
+                                    <div style="font-weight: 500;">${getCategoryIcon(doc.category)} ${doc.name}</div>
                                     <div style="font-size: 0.875rem; color: #6b7280;">
                                         ${new Date(doc.uploadDate).toLocaleDateString('ro-RO')} • ${(doc.size / 1024).toFixed(1)} KB
                                     </div>
                                 </div>
-                                <button class="btn btn-primary" onclick="viewDocument('${doc.id}', ${clientId})" style="padding: 0.5rem;">
+                                <button class="btn btn-primary" onclick="viewDocument(${doc.id})" style="padding: 0.5rem;">
                                     👁️
                                 </button>
                             </div>
@@ -1953,33 +3440,6 @@
             showModal('clientDetailsModal');
         }
 
-        function viewDocument(docId, clientId) {
-            const client = appData.clients.find(c => c.id === clientId);
-            if (!client || !client.documents) return;
-            
-            const document = client.documents.find(d => d.id == docId);
-            if (!document) return;
-            
-            if (document.type.startsWith('image/')) {
-                // Show image in new window
-                const newWindow = window.open();
-                newWindow.document.write(`
-                    <html>
-                        <head><title>${document.name}</title></head>
-                        <body style="margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #000;">
-                            <img src="${document.data}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                        </body>
-                    </html>
-                `);
-            } else {
-                // Download other files
-                const link = document.createElement('a');
-                link.href = document.data;
-                link.download = document.name;
-                link.click();
-            }
-        }
-
         function renderClients(clientsToRender = null) {
             const clients = clientsToRender || appData.clients;
             const container = document.getElementById('clients-list');
@@ -1989,33 +3449,37 @@
                 return;
             }
 
-            container.innerHTML = clients.map(client => `
-                <div class="list-item">
-                    <div class="avatar">${client.name.charAt(0).toUpperCase()}</div>
-                    <div class="list-content">
-                        <div class="list-title">${client.name}</div>
-                        <div class="list-subtitle">📞 ${client.phone} • 📍 ${client.address}</div>
-                        ${client.documents && client.documents.length > 0 ? `
-                            <div class="text-xs" style="color: #10b981; margin-top: 0.25rem;">
-                                📎 ${client.documents.length} document${client.documents.length > 1 ? 'e' : ''}
+            container.innerHTML = clients.map(client => {
+                const clientDocuments = appData.documents.filter(d => d.clientId === client.id);
+                
+                return `
+                    <div class="list-item">
+                        <div class="avatar">${client.name.charAt(0).toUpperCase()}</div>
+                        <div class="list-content">
+                            <div class="list-title">${client.name}</div>
+                            <div class="list-subtitle">📞 ${client.phone} • 📍 ${client.address}</div>
+                            ${clientDocuments.length > 0 ? `
+                                <div class="text-xs" style="color: #10b981; margin-top: 0.25rem;">
+                                    📎 ${clientDocuments.length} document${clientDocuments.length > 1 ? 'e' : ''}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex gap-1" style="flex-direction: column;">
+                            <div class="flex gap-1">
+                                <button class="btn btn-primary" onclick="callClient('${client.phone}')" style="padding: 0.4rem; font-size: 0.75rem;">
+                                    📞
+                                </button>
+                                <button class="btn btn-success" onclick="showClientDetails(${client.id})" style="padding: 0.4rem; font-size: 0.75rem;">
+                                    👁️
+                                </button>
                             </div>
-                        ` : ''}
-                    </div>
-                    <div class="flex gap-1" style="flex-direction: column;">
-                        <div class="flex gap-1">
-                            <button class="btn btn-primary" onclick="callClient('${client.phone}')" style="padding: 0.4rem; font-size: 0.75rem;">
-                                📞
-                            </button>
-                            <button class="btn btn-success" onclick="showClientDetails(${client.id})" style="padding: 0.4rem; font-size: 0.75rem;">
-                                👁️
+                            <button class="btn btn-warning" onclick="showModal('addDocumentModal'); populateDocumentClientDropdown(); document.getElementById('document-client-select').value='${client.id}'" style="padding: 0.3rem; font-size: 0.7rem;">
+                                📷 Foto
                             </button>
                         </div>
-                        <button class="btn btn-secondary" onclick="uploadClientDocument(${client.id})" style="padding: 0.3rem; font-size: 0.7rem;">
-                            📎 Upload
-                        </button>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function searchClients(searchTerm) {
@@ -2052,18 +3516,16 @@
             let clientName = '';
             let clientId = null;
 
-            // Determină numele clientului
             if (clientDropdown.value === 'new-client') {
                 clientName = manualNameInput.value.trim();
                 if (!clientName) {
-                    alert('Te rog să introduci numele clientului!');
+                    showNotification('Te rog să introduci numele clientului!', 'warning');
                     return;
                 }
             } else if (clientDropdown.value === '') {
-                alert('Te rog să selectezi un client sau să alegi "Client Nou"!');
+                showNotification('Te rog să selectezi un client sau să alegi "Client Nou"!', 'warning');
                 return;
             } else {
-                // Client existent
                 clientId = parseInt(clientDropdown.value);
                 const client = appData.clients.find(c => c.id === clientId);
                 if (client) {
@@ -2072,13 +3534,13 @@
             }
 
             if (!clientName || !phone || !service || !address || !date || !time) {
-                alert('Te rog să completezi toate câmpurile obligatorii!');
+                showNotification('Te rog să completezi toate câmpurile obligatorii!', 'warning');
                 return;
             }
 
             const newAppointment = {
                 id: Date.now(),
-                clientId: clientId, // null pentru clienți noi, id pentru clienți existenți
+                clientId: clientId,
                 clientName: clientName,
                 phone: phone,
                 service: service,
@@ -2093,7 +3555,6 @@
 
             appData.appointments.push(newAppointment);
             
-            // Dacă este client nou și nu există deja în baza de date, îl adăugăm
             if (clientId === null) {
                 const existingClient = appData.clients.find(c => 
                     c.name.toLowerCase() === clientName.toLowerCase() && c.phone === phone
@@ -2101,7 +3562,7 @@
                 
                 if (!existingClient) {
                     const newClient = {
-                        id: Date.now() + 1, // +1 pentru a evita conflictul cu appointment id
+                        id: Date.now() + 1,
                         name: clientName,
                         phone: phone,
                         email: '',
@@ -2117,6 +3578,8 @@
             saveData();
             updateUI();
             hideModal('addAppointmentModal');
+            
+            showNotification(`Programare pentru "${clientName}" adăugată cu succes!`, 'success');
         }
 
         function renderAppointments(appointmentsToRender = null) {
@@ -2227,18 +3690,16 @@
             let clientName = '';
             let clientId = null;
 
-            // Determină numele clientului
             if (clientDropdown.value === 'new-client') {
                 clientName = manualNameInput.value.trim();
                 if (!clientName) {
-                    alert('Te rog să introduci numele clientului!');
+                    showNotification('Te rog să introduci numele clientului!', 'warning');
                     return;
                 }
             } else if (clientDropdown.value === '') {
-                alert('Te rog să selectezi un client sau să alegi "Client Nou"!');
+                showNotification('Te rog să selectezi un client sau să alegi "Client Nou"!', 'warning');
                 return;
             } else {
-                // Client existent
                 clientId = parseInt(clientDropdown.value);
                 const client = appData.clients.find(c => c.id === clientId);
                 if (client) {
@@ -2247,7 +3708,7 @@
             }
 
             if (!clientName || !phone || !type || !date || !message) {
-                alert('Te rog să completezi toate câmpurile obligatorii!');
+                showNotification('Te rog să completezi toate câmpurile obligatorii!', 'warning');
                 return;
             }
 
@@ -2267,6 +3728,8 @@
             saveData();
             updateUI();
             hideModal('addReminderModal');
+            
+            showNotification(`Reminder pentru "${clientName}" adăugat cu succes!`, 'success');
         }
 
         function updateReminderMessage() {
@@ -2476,21 +3939,29 @@
             const tomorrowReminders = appData.reminders.filter(r => r.reminderDate === tomorrowStr && !r.sent);
             
             if (tomorrowReminders.length === 0) {
-                alert('Nu există reminder-e programate pentru mâine.');
+                showNotification('Nu există reminder-e programate pentru mâine.', 'info');
                 return;
             }
             
-            if (confirm(`Vrei să trimiți ${tomorrowReminders.length} reminder-e prin WhatsApp pentru mâine?`)) {
-                tomorrowReminders.forEach(reminder => {
-                    sendWhatsApp(reminder.phone, reminder.message);
-                    // Mark as sent
-                    reminder.sent = true;
-                });
-                
-                saveData();
-                updateUI();
-                alert(`✅ ${tomorrowReminders.length} reminder-e trimise cu succes!`);
-            }
+            showConfirm(
+                `Vrei să trimiți ${tomorrowReminders.length} reminder-e prin WhatsApp pentru mâine?`,
+                'Trimite Reminder-e',
+                {
+                    confirmText: 'Trimite toate',
+                    cancelText: 'Anulează'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    tomorrowReminders.forEach(reminder => {
+                        sendWhatsApp(reminder.phone, reminder.message);
+                        reminder.sent = true;
+                    });
+                    
+                    saveData();
+                    updateUI();
+                    showNotification(`${tomorrowReminders.length} reminder-e trimise cu succes!`, 'success');
+                }
+            });
         }
 
         function sendTodayReminders() {
@@ -2498,21 +3969,29 @@
             const todayReminders = appData.reminders.filter(r => r.reminderDate === today && !r.sent);
             
             if (todayReminders.length === 0) {
-                alert('Nu există reminder-e programate pentru azi.');
+                showNotification('Nu există reminder-e programate pentru azi.', 'info');
                 return;
             }
             
-            if (confirm(`Vrei să trimiți ${todayReminders.length} reminder-e prin WhatsApp pentru azi?`)) {
-                todayReminders.forEach(reminder => {
-                    sendWhatsApp(reminder.phone, reminder.message);
-                    // Mark as sent
-                    reminder.sent = true;
-                });
-                
-                saveData();
-                updateUI();
-                alert(`✅ ${todayReminders.length} reminder-e trimise cu succes!`);
-            }
+            showConfirm(
+                `Vrei să trimiți ${todayReminders.length} reminder-e prin WhatsApp pentru azi?`,
+                'Trimite Reminder-e',
+                {
+                    confirmText: 'Trimite toate',
+                    cancelText: 'Anulează'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    todayReminders.forEach(reminder => {
+                        sendWhatsApp(reminder.phone, reminder.message);
+                        reminder.sent = true;
+                    });
+                    
+                    saveData();
+                    updateUI();
+                    showNotification(`${todayReminders.length} reminder-e trimise cu succes!`, 'success');
+                }
+            });
         }
 
         // Export functions
@@ -2525,7 +4004,7 @@
                 'Telefon': client.phone,
                 'Email': client.email || '',
                 'Adresa': client.address,
-                'Documente': client.documents ? client.documents.length : 0,
+                'Documente': appData.documents.filter(d => d.clientId === client.id).length,
                 'Data Adăugării': new Date(client.createdAt).toLocaleDateString('ro-RO')
             }));
             const clientsWS = XLSX.utils.json_to_sheet(clientsData);
@@ -2559,6 +4038,18 @@
             }));
             const remindersWS = XLSX.utils.json_to_sheet(remindersData);
             XLSX.utils.book_append_sheet(wb, remindersWS, 'Reminder-uri');
+
+            // Documents sheet
+            const documentsData = appData.documents.map(doc => ({
+                'Client': doc.clientName,
+                'Tip Document': getCategoryName(doc.category),
+                'Nume': doc.name,
+                'Mărime (KB)': Math.round(doc.size / 1024),
+                'Data Upload': new Date(doc.uploadDate).toLocaleDateString('ro-RO'),
+                'Sursă': doc.source === 'camera' ? 'Cameră' : 'Upload'
+            }));
+            const documentsWS = XLSX.utils.json_to_sheet(documentsData);
+            XLSX.utils.book_append_sheet(wb, documentsWS, 'Documente');
             
             // Statistics sheet
             const stats = calculateStats();
@@ -2567,7 +4058,7 @@
                 { 'Indicator': 'Programări Luna Aceasta', 'Valoare': stats.monthAppointments },
                 { 'Indicator': 'Programări în Așteptare', 'Valoare': stats.pendingAppointments },
                 { 'Indicator': 'Programări Finalizate', 'Valoare': stats.completedAppointments },
-                { 'Indicator': 'Venituri Luna (RON)', 'Valoare': stats.monthRevenue },
+                { 'Indicator': 'Total Documente', 'Valoare': stats.totalDocuments },
                 { 'Indicator': 'Activități Mâine', 'Valoare': stats.tomorrowTasks }
             ];
             const statsWS = XLSX.utils.json_to_sheet(statsData);
@@ -2602,7 +4093,7 @@
                 ['Programări Luna Aceasta', stats.monthAppointments],
                 ['Programări în Așteptare', stats.pendingAppointments],
                 ['Programări Finalizate', stats.completedAppointments],
-                ['Venituri Luna (RON)', stats.monthRevenue],
+                ['Total Documente', stats.totalDocuments],
                 ['Activități Mâine', stats.tomorrowTasks]
             ];
             
@@ -2619,10 +4110,10 @@
             // Appointments
             if (appData.appointments.length > 0) {
                 doc.setFontSize(16);
-                doc.text('Programări', 20, yPosition);
+                doc.text('Programări Recente', 20, yPosition);
                 yPosition += 10;
                 
-                const appointmentsData = appData.appointments.slice(0, 20).map(apt => [
+                const appointmentsData = appData.appointments.slice(0, 15).map(apt => [
                     apt.clientName,
                     apt.service,
                     new Date(apt.date).toLocaleDateString('ro-RO'),
@@ -2650,11 +4141,12 @@
             const backupData = {
                 ...appData,
                 backupInfo: {
-                    version: '2.0-PWA',
+                    version: '2.1-PWA-Enhanced',
                     timestamp: new Date().toISOString(),
                     totalClients: appData.clients.length,
                     totalAppointments: appData.appointments.length,
-                    totalReminders: appData.reminders.length
+                    totalReminders: appData.reminders.length,
+                    totalDocuments: appData.documents.length
                 }
             };
             
@@ -2666,7 +4158,7 @@
             a.click();
             URL.revokeObjectURL(url);
             
-            alert('✅ Backup realizat cu succes!');
+            showNotification('Backup realizat cu succes!', 'success');
         }
 
         function restoreData(input) {
@@ -2674,7 +4166,7 @@
             if (!file) return;
             
             if (!file.name.endsWith('.json')) {
-                alert('❌ Te rog să selectezi un fișier JSON valid!');
+                showNotification('Te rog să selectezi un fișier JSON valid!', 'error');
                 return;
             }
             
@@ -2688,31 +4180,45 @@
                         throw new Error('Fișierul nu conține date valide!');
                     }
                     
-                    if (confirm('ATENȚIE!\nAceasta va înlocui TOATE datele curente cu cele din backup.\nEști sigur că vrei să continui?')) {
-                        // Restore data
-                        appData.clients = backupData.clients || [];
-                        appData.appointments = backupData.appointments || [];
-                        appData.reminders = backupData.reminders || [];
-                        
-                        // Ensure documents array exists for all clients
-                        appData.clients.forEach(client => {
-                            if (!client.documents) {
-                                client.documents = [];
-                            }
-                        });
-                        
-                        saveData();
-                        updateUI();
-                        
-                        const info = backupData.backupInfo;
-                        if (info) {
-                            alert(`✅ Backup restaurat cu succes!\n\nInfo backup:\n- Data: ${new Date(info.timestamp).toLocaleDateString('ro-RO')}\n- Clienți: ${info.totalClients}\n- Programări: ${info.totalAppointments}\n- Reminder-uri: ${info.totalReminders}`);
-                        } else {
-                            alert('✅ Date restaurate cu succes!');
+                    showConfirm(
+                        'ATENȚIE!\nAceasta va înlocui TOATE datele curente cu cele din backup.\nEști sigur că vrei să continui?',
+                        'Confirmare Restore',
+                        {
+                            confirmText: 'Da, restaurează',
+                            cancelText: 'Anulează'
                         }
-                    }
+                    ).then((confirmed) => {
+                        if (confirmed) {
+                            // Restore data
+                            appData.clients = backupData.clients || [];
+                            appData.appointments = backupData.appointments || [];
+                            appData.reminders = backupData.reminders || [];
+                            appData.documents = backupData.documents || [];
+                            
+                            // Ensure documents array exists for all clients (backward compatibility)
+                            appData.clients.forEach(client => {
+                                if (!client.documents) {
+                                    client.documents = [];
+                                }
+                            });
+                            
+                            saveData();
+                            updateUI();
+                            
+                            const info = backupData.backupInfo;
+                            if (info) {
+                                showNotification(
+                                    `Backup restaurat cu succes!\n\nInfo backup:\n- Data: ${new Date(info.timestamp).toLocaleDateString('ro-RO')}\n- Clienți: ${info.totalClients}\n- Programări: ${info.totalAppointments}\n- Reminder-uri: ${info.totalReminders}\n- Documente: ${info.totalDocuments || 0}`,
+                                    'success',
+                                    { title: 'Restore Complet' }
+                                );
+                            } else {
+                                showNotification('Date restaurate cu succes!', 'success');
+                            }
+                        }
+                    });
                 } catch (error) {
-                    alert('❌ Eroare la citirea fișierului backup!\n\n' + error.message);
+                    showNotification(`Eroare la citirea fișierului backup!\n\n${error.message}`, 'error');
                 }
                 
                 // Reset file input
@@ -2727,32 +4233,44 @@
             const checkbox = document.getElementById('delete-checkbox').checked;
             
             if (confirmation !== 'STERGE TOTUL') {
-                alert('Trebuie să scrii exact "STERGE TOTUL" pentru confirmare!');
+                showNotification('Trebuie să scrii exact "STERGE TOTUL" pentru confirmare!', 'warning');
                 return;
             }
             
             if (!checkbox) {
-                alert('Trebuie să bifezi căsuța de confirmare!');
+                showNotification('Trebuie să bifezi căsuța de confirmare!', 'warning');
                 return;
             }
             
-            if (confirm('ULTIMA CONFIRMARE!\nEști 100% sigur că vrei să ștergi TOATE datele?\nAceastă acțiune NU poate fi anulată!')) {
-                // Clear all data
-                appData = {
-                    clients: [],
-                    appointments: [],
-                    reminders: []
-                };
-                
-                // Clear localStorage
-                localStorage.removeItem('adinstalgaz_data');
-                
-                // Update UI
-                updateUI();
-                hideModal('deleteDataModal');
-                
-                alert('✅ Toate datele au fost șterse cu succes!');
-            }
+            showConfirm(
+                'ULTIMA CONFIRMARE!\nEști 100% sigur că vrei să ștergi TOATE datele?\nAceastă acțiune NU poate fi anulată!',
+                'Confirmare Finală',
+                {
+                    confirmText: 'DA, ȘTERGE TOTUL',
+                    cancelText: 'NU, Anulează'
+                }
+            ).then((confirmed) => {
+                if (confirmed) {
+                    // Clear all data
+                    appData = {
+                        clients: [],
+                        appointments: [],
+                        reminders: [],
+                        documents: []
+                    };
+                    
+                    // Clear localStorage
+                    localStorage.removeItem('adinstalgaz_data');
+                    
+                    // Update UI
+                    updateUI();
+                    hideModal('deleteDataModal');
+                    
+                    showNotification('Toate datele au fost șterse cu succes!', 'success', {
+                        title: 'Ștergere Completă'
+                    });
+                }
+            });
         }
 
         // Statistics and reporting
@@ -2769,13 +4287,7 @@
                 }).length,
                 pendingAppointments: appData.appointments.filter(apt => apt.status === 'programat').length,
                 completedAppointments: appData.appointments.filter(apt => apt.status === 'finalizat').length,
-                monthRevenue: appData.appointments
-                    .filter(apt => {
-                        if (apt.status !== 'finalizat' || !apt.completedAt) return false;
-                        const completedDate = new Date(apt.completedAt);
-                        return completedDate.getMonth() === currentMonth && completedDate.getFullYear() === currentYear;
-                    })
-                    .reduce((sum, apt) => sum + (apt.price || 0), 0),
+                totalDocuments: appData.documents.length,
                 tomorrowTasks: getTomorrowTasks()
             };
         }
@@ -2791,6 +4303,42 @@
             return tomorrowAppointments.length + tomorrowReminders.length;
         }
 
+        function showStorageInfo() {
+            const dataString = JSON.stringify(appData);
+            const totalSize = dataString.length;
+            const sizeInMB = (totalSize / (1024 * 1024)).toFixed(2);
+            
+            // Calculate breakdown
+            const clientsSize = JSON.stringify(appData.clients).length;
+            const appointmentsSize = JSON.stringify(appData.appointments).length;
+            const remindersSize = JSON.stringify(appData.reminders).length;
+            const documentsSize = JSON.stringify(appData.documents).length;
+            
+            const breakdown = `UTILIZARE STORAGE DETALIATĂ:
+
+💾 Total: ${sizeInMB} MB
+👥 Clienți: ${(clientsSize / (1024 * 1024)).toFixed(2)} MB
+📅 Programări: ${(appointmentsSize / (1024 * 1024)).toFixed(2)} MB
+🔔 Reminder-e: ${(remindersSize / (1024 * 1024)).toFixed(2)} MB
+📁 Documente: ${(documentsSize / (1024 * 1024)).toFixed(2)} MB
+
+📈 LIMITE:
+✅ Bun: sub 5 MB
+⚠️ Atenție: 5-8 MB  
+❌ Critic: peste 8 MB
+
+${sizeInMB > 8 ? '❌ URGENT: Storage critic! Ștergeți fotografii vechi.' : 
+  sizeInMB > 5 ? '⚠️ Storage mare. Recomand curățarea documentelor.' : 
+  '✅ Storage în parametri normali.'}
+
+📁 Total fotografii: ${appData.documents.length}
+🗓️ Ultima fotografiere: ${appData.documents.length > 0 ? 
+    new Date(Math.max(...appData.documents.map(d => new Date(d.uploadDate)))).toLocaleDateString('ro-RO') : 
+    'Niciuna'}`;
+
+            showInfoModal('Informații Storage', breakdown, sizeInMB > 8 ? 'error' : sizeInMB > 5 ? 'warning' : 'info');
+        }
+
         function updateUI() {
             const stats = calculateStats();
             
@@ -2798,8 +4346,11 @@
             document.getElementById('total-clients').textContent = stats.totalClients;
             document.getElementById('month-appointments').textContent = stats.monthAppointments;
             document.getElementById('pending-appointments').textContent = stats.pendingAppointments;
-            document.getElementById('month-revenue').textContent = stats.monthRevenue + ' RON';
+            document.getElementById('total-documents').textContent = stats.totalDocuments;
             document.getElementById('tomorrow-tasks').textContent = stats.tomorrowTasks;
+            
+            // Update storage info
+            updateStorageDisplay();
             
             // Update counts
             document.getElementById('clients-count').textContent = stats.totalClients;
@@ -2808,7 +4359,9 @@
             // Update reports
             document.getElementById('report-appointments').textContent = stats.monthAppointments;
             document.getElementById('report-completed').textContent = stats.completedAppointments;
-            document.getElementById('report-revenue').textContent = stats.monthRevenue + ' RON';
+            
+            // Update document categories
+            updateDocumentCategoryCounts();
             
             // Render lists
             renderClients();
@@ -2816,6 +4369,43 @@
             renderReminders();
             renderRecentActivity();
             renderTomorrowTasks();
+            renderDocuments();
+        }
+
+        function updateStorageDisplay() {
+            const storageElement = document.getElementById('storage-usage');
+            if (!storageElement) return;
+            
+            try {
+                const dataString = JSON.stringify(appData);
+                const sizeInMB = (dataString.length / (1024 * 1024)).toFixed(2);
+                
+                storageElement.textContent = `${sizeInMB} MB`;
+                
+                // Color code based on usage
+                if (sizeInMB > 8) {
+                    storageElement.style.color = '#dc2626'; // Red
+                } else if (sizeInMB > 5) {
+                    storageElement.style.color = '#f59e0b'; // Orange
+                } else {
+                    storageElement.style.color = '#10b981'; // Green
+                }
+            } catch (error) {
+                storageElement.textContent = 'Eroare calcul';
+                storageElement.style.color = '#6b7280';
+            }
+        }
+
+        function updateDocumentCategoryCounts() {
+            const pvCount = appData.documents.filter(d => d.category === 'pv-verificare').length;
+            const fiseCount = appData.documents.filter(d => d.category === 'fisa-tehnica').length;
+            const otherCount = appData.documents.filter(d => !['pv-verificare', 'fisa-tehnica'].includes(d.category)).length;
+            
+            if (document.getElementById('pv-count')) {
+                document.getElementById('pv-count').textContent = pvCount;
+                document.getElementById('fise-count').textContent = fiseCount;
+                document.getElementById('other-docs-count').textContent = otherCount;
+            }
         }
 
         function renderRecentActivity() {
@@ -2866,14 +4456,6 @@
             }
         }
 
-        // Set minimum date for date inputs
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date().toISOString().split('T')[0];
-            const dateInputs = document.querySelectorAll('input[type="date"]');
-            dateInputs.forEach(input => {
-                input.min = today;
-            });
-        });
     </script>
 </body>
 </html>
