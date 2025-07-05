@@ -1,1 +1,1200 @@
+import { useState, useEffect } from 'react';
+import { Calendar, Users, FileText, DollarSign, Phone, Plus, Search, Download, Edit, Trash2, CheckCircle, Clock, AlertCircle, Bell, Camera, Upload, MessageSquare, Zap } from 'lucide-react';
 
+// Logo component
+const Logo = () => (
+  <div className="w-12 h-12 bg-gradient-to-br from-white to-gray-100 rounded-xl flex items-center justify-center border-2 border-white/30 shadow-lg">
+    <svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M50 15 C60 25, 65 35, 65 45 C65 55, 60 65, 50 65 C40 65, 35 55, 35 45 C35 35, 40 25, 50 15 Z" fill="url(#flameGradient)"/>
+      <rect x="20" y="70" width="60" height="8" rx="4" fill="#2a5298"/>
+      <rect x="15" y="78" width="70" height="6" rx="3" fill="#1e3c72"/>
+      <path d="M25 50 L35 50 L35 45 L40 45 L40 55 L35 55 L35 50 L30 50 L30 60 L25 60 Z" fill="#ff6b35"/>
+      <defs>
+        <linearGradient id="flameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style={{stopColor:'#ff6b35', stopOpacity:1}} />
+          <stop offset="50%" style={{stopColor:'#ff8c42', stopOpacity:1}} />
+          <stop offset="100%" style={{stopColor:'#ffa726', stopOpacity:1}} />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+);
+
+// Storage helper functions
+const saveToStorage = (key, data) => {
+  localStorage.setItem(key, JSON.stringify(data));
+};
+
+const getFromStorage = (key) => {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : null;
+};
+
+const AdInstalGazApp = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [clients, setClients] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [invoices, setInvoices] = useState([]);
+  const [reminders, setReminders] = useState([]);
+  const [documents, setDocuments] = useState([]);
+  const [showAddClient, setShowAddClient] = useState(false);
+  const [showAddAppointment, setShowAddAppointment] = useState(false);
+  const [showAddReminder, setShowAddReminder] = useState(false);
+  const [showClientDetails, setShowClientDetails] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Load data from storage on component mount
+  useEffect(() => {
+    const savedClients = getFromStorage('adinstal_clients') || [];
+    const savedAppointments = getFromStorage('adinstal_appointments') || [];
+    const savedInvoices = getFromStorage('adinstal_invoices') || [];
+    const savedReminders = getFromStorage('adinstal_reminders') || [];
+    const savedDocuments = getFromStorage('adinstal_documents') || [];
+    
+    setClients(savedClients);
+    setAppointments(savedAppointments);
+    setInvoices(savedInvoices);
+    setReminders(savedReminders);
+    setDocuments(savedDocuments);
+  }, []);
+
+  // Save data to storage whenever state changes
+  useEffect(() => {
+    saveToStorage('adinstal_clients', clients);
+  }, [clients]);
+
+  useEffect(() => {
+    saveToStorage('adinstal_appointments', appointments);
+  }, [appointments]);
+
+  useEffect(() => {
+    saveToStorage('adinstal_invoices', invoices);
+  }, [invoices]);
+
+  useEffect(() => {
+    saveToStorage('adinstal_reminders', reminders);
+  }, [reminders]);
+
+  useEffect(() => {
+    saveToStorage('adinstal_documents', documents);
+  }, [documents]);
+
+  // Add new client
+  const addClient = (clientData) => {
+    const newClient = {
+      id: Date.now(),
+      ...clientData,
+      createdAt: new Date().toISOString(),
+      totalServices: 0,
+      lastService: null
+    };
+    setClients([...clients, newClient]);
+    setShowAddClient(false);
+  };
+
+  // Add new appointment
+  const addAppointment = (appointmentData) => {
+    const newAppointment = {
+      id: Date.now(),
+      ...appointmentData,
+      createdAt: new Date().toISOString(),
+      status: 'programat'
+    };
+    setAppointments([...appointments, newAppointment]);
+    setShowAddAppointment(false);
+  };
+
+  // Update appointment status
+  const updateAppointmentStatus = (id, status) => {
+    setAppointments(appointments.map(apt => 
+      apt.id === id ? { ...apt, status, completedAt: status === 'finalizat' ? new Date().toISOString() : null } : apt
+    ));
+  };
+
+  // Add reminder
+  const addReminder = (reminderData) => {
+    const newReminder = {
+      id: Date.now(),
+      ...reminderData,
+      createdAt: new Date().toISOString(),
+      sent: false
+    };
+    setReminders([...reminders, newReminder]);
+    setShowAddReminder(false);
+  };
+
+  // Upload document for client
+  const uploadDocument = (clientId, file, type, description) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const newDocument = {
+        id: Date.now(),
+        clientId,
+        fileName: file.name,
+        fileType: file.type,
+        fileData: e.target.result,
+        documentType: type,
+        description,
+        uploadedAt: new Date().toISOString()
+      };
+      setDocuments([...documents, newDocument]);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Send WhatsApp reminder
+  const sendWhatsAppReminder = (clientPhone, message, reminderType) => {
+    let finalMessage = message;
+    
+    if (!message && reminderType) {
+      if (reminderType === 'verificare-instalatii-gaz') {
+        finalMessage = `Bună ziua! Vă aducem aminte că se apropie termenul pentru verificarea tehnică a instalațiilor de gaze. Vă rugăm să ne contactați pentru programare. Ad Instal Gaz SRL - 0762 614 401`;
+      } else if (reminderType === 'verificare-centrale-termice') {
+        finalMessage = `Bună ziua! Este timpul pentru revizia/verificarea centralei termice. Contactați-ne pentru programare. Ad Instal Gaz SRL - 0762 614 401`;
+      }
+    }
+    
+    const whatsappURL = `https://wa.me/40${clientPhone.replace(/\D/g, '').slice(-9)}?text=${encodeURIComponent(finalMessage)}`;
+    window.open(whatsappURL, '_blank');
+  };
+
+  // Send SMS reminder
+  const sendSMSReminder = (clientPhone, message, reminderType) => {
+    let finalMessage = message;
+    
+    if (!message && reminderType) {
+      if (reminderType === 'verificare-instalatii-gaz') {
+        finalMessage = `Verificare instalații gaze aproape! Programare: 0762614401 - Ad Instal Gaz SRL`;
+      } else if (reminderType === 'verificare-centrale-termice') {
+        finalMessage = `Revizie centrală termică aproape! Programare: 0762614401 - Ad Instal Gaz SRL`;
+      }
+    }
+    
+    const smsURL = `sms:+40${clientPhone.replace(/\D/g, '').slice(-9)}?body=${encodeURIComponent(finalMessage)}`;
+    window.location.href = smsURL;
+  };
+
+  // Check for upcoming reminders
+  const checkReminders = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    
+    return reminders.filter(reminder => 
+      reminder.reminderDate === tomorrowStr && !reminder.sent
+    );
+  };
+
+  // Get tomorrow's activities
+  const getTomorrowActivities = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    
+    const tomorrowAppointments = appointments.filter(apt => apt.date === tomorrowStr);
+    const upcomingReminders = checkReminders();
+    
+    return {
+      appointments: tomorrowAppointments,
+      reminders: upcomingReminders,
+      totalTasks: tomorrowAppointments.length + upcomingReminders.length
+    };
+  };
+
+  // Generate statistics
+  const stats = {
+    totalClients: clients.length,
+    thisMonthAppointments: appointments.filter(apt => {
+      const aptDate = new Date(apt.date);
+      const now = new Date();
+      return aptDate.getMonth() === now.getMonth() && aptDate.getFullYear() === now.getFullYear();
+    }).length,
+    pendingAppointments: appointments.filter(apt => apt.status === 'programat').length,
+    completedAppointments: appointments.filter(apt => apt.status === 'finalizat').length,
+    thisMonthRevenue: appointments
+      .filter(apt => apt.status === 'finalizat' && new Date(apt.completedAt).getMonth() === new Date().getMonth())
+      .reduce((sum, apt) => sum + (apt.price || 0), 0),
+    tomorrowActivities: getTomorrowActivities()
+  };
+
+  // Filter clients based on search
+  const filteredClients = clients.filter(client =>
+    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    client.phone.includes(searchTerm) ||
+    client.address.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const filteredAppointments = appointments.filter(apt =>
+    apt.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    apt.service.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-blue-600 text-white p-4 shadow-lg">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Logo />
+            <div>
+              <h1 className="text-xl font-bold">Ad Instal Gaz SRL</h1>
+              <p className="text-blue-100 text-sm">Management Business</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="text-sm text-blue-100">Astăzi</p>
+            <p className="font-semibold">{new Date().toLocaleDateString('ro-RO')}</p>
+          </div>
+        </div>
+      </header>
+
+      {/* Navigation */}
+      <nav className="bg-white border-b border-gray-200 p-4">
+        <div className="flex space-x-1 overflow-x-auto">
+          {[
+            { id: 'dashboard', icon: DollarSign, label: 'Dashboard' },
+            { id: 'clients', icon: Users, label: 'Clienți' },
+            { id: 'appointments', icon: Calendar, label: 'Programări' },
+            { id: 'reminders', icon: Bell, label: 'Reminder-e' },
+            { id: 'invoices', icon: FileText, label: 'Rapoarte' }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              <tab.icon size={18} />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="p-4">
+        {activeTab === 'dashboard' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Dashboard</h2>
+              <div className="text-sm text-gray-500">
+                Ultima actualizare: {new Date().toLocaleTimeString('ro-RO')}
+              </div>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="bg-white p-6 rounded-lg shadow-sm border">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Total Clienți</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.totalClients}</p>
+                  </div>
+                  <Users className="text-blue-600" size={24} />
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm border">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Programări Luna</p>
+                    <p className="text-2xl font-bold text-gray-900">{stats.thisMonthAppointments}</p>
+                  </div>
+                  <Calendar className="text-green-600" size={24} />
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm border">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">În Așteptare</p>
+                    <p className="text-2xl font-bold text-orange-600">{stats.pendingAppointments}</p>
+                  </div>
+                  <Clock className="text-orange-600" size={24} />
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm border">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-600">Venituri Luna</p>
+                    <p className="text-2xl font-bold text-green-600">{stats.thisMonthRevenue} RON</p>
+                  </div>
+                  <DollarSign className="text-green-600" size={24} />
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-lg shadow-sm text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-blue-100">Mâine</p>
+                    <p className="text-2xl font-bold">{stats.tomorrowActivities.totalTasks}</p>
+                    <p className="text-xs text-blue-100">activități</p>
+                  </div>
+                  <Bell className="text-white" size={24} />
+                </div>
+              </div>
+            </div>
+
+            {/* Tomorrow's Schedule Alert */}
+            {stats.tomorrowActivities.totalTasks > 0 && (
+              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+                <div className="flex items-center">
+                  <AlertCircle className="text-blue-400 mr-3" size={20} />
+                  <div>
+                    <p className="text-blue-700 font-medium">Activități pentru mâine ({new Date(Date.now() + 86400000).toLocaleDateString('ro-RO')})</p>
+                    <p className="text-blue-600 text-sm">
+                      {stats.tomorrowActivities.appointments.length} programări, {stats.tomorrowActivities.reminders.length} reminder-e
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Recent Activity */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg shadow-sm border">
+                <div className="p-6 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold">Programări Recente</h3>
+                </div>
+                <div className="p-6">
+                  {appointments.slice(-5).reverse().map(apt => (
+                    <div key={apt.id} className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
+                      <div className={`w-3 h-3 rounded-full ${
+                        apt.status === 'finalizat' ? 'bg-green-500' :
+                        apt.status === 'in-progres' ? 'bg-yellow-500' : 'bg-blue-500'
+                      }`} />
+                      <div className="flex-1">
+                        <p className="font-medium">{apt.clientName}</p>
+                        <p className="text-sm text-gray-600">{apt.service}</p>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {new Date(apt.date).toLocaleDateString('ro-RO')}
+                      </div>
+                    </div>
+                  ))}
+                  {appointments.length === 0 && (
+                    <p className="text-gray-500 text-center py-8">Nu există programări încă</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border">
+                <div className="p-6 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold">Clienți Noi</h3>
+                </div>
+                <div className="p-6">
+                  {clients.slice(-5).reverse().map(client => (
+                    <div key={client.id} className="flex items-center gap-3 py-3 border-b border-gray-100 last:border-0">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-blue-600 font-semibold text-sm">
+                          {client.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{client.name}</p>
+                        <p className="text-sm text-gray-600">{client.phone}</p>
+                      </div>
+                      <button
+                        onClick={() => window.open(`tel:${client.phone}`)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Phone size={18} />
+                      </button>
+                    </div>
+                  ))}
+                  {clients.length === 0 && (
+                    <p className="text-gray-500 text-center py-8">Nu există clienți încă</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'clients' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Clienți ({clients.length})</h2>
+              <button
+                onClick={() => setShowAddClient(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              >
+                <Plus size={18} />
+                Adaugă Client
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Caută clienți..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Clients List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredClients.map(client => (
+                <div key={client.id} className="bg-white rounded-lg shadow-sm border p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-blue-600 font-bold text-lg">
+                        {client.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowClientDetails(client)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <FileText size={20} />
+                      </button>
+                      <button
+                        onClick={() => window.open(`tel:${client.phone}`)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Phone size={20} />
+                      </button>
+                    </div>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">{client.name}</h3>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <p>📞 {client.phone}</p>
+                    <p>📍 {client.address}</p>
+                    <p>🔧 {client.totalServices} servicii</p>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <p className="text-xs text-gray-500">
+                      Adăugat: {new Date(client.createdAt).toLocaleDateString('ro-RO')}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {filteredClients.length === 0 && (
+              <div className="text-center py-12">
+                <Users className="mx-auto text-gray-400 mb-4" size={48} />
+                <p className="text-gray-500">
+                  {searchTerm ? 'Nu s-au găsit clienți' : 'Nu aveți clienți încă'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'reminders' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Reminder-e & Notificări</h2>
+              <button
+                onClick={() => setShowAddReminder(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
+              >
+                <Plus size={18} />
+                Reminder Nou
+              </button>
+            </div>
+
+            {/* Active Reminders */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg shadow-sm border">
+                <div className="p-6 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Bell className="text-orange-500" size={20} />
+                    Reminder-e Active ({reminders.filter(r => !r.sent).length})
+                  </h3>
+                </div>
+                <div className="p-6">
+                  {reminders.filter(r => !r.sent).map(reminder => (
+                    <div key={reminder.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                      <div className="flex-1">
+                        <p className="font-medium">{reminder.clientName}</p>
+                        <p className="text-sm text-gray-600">{reminder.message}</p>
+                        <p className="text-xs text-gray-500">
+                          Programat: {new Date(reminder.reminderDate).toLocaleDateString('ro-RO')}
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => sendWhatsAppReminder(reminder.clientPhone, reminder.message, reminder.type)}
+                          className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600"
+                        >
+                          <MessageSquare size={16} />
+                        </button>
+                        <button
+                          onClick={() => sendSMSReminder(reminder.clientPhone, reminder.message, reminder.type)}
+                          className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                        >
+                          📱
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {reminders.filter(r => !r.sent).length === 0 && (
+                    <p className="text-gray-500 text-center py-8">Nu există reminder-e active</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border">
+                <div className="p-6 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Zap className="text-blue-500" size={20} />
+                    Reminder-e Automate
+                  </h3>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-4">
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <h4 className="font-medium text-blue-900">Verificări și Revizii Instalații Gaz</h4>
+                      <p className="text-sm text-blue-700 mt-1">
+                        Reminder automat pentru verificările periodice ale instalațiilor de gaze (anual/după perioada specificată)
+                      </p>
+                      <button className="mt-3 bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700">
+                        Activează (Pro)
+                      </button>
+                    </div>
+                    <div className="p-4 bg-green-50 rounded-lg">
+                      <h4 className="font-medium text-green-900">Verificări și Revizii Centrale Termice</h4>
+                      <p className="text-sm text-green-700 mt-1">
+                        Notificare clienți pentru reviziile periodice ale centralelor termice și verificările tehnice
+                      </p>
+                      <button className="mt-3 bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700">
+                        Activează (Pro)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Tomorrow's Report */}
+            {stats.tomorrowActivities.totalTasks > 0 && (
+              <div className="bg-white rounded-lg shadow-sm border">
+                <div className="p-6 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold">📋 Raport pentru Mâine ({new Date(Date.now() + 86400000).toLocaleDateString('ro-RO')})</h3>
+                </div>
+                <div className="p-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium mb-3">Programări ({stats.tomorrowActivities.appointments.length})</h4>
+                      {stats.tomorrowActivities.appointments.map(apt => (
+                        <div key={apt.id} className="flex items-center gap-3 py-2 border-b border-gray-100">
+                          <Clock size={16} className="text-blue-500" />
+                          <div className="flex-1">
+                            <p className="font-medium">{apt.time} - {apt.clientName}</p>
+                            <p className="text-sm text-gray-600">{apt.service}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-3">Reminder-e ({stats.tomorrowActivities.reminders.length})</h4>
+                      {stats.tomorrowActivities.reminders.map(reminder => (
+                        <div key={reminder.id} className="flex items-center gap-3 py-2 border-b border-gray-100">
+                          <Bell size={16} className="text-orange-500" />
+                          <div className="flex-1">
+                            <p className="font-medium">{reminder.clientName}</p>
+                            <p className="text-sm text-gray-600">
+                              {reminder.type === 'verificare-instalatii-gaz' ? 'Verificare Instalații Gaz' :
+                               reminder.type === 'verificare-centrale-termice' ? 'Verificare Centrale Termice' :
+                               reminder.type === 'urmărire-factura' ? 'Urmărire Factură' : 'Reminder Custom'}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'appointments' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Programări ({appointments.length})</h2>
+              <button
+                onClick={() => setShowAddAppointment(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              >
+                <Plus size={18} />
+                Programare Nouă
+              </button>
+            </div>
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <input
+                type="text"
+                placeholder="Caută programări..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Appointments List */}
+            <div className="space-y-4">
+              {filteredAppointments.map(apt => (
+                <div key={apt.id} className="bg-white rounded-lg shadow-sm border p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-semibold text-gray-900">{apt.clientName}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          apt.status === 'finalizat' ? 'bg-green-100 text-green-800' :
+                          apt.status === 'in-progres' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {apt.status === 'finalizat' ? 'Finalizat' :
+                           apt.status === 'in-progres' ? 'În Progres' : 'Programat'}
+                        </span>
+                      </div>
+                      <div className="space-y-1 text-sm text-gray-600">
+                        <p>🔧 {apt.service}</p>
+                        <p>📍 {apt.address}</p>
+                        <p>📅 {new Date(apt.date).toLocaleDateString('ro-RO')} • {apt.time}</p>
+                        {apt.price && <p>💰 {apt.price} RON</p>}
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      {apt.status === 'programat' && (
+                        <button
+                          onClick={() => updateAppointmentStatus(apt.id, 'in-progres')}
+                          className="bg-yellow-600 text-white px-3 py-1 rounded text-sm hover:bg-yellow-700"
+                        >
+                          Start
+                        </button>
+                      )}
+                      {apt.status === 'in-progres' && (
+                        <button
+                          onClick={() => updateAppointmentStatus(apt.id, 'finalizat')}
+                          className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                        >
+                          Finalizează
+                        </button>
+                      )}
+                      <button
+                        onClick={() => window.open(`tel:${apt.phone}`)}
+                        className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+                      >
+                        <Phone size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {filteredAppointments.length === 0 && (
+              <div className="text-center py-12">
+                <Calendar className="mx-auto text-gray-400 mb-4" size={48} />
+                <p className="text-gray-500">
+                  {searchTerm ? 'Nu s-au găsit programări' : 'Nu aveți programări încă'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'invoices' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Facturi & Rapoarte</h2>
+              <button
+                onClick={() => {
+                  const data = { clients, appointments, invoices, stats };
+                  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `adinstalgaz-backup-${new Date().toISOString().split('T')[0]}.json`;
+                  a.click();
+                }}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center gap-2"
+              >
+                <Download size={18} />
+                Export Date
+              </button>
+            </div>
+
+            {/* Statistics Overview */}
+            <div className="bg-white rounded-lg shadow-sm border p-6">
+              <h3 className="text-lg font-semibold mb-4">Raport Lunar</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-blue-600">{stats.thisMonthAppointments}</p>
+                  <p className="text-gray-600">Servicii Luna Aceasta</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-green-600">{stats.completedAppointments}</p>
+                  <p className="text-gray-600">Servicii Finalizate</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-3xl font-bold text-green-600">{stats.thisMonthRevenue} RON</p>
+                  <p className="text-gray-600">Venituri Luna</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Services Breakdown */}
+            <div className="bg-white rounded-lg shadow-sm border p-6">
+              <h3 className="text-lg font-semibold mb-4">Servicii pe Tipuri</h3>
+              <div className="space-y-3">
+                {['Verificare Tehnică Periodică', 'Verificare la Racordare', 'Instalații de Utilizare Gaz', 'Revizii Centrale Termice'].map(service => {
+                  const count = appointments.filter(apt => apt.service.includes(service.split(' ')[0])).length;
+                  return (
+                    <div key={service} className="flex justify-between items-center">
+                      <span className="text-gray-700">{service}</span>
+                      <span className="font-semibold text-blue-600">{count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+
+      {/* Add Reminder Modal */}
+      {showAddReminder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold mb-4">Reminder Nou</h3>
+              <div className="space-y-4">
+                <input
+                  id="reminderClientName"
+                  type="text"
+                  placeholder="Nume client"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+                <input
+                  id="reminderClientPhone"
+                  type="tel"
+                  placeholder="Telefon client"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+                <select
+                  id="reminderType"
+                  onChange={(e) => {
+                    const type = e.target.value;
+                    const messageField = document.getElementById('reminderMessage');
+                    
+                    if (type === 'verificare-instalatii-gaz') {
+                      messageField.value = 'Bună ziua! Vă aducem aminte că se apropie termenul pentru verificarea tehnică a instalațiilor de gaze. Vă rugăm să ne contactați pentru programare. Ad Instal Gaz SRL - 0762 614 401';
+                    } else if (type === 'verificare-centrale-termice') {
+                      messageField.value = 'Bună ziua! Este timpul pentru revizia/verificarea centralei termice. Contactați-ne pentru programare. Ad Instal Gaz SRL - 0762 614 401';
+                    } else if (type === 'urmărire-factura') {
+                      messageField.value = 'Bună ziua! Vă aducem aminte despre factura pentru serviciile prestate. Pentru detalii, contactați-ne la 0762 614 401. Ad Instal Gaz SRL';
+                    } else {
+                      messageField.value = '';
+                    }
+                  }}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                >
+                  <option value="">Tipul reminder-ului</option>
+                  <option value="verificare-instalatii-gaz">Verificări și Revizii Instalații Gaz</option>
+                  <option value="verificare-centrale-termice">Verificări și Revizii Centrale Termice</option>
+                  <option value="urmărire-factura">Urmărire Factură</option>
+                  <option value="custom">Personalizat</option>
+                </select>
+                <input
+                  id="reminderDate"
+                  type="date"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+                <textarea
+                  id="reminderMessage"
+                  placeholder="Mesajul pentru client (se completează automat când selectezi tipul)"
+                  rows="4"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowAddReminder(false)}
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                >
+                  Anulează
+                </button>
+                <button
+                  onClick={() => {
+                    const clientName = document.getElementById('reminderClientName').value;
+                    const clientPhone = document.getElementById('reminderClientPhone').value;
+                    const type = document.getElementById('reminderType').value;
+                    const reminderDate = document.getElementById('reminderDate').value;
+                    const message = document.getElementById('reminderMessage').value;
+                    
+                    if (clientName && clientPhone && type && reminderDate && message) {
+                      addReminder({
+                        clientName,
+                        clientPhone,
+                        type,
+                        reminderDate,
+                        message
+                      });
+                      // Clear inputs
+                      document.getElementById('reminderClientName').value = '';
+                      document.getElementById('reminderClientPhone').value = '';
+                      document.getElementById('reminderType').value = '';
+                      document.getElementById('reminderDate').value = '';
+                      document.getElementById('reminderMessage').value = '';
+                    }
+                  }}
+                  className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
+                >
+                  Salvează
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Client Details Modal */}
+      {showClientDetails && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-xl font-semibold">Detalii Client: {showClientDetails.name}</h3>
+              <button
+                onClick={() => setShowClientDetails(null)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Client Info */}
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-3">Informații Client</h4>
+                    <div className="space-y-2 text-sm">
+                      <p><span className="font-medium">📞 Telefon:</span> {showClientDetails.phone}</p>
+                      <p><span className="font-medium">📧 Email:</span> {showClientDetails.email || 'Nu este specificat'}</p>
+                      <p><span className="font-medium">📍 Adresa:</span> {showClientDetails.address}</p>
+                      <p><span className="font-medium">📅 Client din:</span> {new Date(showClientDetails.createdAt).toLocaleDateString('ro-RO')}</p>
+                    </div>
+                  </div>
+
+                  {/* Upload Documents */}
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-3">Încarcă Document</h4>
+                    <div className="space-y-3">
+                      <select id="docType" className="w-full p-2 border border-gray-300 rounded">
+                        <option value="">Tipul documentului</option>
+                        <option value="verificare-instalatii-gaz">Certificat Verificare Instalații Gaz</option>
+                        <option value="verificare-centrale-termice">Certificat Verificare Centrale Termice</option>
+                        <option value="autorizatie-functionare">Autorizație Funcționare</option>
+                        <option value="raport-tehnic">Raport Tehnic</option>
+                        <option value="factura">Factură</option>
+                        <option value="contract">Contract</option>
+                        <option value="pozele-instalatii">Poze Instalații</option>
+                        <option value="altele">Altele</option>
+                      </select>
+                      <input
+                        id="docDescription"
+                        type="text"
+                        placeholder="Descriere document"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                      <input
+                        id="docFile"
+                        type="file"
+                        accept="image/*,.pdf,.doc,.docx"
+                        className="w-full p-2 border border-gray-300 rounded"
+                      />
+                      <button
+                        onClick={() => {
+                          const file = document.getElementById('docFile').files[0];
+                          const type = document.getElementById('docType').value;
+                          const description = document.getElementById('docDescription').value;
+                          
+                          if (file && type && description) {
+                            uploadDocument(showClientDetails.id, file, type, description);
+                            document.getElementById('docFile').value = '';
+                            document.getElementById('docType').value = '';
+                            document.getElementById('docDescription').value = '';
+                          }
+                        }}
+                        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                      >
+                        <Upload size={16} className="inline mr-2" />
+                        Încarcă Document
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Documents & History */}
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-3">Istoric Servicii</h4>
+                    <div className="space-y-2">
+                      {appointments
+                        .filter(apt => apt.clientName === showClientDetails.name)
+                        .sort((a, b) => new Date(b.date) - new Date(a.date))
+                        .map(apt => (
+                          <div key={apt.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-0">
+                            <div className={`w-3 h-3 rounded-full ${
+                              apt.status === 'finalizat' ? 'bg-green-500' :
+                              apt.status === 'in-progres' ? 'bg-yellow-500' : 'bg-blue-500'
+                            }`} />
+                            <div className="flex-1">
+                              <p className="font-medium text-sm">{apt.service}</p>
+                              <p className="text-xs text-gray-600">
+                                {new Date(apt.date).toLocaleDateString('ro-RO')} • {apt.status}
+                              </p>
+                            </div>
+                            {apt.price && (
+                              <span className="text-sm font-medium text-green-600">{apt.price} RON</span>
+                            )}
+                          </div>
+                        ))}
+                      {appointments.filter(apt => apt.clientName === showClientDetails.name).length === 0 && (
+                        <p className="text-gray-500 text-sm">Nu există servicii înregistrate</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium mb-3">Documente ({documents.filter(doc => doc.clientId === showClientDetails.id).length})</h4>
+                    <div className="space-y-2">
+                      {documents
+                        .filter(doc => doc.clientId === showClientDetails.id)
+                        .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))
+                        .map(doc => (
+                          <div key={doc.id} className="flex items-center gap-3 py-2 border-b border-gray-200 last:border-0">
+                            <FileText size={16} className="text-blue-500" />
+                            <div className="flex-1">
+                              <p className="font-medium text-sm">{doc.description}</p>
+                              <p className="text-xs text-gray-600">
+                                {doc.documentType === 'verificare-instalatii-gaz' ? 'Verificare Instalații Gaz' :
+                                 doc.documentType === 'verificare-centrale-termice' ? 'Verificare Centrale Termice' :
+                                 doc.documentType === 'autorizatie-functionare' ? 'Autorizație Funcționare' :
+                                 doc.documentType === 'raport-tehnic' ? 'Raport Tehnic' :
+                                 doc.documentType === 'pozele-instalatii' ? 'Poze Instalații' :
+                                 doc.documentType} • {new Date(doc.uploadedAt).toLocaleDateString('ro-RO')}
+                              </p>
+                            </div>
+                            <button
+                              onClick={() => {
+                                const link = document.createElement('a');
+                                link.href = doc.fileData;
+                                link.download = doc.fileName;
+                                link.click();
+                              }}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              <Download size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      {documents.filter(doc => doc.clientId === showClientDetails.id).length === 0 && (
+                        <p className="text-gray-500 text-sm">Nu există documente încărcate</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Client Modal */}
+      {showAddClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold mb-4">Adaugă Client Nou</h3>
+              <div className="space-y-4">
+                <input
+                  id="clientName"
+                  type="text"
+                  placeholder="Nume complet"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  id="clientPhone"
+                  type="tel"
+                  placeholder="Telefon"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  id="clientEmail"
+                  type="email"
+                  placeholder="Email (opțional)"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <textarea
+                  id="clientAddress"
+                  placeholder="Adresa"
+                  rows="3"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowAddClient(false)}
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                >
+                  Anulează
+                </button>
+                <button
+                  onClick={() => {
+                    const name = document.getElementById('clientName').value;
+                    const phone = document.getElementById('clientPhone').value;
+                    const email = document.getElementById('clientEmail').value;
+                    const address = document.getElementById('clientAddress').value;
+                    
+                    if (name && phone && address) {
+                      addClient({ name, phone, email, address });
+                      // Clear inputs
+                      document.getElementById('clientName').value = '';
+                      document.getElementById('clientPhone').value = '';
+                      document.getElementById('clientEmail').value = '';
+                      document.getElementById('clientAddress').value = '';
+                    }
+                  }}
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Salvează
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Appointment Modal */}
+      {showAddAppointment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold mb-4">Programare Nouă</h3>
+              <div className="space-y-4">
+                <input
+                  id="appointmentClientName"
+                  type="text"
+                  placeholder="Nume client"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  id="appointmentPhone"
+                  type="tel"
+                  placeholder="Telefon"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <select
+                  id="appointmentService"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Selectează serviciul</option>
+                  <option value="Verificare Tehnică Periodică">Verificare Tehnică Periodică</option>
+                  <option value="Verificare la Racordare">Verificare la Racordare</option>
+                  <option value="Instalații de Utilizare Gaz">Instalații de Utilizare Gaz</option>
+                  <option value="Revizii Centrale Termice">Revizii Centrale Termice</option>
+                  <option value="Proiectare Branșamente">Proiectare Branșamente</option>
+                  <option value="Execuție Branșamente">Execuție Branșamente</option>
+                </select>
+                <input
+                  id="appointmentAddress"
+                  type="text"
+                  placeholder="Adresa"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    id="appointmentDate"
+                    type="date"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    id="appointmentTime"
+                    type="time"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <input
+                  id="appointmentPrice"
+                  type="number"
+                  placeholder="Preț (RON)"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <textarea
+                  id="appointmentNotes"
+                  placeholder="Observații (opțional)"
+                  rows="2"
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowAddAppointment(false)}
+                  className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400"
+                >
+                  Anulează
+                </button>
+                <button
+                  onClick={() => {
+                    const clientName = document.getElementById('appointmentClientName').value;
+                    const phone = document.getElementById('appointmentPhone').value;
+                    const service = document.getElementById('appointmentService').value;
+                    const address = document.getElementById('appointmentAddress').value;
+                    const date = document.getElementById('appointmentDate').value;
+                    const time = document.getElementById('appointmentTime').value;
+                    const price = document.getElementById('appointmentPrice').value;
+                    const notes = document.getElementById('appointmentNotes').value;
+                    
+                    if (clientName && phone && service && address && date && time) {
+                      addAppointment({
+                        clientName,
+                        phone,
+                        service,
+                        address,
+                        date,
+                        time,
+                        price: Number(price) || 0,
+                        notes
+                      });
+                      // Clear inputs
+                      document.getElementById('appointmentClientName').value = '';
+                      document.getElementById('appointmentPhone').value = '';
+                      document.getElementById('appointmentService').value = '';
+                      document.getElementById('appointmentAddress').value = '';
+                      document.getElementById('appointmentDate').value = '';
+                      document.getElementById('appointmentTime').value = '';
+                      document.getElementById('appointmentPrice').value = '';
+                      document.getElementById('appointmentNotes').value = '';
+                    }
+                  }}
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Salvează
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AdInstalGazApp;
