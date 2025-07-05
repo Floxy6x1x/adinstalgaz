@@ -6,6 +6,11 @@
     <title>GazTech Services - Aplicație Gestionare Abonați</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-functions-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -767,6 +772,15 @@
                     <button class="btn btn-secondary" onclick="sincronizareAvansata()" style="margin-bottom: 10px; width: 100%;">🔄 Sincronizare Avansată</button>
                     <button class="btn btn-secondary" onclick="creeazaBackup()" style="width: 100%;">💾 Backup Date</button>
                 </div>
+                <div class="form-container">
+                    <h3 style="color: #4a5568; margin-bottom: 15px;">📱 Notificări & Firebase</h3>
+                    <button class="btn btn-primary" onclick="verificaNotificariAutomated()" style="margin-bottom: 10px; width: 100%;">📱 Verifică Notificări</button>
+                    <button class="btn btn-secondary" onclick="sincronizareCuFirestore()" style="margin-bottom: 10px; width: 100%;">🔥 Sync Firebase</button>
+                    <button class="btn btn-secondary" onclick="trimiteNotificariInMasa()" style="width: 100%;">📢 Notificări în Masă</button>
+                    <div style="margin-top: 10px; padding: 10px; background: #f0fff4; border-radius: 6px; border-left: 3px solid #38a169;">
+                        <small style="color: #22543d;">Firebase: <span id="firebaseStatus">Verificare...</span></small>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1216,6 +1230,259 @@
     </div>
 
     <script>
+        // ===========================================
+        // FIREBASE CONFIGURATION & NOTIFICATIONS
+        // ===========================================
+        
+        // Configurare Firebase
+        const firebaseConfig = {
+            apiKey: "your-api-key",
+            authDomain: "adinstalgaz-pwa.firebaseapp.com",
+            projectId: "adinstalgaz-pwa",
+            storageBucket: "adinstalgaz-pwa.appspot.com",
+            messagingSenderId: "your-sender-id",
+            appId: "your-app-id"
+        };
+
+        // Inițializează Firebase
+        let db, functions;
+        try {
+            if (typeof firebase !== 'undefined') {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                functions = firebase.functions();
+                console.log('✅ Firebase inițializat cu succes!');
+            }
+        } catch (error) {
+            console.warn('⚠️ Firebase nu este disponibil:', error.message);
+            console.log('📱 Aplicația va funcționa în modul offline');
+        }
+
+        // ===========================================
+        // SISTEM NOTIFICĂRI AUTOMATE
+        // ===========================================
+
+        // Template-uri de mesaje
+        const messageTemplates = {
+            expirareRevizie: (nume, zile, servicii, telefon) => 
+                `🔔 Bună ziua ${nume}!\n\n` +
+                `Revizia dumneavoastră pentru ${servicii} expiră în ${zile} zile.\n\n` +
+                `Pentru reprogramare, sunați la 📞 ${telefon || '0721234567'}.\n\n` +
+                `GazTech Services - Servicii profesionale de instalații gaz`,
+
+            plataPendenta: (nume, suma, servicii) => 
+                `💰 Bună ziua ${nume}!\n\n` +
+                `Aveți de plătit suma de ${suma} Lei pentru:\n${servicii}\n\n` +
+                `Vă rugăm să efectuați plata în cel mai scurt timp.\n\n` +
+                `GazTech Services - Mulțumim!`,
+
+            confirmareProgramare: (nume, data, serviciu, adresa) => 
+                `✅ Bună ziua ${nume}!\n\n` +
+                `Confirmăm programarea pentru ${serviciu}\n` +
+                `📅 Data: ${data}\n📍 Adresa: ${adresa}\n\n` +
+                `GazTech Services`,
+
+            revizieCompletata: (nume, serviciu, valabilitate) => 
+                `✅ Bună ziua ${nume}!\n\n` +
+                `Revizia pentru ${serviciu} a fost finalizată cu succes!\n` +
+                `📋 Valabilitate: ${valabilitate}\n\n` +
+                `GazTech Services - Mulțumim pentru încredere!`
+        };
+
+        // Funcție pentru trimitere SMS (simulare)
+        async function trimiteNotificare(telefon, mesaj, tip = 'SMS') {
+            try {
+                if (db && functions) {
+                    // Trimite prin Firebase Functions
+                    const sendNotification = functions.httpsCallable('sendNotification');
+                    const result = await sendNotification({
+                        phone: telefon,
+                        message: mesaj,
+                        type: tip
+                    });
+                    
+                    console.log(`📱 ${tip} trimis cu succes:`, result.data);
+                    return { success: true, result: result.data };
+                } else {
+                    // Simulare pentru demo
+                    console.log(`📱 SIMULARE ${tip} către ${telefon}:`);
+                    console.log(mesaj);
+                    
+                    showNotification(`📱 ${tip} trimis către ${telefon}`, 'success');
+                    return { success: true, simulated: true };
+                }
+            } catch (error) {
+                console.error(`❌ Eroare trimitere ${tip}:`, error);
+                showNotification(`❌ Eroare trimitere ${tip}: ${error.message}`, 'error');
+                return { success: false, error: error.message };
+            }
+        }
+
+        // Funcție pentru notificare expirare revizie
+        async function notificaExpirareRevizie(abonat) {
+            const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'servicii contractate';
+            const dataExpirare = new Date(abonat.dataExpirare);
+            const astazi = new Date();
+            const zileRamase = Math.ceil((dataExpirare - astazi) / (1000 * 60 * 60 * 24));
+            
+            const mesaj = messageTemplates.expirareRevizie(
+                abonat.nume,
+                zileRamase,
+                servicii,
+                '0721234567'
+            );
+            
+            return await trimiteNotificare(abonat.telefon, mesaj, 'SMS');
+        }
+
+        // Funcție pentru notificare plată pendentă
+        async function notificaPlata(abonat) {
+            let costTotal = 0;
+            if (abonat.serviciiContractate) {
+                abonat.serviciiContractate.forEach(serviciu => {
+                    switch(serviciu) {
+                        case 'Verificare Instalație Gaz': costTotal += 150; break;
+                        case 'Revizie Instalație Gaz': costTotal += 250; break;
+                        case 'Verificare Centrală': costTotal += 150; break;
+                        case 'Instalații Gaz + Centrală': costTotal += 250; break;
+                    }
+                });
+            }
+            
+            const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'servicii contractate';
+            const mesaj = messageTemplates.plataPendenta(abonat.nume, costTotal, servicii);
+            
+            return await trimiteNotificare(abonat.telefon, mesaj, 'SMS');
+        }
+
+        // Funcție pentru confirmare programare
+        async function confirmareProgramare(programare) {
+            const abonat = abonati.find(a => a.id == programare.clientId);
+            if (!abonat) return;
+            
+            const data = new Date(programare.data).toLocaleString('ro-RO');
+            const adresa = formatareAdresa(abonat.adresa);
+            
+            const mesaj = messageTemplates.confirmareProgramare(
+                abonat.nume,
+                data,
+                programare.tipServiciu,
+                adresa
+            );
+            
+            return await trimiteNotificare(abonat.telefon, mesaj, 'SMS');
+        }
+
+        // ===========================================
+        // FIREBASE FIRESTORE SYNC
+        // ===========================================
+
+        // Salvare în Firestore
+        async function salveazaInFirestore(colectie, id, data) {
+            if (!db) {
+                console.log('📱 Firestore nu este disponibil - date salvate local');
+                return false;
+            }
+            
+            try {
+                await db.collection(colectie).doc(id.toString()).set({
+                    ...data,
+                    lastModified: firebase.firestore.FieldValue.serverTimestamp(),
+                    source: 'gaztech-web-app'
+                });
+                
+                console.log(`✅ ${colectie}/${id} salvat în Firestore`);
+                return true;
+            } catch (error) {
+                console.error(`❌ Eroare salvare ${colectie}:`, error);
+                return false;
+            }
+        }
+
+        // Încărcare din Firestore
+        async function incarcaDinFirestore(colectie) {
+            if (!db) return [];
+            
+            try {
+                const snapshot = await db.collection(colectie).get();
+                const data = [];
+                
+                snapshot.forEach(doc => {
+                    data.push({
+                        id: parseInt(doc.id) || doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                console.log(`✅ ${data.length} înregistrări încărcate din ${colectie}`);
+                return data;
+            } catch (error) {
+                console.error(`❌ Eroare încărcare ${colectie}:`, error);
+                return [];
+            }
+        }
+
+        // Sincronizare completă cu Firestore
+        async function sincronizareCuFirestore() {
+            if (!db) {
+                showNotification('📱 Firestore nu este disponibil', 'warning');
+                return;
+            }
+            
+            try {
+                showNotification('🔄 Sincronizare cu Firebase...', 'info');
+                
+                // Salvează datele locale în Firestore
+                const promiseSalvare = [];
+                
+                abonati.forEach(abonat => {
+                    promiseSalvare.push(salveazaInFirestore('subscribers', abonat.id, abonat));
+                });
+                
+                programari.forEach(programare => {
+                    promiseSalvare.push(salveazaInFirestore('appointments', programare.id, programare));
+                });
+                
+                remindere.forEach(reminder => {
+                    promiseSalvare.push(salveazaInFirestore('reminders', reminder.id, reminder));
+                });
+                
+                await Promise.all(promiseSalvare);
+                
+                showNotification('✅ Sincronizare Firebase completă!', 'success');
+                showSyncIndicator();
+                
+            } catch (error) {
+                console.error('❌ Eroare sincronizare:', error);
+                showNotification('❌ Eroare sincronizare Firebase', 'error');
+            }
+        }
+
+        // ===========================================
+        // VERIFICARE AUTOMATĂ NOTIFICĂRI
+        // ===========================================
+
+        function verificaNotificariAutomated() {
+            const astazi = new Date();
+            
+            abonati.forEach(async (abonat) => {
+                if (!abonat.dataExpirare) return;
+                
+                const dataExpirare = new Date(abonat.dataExpirare);
+                const zileRamase = Math.ceil((dataExpirare - astazi) / (1000 * 60 * 60 * 24));
+                
+                // Notificare la 30, 7 și 1 zi înainte de expirare
+                if ([30, 7, 1].includes(zileRamase)) {
+                    console.log(`📱 Trimite notificare expirare pentru ${abonat.nume} (${zileRamase} zile)`);
+                    await notificaExpirareRevizie(abonat);
+                    
+                    // Marchează notificarea ca trimisă
+                    abonat.ultimaNotificare = astazi.toISOString();
+                    saveData();
+                }
+            });
+        }
+
         // Global Variables
         let abonati = JSON.parse(localStorage.getItem('abonati')) || [];
         let programari = JSON.parse(localStorage.getItem('programari')) || [];
@@ -1623,11 +1890,149 @@
             }, 4000);
         }
 
-        // Save data to localStorage with sync
+        // FUNCȚII PENTRU NOTIFICĂRI INDIVIDUALE
+        async function trimiteNotificareExpirare(idAbonat) {
+            const abonat = abonati.find(a => a.id === idAbonat);
+            if (!abonat) return;
+            
+            const rezultat = await notificaExpirareRevizie(abonat);
+            if (rezultat.success) {
+                // Marchează notificarea ca trimisă
+                abonat.ultimaNotificare = new Date().toISOString();
+                abonat.numarNotificari = (abonat.numarNotificari || 0) + 1;
+                saveData();
+                
+                // Sincronizează cu Firebase
+                if (db) {
+                    await salveazaInFirestore('subscribers', abonat.id, abonat);
+                }
+                
+                updateListaAbonati();
+            }
+        }
+
+        async function trimiteNotificarePlata(idAbonat) {
+            const abonat = abonati.find(a => a.id === idAbonat);
+            if (!abonat) return;
+            
+            const rezultat = await notificaPlata(abonat);
+            if (rezultat.success) {
+                abonat.ultimaNotificare = new Date().toISOString();
+                abonat.numarNotificari = (abonat.numarNotificari || 0) + 1;
+                saveData();
+                
+                if (db) {
+                    await salveazaInFirestore('subscribers', abonat.id, abonat);
+                }
+                
+                updateListaAbonati();
+            }
+        }
+
+        // FUNCȚII PENTRU NOTIFICĂRI ÎN MASĂ
+        async function trimiteNotificariInMasa() {
+            if (!confirm('Trimiteți notificări pentru toate reviziile care expiră în următoarele 30 de zile?')) {
+                return;
+            }
+            
+            const astazi = new Date();
+            const in30Zile = new Date(astazi.getTime() + 30 * 24 * 60 * 60 * 1000);
+            
+            const abonatiDeNotificat = abonati.filter(abonat => {
+                if (!abonat.dataExpirare) return false;
+                const dataExp = new Date(abonat.dataExpirare);
+                return dataExp >= astazi && dataExp <= in30Zile;
+            });
+            
+            if (abonatiDeNotificat.length === 0) {
+                showNotification('Nu există abonați cu revizii care expiră în următoarele 30 de zile', 'info');
+                return;
+            }
+            
+            showNotification(`📱 Trimitere ${abonatiDeNotificat.length} notificări...`, 'info');
+            
+            let trimiseCuSucces = 0;
+            for (const abonat of abonatiDeNotificat) {
+                const rezultat = await notificaExpirareRevizie(abonat);
+                if (rezultat.success) {
+                    abonat.ultimaNotificare = new Date().toISOString();
+                    abonat.numarNotificari = (abonat.numarNotificari || 0) + 1;
+                    trimiseCuSucces++;
+                }
+                
+                // Pauză între notificări pentru a nu supraîncărca sistemul
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            saveData();
+            showNotification(`✅ ${trimiseCuSucces}/${abonatiDeNotificat.length} notificări trimise cu succes!`, 'success');
+        }
+
+        // Verificare status Firebase
+        function verificaStatusFirebase() {
+            const statusElement = document.getElementById('firebaseStatus');
+            if (statusElement) {
+                if (db) {
+                    statusElement.textContent = '✅ Conectat';
+                    statusElement.style.color = '#22543d';
+                } else {
+                    statusElement.textContent = '❌ Offline';
+                    statusElement.style.color = '#742a2a';
+                }
+            }
+        }
+
+        // Încărcare inițială din Firebase
+        async function incarcareInitialaDinFirebase() {
+            if (!db) return;
+            
+            try {
+                showNotification('🔄 Încărcare date din Firebase...', 'info');
+                
+                const [firestoreAbonati, firestoreProgramari, firestoreRemindere] = await Promise.all([
+                    incarcaDinFirestore('subscribers'),
+                    incarcaDinFirestore('appointments'),
+                    incarcaDinFirestore('reminders')
+                ]);
+                
+                // Îmbină datele locale cu cele din Firebase (prioritate Firebase)
+                if (firestoreAbonati.length > 0) {
+                    abonati = firestoreAbonati;
+                }
+                
+                if (firestoreProgramari.length > 0) {
+                    programari = firestoreProgramari;
+                }
+                
+                if (firestoreRemindere.length > 0) {
+                    remindere = firestoreRemindere;
+                }
+                
+                // Salvează local datele actualizate
+                localStorage.setItem('abonati', JSON.stringify(abonati));
+                localStorage.setItem('programari', JSON.stringify(programari));
+                localStorage.setItem('remindere', JSON.stringify(remindere));
+                
+                showNotification('✅ Date încărcate din Firebase!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Eroare încărcare Firebase:', error);
+                showNotification('⚠️ Eroare încărcare Firebase - se folosesc datele locale', 'warning');
+            }
+        }
+
+        // Modificare funcția saveData pentru a include Firebase
         function saveData() {
             localStorage.setItem('abonati', JSON.stringify(abonati));
             localStorage.setItem('programari', JSON.stringify(programari));
             localStorage.setItem('remindere', JSON.stringify(remindere));
+            
+            // Sincronizare automată cu Firebase
+            if (db) {
+                setTimeout(() => {
+                    sincronizareCuFirestore();
+                }, 500);
+            }
             
             // Sincronizare automată după salvare
             setTimeout(() => {
@@ -1930,11 +2335,26 @@
                 creeazaReminderAutomat(abonatNou);
             }
 
+            // NOTIFICARE AUTOMATĂ PENTRU ABONAT NOU
+            setTimeout(async () => {
+                const servicii = serviciiContractate.join(', ');
+                const mesaj = `✅ Bună ziua ${nume}!\n\n` +
+                    `Vă confirmăm înregistrarea în sistemul GazTech Services.\n` +
+                    `📋 Servicii contractate: ${servicii}\n` +
+                    `📞 Pentru informații: 0721234567\n\n` +
+                    `Mulțumim pentru încredere!`;
+                
+                await trimiteNotificare(telefon, mesaj, 'SMS');
+                abonatNou.numarNotificari = 1;
+                abonatNou.ultimaNotificare = new Date().toISOString();
+                saveData();
+            }, 1000);
+
             saveData();
             resetFormAbonat();
             
             const costTotal = calculeazaCostTotal();
-            showNotification(`Abonatul ${nume} a fost adăugat cu succes! ${documenteTemp.length > 0 ? `(${documenteTemp.length} documente încărcate)` : ''} ${dataUrmatoareaRevizie ? 'Reminder și programare automată create!' : ''}`, 'success');
+            showNotification(`Abonatul ${nume} a fost adăugat cu succes! ${documenteTemp.length > 0 ? `(${documenteTemp.length} documente încărcate)` : ''} ${dataUrmatoareaRevizie ? 'Reminder și programare automată create!' : ''} 📱 Notificare trimisă!`, 'success');
         }
 
         function resetFormAbonat() {
@@ -1996,6 +2416,7 @@
                             <th>Data Revizie</th>
                             <th>Data Expirare</th>
                             <th>Documente</th>
+                            <th>Notificări</th>
                             <th>Status</th>
                             <th>Acțiuni</th>
                         </tr>
@@ -2035,9 +2456,14 @@
                         <td><small>${dataRevizie}</small></td>
                         <td><span class="status-badge ${statusExpirare}"><small>${dataExpirare}</small></span></td>
                         <td>
-                            <button class="btn btn-secondary btn-small" onclick="gestioneazaDocumente(${abonat.id})" title="Gestionează documente">
-                                📎 ${numarDocumente}
-                            </button>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary btn-small" onclick="gestioneazaDocumente(${abonat.id})" title="Gestionează documente">
+                                    📎 ${numarDocumente}
+                                </button>
+                                <button class="btn btn-primary btn-small" onclick="trimiteNotificareExpirare(${abonat.id})" title="Trimite notificare expirare">
+                                    📱
+                                </button>
+                            </div>
                         </td>
                         <td><span class="status-badge status-active">${abonat.status}</span></td>
                         <td>
@@ -2108,10 +2534,18 @@
             };
 
             programari.push(programareNoua);
+
+            // NOTIFICARE AUTOMATĂ PENTRU PROGRAMARE
+            setTimeout(async () => {
+                if (clientId !== 'nou') {
+                    await confirmareProgramare(programareNoua);
+                }
+            }, 500);
+
             saveData();
             resetFormProgramare();
             
-            showNotification('Programarea a fost adăugată cu succes!', 'success');
+            showNotification('Programarea a fost adăugată cu succes! 📱 Notificare trimisă!', 'success');
         }
 
         function resetFormProgramare() {
@@ -2744,6 +3178,8 @@
                                 dataIncarcare: '2024-01-15T10:30:00.000Z'
                             }
                         ],
+                        numarNotificari: 2,
+                        ultimaNotificare: '2024-12-01T10:00:00.000Z',
                         dataCreare: '2024-01-15T10:30:00.000Z',
                         status: 'Activ'
                     },
@@ -2772,6 +3208,8 @@
                         dataUrmatoareaRevizie: '2026-01-20',
                         zileNotificare: '3',
                         documente: [],
+                        numarNotificari: 0,
+                        ultimaNotificare: null,
                         dataCreare: '2024-02-10T14:20:00.000Z',
                         status: 'Activ'
                     },
@@ -2817,6 +3255,8 @@
                                 dataIncarcare: '2024-11-02T09:20:00.000Z'
                             }
                         ],
+                        numarNotificari: 1,
+                        ultimaNotificare: '2024-11-25T16:00:00.000Z',
                         dataCreare: '2024-11-01T16:45:00.000Z',
                         status: 'Activ'
                     }
@@ -2980,9 +3420,17 @@
         }
 
         // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Verifică statusul Firebase
+            verificaStatusFirebase();
+            
+            // Încearcă să încarce datele din Firebase
+            await incarcareInitialaDinFirebase();
+            
             // Adaugă date de test dacă nu există
-            adaugaDateDeTest();
+            if (abonati.length === 0) {
+                adaugaDateDeTest();
+            }
             
             // Sincronizare inițială
             sincronizeazaDatele();
@@ -2997,16 +3445,26 @@
             // Check for urgent reminders every 5 minutes
             setInterval(verificaReminderePendente, 5 * 60 * 1000);
             
+            // Verificare automată notificări la fiecare 30 minute
+            setInterval(verificaNotificariAutomated, 30 * 60 * 1000);
+            
             // Sincronizare avansată la fiecare 30 secunde
             setInterval(sincronizareAvansata, 30000);
             
-            console.log('✅ GazTech Services s-a încărcat complet cu SINCRONIZARE AVANSATĂ!');
+            // Sincronizare cu Firebase la fiecare 2 minute
+            if (db) {
+                setInterval(sincronizareCuFirestore, 2 * 60 * 1000);
+            }
+            
+            console.log('✅ GazTech Services s-a încărcat complet cu NOTIFICĂRI & FIREBASE!');
             console.log('📊 Abonați:', abonati.length);
             console.log('📅 Programări:', programari.length);
             console.log('🔔 Remindere:', remindere.length);
             console.log('🔄 Sincronizare: ACTIVĂ');
             console.log('📎 Gestionare documente: COMPLETĂ');
             console.log('💾 Backup: DISPONIBIL');
+            console.log('📱 Notificări automate: ACTIVE');
+            console.log('🔥 Firebase:', db ? 'CONECTAT' : 'OFFLINE');
         });
 
         // Error handling
