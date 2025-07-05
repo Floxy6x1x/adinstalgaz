@@ -11,6 +11,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Biblioteci pentru rapoarte -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         .tab-button.active {
             background-color: #1e40af;
@@ -36,6 +40,18 @@
             right: 20px;
             z-index: 1000;
         }
+        .logo-placeholder {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -43,8 +59,13 @@
     <header class="bg-blue-600 text-white p-4 shadow-lg">
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <img src="icon-192x192.png" alt="Logo" class="w-10 h-10 rounded-lg">
-                <h1 class="text-xl font-bold">Ad Instal Gaz SRL</h1>
+                <!-- Logo (fallback dacă nu există icon-192x192.png) -->
+                <img src="icon-192x192.png" alt="Logo" class="w-10 h-10 rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="logo-placeholder" style="display:none;">AG</div>
+                <div>
+                    <h1 class="text-xl font-bold">Ad Instal Gaz SRL</h1>
+                    <p class="text-sm opacity-75">Gavrila - 📞 0762614402</p>
+                </div>
             </div>
             <button id="notifications-btn" class="relative p-2 bg-blue-700 rounded-lg hover:bg-blue-800 transition duration-300">
                 🔔
@@ -67,6 +88,9 @@
             </button>
             <button class="tab-button flex-1 p-4 text-center font-medium transition duration-300 hover:bg-gray-100" data-tab="reminders">
                 ⏰ Reminder-uri
+            </button>
+            <button class="tab-button flex-1 p-4 text-center font-medium transition duration-300 hover:bg-gray-100" data-tab="reports">
+                📊 Rapoarte
             </button>
             <button class="tab-button flex-1 p-4 text-center font-medium transition duration-300 hover:bg-gray-100" data-tab="documents">
                 📄 Documente
@@ -100,7 +124,7 @@
             <!-- Quick Actions -->
             <div class="bg-white p-6 rounded-lg shadow-md mb-8">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">🚀 Acțiuni Rapide</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <button class="quick-action bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg transition duration-300" data-action="add-client">
                         👤 Adaugă Client Nou
                     </button>
@@ -110,8 +134,8 @@
                     <button class="quick-action bg-orange-500 hover:bg-orange-600 text-white p-4 rounded-lg transition duration-300" data-action="add-reminder">
                         ⏰ Setează Reminder
                     </button>
-                    <button class="quick-action bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg transition duration-300" data-action="scan-document">
-                        📄 Scanează Document
+                    <button class="quick-action bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg transition duration-300" data-action="generate-report">
+                        📊 Generează Raport
                     </button>
                 </div>
             </div>
@@ -129,9 +153,14 @@
         <section id="clients-section" class="tab-content hidden">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-blue-600">👥 Clienți</h2>
-                <button id="add-client-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                    ➕ Adaugă Client
-                </button>
+                <div class="flex space-x-2">
+                    <button id="export-clients-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                        📤 Export Excel
+                    </button>
+                    <button id="add-client-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                        ➕ Adaugă Client
+                    </button>
+                </div>
             </div>
             
             <!-- Search -->
@@ -149,9 +178,14 @@
         <section id="appointments-section" class="tab-content hidden">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-blue-600">📅 Programări</h2>
-                <button id="add-appointment-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-                    ➕ Adaugă Programare
-                </button>
+                <div class="flex space-x-2">
+                    <button id="export-appointments-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                        📤 Export Excel
+                    </button>
+                    <button id="add-appointment-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                        ➕ Adaugă Programare
+                    </button>
+                </div>
             </div>
             
             <!-- Calendar Filter -->
@@ -177,6 +211,63 @@
         <!-- Reminders Section -->
         <section id="reminders-section" class="tab-content hidden">
             <!-- Will be populated by JavaScript -->
+        </section>
+
+        <!-- Reports Section -->
+        <section id="reports-section" class="tab-content hidden">
+            <h2 class="text-2xl font-bold text-blue-600 mb-6">📊 Rapoarte</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Rapoarte Clienți -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-400">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">👥 Rapoarte Clienți</h3>
+                    <div class="space-y-3">
+                        <button onclick="exportClientsExcel()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            📊 Export Clienți Excel
+                        </button>
+                        <button onclick="exportClientsPDF()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            📄 Export Clienți PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Rapoarte Programări -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-400">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📅 Rapoarte Programări</h3>
+                    <div class="space-y-3">
+                        <button onclick="exportAppointmentsExcel()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            📊 Export Programări Excel
+                        </button>
+                        <button onclick="exportAppointmentsPDF()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            📄 Export Programări PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Raport Complet -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-400 md:col-span-2">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📋 Raport Complet</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <button onclick="exportFullReportExcel()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            📊 Raport Complet Excel
+                        </button>
+                        <button onclick="exportFullReportPDF()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            📄 Raport Complet PDF
+                        </button>
+                        <button onclick="exportMonthlyReport()" class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            📅 Raport Lunar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistici -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">📈 Statistici</h3>
+                <div id="statistics-content" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Statisticile vor fi generate dinamic -->
+                </div>
+            </div>
         </section>
 
         <!-- Documents Section -->
@@ -233,9 +324,11 @@
                     <form id="business-form">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <input type="text" id="business-name" placeholder="Nume Firmă" class="p-3 border border-gray-300 rounded-lg" value="Ad Instal Gaz SRL">
-                            <input type="tel" id="business-phone" placeholder="Telefon Firmă" class="p-3 border border-gray-300 rounded-lg">
-                            <input type="email" id="business-email" placeholder="Email Firmă" class="p-3 border border-gray-300 rounded-lg">
-                            <input type="text" id="business-address" placeholder="Adresă Firmă" class="p-3 border border-gray-300 rounded-lg">
+                            <input type="tel" id="business-phone" placeholder="Telefon Firmă" class="p-3 border border-gray-300 rounded-lg" value="0762614402">
+                            <input type="email" id="business-email" placeholder="Email Firmă" class="p-3 border border-gray-300 rounded-lg" value="gavrila_1971@yahoo.com">
+                            <input type="text" id="business-address" placeholder="Adresă Firmă" class="p-3 border border-gray-300 rounded-lg" value="Str. Mărășești, Nr.97">
+                            <input type="text" id="business-owner" placeholder="Proprietar" class="p-3 border border-gray-300 rounded-lg" value="Gavrila">
+                            <input type="text" id="business-cui" placeholder="CUI (opțional)" class="p-3 border border-gray-300 rounded-lg">
                         </div>
                         <button type="submit" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
                             💾 Salvează
@@ -243,51 +336,22 @@
                     </form>
                 </div>
                 
-                <!-- Notifications -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🔔 Notificări</h3>
-                    <div class="space-y-4">
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" id="enable-notifications" class="w-5 h-5 text-blue-600">
-                            <span>Activează notificările push</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" id="reminder-notifications" class="w-5 h-5 text-blue-600" checked>
-                            <span>Notificări pentru reminder-uri</span>
-                        </label>
-                        <label class="flex items-center space-x-3">
-                            <input type="checkbox" id="appointment-notifications" class="w-5 h-5 text-blue-600" checked>
-                            <span>Notificări pentru programări</span>
-                        </label>
-                    </div>
-                </div>
-                
                 <!-- Data Management -->
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">💾 Management Date</h3>
-                    <div class="space-y-4">
-                        <button id="export-data-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
-                            📤 Exportă Date
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button id="export-data-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            📤 Exportă Toate Datele
                         </button>
-                        <button id="import-data-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                        <button id="import-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
                             📥 Importă Date
                         </button>
                         <input type="file" id="import-file" accept=".json" class="hidden">
-                        <button id="clear-data-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                        <button id="clear-data-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
                             🗑️ Șterge Toate Datele
                         </button>
-                    </div>
-                </div>
-                
-                <!-- Website Sync -->
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🌐 Sincronizare Site</h3>
-                    <p class="text-gray-600 mb-4">Conectează aplicația cu site-ul oficial pentru sincronizarea datelor.</p>
-                    <div class="space-y-4">
-                        <input type="url" id="website-url" placeholder="URL Site (ex: https://www.adinstalgaz.ro)" class="w-full p-3 border border-gray-300 rounded-lg">
-                        <input type="password" id="sync-key" placeholder="Cheie de sincronizare" class="w-full p-3 border border-gray-300 rounded-lg">
-                        <button id="test-connection-btn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
-                            🔗 Testează Conexiunea
+                        <button onclick="exportBackupExcel()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition duration-300">
+                            💾 Backup Excel Complet
                         </button>
                     </div>
                 </div>
@@ -296,7 +360,7 @@
     </main>
 
     <!-- Floating Add Button -->
-    <button id="floating-add" class="floating-add bg-blue-600 hover:bg-blue-700 text-white rounded-full w-14 h-14 flex items-center justify-content shadow-lg transition duration-300 text-2xl">
+    <button id="floating-add" class="floating-add bg-blue-600 hover:bg-blue-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition duration-300 text-2xl">
         ➕
     </button>
 
@@ -308,27 +372,15 @@
     </div>
 
     <script>
-        // Service Worker Registration with fallback
+        // Service Worker Registration
         if ('serviceWorker' in navigator) {
-            // Try sw.js first, then service-worker.js as fallback
             navigator.serviceWorker.register('sw.js')
                 .then(registration => {
                     console.log('✅ Service Worker registered successfully:', registration);
                 })
                 .catch(error => {
-                    console.log('❌ sw.js failed, trying service-worker.js...');
-                    // Fallback to service-worker.js
-                    navigator.serviceWorker.register('service-worker.js')
-                        .then(registration => {
-                            console.log('✅ Service Worker registered with fallback:', registration);
-                        })
-                        .catch(fallbackError => {
-                            console.log('❌ Both SW files failed. App will work without offline support.');
-                            console.log('Create sw.js or service-worker.js for offline functionality.');
-                        });
+                    console.log('❌ Service Worker registration failed:', error);
                 });
-        } else {
-            console.log('❌ Service Workers not supported in this browser');
         }
 
         // Global variables
@@ -337,6 +389,19 @@
         let reminders = JSON.parse(localStorage.getItem('reminders') || '[]');
         let documents = JSON.parse(localStorage.getItem('documents') || '[]');
         let businessInfo = JSON.parse(localStorage.getItem('businessInfo') || '{}');
+
+        // Initialize business info with default values
+        if (!businessInfo.name) {
+            businessInfo = {
+                name: 'Ad Instal Gaz SRL',
+                phone: '0762614402',
+                email: 'gavrila_1971@yahoo.com',
+                address: 'Str. Mărășești, Nr.97',
+                owner: 'Gavrila',
+                cui: ''
+            };
+            localStorage.setItem('businessInfo', JSON.stringify(businessInfo));
+        }
 
         // Tab switching
         document.querySelectorAll('.tab-button').forEach(button => {
@@ -363,6 +428,7 @@
             if (tabName === 'reminders') loadReminders();
             if (tabName === 'documents') loadDocuments();
             if (tabName === 'dashboard') loadDashboard();
+            if (tabName === 'reports') loadReports();
         }
 
         // Initialize app
@@ -370,13 +436,17 @@
             loadDashboard();
             setupEventListeners();
             checkNotifications();
-            
-            // Load business info
+            loadBusinessInfo();
+        }
+
+        function loadBusinessInfo() {
             if (businessInfo.name) {
-                document.getElementById('business-name').value = businessInfo.name;
-                document.getElementById('business-phone').value = businessInfo.phone || '';
-                document.getElementById('business-email').value = businessInfo.email || '';
-                document.getElementById('business-address').value = businessInfo.address || '';
+                document.getElementById('business-name').value = businessInfo.name || 'Ad Instal Gaz SRL';
+                document.getElementById('business-phone').value = businessInfo.phone || '0762614402';
+                document.getElementById('business-email').value = businessInfo.email || 'gavrila_1971@yahoo.com';
+                document.getElementById('business-address').value = businessInfo.address || 'Str. Mărășești, Nr.97';
+                document.getElementById('business-owner').value = businessInfo.owner || 'Gavrila';
+                document.getElementById('business-cui').value = businessInfo.cui || '';
             }
         }
 
@@ -425,9 +495,8 @@
                         case 'add-reminder':
                             showAddReminderModal();
                             break;
-                        case 'scan-document':
-                            switchTab('documents');
-                            startCamera();
+                        case 'generate-report':
+                            switchTab('reports');
                             break;
                     }
                 });
@@ -438,6 +507,10 @@
             document.getElementById('add-appointment-btn').addEventListener('click', showAddAppointmentModal);
             document.getElementById('scan-document-btn').addEventListener('click', startCamera);
             document.getElementById('floating-add').addEventListener('click', showQuickActionsMenu);
+
+            // Export buttons
+            document.getElementById('export-clients-btn').addEventListener('click', exportClientsExcel);
+            document.getElementById('export-appointments-btn').addEventListener('click', exportAppointmentsExcel);
 
             // Modal close
             document.getElementById('modal-overlay').addEventListener('click', (e) => {
@@ -461,12 +534,238 @@
             });
             document.getElementById('import-file').addEventListener('change', importData);
             document.getElementById('clear-data-btn').addEventListener('click', clearAllData);
-
-            // Notification permission
-            document.getElementById('enable-notifications').addEventListener('change', requestNotificationPermission);
         }
 
-        // Client Management
+        // Export Functions
+        function exportClientsExcel() {
+            if (clients.length === 0) {
+                showNotification('Nu ai clienți de exportat!', 'error');
+                return;
+            }
+
+            const ws = XLSX.utils.json_to_sheet(clients.map(client => ({
+                'Nume': client.name,
+                'Telefon': client.phone,
+                'Email': client.email || '',
+                'Adresă': client.address,
+                'Notițe': client.notes || '',
+                'Data Adăugării': new Date(client.createdAt).toLocaleDateString('ro-RO')
+            })));
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Clienți');
+            
+            const fileName = `Clienti_AdInstalGaz_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            
+            showNotification('Lista clienților a fost exportată!', 'success');
+        }
+
+        function exportAppointmentsExcel() {
+            if (appointments.length === 0) {
+                showNotification('Nu ai programări de exportat!', 'error');
+                return;
+            }
+
+            const ws = XLSX.utils.json_to_sheet(appointments.map(apt => ({
+                'Client': apt.clientName,
+                'Telefon': apt.clientPhone,
+                'Data': apt.date,
+                'Ora': apt.time,
+                'Serviciu': apt.service,
+                'Adresă': apt.address,
+                'Status': apt.status,
+                'Notițe': apt.notes || '',
+                'Data Programării': new Date(apt.createdAt).toLocaleDateString('ro-RO')
+            })));
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Programări');
+            
+            const fileName = `Programari_AdInstalGaz_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            
+            showNotification('Lista programărilor a fost exportată!', 'success');
+        }
+
+        function exportClientsPDF() {
+            if (clients.length === 0) {
+                showNotification('Nu ai clienți de exportat!', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(16);
+            doc.text('Lista Clienților - Ad Instal Gaz SRL', 20, 20);
+            doc.setFontSize(12);
+            doc.text(`Generat pe: ${new Date().toLocaleDateString('ro-RO')}`, 20, 30);
+            doc.text(`Contact: ${businessInfo.phone} | ${businessInfo.email}`, 20, 40);
+            
+            // Table
+            const tableData = clients.map(client => [
+                client.name,
+                client.phone,
+                client.email || '',
+                client.address,
+                new Date(client.createdAt).toLocaleDateString('ro-RO')
+            ]);
+            
+            doc.autoTable({
+                head: [['Nume', 'Telefon', 'Email', 'Adresă', 'Data Adăugării']],
+                body: tableData,
+                startY: 50,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [30, 64, 175] }
+            });
+            
+            doc.save(`Clienti_AdInstalGaz_${new Date().toISOString().slice(0, 10)}.pdf`);
+            showNotification('Raportul PDF a fost generat!', 'success');
+        }
+
+        function exportAppointmentsPDF() {
+            if (appointments.length === 0) {
+                showNotification('Nu ai programări de exportat!', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(16);
+            doc.text('Lista Programărilor - Ad Instal Gaz SRL', 20, 20);
+            doc.setFontSize(12);
+            doc.text(`Generat pe: ${new Date().toLocaleDateString('ro-RO')}`, 20, 30);
+            doc.text(`Contact: ${businessInfo.phone} | ${businessInfo.email}`, 20, 40);
+            
+            // Table
+            const tableData = appointments.map(apt => [
+                apt.clientName,
+                apt.clientPhone,
+                apt.date,
+                apt.time,
+                apt.service,
+                apt.status
+            ]);
+            
+            doc.autoTable({
+                head: [['Client', 'Telefon', 'Data', 'Ora', 'Serviciu', 'Status']],
+                body: tableData,
+                startY: 50,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [30, 64, 175] }
+            });
+            
+            doc.save(`Programari_AdInstalGaz_${new Date().toISOString().slice(0, 10)}.pdf`);
+            showNotification('Raportul PDF a fost generat!', 'success');
+        }
+
+        function exportFullReportExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            // Clienți
+            if (clients.length > 0) {
+                const clientsWS = XLSX.utils.json_to_sheet(clients.map(client => ({
+                    'Nume': client.name,
+                    'Telefon': client.phone,
+                    'Email': client.email || '',
+                    'Adresă': client.address,
+                    'Notițe': client.notes || '',
+                    'Data Adăugării': new Date(client.createdAt).toLocaleDateString('ro-RO')
+                })));
+                XLSX.utils.book_append_sheet(wb, clientsWS, 'Clienți');
+            }
+            
+            // Programări
+            if (appointments.length > 0) {
+                const appointmentsWS = XLSX.utils.json_to_sheet(appointments.map(apt => ({
+                    'Client': apt.clientName,
+                    'Telefon': apt.clientPhone,
+                    'Data': apt.date,
+                    'Ora': apt.time,
+                    'Serviciu': apt.service,
+                    'Adresă': apt.address,
+                    'Status': apt.status,
+                    'Notițe': apt.notes || '',
+                    'Data Programării': new Date(apt.createdAt).toLocaleDateString('ro-RO')
+                })));
+                XLSX.utils.book_append_sheet(wb, appointmentsWS, 'Programări');
+            }
+            
+            // Reminder-uri
+            if (reminders.length > 0) {
+                const remindersWS = XLSX.utils.json_to_sheet(reminders.map(rem => ({
+                    'Client': rem.clientName,
+                    'Telefon': rem.phone,
+                    'Data Reminder': rem.date,
+                    'Mesaj': rem.message || '',
+                    'Status': rem.status,
+                    'Data Creării': new Date(rem.createdAt).toLocaleDateString('ro-RO')
+                })));
+                XLSX.utils.book_append_sheet(wb, remindersWS, 'Reminder-uri');
+            }
+            
+            // Informații firmă
+            const businessWS = XLSX.utils.json_to_sheet([{
+                'Nume Firmă': businessInfo.name,
+                'Telefon': businessInfo.phone,
+                'Email': businessInfo.email,
+                'Adresă': businessInfo.address,
+                'Proprietar': businessInfo.owner,
+                'CUI': businessInfo.cui || '',
+                'Data Export': new Date().toLocaleDateString('ro-RO')
+            }]);
+            XLSX.utils.book_append_sheet(wb, businessWS, 'Info Firmă');
+            
+            const fileName = `RaportComplet_AdInstalGaz_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            
+            showNotification('Raportul complet a fost exportat!', 'success');
+        }
+
+        function exportBackupExcel() {
+            exportFullReportExcel();
+        }
+
+        function loadReports() {
+            const statisticsContent = document.getElementById('statistics-content');
+            
+            // Calculate statistics
+            const totalClients = clients.length;
+            const totalAppointments = appointments.length;
+            const totalReminders = reminders.length;
+            
+            const thisMonth = new Date().getMonth();
+            const thisYear = new Date().getFullYear();
+            
+            const monthlyAppointments = appointments.filter(apt => {
+                const aptDate = new Date(apt.date);
+                return aptDate.getMonth() === thisMonth && aptDate.getFullYear() === thisYear;
+            }).length;
+            
+            const completedAppointments = appointments.filter(apt => apt.status === 'finalizat').length;
+            const pendingReminders = reminders.filter(rem => new Date(rem.date) >= new Date()).length;
+            
+            statisticsContent.innerHTML = `
+                <div class="bg-blue-50 p-4 rounded-lg text-center">
+                    <h4 class="font-semibold text-blue-800">Total Clienți</h4>
+                    <p class="text-2xl font-bold text-blue-600">${totalClients}</p>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg text-center">
+                    <h4 class="font-semibold text-green-800">Programări Luna Aceasta</h4>
+                    <p class="text-2xl font-bold text-green-600">${monthlyAppointments}</p>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg text-center">
+                    <h4 class="font-semibold text-orange-800">Servicii Finalizate</h4>
+                    <p class="text-2xl font-bold text-orange-600">${completedAppointments}</p>
+                </div>
+            `;
+        }
+
+        // Client Management Functions (keeping dropdown functionality)
         function showAddClientModal() {
             const modalContent = `
                 <div class="flex justify-between items-center mb-6">
@@ -543,9 +842,6 @@
                             <button onclick="messageClient('${client.phone}')" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg transition duration-300">
                                 💬
                             </button>
-                            <button onclick="editClient(${client.id})" class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition duration-300">
-                                ✏️
-                            </button>
                             <button onclick="deleteClient(${client.id})" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition duration-300">
                                 🗑️
                             </button>
@@ -586,9 +882,6 @@
                             <button onclick="messageClient('${client.phone}')" class="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-lg transition duration-300">
                                 💬
                             </button>
-                            <button onclick="editClient(${client.id})" class="bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-lg transition duration-300">
-                                ✏️
-                            </button>
                             <button onclick="deleteClient(${client.id})" class="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition duration-300">
                                 🗑️
                             </button>
@@ -617,7 +910,7 @@
             }
         }
 
-        // Appointment Management
+        // Appointment Management with dropdown
         function showAddAppointmentModal() {
             const modalContent = `
                 <div class="flex justify-between items-center mb-6">
@@ -1117,10 +1410,10 @@
                         <div class="font-semibold">Reminder</div>
                         <div class="text-sm opacity-75">Setează reminder</div>
                     </button>
-                    <button onclick="closeModal(); switchTab('documents'); startCamera();" class="bg-purple-500 hover:bg-purple-600 text-white p-6 rounded-lg transition duration-300 text-left">
-                        <div class="text-2xl mb-2">📄</div>
-                        <div class="font-semibold">Scanează</div>
-                        <div class="text-sm opacity-75">Document nou</div>
+                    <button onclick="closeModal(); switchTab('reports');" class="bg-purple-500 hover:bg-purple-600 text-white p-6 rounded-lg transition duration-300 text-left">
+                        <div class="text-2xl mb-2">📊</div>
+                        <div class="font-semibold">Rapoarte</div>
+                        <div class="text-sm opacity-75">Generează raport</div>
                     </button>
                 </div>
             `;
@@ -1162,18 +1455,6 @@
             }
         }
 
-        function requestNotificationPermission() {
-            if (document.getElementById('enable-notifications').checked) {
-                if ('Notification' in window) {
-                    Notification.requestPermission().then(permission => {
-                        if (permission === 'granted') {
-                            showNotification('Notificările au fost activate!', 'success');
-                        }
-                    });
-                }
-            }
-        }
-
         function saveBusinessInfo(e) {
             e.preventDefault();
             
@@ -1181,7 +1462,9 @@
                 name: document.getElementById('business-name').value,
                 phone: document.getElementById('business-phone').value,
                 email: document.getElementById('business-email').value,
-                address: document.getElementById('business-address').value
+                address: document.getElementById('business-address').value,
+                owner: document.getElementById('business-owner').value,
+                cui: document.getElementById('business-cui').value
             };
             
             localStorage.setItem('businessInfo', JSON.stringify(businessInfo));
@@ -1229,6 +1512,7 @@
                             localStorage.setItem('businessInfo', JSON.stringify(businessInfo));
                             
                             loadDashboard();
+                            loadBusinessInfo();
                             showNotification('Datele au fost importate cu succes!', 'success');
                         }
                     } catch (error) {
@@ -1246,9 +1530,18 @@
                 appointments = [];
                 reminders = [];
                 documents = [];
-                businessInfo = {};
+                businessInfo = {
+                    name: 'Ad Instal Gaz SRL',
+                    phone: '0762614402',
+                    email: 'gavrila_1971@yahoo.com',
+                    address: 'Str. Mărășești, Nr.97',
+                    owner: 'Gavrila',
+                    cui: ''
+                };
+                localStorage.setItem('businessInfo', JSON.stringify(businessInfo));
                 
                 loadDashboard();
+                loadBusinessInfo();
                 showNotification('Toate datele au fost șterse!', 'success');
             }
         }
