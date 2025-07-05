@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ad Instal Gaz SRL - Management Business</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+    <!-- Libraries for Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -534,6 +538,10 @@
                     <span class="icon">📅</span>
                     Programări
                 </button>
+                <button class="nav-button" onclick="showSection('workplan')" id="nav-workplan">
+                    <span class="icon">📋</span>
+                    Fișa Mâine
+                </button>
                 <button class="nav-button" onclick="showSection('reminders')" id="nav-reminders">
                     <span class="icon">🔔</span>
                     Reminder-e
@@ -702,14 +710,87 @@
                 </div>
             </section>
 
+            <!-- Work Plan Section -->
+            <section id="workplan" class="section">
+                <div class="dashboard-header">
+                    <h2 class="dashboard-title">📋 Fișa de Lucru - Mâine</h2>
+                    <div class="flex gap-2">
+                        <button class="btn btn-success" onclick="exportTomorrowWorkPlan()">
+                            <span>📄</span>
+                            Export PDF
+                        </button>
+                        <button class="btn btn-primary" onclick="sendTomorrowReminders()">
+                            <span>📱</span>
+                            Trimite Reminder-e
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">📅 Programări Mâine</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="tomorrow-appointments">
+                                <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                                    Nu aveți programări mâine
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🔔 Reminder-e de Trimis Mâine</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="tomorrow-reminders">
+                                <p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">
+                                    Nu aveți reminder-e mâine
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📊 Rezumat Zilei</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="stats-grid">
+                            <div class="text-center">
+                                <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;" id="tomorrow-total-tasks">0</div>
+                                <div style="color: #6b7280;">Total Activități</div>
+                            </div>
+                            <div class="text-center">
+                                <div style="font-size: 2rem; font-weight: bold; color: #10b981;" id="tomorrow-appointments-count">0</div>
+                                <div style="color: #6b7280;">Programări</div>
+                            </div>
+                            <div class="text-center">
+                                <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;" id="tomorrow-reminders-count">0</div>
+                                <div style="color: #6b7280;">Reminder-e</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Reminders Section -->
             <section id="reminders" class="section">
                 <div class="dashboard-header">
                     <h2 class="dashboard-title">Reminder-e & Notificări</h2>
-                    <button class="btn btn-success" onclick="showModal('addReminderModal')">
-                        <span>➕</span>
-                        Reminder Nou
-                    </button>
+                    <div class="flex gap-2">
+                        <button class="btn btn-success" onclick="showModal('addReminderModal')">
+                            <span>➕</span>
+                            Reminder Nou
+                        </button>
+                        <button class="btn btn-primary" onclick="sendTodayReminders()">
+                            <span>📱</span>
+                            Trimite Azi
+                        </button>
+                    </div>
                 </div>
 
                 <div class="stats-grid">
@@ -752,10 +833,29 @@
             <section id="reports" class="section">
                 <div class="dashboard-header">
                     <h2 class="dashboard-title">Rapoarte & Statistici</h2>
-                    <button class="btn btn-success" onclick="exportData()">
-                        <span>📥</span>
-                        Export Date
-                    </button>
+                    <div class="flex gap-2">
+                        <button class="btn btn-success" onclick="exportToExcel()">
+                            <span>📊</span>
+                            Export Excel
+                        </button>
+                        <button class="btn btn-success" onclick="exportToPDF()">
+                            <span>📄</span>
+                            Export PDF
+                        </button>
+                        <button class="btn btn-primary" onclick="backupData()">
+                            <span>💾</span>
+                            Backup
+                        </button>
+                        <button class="btn btn-primary" onclick="document.getElementById('restore-file').click()">
+                            <span>📂</span>
+                            Restore
+                        </button>
+                        <input type="file" id="restore-file" accept=".json" style="display: none;" onchange="restoreData(this)">
+                        <button class="btn btn-secondary" onclick="showModal('deleteDataModal')" style="background: #dc2626;">
+                            <span>🗑️</span>
+                            Șterge Date Test
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card">
@@ -932,6 +1032,60 @@
         </div>
     </div>
 
+    <!-- Client Details Modal -->
+    <div id="clientDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title">👤 Detalii Client</h3>
+                <button class="modal-close" onclick="hideModal('clientDetailsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="client-details-content">
+                    <!-- Content will be populated dynamically -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('clientDetailsModal')">Închide</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Data Modal -->
+    <div id="deleteDataModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" style="color: #dc2626;">⚠️ Ștergere Date Test</h3>
+                <button class="modal-close" onclick="hideModal('deleteDataModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 1rem; margin-bottom: 1rem;">
+                    <p style="color: #dc2626; font-weight: 600; margin-bottom: 0.5rem;">ATENȚIE!</p>
+                    <p style="color: #dc2626; font-size: 0.875rem;">
+                        Această acțiune va șterge TOATE datele (clienți, programări, reminder-uri) și nu poate fi anulată!
+                    </p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Pentru confirmare, scrie: <strong>STERGE TOTUL</strong></label>
+                    <input type="text" class="form-input" id="delete-confirmation" placeholder="Scrie exact: STERGE TOTUL">
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;">
+                        <input type="checkbox" id="delete-checkbox">
+                        Confirm că vreau să șterg toate datele
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('deleteDataModal')">Anulează</button>
+                <button class="btn" onclick="deleteAllData()" style="background: #dc2626; color: white;">
+                    🗑️ Șterge Totul
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global data storage
         let appData = {
@@ -967,6 +1121,12 @@
             const saved = localStorage.getItem('adinstalgaz_data');
             if (saved) {
                 appData = JSON.parse(saved);
+                // Ensure documents array exists for all clients
+                appData.clients.forEach(client => {
+                    if (!client.documents) {
+                        client.documents = [];
+                    }
+                });
             }
         }
 
@@ -1160,13 +1320,137 @@
                 email: email,
                 address: address,
                 createdAt: new Date().toISOString(),
-                totalServices: 0
+                totalServices: 0,
+                documents: []
             };
 
             appData.clients.push(newClient);
             saveData();
             updateUI();
             hideModal('addClientModal');
+        }
+
+        // Client documents functions
+        function uploadClientDocument(clientId) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,.pdf,.doc,.docx';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const document = {
+                            id: Date.now(),
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: e.target.result,
+                            uploadDate: new Date().toISOString()
+                        };
+                        
+                        const client = appData.clients.find(c => c.id === clientId);
+                        if (client) {
+                            if (!client.documents) client.documents = [];
+                            client.documents.push(document);
+                            saveData();
+                            updateUI();
+                            alert('✅ Document uplodat cu succes!');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        function showClientDetails(clientId) {
+            const client = appData.clients.find(c => c.id === clientId);
+            if (!client) return;
+            
+            const clientAppointments = appData.appointments.filter(apt => apt.clientId === clientId || apt.clientName === client.name);
+            const clientReminders = appData.reminders.filter(r => r.clientId === clientId || r.clientName === client.name);
+            
+            const content = `
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #111827; margin-bottom: 1rem;">📋 Informații Client</h4>
+                    <div style="background: #f9fafb; padding: 1rem; border-radius: 8px;">
+                        <p><strong>Nume:</strong> ${client.name}</p>
+                        <p><strong>Telefon:</strong> ${client.phone}</p>
+                        <p><strong>Email:</strong> ${client.email || 'Nu este specificat'}</p>
+                        <p><strong>Adresa:</strong> ${client.address}</p>
+                        <p><strong>Client din:</strong> ${new Date(client.createdAt).toLocaleDateString('ro-RO')}</p>
+                    </div>
+                </div>
+                
+                ${client.documents && client.documents.length > 0 ? `
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #111827; margin-bottom: 1rem;">📎 Documente (${client.documents.length})</h4>
+                    <div style="display: grid; gap: 0.5rem;">
+                        ${client.documents.map(doc => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; background: #f3f4f6; padding: 0.75rem; border-radius: 6px;">
+                                <div>
+                                    <div style="font-weight: 500;">${doc.name}</div>
+                                    <div style="font-size: 0.875rem; color: #6b7280;">
+                                        ${new Date(doc.uploadDate).toLocaleDateString('ro-RO')} • ${(doc.size / 1024).toFixed(1)} KB
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary" onclick="viewDocument('${doc.id}', ${clientId})" style="padding: 0.5rem;">
+                                    👁️
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                ${clientAppointments.length > 0 ? `
+                <div style="margin-bottom: 2rem;">
+                    <h4 style="color: #111827; margin-bottom: 1rem;">📅 Istoric Programări (${clientAppointments.length})</h4>
+                    <div style="display: grid; gap: 0.5rem;">
+                        ${clientAppointments.slice(0, 5).map(apt => `
+                            <div style="background: #f3f4f6; padding: 0.75rem; border-radius: 6px;">
+                                <div style="font-weight: 500;">${apt.service}</div>
+                                <div style="font-size: 0.875rem; color: #6b7280;">
+                                    ${new Date(apt.date).toLocaleDateString('ro-RO')} • ${apt.time} • ${getStatusText(apt.status)}
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${clientAppointments.length > 5 ? `<div style="text-align: center; color: #6b7280; font-size: 0.875rem;">... și încă ${clientAppointments.length - 5} programări</div>` : ''}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            
+            document.getElementById('client-details-content').innerHTML = content;
+            showModal('clientDetailsModal');
+        }
+
+        function viewDocument(docId, clientId) {
+            const client = appData.clients.find(c => c.id === clientId);
+            if (!client || !client.documents) return;
+            
+            const document = client.documents.find(d => d.id == docId);
+            if (!document) return;
+            
+            if (document.type.startsWith('image/')) {
+                // Show image in new window
+                const newWindow = window.open();
+                newWindow.document.write(`
+                    <html>
+                        <head><title>${document.name}</title></head>
+                        <body style="margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #000;">
+                            <img src="${document.data}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        </body>
+                    </html>
+                `);
+            } else {
+                // Download other files
+                const link = document.createElement('a');
+                link.href = document.data;
+                link.download = document.name;
+                link.click();
+            }
         }
 
         function renderClients(clientsToRender = null) {
@@ -1184,10 +1468,25 @@
                     <div class="list-content">
                         <div class="list-title">${client.name}</div>
                         <div class="list-subtitle">📞 ${client.phone} • 📍 ${client.address}</div>
+                        ${client.documents && client.documents.length > 0 ? `
+                            <div class="text-xs" style="color: #10b981; margin-top: 0.25rem;">
+                                📎 ${client.documents.length} document${client.documents.length > 1 ? 'e' : ''}
+                            </div>
+                        ` : ''}
                     </div>
-                    <button class="btn btn-primary" onclick="callClient('${client.phone}')">
-                        📞
-                    </button>
+                    <div class="flex gap-1" style="flex-direction: column;">
+                        <div class="flex gap-1">
+                            <button class="btn btn-primary" onclick="callClient('${client.phone}')" style="padding: 0.4rem; font-size: 0.75rem;">
+                                📞
+                            </button>
+                            <button class="btn btn-success" onclick="showClientDetails(${client.id})" style="padding: 0.4rem; font-size: 0.75rem;">
+                                👁️
+                            </button>
+                        </div>
+                        <button class="btn btn-secondary" onclick="uploadClientDocument(${client.id})" style="padding: 0.3rem; font-size: 0.7rem;">
+                            📎 Upload
+                        </button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -1281,7 +1580,8 @@
                         email: '',
                         address: address,
                         createdAt: new Date().toISOString(),
-                        totalServices: 0
+                        totalServices: 0,
+                        documents: []
                     };
                     appData.clients.push(newClient);
                 }
@@ -1316,20 +1616,30 @@
                             </span>
                         </div>
                     </div>
-                    <div class="flex gap-2">
-                        ${apt.status === 'programat' ? `
-                            <button class="btn btn-success" onclick="updateAppointmentStatus(${apt.id}, 'in-progres')" style="padding: 0.5rem;">
-                                ▶️
+                    <div class="flex gap-1" style="flex-direction: column;">
+                        <div class="flex gap-1">
+                            ${apt.status === 'programat' ? `
+                                <button class="btn btn-success" onclick="updateAppointmentStatus(${apt.id}, 'in-progres')" style="padding: 0.4rem; font-size: 0.75rem;">
+                                    ▶️
+                                </button>
+                            ` : ''}
+                            ${apt.status === 'in-progres' ? `
+                                <button class="btn btn-success" onclick="updateAppointmentStatus(${apt.id}, 'finalizat')" style="padding: 0.4rem; font-size: 0.75rem;">
+                                    ✅
+                                </button>
+                            ` : ''}
+                            <button class="btn btn-primary" onclick="callClient('${apt.phone}')" style="padding: 0.4rem; font-size: 0.75rem;">
+                                📞
                             </button>
-                        ` : ''}
-                        ${apt.status === 'in-progres' ? `
-                            <button class="btn btn-success" onclick="updateAppointmentStatus(${apt.id}, 'finalizat')" style="padding: 0.5rem;">
-                                ✅
+                        </div>
+                        <div class="flex gap-1">
+                            <button class="btn btn-success" onclick="sendAppointmentWhatsApp('${apt.phone}', '${apt.clientName}', '${apt.service}', '${apt.date}', '${apt.time}')" style="padding: 0.3rem; font-size: 0.7rem;">
+                                📱
                             </button>
-                        ` : ''}
-                        <button class="btn btn-primary" onclick="callClient('${apt.phone}')" style="padding: 0.5rem;">
-                            📞
-                        </button>
+                            <button class="btn btn-primary" onclick="sendAppointmentSMS('${apt.phone}', '${apt.clientName}', '${apt.service}', '${apt.date}', '${apt.time}')" style="padding: 0.3rem; font-size: 0.7rem;">
+                                💬
+                            </button>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -1488,6 +1798,436 @@
             window.location.href = smsURL;
         }
 
+        // WhatsApp/SMS for appointments
+        function sendAppointmentWhatsApp(phone, clientName, service, date, time) {
+            const formattedDate = new Date(date).toLocaleDateString('ro-RO');
+            const message = `Bună ziua ${clientName}! Vă reamintim despre programarea pentru ${service} pe data de ${formattedDate} la ora ${time}. Ad Instal Gaz SRL - 0762 614 401`;
+            sendWhatsApp(phone, message);
+        }
+
+        function sendAppointmentSMS(phone, clientName, service, date, time) {
+            const formattedDate = new Date(date).toLocaleDateString('ro-RO');
+            const message = `Bună ziua ${clientName}! Programare ${service} pe ${formattedDate} la ${time}. Ad Instal Gaz SRL - 0762 614 401`;
+            sendSMS(phone, message);
+        }
+
+        // Tomorrow work plan functions
+        function renderTomorrowTasks() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            
+            // Tomorrow appointments
+            const tomorrowAppointments = appData.appointments.filter(apt => apt.date === tomorrowStr);
+            const appointmentsContainer = document.getElementById('tomorrow-appointments');
+            
+            if (tomorrowAppointments.length === 0) {
+                appointmentsContainer.innerHTML = '<p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">Nu aveți programări mâine</p>';
+            } else {
+                appointmentsContainer.innerHTML = tomorrowAppointments.map(apt => `
+                    <div class="list-item">
+                        <div class="avatar" style="background: ${getStatusColor(apt.status)};">${apt.clientName.charAt(0).toUpperCase()}</div>
+                        <div class="list-content">
+                            <div class="list-title">${apt.time} - ${apt.clientName}</div>
+                            <div class="list-subtitle">${apt.service} • 📍 ${apt.address}</div>
+                            <div class="text-xs" style="color: #6b7280;">📞 ${apt.phone}</div>
+                        </div>
+                        <div class="flex gap-1">
+                            <button class="btn btn-primary" onclick="callClient('${apt.phone}')" style="padding: 0.4rem; font-size: 0.75rem;">📞</button>
+                            <button class="btn btn-success" onclick="sendAppointmentWhatsApp('${apt.phone}', '${apt.clientName}', '${apt.service}', '${apt.date}', '${apt.time}')" style="padding: 0.4rem; font-size: 0.75rem;">📱</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Tomorrow reminders
+            const tomorrowReminders = appData.reminders.filter(r => r.reminderDate === tomorrowStr && !r.sent);
+            const remindersContainer = document.getElementById('tomorrow-reminders');
+            
+            if (tomorrowReminders.length === 0) {
+                remindersContainer.innerHTML = '<p class="text-center text-sm" style="color: #6b7280; padding: 2rem;">Nu aveți reminder-e mâine</p>';
+            } else {
+                remindersContainer.innerHTML = tomorrowReminders.map(reminder => `
+                    <div class="list-item">
+                        <div class="avatar">🔔</div>
+                        <div class="list-content">
+                            <div class="list-title">${reminder.clientName}</div>
+                            <div class="list-subtitle">${reminder.message.substring(0, 50)}...</div>
+                            <div class="text-xs" style="color: #6b7280;">📞 ${reminder.phone}</div>
+                        </div>
+                        <div class="flex gap-1">
+                            <button class="btn btn-success" onclick="sendWhatsApp('${reminder.phone}', '${reminder.message}')" style="padding: 0.4rem; font-size: 0.75rem;">📱</button>
+                            <button class="btn btn-primary" onclick="sendSMS('${reminder.phone}', '${reminder.message}')" style="padding: 0.4rem; font-size: 0.75rem;">💬</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Update tomorrow stats
+            if (document.getElementById('tomorrow-total-tasks')) {
+                document.getElementById('tomorrow-total-tasks').textContent = tomorrowAppointments.length + tomorrowReminders.length;
+                document.getElementById('tomorrow-appointments-count').textContent = tomorrowAppointments.length;
+                document.getElementById('tomorrow-reminders-count').textContent = tomorrowReminders.length;
+            }
+        }
+
+        function exportTomorrowWorkPlan() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            const tomorrowFormatted = tomorrow.toLocaleDateString('ro-RO');
+            
+            // Title
+            doc.setFontSize(20);
+            doc.text('FIȘA DE LUCRU', 20, 20);
+            doc.setFontSize(16);
+            doc.text(`Ad Instal Gaz SRL - ${tomorrowFormatted}`, 20, 30);
+            
+            let yPosition = 50;
+            
+            // Appointments
+            const tomorrowAppointments = appData.appointments.filter(apt => apt.date === tomorrowStr);
+            if (tomorrowAppointments.length > 0) {
+                doc.setFontSize(14);
+                doc.text('PROGRAMĂRI:', 20, yPosition);
+                yPosition += 10;
+                
+                const appointmentsData = tomorrowAppointments.map(apt => [
+                    apt.time,
+                    apt.clientName,
+                    apt.service,
+                    apt.address,
+                    apt.phone
+                ]);
+                
+                doc.autoTable({
+                    startY: yPosition,
+                    head: [['Ora', 'Client', 'Serviciu', 'Adresa', 'Telefon']],
+                    body: appointmentsData,
+                    margin: { left: 20 },
+                    styles: { fontSize: 10 }
+                });
+                
+                yPosition = doc.lastAutoTable.finalY + 20;
+            }
+            
+            // Reminders
+            const tomorrowReminders = appData.reminders.filter(r => r.reminderDate === tomorrowStr && !r.sent);
+            if (tomorrowReminders.length > 0) {
+                doc.setFontSize(14);
+                doc.text('REMINDER-E DE TRIMIS:', 20, yPosition);
+                yPosition += 10;
+                
+                const remindersData = tomorrowReminders.map(r => [
+                    r.clientName,
+                    r.phone,
+                    r.type,
+                    r.message.substring(0, 50) + '...'
+                ]);
+                
+                doc.autoTable({
+                    startY: yPosition,
+                    head: [['Client', 'Telefon', 'Tip', 'Mesaj']],
+                    body: remindersData,
+                    margin: { left: 20 },
+                    styles: { fontSize: 9 }
+                });
+            }
+            
+            doc.save(`Fisa-Lucru-${tomorrowFormatted}.pdf`);
+        }
+
+        // Reminder automation functions
+        function sendTomorrowReminders() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            
+            const tomorrowReminders = appData.reminders.filter(r => r.reminderDate === tomorrowStr && !r.sent);
+            
+            if (tomorrowReminders.length === 0) {
+                alert('Nu există reminder-e programate pentru mâine.');
+                return;
+            }
+            
+            if (confirm(`Vrei să trimiți ${tomorrowReminders.length} reminder-e prin WhatsApp pentru mâine?`)) {
+                tomorrowReminders.forEach(reminder => {
+                    sendWhatsApp(reminder.phone, reminder.message);
+                    // Mark as sent
+                    reminder.sent = true;
+                });
+                
+                saveData();
+                updateUI();
+                alert(`✅ ${tomorrowReminders.length} reminder-e trimise cu succes!`);
+            }
+        }
+
+        function sendTodayReminders() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayReminders = appData.reminders.filter(r => r.reminderDate === today && !r.sent);
+            
+            if (todayReminders.length === 0) {
+                alert('Nu există reminder-e programate pentru azi.');
+                return;
+            }
+            
+            if (confirm(`Vrei să trimiți ${todayReminders.length} reminder-e prin WhatsApp pentru azi?`)) {
+                todayReminders.forEach(reminder => {
+                    sendWhatsApp(reminder.phone, reminder.message);
+                    // Mark as sent
+                    reminder.sent = true;
+                });
+                
+                saveData();
+                updateUI();
+                alert(`✅ ${todayReminders.length} reminder-e trimise cu succes!`);
+            }
+        }
+
+        // Export functions
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            
+            // Clients sheet
+            const clientsData = appData.clients.map(client => ({
+                'Nume': client.name,
+                'Telefon': client.phone,
+                'Email': client.email || '',
+                'Adresa': client.address,
+                'Documente': client.documents ? client.documents.length : 0,
+                'Data Adăugării': new Date(client.createdAt).toLocaleDateString('ro-RO')
+            }));
+            const clientsWS = XLSX.utils.json_to_sheet(clientsData);
+            XLSX.utils.book_append_sheet(wb, clientsWS, 'Clienți');
+            
+            // Appointments sheet
+            const appointmentsData = appData.appointments.map(apt => ({
+                'Client': apt.clientName,
+                'Telefon': apt.phone,
+                'Serviciu': apt.service,
+                'Data': new Date(apt.date).toLocaleDateString('ro-RO'),
+                'Ora': apt.time,
+                'Adresa': apt.address,
+                'Preț (RON)': apt.price || 0,
+                'Status': getStatusText(apt.status),
+                'Observații': apt.notes || '',
+                'Data Creării': new Date(apt.createdAt).toLocaleDateString('ro-RO')
+            }));
+            const appointmentsWS = XLSX.utils.json_to_sheet(appointmentsData);
+            XLSX.utils.book_append_sheet(wb, appointmentsWS, 'Programări');
+            
+            // Reminders sheet
+            const remindersData = appData.reminders.map(reminder => ({
+                'Client': reminder.clientName,
+                'Telefon': reminder.phone,
+                'Tip': reminder.type,
+                'Data Reminder': new Date(reminder.reminderDate).toLocaleDateString('ro-RO'),
+                'Mesaj': reminder.message,
+                'Trimis': reminder.sent ? 'Da' : 'Nu',
+                'Data Creării': new Date(reminder.createdAt).toLocaleDateString('ro-RO')
+            }));
+            const remindersWS = XLSX.utils.json_to_sheet(remindersData);
+            XLSX.utils.book_append_sheet(wb, remindersWS, 'Reminder-uri');
+            
+            // Statistics sheet
+            const stats = calculateStats();
+            const statsData = [
+                { 'Indicator': 'Total Clienți', 'Valoare': stats.totalClients },
+                { 'Indicator': 'Programări Luna Aceasta', 'Valoare': stats.monthAppointments },
+                { 'Indicator': 'Programări în Așteptare', 'Valoare': stats.pendingAppointments },
+                { 'Indicator': 'Programări Finalizate', 'Valoare': stats.completedAppointments },
+                { 'Indicator': 'Venituri Luna (RON)', 'Valoare': stats.monthRevenue },
+                { 'Indicator': 'Activități Mâine', 'Valoare': stats.tomorrowTasks }
+            ];
+            const statsWS = XLSX.utils.json_to_sheet(statsData);
+            XLSX.utils.book_append_sheet(wb, statsWS, 'Statistici');
+            
+            // Save file
+            const today = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `AdInstalGaz-Raport-${today}.xlsx`);
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Title
+            doc.setFontSize(20);
+            doc.text('Ad Instal Gaz SRL - Raport', 20, 20);
+            
+            doc.setFontSize(12);
+            doc.text(`Data: ${new Date().toLocaleDateString('ro-RO')}`, 20, 30);
+            
+            let yPosition = 50;
+            
+            // Statistics
+            doc.setFontSize(16);
+            doc.text('Statistici Generale', 20, yPosition);
+            yPosition += 10;
+            
+            const stats = calculateStats();
+            const statsData = [
+                ['Total Clienți', stats.totalClients],
+                ['Programări Luna Aceasta', stats.monthAppointments],
+                ['Programări în Așteptare', stats.pendingAppointments],
+                ['Programări Finalizate', stats.completedAppointments],
+                ['Venituri Luna (RON)', stats.monthRevenue],
+                ['Activități Mâine', stats.tomorrowTasks]
+            ];
+            
+            doc.autoTable({
+                startY: yPosition,
+                head: [['Indicator', 'Valoare']],
+                body: statsData,
+                margin: { left: 20 },
+                styles: { fontSize: 10 }
+            });
+            
+            yPosition = doc.lastAutoTable.finalY + 20;
+            
+            // Appointments
+            if (appData.appointments.length > 0) {
+                doc.setFontSize(16);
+                doc.text('Programări', 20, yPosition);
+                yPosition += 10;
+                
+                const appointmentsData = appData.appointments.slice(0, 20).map(apt => [
+                    apt.clientName,
+                    apt.service,
+                    new Date(apt.date).toLocaleDateString('ro-RO'),
+                    apt.time,
+                    getStatusText(apt.status),
+                    apt.price ? `${apt.price} RON` : '-'
+                ]);
+                
+                doc.autoTable({
+                    startY: yPosition,
+                    head: [['Client', 'Serviciu', 'Data', 'Ora', 'Status', 'Preț']],
+                    body: appointmentsData,
+                    margin: { left: 20 },
+                    styles: { fontSize: 8 }
+                });
+            }
+            
+            // Save PDF
+            const today = new Date().toISOString().split('T')[0];
+            doc.save(`AdInstalGaz-Raport-${today}.pdf`);
+        }
+
+        // Backup and restore functions
+        function backupData() {
+            const backupData = {
+                ...appData,
+                backupInfo: {
+                    version: '1.0',
+                    timestamp: new Date().toISOString(),
+                    totalClients: appData.clients.length,
+                    totalAppointments: appData.appointments.length,
+                    totalReminders: appData.reminders.length
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `AdInstalGaz-Backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert('✅ Backup realizat cu succes!');
+        }
+
+        function restoreData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.json')) {
+                alert('❌ Te rog să selectezi un fișier JSON valid!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const backupData = JSON.parse(e.target.result);
+                    
+                    // Validate backup data
+                    if (!backupData.clients || !backupData.appointments || !backupData.reminders) {
+                        throw new Error('Fișierul nu conține date valide!');
+                    }
+                    
+                    if (confirm('ATENȚIE!\nAceasta va înlocui TOATE datele curente cu cele din backup.\nEști sigur că vrei să continui?')) {
+                        // Restore data
+                        appData.clients = backupData.clients || [];
+                        appData.appointments = backupData.appointments || [];
+                        appData.reminders = backupData.reminders || [];
+                        
+                        // Ensure documents array exists for all clients
+                        appData.clients.forEach(client => {
+                            if (!client.documents) {
+                                client.documents = [];
+                            }
+                        });
+                        
+                        saveData();
+                        updateUI();
+                        
+                        const info = backupData.backupInfo;
+                        if (info) {
+                            alert(`✅ Backup restaurat cu succes!\n\nInfo backup:\n- Data: ${new Date(info.timestamp).toLocaleDateString('ro-RO')}\n- Clienți: ${info.totalClients}\n- Programări: ${info.totalAppointments}\n- Reminder-uri: ${info.totalReminders}`);
+                        } else {
+                            alert('✅ Date restaurate cu succes!');
+                        }
+                    }
+                } catch (error) {
+                    alert('❌ Eroare la citirea fișierului backup!\n\n' + error.message);
+                }
+                
+                // Reset file input
+                input.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        // Delete all data function
+        function deleteAllData() {
+            const confirmation = document.getElementById('delete-confirmation').value;
+            const checkbox = document.getElementById('delete-checkbox').checked;
+            
+            if (confirmation !== 'STERGE TOTUL') {
+                alert('Trebuie să scrii exact "STERGE TOTUL" pentru confirmare!');
+                return;
+            }
+            
+            if (!checkbox) {
+                alert('Trebuie să bifezi căsuța de confirmare!');
+                return;
+            }
+            
+            if (confirm('ULTIMA CONFIRMARE!\nEști 100% sigur că vrei să ștergi TOATE datele?\nAceastă acțiune NU poate fi anulată!')) {
+                // Clear all data
+                appData = {
+                    clients: [],
+                    appointments: [],
+                    reminders: []
+                };
+                
+                // Clear localStorage
+                localStorage.removeItem('adinstalgaz_data');
+                
+                // Update UI
+                updateUI();
+                hideModal('deleteDataModal');
+                
+                alert('✅ Toate datele au fost șterse cu succes!');
+            }
+        }
+
         // Statistics and reporting
         function calculateStats() {
             const now = new Date();
@@ -1548,6 +2288,7 @@
             renderAppointments();
             renderReminders();
             renderRecentActivity();
+            renderTomorrowTasks();
         }
 
         function renderRecentActivity() {
@@ -1596,22 +2337,6 @@
                     </div>
                 `).join('');
             }
-        }
-
-        function exportData() {
-            const dataToExport = {
-                ...appData,
-                stats: calculateStats(),
-                exportDate: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `adinstalgaz-backup-${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
         }
 
         // Set minimum date for date inputs
