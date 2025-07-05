@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicație Gestionare Abonați - Revizii Automate</title>
+    <title>Aplicație Gestionare Abonați - Rapoarte Complete</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -393,9 +395,124 @@
             font-size: 15px;
         }
 
-        @keyframes pulse-offer {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+        .file-upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: #e6fffa;
+        }
+
+        .file-list {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            font-size: 20px;
+        }
+
+        .file-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .date-range-container {
+            background: #fff5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f56565;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #a0aec0;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #2d3748;
         }
 
         .alert {
@@ -696,6 +813,20 @@
                     </div>
                 </div>
 
+                <div class="date-range-container">
+                    <div class="form-section-title">📅 Date Importante Revizie</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Data Revizie Efectuată</label>
+                            <input type="date" class="form-input" id="dataRevizieEfectuata">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Data Expirare (calculată automat)</label>
+                            <input type="date" class="form-input" id="dataExpirare" readonly style="background: #f7fafc;">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="revizie-container">
                     <div class="form-section-title">🔍 Sistem Revizii Automate</div>
                     <div class="form-grid">
@@ -723,6 +854,18 @@
                             <input type="date" class="form-input" id="dataUrmatoareaRevizie" readonly style="background: #f7fafc;">
                         </div>
                     </div>
+                </div>
+
+                <div class="form-container">
+                    <div class="form-section-title">📎 Gestionare Documente</div>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div style="font-size: 48px; color: #cbd5e0; margin-bottom: 15px;">📄</div>
+                        <p style="color: #4a5568; font-weight: 600; margin-bottom: 10px;">Încarcă documente pentru client</p>
+                        <p style="color: #718096; font-size: 14px;">Drag & drop sau click pentru a selecta fișiere</p>
+                        <p style="color: #a0aec0; font-size: 12px;">PDF, DOC, DOCX, JPG, PNG (max 5MB per fișier)</p>
+                        <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
+                    </div>
+                    <div class="file-list" id="fileList"></div>
                 </div>
 
                 <div style="margin-top: 20px;">
@@ -910,16 +1053,38 @@
             </div>
 
             <div class="form-container">
-                <h3 style="color: #4a5568; margin-bottom: 20px;">📋 Export Date</h3>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="exportAbonati()">📥 Export Abonați</button>
-                    <button class="btn btn-secondary" onclick="exportProgramari()">📥 Export Programări</button>
-                    <button class="btn btn-secondary" onclick="exportRemindere()">📥 Export Remindere</button>
-                    <button class="btn btn-secondary" onclick="exportRevizii()">📥 Export Revizii</button>
+                <h3 style="color: #4a5568; margin-bottom: 20px;">📋 Export Rapoarte Complete</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="exportRaportPDF()">📄 Raport PDF Complet</button>
+                    <button class="btn btn-primary" onclick="exportRaportExcel()">📊 Raport Excel Detaliat</button>
+                    <button class="btn btn-secondary" onclick="exportAbonati()">📥 Export Abonați CSV</button>
+                    <button class="btn btn-secondary" onclick="exportProgramari()">📥 Export Programări CSV</button>
+                    <button class="btn btn-secondary" onclick="exportRemindere()">📥 Export Remindere CSV</button>
+                    <button class="btn btn-secondary" onclick="exportRevizii()">📥 Export Revizii CSV</button>
+                </div>
+                
+                <div style="background: #edf2f7; padding: 15px; border-radius: 8px;">
+                    <h4 style="color: #4a5568; margin-bottom: 10px;">📈 Statistici Raport:</h4>
+                    <p style="color: #718096;">• PDF: Include toate datele, grafice și documente</p>
+                    <p style="color: #718096;">• Excel: Fișier cu multiple foi pentru fiecare secțiune</p>
+                    <p style="color: #718096;">• CSV: Format simplu pentru import în alte sisteme</p>
                 </div>
             </div>
         </section>
     </main>
+
+    <!-- Modal pentru Gestionare Documente -->
+    <div id="modalDocumente" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📎 Documente Client</h2>
+                <button class="close-modal" onclick="inchideModalDocumente()">&times;</button>
+            </div>
+            <div id="continutModalDocumente">
+                <!-- Conținutul se va încărca dinamic -->
+            </div>
+        </div>
+    </div>
 
     <!-- Notification -->
     <div id="notification" class="notification"></div>
@@ -947,9 +1112,30 @@
             }
         });
 
-        // Auto-calculate next revision date
+        // Auto-calculate expiration date and next revision date
         document.getElementById('dataPrimaRevizie').addEventListener('change', calculeazaUrmatoareaRevizie);
         document.getElementById('periodicitateRevizie').addEventListener('change', calculeazaUrmatoareaRevizie);
+        document.getElementById('dataRevizieEfectuata').addEventListener('change', calculeazaDataExpirare);
+
+        function calculeazaDataExpirare() {
+            const dataRevizie = document.getElementById('dataRevizieEfectuata').value;
+            
+            if (dataRevizie) {
+                const data = new Date(dataRevizie);
+                data.setFullYear(data.getFullYear() + 2); // Întotdeauna 2 ani pentru conformitatea legală
+                
+                const dataFormatata = data.toISOString().split('T')[0];
+                document.getElementById('dataExpirare').value = dataFormatata;
+                
+                // Actualizează și următoarea revizie dacă nu este deja setată
+                if (!document.getElementById('dataPrimaRevizie').value) {
+                    document.getElementById('dataPrimaRevizie').value = dataRevizie;
+                    calculeazaUrmatoareaRevizie();
+                }
+            } else {
+                document.getElementById('dataExpirare').value = '';
+            }
+        }
 
         function calculeazaUrmatoareaRevizie() {
             const dataPrima = document.getElementById('dataPrimaRevizie').value;
@@ -964,6 +1150,436 @@
             } else {
                 document.getElementById('dataUrmatoareaRevizie').value = '';
             }
+        }
+
+        // Export PDF functionality
+        function exportRaportPDF() {
+            if (typeof window.jsPDF === 'undefined') {
+                showNotification('Biblioteca PDF nu este încărcată. Încearcă din nou.', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jsPDF;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(20);
+            doc.text('RAPORT COMPLET ABONAȚI', 20, 20);
+            
+            doc.setFontSize(12);
+            doc.text(`Generat pe: ${new Date().toLocaleDateString('ro-RO')}`, 20, 30);
+            
+            let yPosition = 50;
+            
+            // Statistici generale
+            doc.setFontSize(16);
+            doc.text('STATISTICI GENERALE', 20, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(12);
+            doc.text(`Total Abonați: ${abonati.length}`, 20, yPosition);
+            yPosition += 7;
+            doc.text(`Total Programări: ${programari.length}`, 20, yPosition);
+            yPosition += 7;
+            doc.text(`Total Remindere: ${remindere.length}`, 20, yPosition);
+            yPosition += 15;
+            
+            // Abonați
+            doc.setFontSize(16);
+            doc.text('LISTA ABONAȚI', 20, yPosition);
+            yPosition += 10;
+            
+            abonati.forEach((abonat, index) => {
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                
+                const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'N/A';
+                const adresa = formatareAdresa(abonat.adresa);
+                const dataRevizie = abonat.dataRevizieEfectuata ? new Date(abonat.dataRevizieEfectuata).toLocaleDateString('ro-RO') : 'N/A';
+                const dataExpirare = abonat.dataExpirare ? new Date(abonat.dataExpirare).toLocaleDateString('ro-RO') : 'N/A';
+                const numarDocumente = abonat.documente ? abonat.documente.length : 0;
+                
+                doc.setFontSize(12);
+                doc.text(`${index + 1}. ${abonat.nume}`, 20, yPosition);
+                yPosition += 6;
+                doc.setFontSize(10);
+                doc.text(`   Tel: ${abonat.telefon} | Email: ${abonat.email || 'N/A'}`, 20, yPosition);
+                yPosition += 5;
+                doc.text(`   Adresa: ${adresa}`, 20, yPosition);
+                yPosition += 5;
+                doc.text(`   Servicii: ${servicii}`, 20, yPosition);
+                yPosition += 5;
+                doc.text(`   Data Revizie: ${dataRevizie} | Expirare: ${dataExpirare}`, 20, yPosition);
+                yPosition += 5;
+                doc.text(`   Documente: ${numarDocumente}`, 20, yPosition);
+                yPosition += 10;
+            });
+            
+            // Salvare
+            doc.save(`Raport_Complet_Abonati_${new Date().toISOString().split('T')[0]}.pdf`);
+            showNotification('Raportul PDF a fost generat cu succes!', 'success');
+        }
+
+        // Export Excel functionality
+        function exportRaportExcel() {
+            if (typeof XLSX === 'undefined') {
+                showNotification('Biblioteca Excel nu este încărcată. Încearcă din nou.', 'error');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+            
+            // Foi Excel
+            const foaieAbonati = [];
+            const foaieProgramari = [];
+            const foaieRemindere = [];
+            const foaieStatistici = [];
+            
+            // Date abonați
+            foaieAbonati.push(['Nume', 'Telefon', 'Email', 'CNP', 'Oraș', 'Strada', 'Număr', 'Bloc', 'Scara', 'Etaj', 'Apartament', 'Servicii Contractate', 'Cost Total', 'Data Revizie', 'Data Expirare', 'Tip Client', 'Număr Documente', 'Status']);
+            
+            abonati.forEach(abonat => {
+                let costTotal = 0;
+                if (abonat.serviciiContractate) {
+                    abonat.serviciiContractate.forEach(serviciu => {
+                        switch(serviciu) {
+                            case 'Verificare Instalație Gaz': costTotal += 150; break;
+                            case 'Revizie Instalație Gaz': costTotal += 250; break;
+                            case 'Verificare Centrală': costTotal += 150; break;
+                            case 'Instalații Gaz + Centrală': costTotal += 250; break;
+                        }
+                    });
+                }
+                
+                const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join('; ') : '';
+                const dataRevizie = abonat.dataRevizieEfectuata || '';
+                const dataExpirare = abonat.dataExpirare || '';
+                const numarDocumente = abonat.documente ? abonat.documente.length : 0;
+                
+                foaieAbonati.push([
+                    abonat.nume,
+                    abonat.telefon,
+                    abonat.email || '',
+                    abonat.cnp || '',
+                    abonat.adresa.oras,
+                    abonat.adresa.strada || '',
+                    abonat.adresa.numar || '',
+                    abonat.adresa.numeBlocAbonat || '',
+                    abonat.adresa.scara || '',
+                    abonat.adresa.etaj || '',
+                    abonat.adresa.apartament || '',
+                    servicii,
+                    costTotal + ' Lei',
+                    dataRevizie,
+                    dataExpirare,
+                    abonat.tipClient === 'nou' ? 'Client Nou' : 'Client Actual',
+                    numarDocumente,
+                    abonat.status
+                ]);
+            });
+            
+            // Date programări
+            foaieProgramari.push(['Client', 'Serviciu', 'Data', 'Status', 'Observații', 'Tip', 'Data Creare']);
+            programari.forEach(p => {
+                foaieProgramari.push([
+                    p.clientNume,
+                    p.tipServiciu,
+                    new Date(p.data).toLocaleString('ro-RO'),
+                    p.status,
+                    p.observatii || '',
+                    p.tipAutomat || 'Manual',
+                    new Date(p.dataCreare).toLocaleDateString('ro-RO')
+                ]);
+            });
+            
+            // Date remindere
+            foaieRemindere.push(['Client', 'Tip', 'Data', 'Prioritate', 'Mesaj', 'Status', 'Tip', 'Data Creare']);
+            remindere.forEach(r => {
+                foaieRemindere.push([
+                    r.clientNume,
+                    r.tip,
+                    new Date(r.data).toLocaleString('ro-RO'),
+                    r.prioritate,
+                    r.mesaj || '',
+                    r.status,
+                    r.tipAutomat || 'Manual',
+                    new Date(r.dataCreare).toLocaleDateString('ro-RO')
+                ]);
+            });
+            
+            // Statistici
+            foaieStatistici.push(['Statistică', 'Valoare']);
+            foaieStatistici.push(['Total Abonați', abonati.length]);
+            foaieStatistici.push(['Total Programări', programari.length]);
+            foaieStatistici.push(['Total Remindere', remindere.length]);
+            foaieStatistici.push(['Data Generare', new Date().toLocaleDateString('ro-RO')]);
+            
+            // Adaugă foile în Excel
+            const wsAbonati = XLSX.utils.aoa_to_sheet(foaieAbonati);
+            const wsProgramari = XLSX.utils.aoa_to_sheet(foaieProgramari);
+            const wsRemindere = XLSX.utils.aoa_to_sheet(foaieRemindere);
+            const wsStatistici = XLSX.utils.aoa_to_sheet(foaieStatistici);
+            
+            XLSX.utils.book_append_sheet(wb, wsAbonati, 'Abonați');
+            XLSX.utils.book_append_sheet(wb, wsProgramari, 'Programări');
+            XLSX.utils.book_append_sheet(wb, wsRemindere, 'Remindere');
+            XLSX.utils.book_append_sheet(wb, wsStatistici, 'Statistici');
+            
+            // Salvare
+            XLSX.writeFile(wb, `Raport_Excel_Complet_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showNotification('Raportul Excel a fost generat cu succes!', 'success');
+        }
+
+        // File upload functionality
+        function initializeFileUpload() {
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (!fileUploadArea || !fileInput) return;
+
+            fileUploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+        }
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    showNotification(`Fișierul ${file.name} este prea mare (max 5MB)`, 'error');
+                    return;
+                }
+
+                const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
+                if (!allowedTypes.includes(file.type)) {
+                    showNotification(`Tipul fișierului ${file.name} nu este permis`, 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const documentNou = {
+                        id: Date.now() + Math.random(),
+                        nume: file.name,
+                        tip: file.type,
+                        marime: file.size,
+                        continut: e.target.result.split(',')[1], // Base64 fără header
+                        dataIncarcare: new Date().toISOString()
+                    };
+
+                    documenteTemp.push(documentNou);
+                    afiseazaListaFisiere();
+                    showNotification(`Fișierul ${file.name} a fost încărcat`, 'success');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function afiseazaListaFisiere() {
+            const fileList = document.getElementById('fileList');
+            if (!fileList || documenteTemp.length === 0) {
+                if (fileList) fileList.innerHTML = '';
+                return;
+            }
+
+            let html = '<h4 style="color: #4a5568; margin-bottom: 15px;">📄 Fișiere încărcate:</h4>';
+            
+            documenteTemp.forEach(doc => {
+                const marimeMB = (doc.marime / (1024 * 1024)).toFixed(2);
+                const iconFisier = getFileIcon(doc.tip);
+                
+                html += `
+                    <div class="file-item">
+                        <div class="file-info">
+                            <span class="file-icon">${iconFisier}</span>
+                            <div class="file-details">
+                                <span class="file-name">${doc.nume}</span>
+                                <span class="file-size">${marimeMB} MB • ${new Date(doc.dataIncarcare).toLocaleDateString('ro-RO')}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger btn-small" onclick="stergeFisierTemp(${doc.id})" title="Șterge fișier">🗑️</button>
+                    </div>
+                `;
+            });
+
+            fileList.innerHTML = html;
+        }
+
+        function getFileIcon(tipFisier) {
+            switch(tipFisier) {
+                case 'application/pdf': return '📄';
+                case 'application/msword':
+                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': return '📝';
+                case 'image/jpeg':
+                case 'image/png': return '🖼️';
+                default: return '📎';
+            }
+        }
+
+        function stergeFisierTemp(idFisier) {
+            documenteTemp = documenteTemp.filter(doc => doc.id !== idFisier);
+            afiseazaListaFisiere();
+            showNotification('Fișierul a fost șters', 'success');
+        }
+
+        function gestioneazaDocumente(idAbonat) {
+            const abonat = abonati.find(a => a.id === idAbonat);
+            if (!abonat) return;
+
+            const modal = document.getElementById('modalDocumente');
+            const continut = document.getElementById('continutModalDocumente');
+            
+            let html = `
+                <h3 style="color: #4a5568; margin-bottom: 20px;">📎 Documente pentru ${abonat.nume}</h3>
+                
+                <div class="file-upload-area" onclick="document.getElementById('modalFileInput').click()">
+                    <div style="font-size: 48px; color: #cbd5e0; margin-bottom: 15px;">📄</div>
+                    <p style="color: #4a5568; font-weight: 600; margin-bottom: 10px;">Adaugă documente noi</p>
+                    <p style="color: #718096; font-size: 14px;">Click pentru a selecta fișiere</p>
+                    <input type="file" id="modalFileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">📁 Documente existente:</h4>
+                    <div id="documenteExistente">
+            `;
+
+            if (abonat.documente && abonat.documente.length > 0) {
+                abonat.documente.forEach(doc => {
+                    const marimeMB = (doc.marime / (1024 * 1024)).toFixed(2);
+                    const iconFisier = getFileIcon(doc.tip);
+                    
+                    html += `
+                        <div class="file-item">
+                            <div class="file-info">
+                                <span class="file-icon">${iconFisier}</span>
+                                <div class="file-details">
+                                    <span class="file-name">${doc.nume}</span>
+                                    <span class="file-size">${marimeMB} MB • ${new Date(doc.dataIncarcare).toLocaleDateString('ro-RO')}</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary btn-small" onclick="descarcaDocument(${abonat.id}, ${doc.id})" title="Descarcă">📥</button>
+                                <button class="btn btn-danger btn-small" onclick="stergeDocument(${abonat.id}, ${doc.id})" title="Șterge">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html += '<p style="color: #718096; text-align: center; padding: 20px;">Nu există documente încărcate</p>';
+            }
+
+            html += `
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="inchideModalDocumente()">Închide</button>
+                </div>
+            `;
+
+            continut.innerHTML = html;
+
+            // Add event listener for new file uploads
+            document.getElementById('modalFileInput').addEventListener('change', (e) => {
+                adaugaDocumenteExistente(idAbonat, e.target.files);
+            });
+
+            modal.style.display = 'block';
+        }
+
+        function adaugaDocumenteExistente(idAbonat, files) {
+            const abonat = abonati.find(a => a.id === idAbonat);
+            if (!abonat) return;
+
+            if (!abonat.documente) abonat.documente = [];
+
+            Array.from(files).forEach(file => {
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification(`Fișierul ${file.name} este prea mare (max 5MB)`, 'error');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const documentNou = {
+                        id: Date.now() + Math.random(),
+                        nume: file.name,
+                        tip: file.type,
+                        marime: file.size,
+                        continut: e.target.result.split(',')[1],
+                        dataIncarcare: new Date().toISOString()
+                    };
+
+                    abonat.documente.push(documentNou);
+                    saveData();
+                    showNotification(`Documentul ${file.name} a fost adăugat`, 'success');
+                    
+                    // Reîmprospătează modalul
+                    gestioneazaDocumente(idAbonat);
+                    updateListaAbonati();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function descarcaDocument(idAbonat, idDocument) {
+            const abonat = abonati.find(a => a.id === idAbonat);
+            if (!abonat || !abonat.documente) return;
+
+            const document = abonat.documente.find(d => d.id === idDocument);
+            if (!document) return;
+
+            const link = document.createElement('a');
+            link.href = `data:${document.tip};base64,${document.continut}`;
+            link.download = document.nume;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification(`Documentul ${document.nume} a fost descărcat`, 'success');
+        }
+
+        function stergeDocument(idAbonat, idDocument) {
+            if (!confirm('Ești sigur că vrei să ștergi acest document?')) return;
+
+            const abonat = abonati.find(a => a.id === idAbonat);
+            if (!abonat || !abonat.documente) return;
+
+            const document = abonat.documente.find(d => d.id === idDocument);
+            if (!document) return;
+
+            abonat.documente = abonat.documente.filter(d => d.id !== idDocument);
+            saveData();
+            showNotification(`Documentul ${document.nume} a fost șters`, 'success');
+            
+            // Reîmprospătează modalul și lista
+            gestioneazaDocumente(idAbonat);
+            updateListaAbonati();
+        }
+
+        function inchideModalDocumente() {
+            document.getElementById('modalDocumente').style.display = 'none';
         }
 
         // Section navigation
@@ -1182,6 +1798,8 @@
             const scara = document.getElementById('scaraAbonat').value.trim();
             const etaj = document.getElementById('etajAbonat').value.trim();
             const apartament = document.getElementById('apartamentAbonat').value.trim();
+            const dataRevizieEfectuata = document.getElementById('dataRevizieEfectuata').value;
+            const dataExpirare = document.getElementById('dataExpirare').value;
             const dataPrimaRevizie = document.getElementById('dataPrimaRevizie').value;
             const periodicitateRevizie = document.getElementById('periodicitateRevizie').value;
             const dataUrmatoareaRevizie = document.getElementById('dataUrmatoareaRevizie').value;
@@ -1226,10 +1844,13 @@
                     apartament
                 },
                 serviciiContractate,
+                dataRevizieEfectuata,
+                dataExpirare,
                 dataPrimaRevizie,
                 periodicitateRevizie,
                 dataUrmatoareaRevizie,
                 zileNotificare,
+                documente: [...documenteTemp], // Adaugă documentele încărcate
                 dataCreare: new Date().toISOString(),
                 status: 'Activ'
             };
@@ -1247,7 +1868,8 @@
             updateDashboard();
             resetFormAbonat();
             
-            showNotification(`Abonatul ${nume} a fost adăugat cu succes! ${dataUrmatoareaRevizie ? 'Reminder și programare automată pentru revizie create!' : ''}`, 'success');
+            const costTotal = calculeazaCostTotal();
+            showNotification(`Abonatul ${nume} a fost adăugat cu succes! ${documenteTemp.length > 0 ? `(${documenteTemp.length} documente încărcate)` : ''} ${dataUrmatoareaRevizie ? 'Reminder și programare automată create!' : ''}`, 'success');
         }
 
         function resetFormAbonat() {
@@ -1264,8 +1886,10 @@
             document.getElementById('scaraAbonat').value = '';
             document.getElementById('etajAbonat').value = '';
             document.getElementById('apartamentAbonat').value = '';
+            document.getElementById('dataRevizieEfectuata').value = '';
+            document.getElementById('dataExpirare').value = '';
             document.getElementById('dataPrimaRevizie').value = '';
-            document.getElementById('periodicitateRevizie').value = '';
+            document.getElementById('periodicitateRevizie').value = '2';
             document.getElementById('dataUrmatoareaRevizie').value = '';
             document.getElementById('zileNotificare').value = '2';
             
@@ -1273,6 +1897,10 @@
             document.querySelectorAll('#serviciu_verificare_gaz, #serviciu_revizie_gaz, #serviciu_verificare_centrala, #serviciu_pachet_complet').forEach(checkbox => {
                 checkbox.checked = false;
             });
+            
+            // Reset documente
+            documenteTemp = [];
+            afiseazaListaFisiere();
             
             // Reset cost display
             actualizareaCostului();
@@ -1300,8 +1928,9 @@
                             <th>Telefon</th>
                             <th>Adresă</th>
                             <th>Servicii</th>
-                            <th>Tip Client</th>
-                            <th>Următoarea Revizie</th>
+                            <th>Data Revizie</th>
+                            <th>Data Expirare</th>
+                            <th>Documente</th>
                             <th>Status</th>
                             <th>Acțiuni</th>
                         </tr>
@@ -1312,7 +1941,25 @@
             abonati.forEach(abonat => {
                 const adresaCompleta = formatareAdresa(abonat.adresa);
                 const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : '-';
-                const urmatoareaRevizie = abonat.dataUrmatoareaRevizie ? new Date(abonat.dataUrmatoareaRevizie).toLocaleDateString('ro-RO') : '-';
+                const dataRevizie = abonat.dataRevizieEfectuata ? new Date(abonat.dataRevizieEfectuata).toLocaleDateString('ro-RO') : '-';
+                const dataExpirare = abonat.dataExpirare ? new Date(abonat.dataExpirare).toLocaleDateString('ro-RO') : '-';
+                const numarDocumente = abonat.documente ? abonat.documente.length : 0;
+                
+                // Verifică dacă revizia expiră în curând
+                let statusExpirare = 'status-active';
+                if (abonat.dataExpirare) {
+                    const expirare = new Date(abonat.dataExpirare);
+                    const astazi = new Date();
+                    const zilePanaLaExpirare = Math.ceil((expirare - astazi) / (1000 * 60 * 60 * 24));
+                    
+                    if (zilePanaLaExpirare < 0) {
+                        statusExpirare = 'status-urgent'; // Expirat
+                    } else if (zilePanaLaExpirare <= 30) {
+                        statusExpirare = 'status-inactive'; // Expiră în 30 zile
+                    } else if (zilePanaLaExpirare <= 90) {
+                        statusExpirare = 'status-pending'; // Expiră în 90 zile
+                    }
+                }
                 
                 html += `
                     <tr>
@@ -1320,8 +1967,13 @@
                         <td>${abonat.telefon}</td>
                         <td><small>${adresaCompleta}</small></td>
                         <td><small>${servicii}</small></td>
-                        <td><span class="status-badge ${abonat.tipClient === 'nou' ? 'status-pending' : 'status-active'}">${abonat.tipClient === 'nou' ? 'Client Nou' : 'Client Actual'}</span></td>
-                        <td><small>${urmatoareaRevizie}</small></td>
+                        <td><small>${dataRevizie}</small></td>
+                        <td><span class="status-badge ${statusExpirare}"><small>${dataExpirare}</small></span></td>
+                        <td>
+                            <button class="btn btn-secondary btn-small" onclick="gestioneazaDocumente(${abonat.id})" title="Gestionează documente">
+                                📎 ${numarDocumente}
+                            </button>
+                        </td>
                         <td><span class="status-badge status-active">${abonat.status}</span></td>
                         <td>
                             <div class="action-buttons">
