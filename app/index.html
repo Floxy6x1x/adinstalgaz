@@ -1381,6 +1381,147 @@
                 input.min = today;
             });
         });
+        // ========== FIREBASE CLOUD SYNC FUNCTIONS ==========
+
+// Firebase Authentication și Real-time Sync
+async function initializeFirebase() {
+    try {
+        await window.firebaseFunctions.signInAnonymously(window.auth);
+        console.log('✅ Autentificare Firebase reușită');
+        
+        await syncFromCloud();
+        
+    } catch (error) {
+        console.error('❌ Eroare Firebase:', error);
+    }
+}
+
+async function syncToCloud() {
+    if (!isOnline || !window.db) return;
+    
+    setSyncingStatus();
+    
+    try {
+        const { collection, addDoc, serverTimestamp } = window.firebaseFunctions;
+
+        for (const client of appData.clients) {
+            if (!client.cloudId) {
+                const docRef = await addDoc(collection(window.db, 'clients'), {
+                    ...client,
+                    syncedAt: serverTimestamp()
+                });
+                client.cloudId = docRef.id;
+            }
+        }
+
+        for (const appointment of appData.appointments) {
+            if (!appointment.cloudId) {
+                const docRef = await addDoc(collection(window.db, 'appointments'), {
+                    ...appointment,
+                    syncedAt: serverTimestamp()
+                });
+                appointment.cloudId = docRef.id;
+            }
+        }
+
+        saveData();
+        updateLastSyncTime();
+        console.log('✅ Sincronizare în cloud reușită');
+
+    } catch (error) {
+        console.error('❌ Eroare sincronizare:', error);
+    }
+}
+
+async function syncFromCloud() {
+    if (!isOnline || !window.db) return;
+    
+    setSyncingStatus();
+    
+    try {
+        const { collection, getDocs } = window.firebaseFunctions;
+
+        const clientsSnapshot = await getDocs(collection(window.db, 'clients'));
+        const cloudClients = [];
+        clientsSnapshot.forEach((doc) => {
+            cloudClients.push({ cloudId: doc.id, ...doc.data() });
+        });
+
+        const appointmentsSnapshot = await getDocs(collection(window.db, 'appointments'));
+        const cloudAppointments = [];
+        appointmentsSnapshot.forEach((doc) => {
+            cloudAppointments.push({ cloudId: doc.id, ...doc.data() });
+        });
+
+        if (cloudClients.length > 0) appData.clients = cloudClients;
+        if (cloudAppointments.length > 0) appData.appointments = cloudAppointments;
+
+        saveData();
+        updateUI();
+        updateSyncCounts();
+        updateLastSyncTime();
+        console.log('✅ Sincronizare din cloud reușită');
+
+    } catch (error) {
+        console.error('❌ Eroare sincronizare:', error);
+    }
+}
+
+function setSyncingStatus() {
+    const statusEl = document.getElementById('sync-status');
+    const dotEl = document.getElementById('sync-dot');
+    const textEl = document.getElementById('sync-text');
+
+    statusEl.className = 'sync-status syncing';
+    dotEl.className = 'sync-dot syncing';
+    textEl.textContent = 'Sincronizare...';
+
+    setTimeout(() => {
+        updateSyncStatus();
+    }, 2000);
+}
+
+function updateSyncCounts() {
+    if (document.getElementById('sync-clients-count')) {
+        document.getElementById('sync-clients-count').textContent = appData.clients.length;
+        document.getElementById('sync-appointments-count').textContent = appData.appointments.length;
+        document.getElementById('sync-reminders-count').textContent = appData.reminders.length;
+    }
+}
+
+function updateLastSyncTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('ro-RO', {hour: '2-digit', minute: '2-digit'});
+    if (document.getElementById('last-sync')) {
+        document.getElementById('last-sync').textContent = timeStr;
+    }
+}
+
+async function forceSyncToCloud() {
+    if (!isOnline) {
+        alert('❌ Nu ești conectat la internet!');
+        return;
+    }
+    
+    await syncToCloud();
+    alert('✅ Sincronizare în cloud finalizată!');
+}
+
+async function forceSyncFromCloud() {
+    if (!isOnline) {
+        alert('❌ Nu ești conectat la internet!');
+        return;
+    }
+    
+    await syncFromCloud();
+    alert('✅ Sincronizare din cloud finalizată!');
+}
+
+// Initialize Firebase when app loads
+setTimeout(() => {
+    initializeFirebase();
+}, 1000);
+
     </script>
 </body>
 </html>
