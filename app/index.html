@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ad Instal Gaz SRL - Management Business</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
     <style>
         * {
             margin: 0;
@@ -823,8 +824,15 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
+                    <label class="form-label">Client *</label>
+                    <select class="form-select" id="appointment-client-select" onchange="selectClient()" required>
+                        <option value="">Selectează clientul</option>
+                        <option value="new-client">+ Client Nou (introdu manual)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="manual-client-group" style="display: none;">
                     <label class="form-label">Nume Client *</label>
-                    <input type="text" class="form-input" id="appointment-client-name" required>
+                    <input type="text" class="form-input" id="appointment-client-name">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Telefon *</label>
@@ -834,10 +842,13 @@
                     <label class="form-label">Serviciu *</label>
                     <select class="form-select" id="appointment-service" required>
                         <option value="">Selectează serviciul</option>
+                        <option value="Verificări instalații gaz">Verificări instalații gaz</option>
+                        <option value="Revizii instalații gaz">Revizii instalații gaz</option>
+                        <option value="Verificări centrale termice">Verificări centrale termice</option>
+                        <option value="Revizii centrale termice">Revizii centrale termice</option>
                         <option value="Verificare Tehnică Periodică">Verificare Tehnică Periodică</option>
                         <option value="Verificare la Racordare">Verificare la Racordare</option>
                         <option value="Instalații de Utilizare Gaz">Instalații de Utilizare Gaz</option>
-                        <option value="Revizii Centrale Termice">Revizii Centrale Termice</option>
                         <option value="Proiectare Branșamente">Proiectare Branșamente</option>
                         <option value="Execuție Branșamente">Execuție Branșamente</option>
                     </select>
@@ -881,8 +892,15 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
+                    <label class="form-label">Client *</label>
+                    <select class="form-select" id="reminder-client-select" onchange="selectReminderClient()" required>
+                        <option value="">Selectează clientul</option>
+                        <option value="new-client">+ Client Nou (introdu manual)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="manual-reminder-client-group" style="display: none;">
                     <label class="form-label">Nume Client *</label>
-                    <input type="text" class="form-input" id="reminder-client-name" required>
+                    <input type="text" class="form-input" id="reminder-client-name">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Telefon Client *</label>
@@ -974,8 +992,119 @@
 
         // Modal functions
         function showModal(modalId) {
+            if (modalId === 'addAppointmentModal') {
+                populateClientDropdown();
+            } else if (modalId === 'addReminderModal') {
+                populateReminderClientDropdown();
+            }
             document.getElementById(modalId).classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        function populateClientDropdown() {
+            const dropdown = document.getElementById('appointment-client-select');
+            const defaultOptions = `
+                <option value="">Selectează clientul</option>
+                <option value="new-client">+ Client Nou (introdu manual)</option>
+            `;
+            
+            const clientOptions = appData.clients.map(client => 
+                `<option value="${client.id}">${client.name} - ${client.phone}</option>`
+            ).join('');
+            
+            dropdown.innerHTML = defaultOptions + clientOptions;
+        }
+
+        function populateReminderClientDropdown() {
+            const dropdown = document.getElementById('reminder-client-select');
+            const defaultOptions = `
+                <option value="">Selectează clientul</option>
+                <option value="new-client">+ Client Nou (introdu manual)</option>
+            `;
+            
+            const clientOptions = appData.clients.map(client => 
+                `<option value="${client.id}">${client.name} - ${client.phone}</option>`
+            ).join('');
+            
+            dropdown.innerHTML = defaultOptions + clientOptions;
+        }
+
+        function selectClient() {
+            const dropdown = document.getElementById('appointment-client-select');
+            const manualGroup = document.getElementById('manual-client-group');
+            const phoneInput = document.getElementById('appointment-phone');
+            const addressInput = document.getElementById('appointment-address');
+            const nameInput = document.getElementById('appointment-client-name');
+            
+            const selectedValue = dropdown.value;
+            
+            if (selectedValue === 'new-client') {
+                // Afișează câmpul pentru nume manual
+                manualGroup.style.display = 'block';
+                nameInput.required = true;
+                
+                // Resetează câmpurile
+                phoneInput.value = '';
+                addressInput.value = '';
+                nameInput.value = '';
+            } else if (selectedValue === '') {
+                // Ascunde câmpul manual
+                manualGroup.style.display = 'none';
+                nameInput.required = false;
+                
+                // Resetează câmpurile
+                phoneInput.value = '';
+                addressInput.value = '';
+                nameInput.value = '';
+            } else {
+                // Client existent selectat
+                manualGroup.style.display = 'none';
+                nameInput.required = false;
+                
+                const client = appData.clients.find(c => c.id == selectedValue);
+                if (client) {
+                    phoneInput.value = client.phone;
+                    addressInput.value = client.address;
+                    nameInput.value = client.name;
+                }
+            }
+        }
+
+        function selectReminderClient() {
+            const dropdown = document.getElementById('reminder-client-select');
+            const manualGroup = document.getElementById('manual-reminder-client-group');
+            const phoneInput = document.getElementById('reminder-phone');
+            const nameInput = document.getElementById('reminder-client-name');
+            
+            const selectedValue = dropdown.value;
+            
+            if (selectedValue === 'new-client') {
+                // Afișează câmpul pentru nume manual
+                manualGroup.style.display = 'block';
+                nameInput.required = true;
+                
+                // Resetează câmpurile
+                phoneInput.value = '';
+                nameInput.value = '';
+            } else if (selectedValue === '') {
+                // Ascunde câmpul manual
+                manualGroup.style.display = 'none';
+                nameInput.required = false;
+                
+                // Resetează câmpurile
+                phoneInput.value = '';
+                nameInput.value = '';
+            } else {
+                // Client existent selectat
+                manualGroup.style.display = 'none';
+                nameInput.required = false;
+                
+                const client = appData.clients.find(c => c.id == selectedValue);
+                if (client) {
+                    phoneInput.value = client.phone;
+                    nameInput.value = client.name;
+                }
+            }
         }
 
         function hideModal(modalId) {
@@ -994,6 +1123,22 @@
                     input.value = '';
                 }
             });
+            
+            // Resetează și elementele specifice pentru programări
+            if (modalId === 'addAppointmentModal') {
+                const manualGroup = document.getElementById('manual-client-group');
+                const nameInput = document.getElementById('appointment-client-name');
+                manualGroup.style.display = 'none';
+                nameInput.required = false;
+            }
+            
+            // Resetează și elementele specifice pentru reminder-uri
+            if (modalId === 'addReminderModal') {
+                const manualGroup = document.getElementById('manual-reminder-client-group');
+                const nameInput = document.getElementById('reminder-client-name');
+                manualGroup.style.display = 'none';
+                nameInput.required = false;
+            }
         }
 
         // Client functions
@@ -1068,7 +1213,8 @@
 
         // Appointment functions
         function addAppointment() {
-            const clientName = document.getElementById('appointment-client-name').value.trim();
+            const clientDropdown = document.getElementById('appointment-client-select');
+            const manualNameInput = document.getElementById('appointment-client-name');
             const phone = document.getElementById('appointment-phone').value.trim();
             const service = document.getElementById('appointment-service').value;
             const address = document.getElementById('appointment-address').value.trim();
@@ -1077,6 +1223,28 @@
             const price = document.getElementById('appointment-price').value;
             const notes = document.getElementById('appointment-notes').value.trim();
 
+            let clientName = '';
+            let clientId = null;
+
+            // Determină numele clientului
+            if (clientDropdown.value === 'new-client') {
+                clientName = manualNameInput.value.trim();
+                if (!clientName) {
+                    alert('Te rog să introduci numele clientului!');
+                    return;
+                }
+            } else if (clientDropdown.value === '') {
+                alert('Te rog să selectezi un client sau să alegi "Client Nou"!');
+                return;
+            } else {
+                // Client existent
+                clientId = parseInt(clientDropdown.value);
+                const client = appData.clients.find(c => c.id === clientId);
+                if (client) {
+                    clientName = client.name;
+                }
+            }
+
             if (!clientName || !phone || !service || !address || !date || !time) {
                 alert('Te rog să completezi toate câmpurile obligatorii!');
                 return;
@@ -1084,6 +1252,7 @@
 
             const newAppointment = {
                 id: Date.now(),
+                clientId: clientId, // null pentru clienți noi, id pentru clienți existenți
                 clientName: clientName,
                 phone: phone,
                 service: service,
@@ -1097,6 +1266,27 @@
             };
 
             appData.appointments.push(newAppointment);
+            
+            // Dacă este client nou și nu există deja în baza de date, îl adăugăm
+            if (clientId === null) {
+                const existingClient = appData.clients.find(c => 
+                    c.name.toLowerCase() === clientName.toLowerCase() && c.phone === phone
+                );
+                
+                if (!existingClient) {
+                    const newClient = {
+                        id: Date.now() + 1, // +1 pentru a evita conflictul cu appointment id
+                        name: clientName,
+                        phone: phone,
+                        email: '',
+                        address: address,
+                        createdAt: new Date().toISOString(),
+                        totalServices: 0
+                    };
+                    appData.clients.push(newClient);
+                }
+            }
+            
             saveData();
             updateUI();
             hideModal('addAppointmentModal');
@@ -1190,11 +1380,34 @@
 
         // Reminder functions
         function addReminder() {
-            const clientName = document.getElementById('reminder-client-name').value.trim();
+            const clientDropdown = document.getElementById('reminder-client-select');
+            const manualNameInput = document.getElementById('reminder-client-name');
             const phone = document.getElementById('reminder-phone').value.trim();
             const type = document.getElementById('reminder-type').value;
             const date = document.getElementById('reminder-date').value;
             const message = document.getElementById('reminder-message').value.trim();
+
+            let clientName = '';
+            let clientId = null;
+
+            // Determină numele clientului
+            if (clientDropdown.value === 'new-client') {
+                clientName = manualNameInput.value.trim();
+                if (!clientName) {
+                    alert('Te rog să introduci numele clientului!');
+                    return;
+                }
+            } else if (clientDropdown.value === '') {
+                alert('Te rog să selectezi un client sau să alegi "Client Nou"!');
+                return;
+            } else {
+                // Client existent
+                clientId = parseInt(clientDropdown.value);
+                const client = appData.clients.find(c => c.id === clientId);
+                if (client) {
+                    clientName = client.name;
+                }
+            }
 
             if (!clientName || !phone || !type || !date || !message) {
                 alert('Te rog să completezi toate câmpurile obligatorii!');
@@ -1203,6 +1416,7 @@
 
             const newReminder = {
                 id: Date.now(),
+                clientId: clientId,
                 clientName: clientName,
                 phone: phone,
                 type: type,
