@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicație Gestionare Abonați - Rapoarte Complete</title>
+    <title>GazTech Services - Aplicație Gestionare Abonați</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -135,6 +135,39 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        .section-separator {
+            height: 3px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50px;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .section-separator::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid #667eea;
+        }
+
+        .alerts-section {
+            margin-bottom: 30px;
+        }
+
+        .lists-section {
+            margin-bottom: 40px;
+        }
+
+        .forms-section {
+            margin-top: 40px;
         }
 
         .form-container {
@@ -403,6 +436,7 @@
             background: #f7fafc;
             transition: all 0.3s ease;
             margin-top: 15px;
+            cursor: pointer;
         }
 
         .file-upload-area:hover {
@@ -540,6 +574,12 @@
             border-left: 4px solid #4299e1;
         }
 
+        .alert-success {
+            background: #f0fff4;
+            color: #22543d;
+            border-left: 4px solid #38a169;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .mobile-menu-btn {
@@ -646,12 +686,38 @@
             50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
+
+        @keyframes pulse-offer {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(246, 173, 85, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(246, 173, 85, 0); }
+        }
+
+        .sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #48bb78;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sync-indicator.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="nav-container">
-            <a href="#" class="logo">🔧 Revizie Manager</a>
+            <a href="#" class="logo">🔧 GazTech Services</a>
             
             <nav>
                 <ul class="nav-menu" id="navMenu">
@@ -682,7 +748,9 @@
         <section id="dashboard" class="section active">
             <h1 class="section-title">📊 Dashboard</h1>
             
-            <div id="alerteUrgente"></div>
+            <div class="alerts-section">
+                <div id="alerteUrgente"></div>
+            </div>
             
             <div class="form-grid">
                 <div class="form-container">
@@ -695,7 +763,9 @@
                 <div class="form-container">
                     <h3 style="color: #4a5568; margin-bottom: 15px;">⚡ Acțiuni Rapide</h3>
                     <button class="btn btn-primary" onclick="showSection('abonati')" style="margin-bottom: 10px; width: 100%;">Adaugă Abonat</button>
-                    <button class="btn btn-secondary" onclick="showSection('programari')" style="width: 100%;">Programare Nouă</button>
+                    <button class="btn btn-secondary" onclick="showSection('programari')" style="margin-bottom: 10px; width: 100%;">Programare Nouă</button>
+                    <button class="btn btn-secondary" onclick="sincronizareAvansata()" style="margin-bottom: 10px; width: 100%;">🔄 Sincronizare Avansată</button>
+                    <button class="btn btn-secondary" onclick="creeazaBackup()" style="width: 100%;">💾 Backup Date</button>
                 </div>
             </div>
         </section>
@@ -704,189 +774,203 @@
         <section id="abonati" class="section">
             <h1 class="section-title">👥 Gestionare Abonați</h1>
             
-            <div class="form-container">
-                <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Adaugă Abonat Nou</h3>
-                
-                <div class="client-type-container">
-                    <div class="form-section-title">👤 Tip Client</div>
-                    <div class="form-group">
-                        <select class="form-select" id="tipClient">
-                            <option value="">Selectează tipul clientului</option>
-                            <option value="nou">Client Nou</option>
-                            <option value="actual">Client Actual</option>
-                        </select>
-                    </div>
+            <!-- Alerts Section -->
+            <div class="alerts-section">
+                <div id="alerteAbonati"></div>
+            </div>
+
+            <!-- Lists Section -->
+            <div class="lists-section">
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchAbonati" placeholder="🔍 Caută abonați...">
                 </div>
 
-                <div class="form-section-title">📝 Date Personale</div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Nume Complet *</label>
-                        <input type="text" class="form-input" id="numeAbonat" placeholder="Introduceți numele complet" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Telefon *</label>
-                        <input type="tel" class="form-input" id="telefonAbonat" placeholder="0721234567" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="emailAbonat" placeholder="email@exemplu.ro">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">CNP</label>
-                        <input type="text" class="form-input" id="cnpAbonat" placeholder="1234567890123">
+                <div id="listaAbonati">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👥</div>
+                        <h3>Nu există abonați înregistrați</h3>
+                        <p>Adaugă primul abonat folosind formularul de mai jos.</p>
                     </div>
                 </div>
+            </div>
 
-                <div class="form-section-title">📍 Adresă Completă</div>
-                <div class="address-grid">
-                    <div class="form-group">
-                        <label class="form-label">Oraș *</label>
-                        <select class="form-select" id="orasAbonat" required>
-                            <option value="">Selectează orașul</option>
-                            <option value="Roșiorii de Vede">Roșiorii de Vede</option>
-                            <option value="Alexandria">Alexandria</option>
-                            <option value="Turnu Măgurele">Turnu Măgurele</option>
-                            <option value="Videle">Videle</option>
-                            <option value="Zimnicea">Zimnicea</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Strada</label>
-                        <input type="text" class="form-input" id="stradaAbonat" placeholder="Str. Exemplu">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Numărul</label>
-                        <input type="text" class="form-input" id="numarAbonat" placeholder="Nr. 123">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tip Locuință</label>
-                        <select class="form-select" id="tipAdresa">
-                            <option value="">Selectează tipul</option>
-                            <option value="Casa">Casă</option>
-                            <option value="Bloc">Bloc</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Bloc (ex: Bl. 413, K1)</label>
-                        <input type="text" class="form-input" id="numeBlocAbonat" placeholder="Bl. 413, K1, etc.">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Scara</label>
-                        <input type="text" class="form-input" id="scaraAbonat" placeholder="A, B, C...">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Etaj</label>
-                        <input type="text" class="form-input" id="etajAbonat" placeholder="1, 2, 3...">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Apartament</label>
-                        <input type="text" class="form-input" id="apartamentAbonat" placeholder="12, 34...">
-                    </div>
-                </div>
+            <!-- Separator -->
+            <div class="section-separator"></div>
 
-                <div class="servicii-container">
-                    <div class="form-section-title">🛠️ Servicii Contractate cu Prețuri</div>
-                    <div class="checkbox-group">
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="serviciu_verificare_gaz" value="Verificare Instalație Gaz">
-                            <label for="serviciu_verificare_gaz">Verificare Instalație Gaz - <strong>150 Lei</strong> <small>(valabilitate 2 ani)</small></label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="serviciu_revizie_gaz" value="Revizie Instalație Gaz">
-                            <label for="serviciu_revizie_gaz">Revizie Instalație Gaz - <strong>250 Lei</strong> <small>(valabilitate 2 ani)</small></label>
-                        </div>
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="serviciu_verificare_centrala" value="Verificare Centrală">
-                            <label for="serviciu_verificare_centrala">Verificare Centrală - <strong>150 Lei</strong> <small>(valabilitate 2 ani)</small></label>
-                        </div>
-                        <div class="checkbox-item oferta-speciala">
-                            <input type="checkbox" id="serviciu_pachet_complet" value="Instalații Gaz + Centrală">
-                            <label for="serviciu_pachet_complet"><strong>🔥 OFERTĂ: Instalații Gaz + Centrală - 250 Lei</strong> <small>(valabilitate 2 ani)</small></label>
-                        </div>
-                    </div>
-                    <div style="background: #e6fffa; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #38b2ac;">
-                        <p style="color: #2c7a7b; font-weight: 600; margin: 0;">ℹ️ Toate serviciile au valabilitate de 2 ani și se programează automat următoarea verificare!</p>
-                        <div id="costTotal" style="margin-top: 10px; font-size: 18px; font-weight: bold; color: #2c7a7b;">
-                            💰 Cost total: <span id="valoareTotala">0</span> Lei
-                        </div>
-                    </div>
-                </div>
-
-                <div class="date-range-container">
-                    <div class="form-section-title">📅 Date Importante Revizie</div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Data Revizie Efectuată</label>
-                            <input type="date" class="form-input" id="dataRevizieEfectuata">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Data Expirare (calculată automat)</label>
-                            <input type="date" class="form-input" id="dataExpirare" readonly style="background: #f7fafc;">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="revizie-container">
-                    <div class="form-section-title">🔍 Sistem Revizii Automate</div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label class="form-label">Data Primei Revizii/Verificări</label>
-                            <input type="date" class="form-input" id="dataPrimaRevizie">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Periodicitate Revizie (legal)</label>
-                            <select class="form-select" id="periodicitateRevizie">
-                                <option value="2" selected>2 ani (obligatoriu legal pentru instalațiile de gaz)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Zile Notificare Înainte</label>
-                            <select class="form-select" id="zileNotificare">
-                                <option value="1">1 zi înainte</option>
-                                <option value="2" selected>2 zile înainte</option>
-                                <option value="3">3 zile înainte</option>
-                                <option value="7">1 săptămână înainte</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Data Următoarei Revizii</label>
-                            <input type="date" class="form-input" id="dataUrmatoareaRevizie" readonly style="background: #f7fafc;">
-                        </div>
-                    </div>
-                </div>
-
+            <!-- Forms Section -->
+            <div class="forms-section">
                 <div class="form-container">
-                    <div class="form-section-title">📎 Gestionare Documente</div>
-                    <div class="file-upload-area" id="fileUploadArea">
-                        <div style="font-size: 48px; color: #cbd5e0; margin-bottom: 15px;">📄</div>
-                        <p style="color: #4a5568; font-weight: 600; margin-bottom: 10px;">Încarcă documente pentru client</p>
-                        <p style="color: #718096; font-size: 14px;">Drag & drop sau click pentru a selecta fișiere</p>
-                        <p style="color: #a0aec0; font-size: 12px;">PDF, DOC, DOCX, JPG, PNG (max 5MB per fișier)</p>
-                        <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Adaugă Abonat Nou</h3>
+                    
+                    <div class="client-type-container">
+                        <div class="form-section-title">👤 Tip Client</div>
+                        <div class="form-group">
+                            <select class="form-select" id="tipClient">
+                                <option value="">Selectează tipul clientului</option>
+                                <option value="nou">Client Nou</option>
+                                <option value="actual">Client Actual</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="file-list" id="fileList"></div>
-                </div>
 
-                <div style="margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="adaugaAbonat()">
-                        ➕ Adaugă Abonat
-                    </button>
-                    <button class="btn btn-secondary" onclick="resetFormAbonat()">
-                        🔄 Resetează Formularul
-                    </button>
-                </div>
-            </div>
+                    <div class="form-section-title">📝 Date Personale</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nume Complet *</label>
+                            <input type="text" class="form-input" id="numeAbonat" placeholder="Introduceți numele complet" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Telefon *</label>
+                            <input type="tel" class="form-input" id="telefonAbonat" placeholder="0721234567" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-input" id="emailAbonat" placeholder="email@exemplu.ro">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CNP</label>
+                            <input type="text" class="form-input" id="cnpAbonat" placeholder="1234567890123">
+                        </div>
+                    </div>
 
-            <div class="search-container">
-                <input type="text" class="search-input" id="searchAbonati" placeholder="🔍 Caută abonați...">
-            </div>
+                    <div class="form-section-title">📍 Adresă Completă</div>
+                    <div class="address-grid">
+                        <div class="form-group">
+                            <label class="form-label">Oraș *</label>
+                            <select class="form-select" id="orasAbonat" required>
+                                <option value="">Selectează orașul</option>
+                                <option value="Roșiorii de Vede">Roșiorii de Vede</option>
+                                <option value="Alexandria">Alexandria</option>
+                                <option value="Turnu Măgurele">Turnu Măgurele</option>
+                                <option value="Videle">Videle</option>
+                                <option value="Zimnicea">Zimnicea</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Strada</label>
+                            <input type="text" class="form-input" id="stradaAbonat" placeholder="Str. Exemplu">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Numărul</label>
+                            <input type="text" class="form-input" id="numarAbonat" placeholder="Nr. 123">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tip Locuință</label>
+                            <select class="form-select" id="tipAdresa">
+                                <option value="">Selectează tipul</option>
+                                <option value="Casa">Casă</option>
+                                <option value="Bloc">Bloc</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bloc (ex: Bl. 413, K1)</label>
+                            <input type="text" class="form-input" id="numeBlocAbonat" placeholder="Bl. 413, K1, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Scara</label>
+                            <input type="text" class="form-input" id="scaraAbonat" placeholder="A, B, C...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Etaj</label>
+                            <input type="text" class="form-input" id="etajAbonat" placeholder="1, 2, 3...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Apartament</label>
+                            <input type="text" class="form-input" id="apartamentAbonat" placeholder="12, 34...">
+                        </div>
+                    </div>
 
-            <div id="listaAbonati">
-                <div class="empty-state">
-                    <div class="empty-state-icon">👥</div>
-                    <h3>Nu există abonați înregistrați</h3>
-                    <p>Adaugă primul abonat folosind formularul de mai sus.</p>
+                    <div class="servicii-container">
+                        <div class="form-section-title">🛠️ Servicii Contractate cu Prețuri</div>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="serviciu_verificare_gaz" value="Verificare Instalație Gaz">
+                                <label for="serviciu_verificare_gaz">Verificare Instalație Gaz - <strong>150 Lei</strong> <small>(valabilitate 2 ani)</small></label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="serviciu_revizie_gaz" value="Revizie Instalație Gaz">
+                                <label for="serviciu_revizie_gaz">Revizie Instalație Gaz - <strong>250 Lei</strong> <small>(valabilitate 2 ani)</small></label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="serviciu_verificare_centrala" value="Verificare Centrală">
+                                <label for="serviciu_verificare_centrala">Verificare Centrală - <strong>150 Lei</strong> <small>(valabilitate 2 ani)</small></label>
+                            </div>
+                            <div class="checkbox-item oferta-speciala">
+                                <input type="checkbox" id="serviciu_pachet_complet" value="Instalații Gaz + Centrală">
+                                <label for="serviciu_pachet_complet"><strong>🔥 OFERTĂ: Instalații Gaz + Centrală - 250 Lei</strong> <small>(valabilitate 2 ani)</small></label>
+                            </div>
+                        </div>
+                        <div style="background: #e6fffa; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #38b2ac;">
+                            <p style="color: #2c7a7b; font-weight: 600; margin: 0;">ℹ️ Toate serviciile au valabilitate de 2 ani și se programează automat următoarea verificare!</p>
+                            <div id="costTotal" style="margin-top: 10px; font-size: 18px; font-weight: bold; color: #2c7a7b;">
+                                💰 Cost total: <span id="valoareTotala">0</span> Lei
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="date-range-container">
+                        <div class="form-section-title">📅 Date Importante Revizie</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Data Revizie Efectuată</label>
+                                <input type="date" class="form-input" id="dataRevizieEfectuata">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data Expirare (calculată automat)</label>
+                                <input type="date" class="form-input" id="dataExpirare" readonly style="background: #f7fafc;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="revizie-container">
+                        <div class="form-section-title">🔍 Sistem Revizii Automate</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Data Primei Revizii/Verificări</label>
+                                <input type="date" class="form-input" id="dataPrimaRevizie">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Periodicitate Revizie (legal)</label>
+                                <select class="form-select" id="periodicitateRevizie">
+                                    <option value="2" selected>2 ani (obligatoriu legal pentru instalațiile de gaz)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Zile Notificare Înainte</label>
+                                <select class="form-select" id="zileNotificare">
+                                    <option value="1">1 zi înainte</option>
+                                    <option value="2" selected>2 zile înainte</option>
+                                    <option value="3">3 zile înainte</option>
+                                    <option value="7">1 săptămână înainte</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Data Următoarei Revizii</label>
+                                <input type="date" class="form-input" id="dataUrmatoareaRevizie" readonly style="background: #f7fafc;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-container">
+                        <div class="form-section-title">📎 Gestionare Documente</div>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <div style="font-size: 48px; color: #cbd5e0; margin-bottom: 15px;">📄</div>
+                            <p style="color: #4a5568; font-weight: 600; margin-bottom: 10px;">Încarcă documente pentru client</p>
+                            <p style="color: #718096; font-size: 14px;">Drag & drop sau click pentru a selecta fișiere</p>
+                            <p style="color: #a0aec0; font-size: 12px;">PDF, DOC, DOCX, JPG, PNG (max 5MB per fișier)</p>
+                            <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
+                        </div>
+                        <div class="file-list" id="fileList"></div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="adaugaAbonat()">
+                            ➕ Adaugă Abonat
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFormAbonat()">
+                            🔄 Resetează Formularul
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -895,65 +979,79 @@
         <section id="programari" class="section">
             <h1 class="section-title">📅 Gestionare Programări</h1>
             
-            <div class="form-container">
-                <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Programare Nouă</h3>
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Client</label>
-                        <select class="form-select" id="clientProgramare">
-                            <option value="">Selectează clientul</option>
-                            <option value="nou">➕ Client Nou</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tip Serviciu</label>
-                        <select class="form-select" id="tipServiciu">
-                            <option value="">Selectează serviciul</option>
-                            <option value="Verificare Instalație Gaz">Verificare Instalație Gaz - 150 Lei</option>
-                            <option value="Revizie Instalație Gaz">Revizie Instalație Gaz - 250 Lei</option>
-                            <option value="Verificare Centrală">Verificare Centrală - 150 Lei</option>
-                            <option value="Instalații Gaz + Centrală">🔥 OFERTĂ: Instalații Gaz + Centrală - 250 Lei</option>
-                            <option value="Reparație">Reparație</option>
-                            <option value="Consultanță">Consultanță</option>
-                            <option value="Urgență">Urgență</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Data Programării</label>
-                        <input type="datetime-local" class="form-input" id="dataProgramare">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="statusProgramare">
-                            <option value="Programată">📅 Programată</option>
-                            <option value="În Progres">⚡ În Progres</option>
-                            <option value="Finalizată">✅ Finalizată</option>
-                            <option value="Anulată">❌ Anulată</option>
-                        </select>
-                    </div>
-                </div>
+            <!-- Alerts Section -->
+            <div class="alerts-section">
+                <div id="alerteProgramari"></div>
+            </div>
 
-                <div class="form-group">
-                    <label class="form-label">Observații</label>
-                    <textarea class="form-input" id="observatiiProgramare" rows="3" placeholder="Detalii despre programare..."></textarea>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="adaugaProgramare()">
-                        📅 Adaugă Programare
-                    </button>
-                    <button class="btn btn-secondary" onclick="resetFormProgramare()">
-                        🔄 Resetează
-                    </button>
+            <!-- Lists Section -->
+            <div class="lists-section">
+                <div id="listaProgramari">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <h3>Nu există programări</h3>
+                        <p>Adaugă prima programare folosind formularul de mai jos.</p>
+                    </div>
                 </div>
             </div>
 
-            <div id="listaProgramari">
-                <div class="empty-state">
-                    <div class="empty-state-icon">📅</div>
-                    <h3>Nu există programări</h3>
-                    <p>Adaugă prima programare folosind formularul de mai sus.</p>
+            <!-- Separator -->
+            <div class="section-separator"></div>
+
+            <!-- Forms Section -->
+            <div class="forms-section">
+                <div class="form-container">
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Programare Nouă</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Client</label>
+                            <select class="form-select" id="clientProgramare">
+                                <option value="">Selectează clientul</option>
+                                <option value="nou">➕ Client Nou</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tip Serviciu</label>
+                            <select class="form-select" id="tipServiciu">
+                                <option value="">Selectează serviciul</option>
+                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz - 150 Lei</option>
+                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz - 250 Lei</option>
+                                <option value="Verificare Centrală">Verificare Centrală - 150 Lei</option>
+                                <option value="Instalații Gaz + Centrală">🔥 OFERTĂ: Instalații Gaz + Centrală - 250 Lei</option>
+                                <option value="Reparație">Reparație</option>
+                                <option value="Consultanță">Consultanță</option>
+                                <option value="Urgență">Urgență</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Data Programării</label>
+                            <input type="datetime-local" class="form-input" id="dataProgramare">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="statusProgramare">
+                                <option value="Programată">📅 Programată</option>
+                                <option value="În Progres">⚡ În Progres</option>
+                                <option value="Finalizată">✅ Finalizată</option>
+                                <option value="Anulată">❌ Anulată</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Observații</label>
+                        <textarea class="form-input" id="observatiiProgramare" rows="3" placeholder="Detalii despre programare..."></textarea>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="adaugaProgramare()">
+                            📅 Adaugă Programare
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFormProgramare()">
+                            🔄 Resetează
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -962,65 +1060,79 @@
         <section id="remindere" class="section">
             <h1 class="section-title">🔔 Gestionare Remindere</h1>
             
-            <div class="form-container">
-                <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Reminder Nou</h3>
-                
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Client</label>
-                        <select class="form-select" id="clientReminder">
-                            <option value="">Selectează clientul</option>
-                            <option value="nou">➕ Client Nou</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Tip Reminder</label>
-                        <select class="form-select" id="tipReminder">
-                            <option value="">Selectează tipul</option>
-                            <option value="Verificare Instalație Gaz">🔍 Verificare Instalație Gaz</option>
-                            <option value="Revizie Instalație Gaz">🔧 Revizie Instalație Gaz</option>
-                            <option value="Verificare Centrală">🏠 Verificare Centrală</option>
-                            <option value="Instalații Gaz + Centrală">🔥 Pachet Complet Gaz + Centrală</option>
-                            <option value="Urmărire">📞 Urmărire Client</option>
-                            <option value="Facturare">💰 Facturare</option>
-                            <option value="Altele">📝 Altele</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Data Reminder</label>
-                        <input type="datetime-local" class="form-input" id="dataReminder">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Prioritate</label>
-                        <select class="form-select" id="prioritateReminder">
-                            <option value="Joasă">🟢 Joasă</option>
-                            <option value="Medie">🟡 Medie</option>
-                            <option value="Înaltă">🔴 Înaltă</option>
-                            <option value="Urgentă">🚨 Urgentă</option>
-                        </select>
-                    </div>
-                </div>
+            <!-- Alerts Section -->
+            <div class="alerts-section">
+                <div id="alerteRemindere"></div>
+            </div>
 
-                <div class="form-group">
-                    <label class="form-label">Mesaj Reminder</label>
-                    <textarea class="form-input" id="mesajReminder" rows="3" placeholder="Descrierea reminder-ului..."></textarea>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="adaugaReminder()">
-                        🔔 Adaugă Reminder
-                    </button>
-                    <button class="btn btn-secondary" onclick="resetFormReminder()">
-                        🔄 Resetează
-                    </button>
+            <!-- Lists Section -->
+            <div class="lists-section">
+                <div id="listaRemindere">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔔</div>
+                        <h3>Nu există remindere</h3>
+                        <p>Adaugă primul reminder folosind formularul de mai jos.</p>
+                    </div>
                 </div>
             </div>
 
-            <div id="listaRemindere">
-                <div class="empty-state">
-                    <div class="empty-state-icon">🔔</div>
-                    <h3>Nu există remindere</h3>
-                    <p>Adaugă primul reminder folosind formularul de mai sus.</p>
+            <!-- Separator -->
+            <div class="section-separator"></div>
+
+            <!-- Forms Section -->
+            <div class="forms-section">
+                <div class="form-container">
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Reminder Nou</h3>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Client</label>
+                            <select class="form-select" id="clientReminder">
+                                <option value="">Selectează clientul</option>
+                                <option value="nou">➕ Client Nou</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tip Reminder</label>
+                            <select class="form-select" id="tipReminder">
+                                <option value="">Selectează tipul</option>
+                                <option value="Verificare Instalație Gaz">🔍 Verificare Instalație Gaz</option>
+                                <option value="Revizie Instalație Gaz">🔧 Revizie Instalație Gaz</option>
+                                <option value="Verificare Centrală">🏠 Verificare Centrală</option>
+                                <option value="Instalații Gaz + Centrală">🔥 Pachet Complet Gaz + Centrală</option>
+                                <option value="Urmărire">📞 Urmărire Client</option>
+                                <option value="Facturare">💰 Facturare</option>
+                                <option value="Altele">📝 Altele</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Data Reminder</label>
+                            <input type="datetime-local" class="form-input" id="dataReminder">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Prioritate</label>
+                            <select class="form-select" id="prioritateReminder">
+                                <option value="Joasă">🟢 Joasă</option>
+                                <option value="Medie">🟡 Medie</option>
+                                <option value="Înaltă">🔴 Înaltă</option>
+                                <option value="Urgentă">🚨 Urgentă</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Mesaj Reminder</label>
+                        <textarea class="form-input" id="mesajReminder" rows="3" placeholder="Descrierea reminder-ului..."></textarea>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="adaugaReminder()">
+                            🔔 Adaugă Reminder
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFormReminder()">
+                            🔄 Resetează
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1063,11 +1175,20 @@
                     <button class="btn btn-secondary" onclick="exportRevizii()">📥 Export Revizii CSV</button>
                 </div>
                 
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; padding-top: 15px; border-top: 2px solid #e2e8f0;">
+                    <button class="btn btn-primary" onclick="sincronizareAvansata()">🔄 Sincronizare Completă</button>
+                    <button class="btn btn-secondary" onclick="creeazaBackup()">💾 Backup Date Complete</button>
+                    <button class="btn btn-secondary" onclick="verificaConsistentaDatele(); showNotification('Verificare completă!', 'info')">🔍 Verifică Consistența</button>
+                    <button class="btn btn-secondary" onclick="adaugaDateDeTest(); sincronizeazaDatele()">🧪 Reîncarcă Date Test</button>
+                </div>
+                
                 <div style="background: #edf2f7; padding: 15px; border-radius: 8px;">
                     <h4 style="color: #4a5568; margin-bottom: 10px;">📈 Statistici Raport:</h4>
                     <p style="color: #718096;">• PDF: Include toate datele, grafice și documente</p>
                     <p style="color: #718096;">• Excel: Fișier cu multiple foi pentru fiecare secțiune</p>
                     <p style="color: #718096;">• CSV: Format simplu pentru import în alte sisteme</p>
+                    <p style="color: #38a169; font-weight: 600;">• Sincronizare: Actualizare automată la fiecare 30 secunde</p>
+                    <p style="color: #38a169; font-weight: 600;">• Backup: Salvare completă a tuturor datelor în format JSON</p>
                 </div>
             </div>
         </section>
@@ -1089,11 +1210,26 @@
     <!-- Notification -->
     <div id="notification" class="notification"></div>
 
+    <!-- Sync Indicator -->
+    <div id="syncIndicator" class="sync-indicator">
+        ✓ Sincronizat
+    </div>
+
     <script>
         // Global Variables
         let abonati = JSON.parse(localStorage.getItem('abonati')) || [];
         let programari = JSON.parse(localStorage.getItem('programari')) || [];
         let remindere = JSON.parse(localStorage.getItem('remindere')) || [];
+        let documenteTemp = []; // Temporare pentru upload
+
+        // Sync indicator
+        function showSyncIndicator() {
+            const indicator = document.getElementById('syncIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
 
         // Navigation
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -1152,187 +1288,7 @@
             }
         }
 
-        // Export PDF functionality
-        function exportRaportPDF() {
-            if (typeof window.jsPDF === 'undefined') {
-                showNotification('Biblioteca PDF nu este încărcată. Încearcă din nou.', 'error');
-                return;
-            }
-
-            const { jsPDF } = window.jsPDF;
-            const doc = new jsPDF();
-            
-            // Header
-            doc.setFontSize(20);
-            doc.text('RAPORT COMPLET ABONAȚI', 20, 20);
-            
-            doc.setFontSize(12);
-            doc.text(`Generat pe: ${new Date().toLocaleDateString('ro-RO')}`, 20, 30);
-            
-            let yPosition = 50;
-            
-            // Statistici generale
-            doc.setFontSize(16);
-            doc.text('STATISTICI GENERALE', 20, yPosition);
-            yPosition += 10;
-            
-            doc.setFontSize(12);
-            doc.text(`Total Abonați: ${abonati.length}`, 20, yPosition);
-            yPosition += 7;
-            doc.text(`Total Programări: ${programari.length}`, 20, yPosition);
-            yPosition += 7;
-            doc.text(`Total Remindere: ${remindere.length}`, 20, yPosition);
-            yPosition += 15;
-            
-            // Abonați
-            doc.setFontSize(16);
-            doc.text('LISTA ABONAȚI', 20, yPosition);
-            yPosition += 10;
-            
-            abonati.forEach((abonat, index) => {
-                if (yPosition > 250) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                
-                const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'N/A';
-                const adresa = formatareAdresa(abonat.adresa);
-                const dataRevizie = abonat.dataRevizieEfectuata ? new Date(abonat.dataRevizieEfectuata).toLocaleDateString('ro-RO') : 'N/A';
-                const dataExpirare = abonat.dataExpirare ? new Date(abonat.dataExpirare).toLocaleDateString('ro-RO') : 'N/A';
-                const numarDocumente = abonat.documente ? abonat.documente.length : 0;
-                
-                doc.setFontSize(12);
-                doc.text(`${index + 1}. ${abonat.nume}`, 20, yPosition);
-                yPosition += 6;
-                doc.setFontSize(10);
-                doc.text(`   Tel: ${abonat.telefon} | Email: ${abonat.email || 'N/A'}`, 20, yPosition);
-                yPosition += 5;
-                doc.text(`   Adresa: ${adresa}`, 20, yPosition);
-                yPosition += 5;
-                doc.text(`   Servicii: ${servicii}`, 20, yPosition);
-                yPosition += 5;
-                doc.text(`   Data Revizie: ${dataRevizie} | Expirare: ${dataExpirare}`, 20, yPosition);
-                yPosition += 5;
-                doc.text(`   Documente: ${numarDocumente}`, 20, yPosition);
-                yPosition += 10;
-            });
-            
-            // Salvare
-            doc.save(`Raport_Complet_Abonati_${new Date().toISOString().split('T')[0]}.pdf`);
-            showNotification('Raportul PDF a fost generat cu succes!', 'success');
-        }
-
-        // Export Excel functionality
-        function exportRaportExcel() {
-            if (typeof XLSX === 'undefined') {
-                showNotification('Biblioteca Excel nu este încărcată. Încearcă din nou.', 'error');
-                return;
-            }
-
-            const wb = XLSX.utils.book_new();
-            
-            // Foi Excel
-            const foaieAbonati = [];
-            const foaieProgramari = [];
-            const foaieRemindere = [];
-            const foaieStatistici = [];
-            
-            // Date abonați
-            foaieAbonati.push(['Nume', 'Telefon', 'Email', 'CNP', 'Oraș', 'Strada', 'Număr', 'Bloc', 'Scara', 'Etaj', 'Apartament', 'Servicii Contractate', 'Cost Total', 'Data Revizie', 'Data Expirare', 'Tip Client', 'Număr Documente', 'Status']);
-            
-            abonati.forEach(abonat => {
-                let costTotal = 0;
-                if (abonat.serviciiContractate) {
-                    abonat.serviciiContractate.forEach(serviciu => {
-                        switch(serviciu) {
-                            case 'Verificare Instalație Gaz': costTotal += 150; break;
-                            case 'Revizie Instalație Gaz': costTotal += 250; break;
-                            case 'Verificare Centrală': costTotal += 150; break;
-                            case 'Instalații Gaz + Centrală': costTotal += 250; break;
-                        }
-                    });
-                }
-                
-                const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join('; ') : '';
-                const dataRevizie = abonat.dataRevizieEfectuata || '';
-                const dataExpirare = abonat.dataExpirare || '';
-                const numarDocumente = abonat.documente ? abonat.documente.length : 0;
-                
-                foaieAbonati.push([
-                    abonat.nume,
-                    abonat.telefon,
-                    abonat.email || '',
-                    abonat.cnp || '',
-                    abonat.adresa.oras,
-                    abonat.adresa.strada || '',
-                    abonat.adresa.numar || '',
-                    abonat.adresa.numeBlocAbonat || '',
-                    abonat.adresa.scara || '',
-                    abonat.adresa.etaj || '',
-                    abonat.adresa.apartament || '',
-                    servicii,
-                    costTotal + ' Lei',
-                    dataRevizie,
-                    dataExpirare,
-                    abonat.tipClient === 'nou' ? 'Client Nou' : 'Client Actual',
-                    numarDocumente,
-                    abonat.status
-                ]);
-            });
-            
-            // Date programări
-            foaieProgramari.push(['Client', 'Serviciu', 'Data', 'Status', 'Observații', 'Tip', 'Data Creare']);
-            programari.forEach(p => {
-                foaieProgramari.push([
-                    p.clientNume,
-                    p.tipServiciu,
-                    new Date(p.data).toLocaleString('ro-RO'),
-                    p.status,
-                    p.observatii || '',
-                    p.tipAutomat || 'Manual',
-                    new Date(p.dataCreare).toLocaleDateString('ro-RO')
-                ]);
-            });
-            
-            // Date remindere
-            foaieRemindere.push(['Client', 'Tip', 'Data', 'Prioritate', 'Mesaj', 'Status', 'Tip', 'Data Creare']);
-            remindere.forEach(r => {
-                foaieRemindere.push([
-                    r.clientNume,
-                    r.tip,
-                    new Date(r.data).toLocaleString('ro-RO'),
-                    r.prioritate,
-                    r.mesaj || '',
-                    r.status,
-                    r.tipAutomat || 'Manual',
-                    new Date(r.dataCreare).toLocaleDateString('ro-RO')
-                ]);
-            });
-            
-            // Statistici
-            foaieStatistici.push(['Statistică', 'Valoare']);
-            foaieStatistici.push(['Total Abonați', abonati.length]);
-            foaieStatistici.push(['Total Programări', programari.length]);
-            foaieStatistici.push(['Total Remindere', remindere.length]);
-            foaieStatistici.push(['Data Generare', new Date().toLocaleDateString('ro-RO')]);
-            
-            // Adaugă foile în Excel
-            const wsAbonati = XLSX.utils.aoa_to_sheet(foaieAbonati);
-            const wsProgramari = XLSX.utils.aoa_to_sheet(foaieProgramari);
-            const wsRemindere = XLSX.utils.aoa_to_sheet(foaieRemindere);
-            const wsStatistici = XLSX.utils.aoa_to_sheet(foaieStatistici);
-            
-            XLSX.utils.book_append_sheet(wb, wsAbonati, 'Abonați');
-            XLSX.utils.book_append_sheet(wb, wsProgramari, 'Programări');
-            XLSX.utils.book_append_sheet(wb, wsRemindere, 'Remindere');
-            XLSX.utils.book_append_sheet(wb, wsStatistici, 'Statistici');
-            
-            // Salvare
-            XLSX.writeFile(wb, `Raport_Excel_Complet_${new Date().toISOString().split('T')[0]}.xlsx`);
-            showNotification('Raportul Excel a fost generat cu succes!', 'success');
-        }
-
-        // File upload functionality
+        // Initialize file upload
         function initializeFileUpload() {
             const fileUploadArea = document.getElementById('fileUploadArea');
             const fileInput = document.getElementById('fileInput');
@@ -1538,6 +1494,7 @@
                     // Reîmprospătează modalul
                     gestioneazaDocumente(idAbonat);
                     updateListaAbonati();
+                    showSyncIndicator();
                 };
                 reader.readAsDataURL(file);
             });
@@ -1576,6 +1533,7 @@
             // Reîmprospătează modalul și lista
             gestioneazaDocumente(idAbonat);
             updateListaAbonati();
+            showSyncIndicator();
         }
 
         function inchideModalDocumente() {
@@ -1604,22 +1562,42 @@
             navMenu.classList.remove('active');
             mobileMenuBtn.textContent = '☰';
 
-            // Update data when showing sections
+            // Update data when showing sections - SINCRONIZARE AUTOMATĂ
+            sincronizeazaDatele();
+            
             if (sectionId === 'dashboard') {
                 updateDashboard();
                 verificaReminderePendente();
             } else if (sectionId === 'abonati') {
                 updateListaAbonati();
-                updateClientDropdowns();
+                verificaAlerteAbonati();
             } else if (sectionId === 'programari') {
                 updateListaProgramari();
-                updateClientDropdowns();
+                verificaAlerteProgramari();
             } else if (sectionId === 'remindere') {
                 updateListaRemindere();
-                updateClientDropdowns();
+                verificaAlerteRemindere();
             } else if (sectionId === 'rapoarte') {
                 updateRapoarte();
             }
+        }
+
+        // FUNCȚIE DE SINCRONIZARE CENTRALIZATĂ
+        function sincronizeazaDatele() {
+            // Actualizează toate dropdown-urile cu abonați
+            updateClientDropdowns();
+            
+            // Actualizează statisticile în toate secțiunile
+            updateDashboard();
+            updateRapoarte();
+            
+            // Verifică reminder-urile și alertele
+            verificaReminderePendente();
+            verificaAlerteAbonati();
+            verificaAlerteProgramari();
+            verificaAlerteRemindere();
+            
+            showSyncIndicator();
         }
 
         // Add event listeners to nav links
@@ -1645,11 +1623,16 @@
             }, 4000);
         }
 
-        // Save data to localStorage
+        // Save data to localStorage with sync
         function saveData() {
             localStorage.setItem('abonati', JSON.stringify(abonati));
             localStorage.setItem('programari', JSON.stringify(programari));
             localStorage.setItem('remindere', JSON.stringify(remindere));
+            
+            // Sincronizare automată după salvare
+            setTimeout(() => {
+                sincronizeazaDatele();
+            }, 100);
         }
 
         // Get selected services
@@ -1783,6 +1766,91 @@
             return adresaCompleta;
         }
 
+        // FUNCȚII DE VERIFICARE ALERTE SPECIFICE
+        function verificaAlerteAbonati() {
+            const alerteContainer = document.getElementById('alerteAbonati');
+            let alerteHtml = '';
+
+            // Verifică abonații fără documente
+            const abonatiLipsaDocumente = abonati.filter(abonat => !abonat.documente || abonat.documente.length === 0);
+            
+            // Verifică expirări în următoarele 30 de zile
+            const astazi = new Date();
+            const in30Zile = new Date(astazi.getTime() + 30 * 24 * 60 * 60 * 1000);
+            const expiraInCurand = abonati.filter(abonat => {
+                if (!abonat.dataExpirare) return false;
+                const dataExp = new Date(abonat.dataExpirare);
+                return dataExp >= astazi && dataExp <= in30Zile;
+            });
+
+            if (abonatiLipsaDocumente.length > 0) {
+                alerteHtml += `
+                    <div class="alert alert-warning">
+                        <strong>📎 Documente Lipsă!</strong> ${abonatiLipsaDocumente.length} abonați nu au documente încărcate.
+                    </div>
+                `;
+            }
+
+            if (expiraInCurand.length > 0) {
+                alerteHtml += `
+                    <div class="alert alert-danger">
+                        <strong>⚠️ Expirări în 30 zile!</strong> ${expiraInCurand.length} revizii expiră în următoarele 30 de zile.
+                    </div>
+                `;
+            }
+
+            if (alerteContainer) {
+                alerteContainer.innerHTML = alerteHtml;
+            }
+        }
+
+        function verificaAlerteProgramari() {
+            const alerteContainer = document.getElementById('alerteProgramari');
+            let alerteHtml = '';
+
+            const astazi = new Date();
+            const programariAstazi = programari.filter(p => {
+                const dataProgramare = new Date(p.data);
+                return dataProgramare.toDateString() === astazi.toDateString() && p.status === 'Programată';
+            });
+
+            if (programariAstazi.length > 0) {
+                alerteHtml += `
+                    <div class="alert alert-info">
+                        <strong>📅 Programări Astăzi!</strong> Ai ${programariAstazi.length} programări pentru astăzi.
+                    </div>
+                `;
+            }
+
+            if (alerteContainer) {
+                alerteContainer.innerHTML = alerteHtml;
+            }
+        }
+
+        function verificaAlerteRemindere() {
+            const alerteContainer = document.getElementById('alerteRemindere');
+            let alerteHtml = '';
+
+            const astazi = new Date();
+            const remindereUrgente = remindere.filter(r => {
+                const dataReminder = new Date(r.data);
+                const diferenta = Math.ceil((dataReminder - astazi) / (1000 * 60 * 60 * 24));
+                return diferenta >= 0 && diferenta <= 1 && r.status === 'Activ';
+            });
+
+            if (remindereUrgente.length > 0) {
+                alerteHtml += `
+                    <div class="alert alert-warning">
+                        <strong>🔔 Remindere Urgente!</strong> ${remindereUrgente.length} remindere expiră în următoarele 24 ore.
+                    </div>
+                `;
+            }
+
+            if (alerteContainer) {
+                alerteContainer.innerHTML = alerteHtml;
+            }
+        }
+
         // Abonați Functions
         function adaugaAbonat() {
             const tipClient = document.getElementById('tipClient').value;
@@ -1863,9 +1931,6 @@
             }
 
             saveData();
-            updateListaAbonati();
-            updateClientDropdowns();
-            updateDashboard();
             resetFormAbonat();
             
             const costTotal = calculeazaCostTotal();
@@ -1914,7 +1979,7 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">👥</div>
                         <h3>Nu există abonați înregistrați</h3>
-                        <p>Adaugă primul abonat folosind formularul de mai sus.</p>
+                        <p>Adaugă primul abonat folosind formularul de mai jos.</p>
                     </div>
                 `;
                 return;
@@ -1995,24 +2060,22 @@
                 programari = programari.filter(programare => programare.clientId != id);
                 remindere = remindere.filter(reminder => reminder.clientId != id);
                 saveData();
-                updateListaAbonati();
-                updateClientDropdowns();
-                updateDashboard();
                 showNotification('Abonatul și datele asociate au fost șterse cu succes!', 'success');
             }
         }
 
-        // Update client dropdowns
+        // Update client dropdowns with SYNC
         function updateClientDropdowns() {
             const dropdowns = ['clientProgramare', 'clientReminder'];
             
             dropdowns.forEach(dropdownId => {
                 const dropdown = document.getElementById(dropdownId);
                 if (dropdown) {
+                    const currentValue = dropdown.value; // Păstrează valoarea selectată
                     let html = '<option value="">Selectează clientul</option><option value="nou">➕ Client Nou</option>';
                     
                     abonati.forEach(abonat => {
-                        html += `<option value="${abonat.id}">${abonat.nume} - ${abonat.telefon}</option>`;
+                        html += `<option value="${abonat.id}" ${currentValue == abonat.id ? 'selected' : ''}>${abonat.nume} - ${abonat.telefon}</option>`;
                     });
                     
                     dropdown.innerHTML = html;
@@ -2046,8 +2109,6 @@
 
             programari.push(programareNoua);
             saveData();
-            updateListaProgramari();
-            updateDashboard();
             resetFormProgramare();
             
             showNotification('Programarea a fost adăugată cu succes!', 'success');
@@ -2069,7 +2130,7 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">📅</div>
                         <h3>Nu există programări</h3>
-                        <p>Adaugă prima programare folosind formularul de mai sus.</p>
+                        <p>Adaugă prima programare folosind formularul de mai jos.</p>
                     </div>
                 `;
                 return;
@@ -2119,8 +2180,6 @@
             if (confirm('Ești sigur că vrei să ștergi această programare?')) {
                 programari = programari.filter(programare => programare.id !== id);
                 saveData();
-                updateListaProgramari();
-                updateDashboard();
                 showNotification('Programarea a fost ștearsă cu succes!', 'success');
             }
         }
@@ -2152,8 +2211,6 @@
 
             remindere.push(reminderNou);
             saveData();
-            updateListaRemindere();
-            updateDashboard();
             resetFormReminder();
             
             showNotification('Reminder-ul a fost adăugat cu succes!', 'success');
@@ -2175,7 +2232,7 @@
                     <div class="empty-state">
                         <div class="empty-state-icon">🔔</div>
                         <h3>Nu există remindere</h3>
-                        <p>Adaugă primul reminder folosind formularul de mai sus.</p>
+                        <p>Adaugă primul reminder folosind formularul de mai jos.</p>
                     </div>
                 `;
                 return;
@@ -2225,8 +2282,6 @@
             if (confirm('Ești sigur că vrei să ștergi acest reminder?')) {
                 remindere = remindere.filter(reminder => reminder.id !== id);
                 saveData();
-                updateListaRemindere();
-                updateDashboard();
                 showNotification('Reminder-ul a fost șters cu succes!', 'success');
             }
         }
@@ -2273,7 +2328,9 @@
                 `;
             }
 
-            alerteContainer.innerHTML = alerteHtml;
+            if (alerteContainer) {
+                alerteContainer.innerHTML = alerteHtml;
+            }
         }
 
         // Utility functions
@@ -2369,6 +2426,186 @@
             document.getElementById('distributieServicii').innerHTML = serviciiHtml || '<p style="color: #718096;">Nu există date disponibile</p>';
         }
 
+        // Export PDF functionality
+        function exportRaportPDF() {
+            if (typeof window.jsPDF === 'undefined') {
+                showNotification('Biblioteca PDF nu este încărcată. Încearcă din nou.', 'error');
+                return;
+            }
+
+            const { jsPDF } = window.jsPDF;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(20);
+            doc.text('RAPORT COMPLET - GAZTECH SERVICES', 20, 20);
+            
+            doc.setFontSize(12);
+            doc.text(`Generat pe: ${new Date().toLocaleDateString('ro-RO')}`, 20, 30);
+            
+            let yPosition = 50;
+            
+            // Statistici generale
+            doc.setFontSize(16);
+            doc.text('STATISTICI GENERALE', 20, yPosition);
+            yPosition += 10;
+            
+            doc.setFontSize(12);
+            doc.text(`Total Abonați: ${abonati.length}`, 20, yPosition);
+            yPosition += 7;
+            doc.text(`Total Programări: ${programari.length}`, 20, yPosition);
+            yPosition += 7;
+            doc.text(`Total Remindere: ${remindere.length}`, 20, yPosition);
+            yPosition += 15;
+            
+            // Abonați
+            doc.setFontSize(16);
+            doc.text('LISTA ABONAȚI', 20, yPosition);
+            yPosition += 10;
+            
+            abonati.forEach((abonat, index) => {
+                if (yPosition > 250) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                
+                const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : 'N/A';
+                const adresa = formatareAdresa(abonat.adresa);
+                const dataRevizie = abonat.dataRevizieEfectuata ? new Date(abonat.dataRevizieEfectuata).toLocaleDateString('ro-RO') : 'N/A';
+                const dataExpirare = abonat.dataExpirare ? new Date(abonat.dataExpirare).toLocaleDateString('ro-RO') : 'N/A';
+                const numarDocumente = abonat.documente ? abonat.documente.length : 0;
+                
+                doc.setFontSize(12);
+                doc.text(`${index + 1}. ${abonat.nume}`, 20, yPosition);
+                yPosition += 6;
+                doc.setFontSize(10);
+                doc.text(`   Tel: ${abonat.telefon} | Email: ${abonat.email || 'N/A'}`, 20, yPosition);
+                yPosition += 5;
+                doc.text(`   Adresa: ${adresa}`, 20, yPosition);
+                yPosition += 5;
+                doc.text(`   Servicii: ${servicii}`, 20, yPosition);
+                yPosition += 5;
+                doc.text(`   Data Revizie: ${dataRevizie} | Expirare: ${dataExpirare}`, 20, yPosition);
+                yPosition += 5;
+                doc.text(`   Documente: ${numarDocumente}`, 20, yPosition);
+                yPosition += 10;
+            });
+            
+            // Salvare
+            doc.save(`GazTech_Raport_Complet_${new Date().toISOString().split('T')[0]}.pdf`);
+            showNotification('Raportul PDF a fost generat cu succes!', 'success');
+        }
+
+        // Export Excel functionality
+        function exportRaportExcel() {
+            if (typeof XLSX === 'undefined') {
+                showNotification('Biblioteca Excel nu este încărcată. Încearcă din nou.', 'error');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+            
+            // Foi Excel
+            const foaieAbonati = [];
+            const foaieProgramari = [];
+            const foaieRemindere = [];
+            const foaieStatistici = [];
+            
+            // Date abonați
+            foaieAbonati.push(['Nume', 'Telefon', 'Email', 'CNP', 'Oraș', 'Strada', 'Număr', 'Bloc', 'Scara', 'Etaj', 'Apartament', 'Servicii Contractate', 'Cost Total', 'Data Revizie', 'Data Expirare', 'Tip Client', 'Număr Documente', 'Status']);
+            
+            abonati.forEach(abonat => {
+                let costTotal = 0;
+                if (abonat.serviciiContractate) {
+                    abonat.serviciiContractate.forEach(serviciu => {
+                        switch(serviciu) {
+                            case 'Verificare Instalație Gaz': costTotal += 150; break;
+                            case 'Revizie Instalație Gaz': costTotal += 250; break;
+                            case 'Verificare Centrală': costTotal += 150; break;
+                            case 'Instalații Gaz + Centrală': costTotal += 250; break;
+                        }
+                    });
+                }
+                
+                const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join('; ') : '';
+                const dataRevizie = abonat.dataRevizieEfectuata || '';
+                const dataExpirare = abonat.dataExpirare || '';
+                const numarDocumente = abonat.documente ? abonat.documente.length : 0;
+                
+                foaieAbonati.push([
+                    abonat.nume,
+                    abonat.telefon,
+                    abonat.email || '',
+                    abonat.cnp || '',
+                    abonat.adresa.oras,
+                    abonat.adresa.strada || '',
+                    abonat.adresa.numar || '',
+                    abonat.adresa.numeBlocAbonat || '',
+                    abonat.adresa.scara || '',
+                    abonat.adresa.etaj || '',
+                    abonat.adresa.apartament || '',
+                    servicii,
+                    costTotal + ' Lei',
+                    dataRevizie,
+                    dataExpirare,
+                    abonat.tipClient === 'nou' ? 'Client Nou' : 'Client Actual',
+                    numarDocumente,
+                    abonat.status
+                ]);
+            });
+            
+            // Date programări
+            foaieProgramari.push(['Client', 'Serviciu', 'Data', 'Status', 'Observații', 'Tip', 'Data Creare']);
+            programari.forEach(p => {
+                foaieProgramari.push([
+                    p.clientNume,
+                    p.tipServiciu,
+                    new Date(p.data).toLocaleString('ro-RO'),
+                    p.status,
+                    p.observatii || '',
+                    p.tipAutomat || 'Manual',
+                    new Date(p.dataCreare).toLocaleDateString('ro-RO')
+                ]);
+            });
+            
+            // Date remindere
+            foaieRemindere.push(['Client', 'Tip', 'Data', 'Prioritate', 'Mesaj', 'Status', 'Tip', 'Data Creare']);
+            remindere.forEach(r => {
+                foaieRemindere.push([
+                    r.clientNume,
+                    r.tip,
+                    new Date(r.data).toLocaleString('ro-RO'),
+                    r.prioritate,
+                    r.mesaj || '',
+                    r.status,
+                    r.tipAutomat || 'Manual',
+                    new Date(r.dataCreare).toLocaleDateString('ro-RO')
+                ]);
+            });
+            
+            // Statistici
+            foaieStatistici.push(['Statistică', 'Valoare']);
+            foaieStatistici.push(['Total Abonați', abonati.length]);
+            foaieStatistici.push(['Total Programări', programari.length]);
+            foaieStatistici.push(['Total Remindere', remindere.length]);
+            foaieStatistici.push(['Data Generare', new Date().toLocaleDateString('ro-RO')]);
+            
+            // Adaugă foile în Excel
+            const wsAbonati = XLSX.utils.aoa_to_sheet(foaieAbonati);
+            const wsProgramari = XLSX.utils.aoa_to_sheet(foaieProgramari);
+            const wsRemindere = XLSX.utils.aoa_to_sheet(foaieRemindere);
+            const wsStatistici = XLSX.utils.aoa_to_sheet(foaieStatistici);
+            
+            XLSX.utils.book_append_sheet(wb, wsAbonati, 'Abonați');
+            XLSX.utils.book_append_sheet(wb, wsProgramari, 'Programări');
+            XLSX.utils.book_append_sheet(wb, wsRemindere, 'Remindere');
+            XLSX.utils.book_append_sheet(wb, wsStatistici, 'Statistici');
+            
+            // Salvare
+            XLSX.writeFile(wb, `GazTech_Raport_Excel_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showNotification('Raportul Excel a fost generat cu succes!', 'success');
+        }
+
         // Export functions
         function exportAbonati() {
             let csvContent = "data:text/csv;charset=utf-8,Nume,Telefon,Email,CNP,Oraș,Strada,Număr,Tip Adresă,Bloc,Scara,Etaj,Apartament,Servicii Contractate,Tip Client,Prima Revizie,Următoarea Revizie,Status\n";
@@ -2384,7 +2621,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "abonati_complet.csv");
+            link.setAttribute("download", "gaztech_abonati.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -2402,7 +2639,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "programari.csv");
+            link.setAttribute("download", "gaztech_programari.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -2420,7 +2657,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "remindere.csv");
+            link.setAttribute("download", "gaztech_remindere.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -2441,7 +2678,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "revizii_programate.csv");
+            link.setAttribute("download", "gaztech_revizii.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -2460,23 +2697,316 @@
             });
         });
 
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('modalDocumente');
+            if (e.target === modal) {
+                inchideModalDocumente();
+            }
+        });
+
+        // ADAUGĂ DATE DE TEST PENTRU DEMONSTRAȚIA SINCRONIZĂRII
+        function adaugaDateDeTest() {
+            if (abonati.length === 0) {
+                // Abonați de test
+                const abonatiTest = [
+                    {
+                        id: 1000001,
+                        tipClient: 'nou',
+                        nume: 'Popescu Ion',
+                        telefon: '0721234567',
+                        email: 'ion.popescu@email.ro',
+                        cnp: '1801010120001',
+                        adresa: {
+                            oras: 'Alexandria',
+                            strada: 'Str. Libertății',
+                            numar: '12',
+                            tipAdresa: 'Casa',
+                            numeBlocAbonat: '',
+                            scara: '',
+                            etaj: '',
+                            apartament: ''
+                        },
+                        serviciiContractate: ['Verificare Instalație Gaz', 'Verificare Centrală'],
+                        dataRevizieEfectuata: '2023-06-15',
+                        dataExpirare: '2025-06-15',
+                        dataPrimaRevizie: '2023-06-15',
+                        periodicitateRevizie: '2',
+                        dataUrmatoareaRevizie: '2025-06-15',
+                        zileNotificare: '7',
+                        documente: [
+                            {
+                                id: 1001,
+                                nume: 'Certificat_Instalatie.pdf',
+                                tip: 'application/pdf',
+                                marime: 245760,
+                                continut: 'JVBERi0xLjQKJcOkw7zDtsO2CjIgMCBvYmoKPDwvTGVuZ3==',
+                                dataIncarcare: '2024-01-15T10:30:00.000Z'
+                            }
+                        ],
+                        dataCreare: '2024-01-15T10:30:00.000Z',
+                        status: 'Activ'
+                    },
+                    {
+                        id: 1000002,
+                        tipClient: 'actual',
+                        nume: 'Ionescu Maria',
+                        telefon: '0734567890',
+                        email: 'maria.ionescu@yahoo.ro',
+                        cnp: '2850505110002',
+                        adresa: {
+                            oras: 'Roșiorii de Vede',
+                            strada: 'Bd. Republicii',
+                            numar: '45',
+                            tipAdresa: 'Bloc',
+                            numeBlocAbonat: 'Bl. A3',
+                            scara: 'B',
+                            etaj: '4',
+                            apartament: '23'
+                        },
+                        serviciiContractate: ['Instalații Gaz + Centrală'],
+                        dataRevizieEfectuata: '2024-01-20',
+                        dataExpirare: '2026-01-20',
+                        dataPrimaRevizie: '2024-01-20',
+                        periodicitateRevizie: '2',
+                        dataUrmatoareaRevizie: '2026-01-20',
+                        zileNotificare: '3',
+                        documente: [],
+                        dataCreare: '2024-02-10T14:20:00.000Z',
+                        status: 'Activ'
+                    },
+                    {
+                        id: 1000003,
+                        tipClient: 'nou',
+                        nume: 'Georgescu Andrei',
+                        telefon: '0745123789',
+                        email: '',
+                        cnp: '',
+                        adresa: {
+                            oras: 'Turnu Măgurele',
+                            strada: 'Str. Mihai Viteazu',
+                            numar: '78',
+                            tipAdresa: 'Casa',
+                            numeBlocAbonat: '',
+                            scara: '',
+                            etaj: '',
+                            apartament: ''
+                        },
+                        serviciiContractate: ['Revizie Instalație Gaz'],
+                        dataRevizieEfectuata: '2024-11-01',
+                        dataExpirare: '2026-11-01',
+                        dataPrimaRevizie: '2024-11-01',
+                        periodicitateRevizie: '2',
+                        dataUrmatoareaRevizie: '2026-11-01',
+                        zileNotificare: '2',
+                        documente: [
+                            {
+                                id: 1002,
+                                nume: 'Plan_Instalatie.jpg',
+                                tip: 'image/jpeg',
+                                marime: 524288,
+                                continut: '/9j/4AAQSkZJRgABAQAAAQABAAD/2wBD==',
+                                dataIncarcare: '2024-11-02T09:15:00.000Z'
+                            },
+                            {
+                                id: 1003,
+                                nume: 'Factura_Revizie.pdf',
+                                tip: 'application/pdf',
+                                marime: 180224,
+                                continut: 'JVBERi0xLjQKJcOkw7zDtsO2CjIgMCB==',
+                                dataIncarcare: '2024-11-02T09:20:00.000Z'
+                            }
+                        ],
+                        dataCreare: '2024-11-01T16:45:00.000Z',
+                        status: 'Activ'
+                    }
+                ];
+
+                // Programări de test
+                const programariTest = [
+                    {
+                        id: 2000001,
+                        clientId: 1000001,
+                        clientNume: 'Popescu Ion',
+                        tipServiciu: 'Verificare Instalație Gaz',
+                        data: new Date().toISOString(), // Astăzi
+                        status: 'Programată',
+                        observatii: 'Verificare anuală programată automat',
+                        tipAutomat: 'revizie',
+                        dataCreare: '2024-12-01T08:00:00.000Z'
+                    },
+                    {
+                        id: 2000002,
+                        clientId: 1000002,
+                        clientNume: 'Ionescu Maria',
+                        tipServiciu: 'Instalații Gaz + Centrală',
+                        data: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Mâine
+                        status: 'Programată',
+                        observatii: 'Client prioritar - apartament',
+                        dataCreare: '2024-12-02T10:30:00.000Z'
+                    },
+                    {
+                        id: 2000003,
+                        clientId: 1000003,
+                        clientNume: 'Georgescu Andrei',
+                        tipServiciu: 'Revizie Instalație Gaz',
+                        data: '2024-11-25T14:00:00.000Z',
+                        status: 'Finalizată',
+                        observatii: 'Revizie completată cu succes',
+                        dataCreare: '2024-11-20T12:00:00.000Z'
+                    }
+                ];
+
+                // Remindere de test
+                const remindereTest = [
+                    {
+                        id: 3000001,
+                        clientId: 1000001,
+                        clientNume: 'Popescu Ion',
+                        tip: 'Verificare/Revizie Automată',
+                        data: new Date(Date.now() + 12 * 60 * 60 * 1000).toISOString(), // În 12 ore
+                        prioritate: 'Înaltă',
+                        mesaj: 'REVIZIE EXPIRING pentru Popescu Ion - Servicii: Verificare Instalație Gaz, Verificare Centrală - Cost total: 300 Lei - Adresa: Alexandria, Str. Libertății 12 - Tel: 0721234567',
+                        status: 'Activ',
+                        tipAutomat: 'revizie',
+                        dataCreare: '2024-11-01T09:00:00.000Z'
+                    },
+                    {
+                        id: 3000002,
+                        clientId: 1000002,
+                        clientNume: 'Ionescu Maria',
+                        tip: 'Urmărire Client',
+                        data: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // În 2 zile
+                        prioritate: 'Medie',
+                        mesaj: 'Urmărire pentru încărcarea documentelor lipsă',
+                        status: 'Activ',
+                        dataCreare: '2024-12-01T15:00:00.000Z'
+                    },
+                    {
+                        id: 3000003,
+                        clientId: 1000003,
+                        clientNume: 'Georgescu Andrei',
+                        tip: 'Facturare',
+                        data: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(), // În 48 ore
+                        prioritate: 'Urgentă',
+                        mesaj: 'Facturare pentru revizia efectuată',
+                        status: 'Activ',
+                        dataCreare: '2024-11-25T16:00:00.000Z'
+                    }
+                ];
+
+                // Adaugă datele de test
+                abonati.push(...abonatiTest);
+                programari.push(...programariTest);
+                remindere.push(...remindereTest);
+                
+                // Salvează datele
+                saveData();
+                
+                showNotification('✅ Date de test adăugate pentru demonstrația sincronizării!', 'success');
+                console.log('📊 Date de test adăugate:', {
+                    abonati: abonatiTest.length,
+                    programari: programariTest.length, 
+                    remindere: remindereTest.length
+                });
+            }
+        }
+
+        // FUNCȚIE AVANSATĂ DE SINCRONIZARE CU PROGRESS
+        function sincronizareAvansata() {
+            showNotification('🔄 Începe sincronizarea avansată...', 'info');
+            
+            setTimeout(() => {
+                // Actualizează toate componentele
+                updateClientDropdowns();
+                updateDashboard();
+                updateRapoarte();
+                
+                // Verifică și curăță datele
+                verificaConsistentaDatele();
+                
+                showNotification('✅ Sincronizare avansată completă!', 'success');
+                showSyncIndicator();
+            }, 1000);
+        }
+
+        function verificaConsistentaDatele() {
+            let problemeGasite = 0;
+            
+            // Verifică programările orfane
+            programari.forEach((programare, index) => {
+                if (programare.clientId !== 'nou' && !abonati.find(a => a.id == programare.clientId)) {
+                    console.warn(`Programare orfană găsită: ${programare.clientNume}`);
+                    problemeGasite++;
+                }
+            });
+            
+            // Verifică reminder-ele orfane
+            remindere.forEach((reminder, index) => {
+                if (reminder.clientId !== 'nou' && !abonati.find(a => a.id == reminder.clientId)) {
+                    console.warn(`Reminder orfan găsit: ${reminder.clientNume}`);
+                    problemeGasite++;
+                }
+            });
+            
+            if (problemeGasite > 0) {
+                showNotification(`⚠️ ${problemeGasite} probleme de consistență găsite`, 'warning');
+            }
+            
+            console.log(`🔍 Verificare consistență: ${problemeGasite} probleme găsite`);
+        }
+
+        // BACKUP ȘI RESTORE
+        function creeazaBackup() {
+            const backup = {
+                timestamp: new Date().toISOString(),
+                versiune: '1.0',
+                abonati: abonati,
+                programari: programari,
+                remindere: remindere
+            };
+            
+            const dataStr = JSON.stringify(backup, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `GazTech_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('💾 Backup creat cu succes!', 'success');
+        }
+
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            updateDashboard();
-            updateListaAbonati();
-            updateClientDropdowns();
-            verificaReminderePendente();
+            // Adaugă date de test dacă nu există
+            adaugaDateDeTest();
+            
+            // Sincronizare inițială
+            sincronizeazaDatele();
+            
+            // Inițializează upload-ul de fișiere
+            initializeFileUpload();
+            
+            // Adaugă event listeners pentru calculul costului
             adaugaListeneriCost();
             actualizareaCostului();
             
             // Check for urgent reminders every 5 minutes
             setInterval(verificaReminderePendente, 5 * 60 * 1000);
             
-            console.log('✅ Aplicația s-a încărcat complet cu servicii specifice și prețuri!');
+            // Sincronizare avansată la fiecare 30 secunde
+            setInterval(sincronizareAvansata, 30000);
+            
+            console.log('✅ GazTech Services s-a încărcat complet cu SINCRONIZARE AVANSATĂ!');
             console.log('📊 Abonați:', abonati.length);
             console.log('📅 Programări:', programari.length);
             console.log('🔔 Remindere:', remindere.length);
-            console.log('💰 Servicii cu prețuri: Verificare Gaz (150 Lei), Revizie Gaz (250 Lei), Verificare Centrală (150 Lei), Pachet Complet (250 Lei)');
+            console.log('🔄 Sincronizare: ACTIVĂ');
+            console.log('📎 Gestionare documente: COMPLETĂ');
+            console.log('💾 Backup: DISPONIBIL');
         });
 
         // Error handling
