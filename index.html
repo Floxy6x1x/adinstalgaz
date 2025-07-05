@@ -180,6 +180,16 @@
             margin-top: 1rem;
         }
 
+        .validity-badge {
+            background: #28a745;
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+            font-weight: normal;
+        }
+
         /* Features */
         .features {
             display: grid;
@@ -457,44 +467,19 @@
             <h2>Serviciile Noastre</h2>
             <div class="services-grid">
                 <div class="service-card">
-                    <h3>🏗️ Proiectare Branșamente Gaz</h3>
-                    <p>Servicii complete de proiectare pentru branșamente gaz naturale. Elaborăm documentația tehnică necesară obținerii avizelor și autorizațiilor.</p>
-                    <div class="price">De la 200 RON</div>
-                </div>
-                <div class="service-card">
-                    <h3>⚡ Execuție Branșamente Gaz</h3>
-                    <p>Execuția profesională a branșamentelor de gaz naturale conform proiectelor autorizate. Echipă specializată și echipamente moderne.</p>
-                    <div class="price">De la 800 RON</div>
-                </div>
-                <div class="service-card">
-                    <h3>🔧 Instalații de Utilizare Gaz</h3>
-                    <p>Montarea și punerea în funcțiune a instalațiilor interioare de gaz pentru locuințe, spații comerciale și industriale.</p>
-                    <div class="price">De la 300 RON</div>
-                </div>
-                <div class="service-card">
-                    <h3>🔧 Verificare Tehnică Periodică</h3>
+                    <h3>🔧 Verificare Instalație Gaz</h3>
                     <p>Verificări obligatorii pentru instalațiile de gaze conform reglementărilor în vigoare. Efectuăm verificări complete pentru siguranța instalației.</p>
-                    <div class="price">De la 80 RON</div>
+                    <div class="price">150 LEI <span class="validity-badge">valabilitate 2 ani</span></div>
                 </div>
                 <div class="service-card">
-                    <h3>🏠 Verificare la Racordare</h3>
-                    <p>Verificări tehnice necesare pentru obținerea avizului de racordare la rețeaua de distribuție gaze naturale.</p>
-                    <div class="price">De la 120 RON</div>
+                    <h3>🔧 Revizie Instalație Gaz</h3>
+                    <p>Revizie completă a instalației de gaz cu verificări amănunțite ale tuturor componentelor și emisiunea certificatelor de conformitate.</p>
+                    <div class="price">250 LEI <span class="validity-badge">valabilitate 2 ani</span></div>
                 </div>
                 <div class="service-card">
-                    <h3>📋 Verificare pentru Autorizații</h3>
-                    <p>Verificări tehnice necesare pentru obținerea sau reînnoirea autorizațiilor de funcționare a instalațiilor de gaze.</p>
-                    <div class="price">De la 100 RON</div>
-                </div>
-                <div class="service-card">
-                    <h3>🌡️ Revizii Centrale Termice</h3>
-                    <p>Revizii periodice și verificări tehnice pentru centrale termice pe gaz. Mentenanță preventivă și reparații.</p>
-                    <div class="price">De la 120 RON</div>
-                </div>
-                <div class="service-card">
-                    <h3>🔨 Verificare Post-Reparații</h3>
-                    <p>Verificări după efectuarea lucrărilor de reparații sau modificări la instalațiile de gaze existente.</p>
-                    <div class="price">De la 90 RON</div>
+                    <h3>🌡️ Verificare Centrală</h3>
+                    <p>Verificări periodice și revizii tehnice pentru centrale termice pe gaz. Mentenanță preventivă și verificări de siguranță.</p>
+                    <div class="price">150 LEI <span class="validity-badge">valabilitate 2 ani</span></div>
                 </div>
                 <div class="service-card">
                     <h3>🚨 Servicii de Urgență</h3>
@@ -586,14 +571,9 @@
                             <label for="serviciu">Tip Serviciu *</label>
                             <select id="serviciu" name="serviciu" required>
                                 <option value="">Selectează serviciul</option>
-                                <option value="proiectare-bransamente">Proiectare Branșamente Gaz</option>
-                                <option value="executie-bransamente">Execuție Branșamente Gaz</option>
-                                <option value="instalatii-utilizare">Instalații de Utilizare Gaz</option>
-                                <option value="verificare-periodica">Verificare Tehnică Periodică</option>
-                                <option value="verificare-racordare">Verificare la Racordare</option>
-                                <option value="verificare-autorizatii">Verificare pentru Autorizații</option>
-                                <option value="revizii-centrale">Revizii Centrale Termice</option>
-                                <option value="verificare-reparatii">Verificare Post-Reparații</option>
+                                <option value="verificare-instalatie-gaz">Verificare Instalație Gaz - 150 Lei (valabilitate 2 ani)</option>
+                                <option value="revizie-instalatie-gaz">Revizie Instalație Gaz - 250 Lei (valabilitate 2 ani)</option>
+                                <option value="verificare-centrala">Verificare Centrală - 150 Lei (valabilitate 2 ani)</option>
                                 <option value="urgenta">Serviciu de Urgență</option>
                             </select>
                         </div>
