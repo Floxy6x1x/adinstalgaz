@@ -812,7 +812,7 @@
                     <button class="btn btn-success" onclick="testeazaWhatsApp()" style="margin-bottom: 10px; width: 100%; background: #25d366; color: white;">💬 Test WhatsApp</button>
                     <div style="margin-top: 10px; padding: 10px; background: #f0fff4; border-radius: 6px; border-left: 3px solid #38a169;">
                         <small style="color: #22543d;">Firebase: <span id="firebaseStatus">Verificare...</span></small><br>
-                        <small style="color: #22543d;">Telefon firmă: <strong>${CONFIGURARI_FIRMA.telefon}</strong></small><br>
+                        <small style="color: #22543d;">Telefon firmă: <strong id="telefonFirma">0762614402</strong></small><br>
                         <small style="color: #22543d;">WhatsApp: <strong>Activ ✅</strong></small>
                     </div>
                 </div>
@@ -875,7 +875,7 @@ ${CONFIGURARI_FIRMA.nume} - Intervenție Rapidă</div>
                     • <strong>📱 SMS:</strong> Click pe 📱 SMS pentru notificări expirări/plăți<br>
                     • <strong>💬 WhatsApp:</strong> Click pe 💬 WA pentru mesaje business instant<br>
                     • <strong>🚨 Automat:</strong> WhatsApp pentru revizii expirate (urgent)<br>
-                    • <strong>Telefon firmă:</strong> ${CONFIGURARI_FIRMA.telefon} (în toate mesajele)
+                    • <strong>Telefon firmă:</strong> <span id="telefonAlert1">0762614402</span> (în toate mesajele)
                 </div>
             </div>
 
@@ -2313,6 +2313,88 @@ ${mesaj}
             
             // Folosește numărul firmei pentru test
             trimiteWhatsApp(CONFIGURARI_FIRMA.telefon, mesajTest);
+        }
+
+        // Funcție pentru actualizarea valorilor în interfață
+        function actualizeazaInterfata() {
+            // Actualizează telefonul firmei în toate locurile
+            const telefonElements = document.querySelectorAll('#telefonFirma, #telefonAlert1');
+            telefonElements.forEach(element => {
+                if (element) {
+                    element.textContent = CONFIGURARI_FIRMA.telefon;
+                }
+            });
+
+            // Actualizează exemplele de mesaje
+            actualizeazaExempleMesaje();
+        }
+
+        // Funcție pentru actualizarea exemplelor de mesaje
+        function actualizeazaExempleMesaje() {
+            // Găsește containerul exemplelor în Dashboard
+            setTimeout(() => {
+                const containerExemple = Array.from(document.querySelectorAll('h3')).find(h3 => 
+                    h3.textContent.includes('Exemple Mesaje')
+                );
+                
+                if (containerExemple) {
+                    const parentContainer = containerExemple.parentElement;
+                    
+                    // Găsește grid-ul cu exemple
+                    const gridExemple = parentContainer.querySelector('div[style*="display: grid"]');
+                    if (gridExemple) {
+                        gridExemple.innerHTML = `
+                            <div style="background: #f7fafc; padding: 15px; border-radius: 8px; border-left: 4px solid #4299e1;">
+                                <h4 style="color: #2b6cb0; margin-bottom: 10px;">🔔 Expirare Revizie (7 zile)</h4>
+                                <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; white-space: pre-line;">🔔 Bună ziua Popescu Ion!
+
+Revizia dumneavoastră pentru Verificare Instalație Gaz expiră în 7 zile.
+
+Pentru reprogramare, sunați la 📞 ${CONFIGURARI_FIRMA.telefon}
+
+${CONFIGURARI_FIRMA.nume} - Servicii profesionale de instalații gaz</div>
+                            </div>
+                            <div style="background: #fef5e7; padding: 15px; border-radius: 8px; border-left: 4px solid #ed8936;">
+                                <h4 style="color: #c05621; margin-bottom: 10px;">💰 Plată Pendentă</h4>
+                                <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; white-space: pre-line;">💰 Bună ziua Ionescu Maria!
+
+Aveți de plătit suma de 250 Lei pentru:
+Revizie Instalație Gaz
+
+Pentru plată: 📞 ${CONFIGURARI_FIRMA.telefon}
+
+${CONFIGURARI_FIRMA.nume} - Mulțumim!</div>
+                            </div>
+                            <div style="background: #f0fff4; padding: 15px; border-radius: 8px; border-left: 4px solid #38a169;">
+                                <h4 style="color: #22543d; margin-bottom: 10px;">✅ Confirmare Programare</h4>
+                                <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; white-space: pre-line;">✅ Bună ziua Georgescu Andrei!
+
+Confirmăm programarea pentru Verificare Centrală
+📅 Data: 15.12.2024 10:00
+📍 Adresa: Alexandria, Str. Libertății 12
+
+Informații: 📞 ${CONFIGURARI_FIRMA.telefon}
+${CONFIGURARI_FIRMA.nume}</div>
+                            </div>
+                            <div style="background: #fed7d7; padding: 15px; border-radius: 8px; border-left: 4px solid #f56565;">
+                                <h4 style="color: #742a2a; margin-bottom: 10px;">🚨 Expirare URGENTĂ (WhatsApp)</h4>
+                                <div style="background: white; padding: 10px; border-radius: 6px; font-size: 13px; color: #4a5568; white-space: pre-line;">🚨 URGENT - ${CONFIGURARI_FIRMA.nume}
+
+Bună ziua Popescu Ion!
+
+Verificarea/Revizia pentru Verificare Instalație Gaz a EXPIRAT.
+
+🔧 Pentru reprogramare urgentă:
+📞 Sunați la ${CONFIGURARI_FIRMA.telefon}
+
+Este obligatoriu să refaceți verificarea conform legii!
+
+${CONFIGURARI_FIRMA.nume}</div>
+                            </div>
+                        `;
+                    }
+                }
+            }, 1000); // Așteptă ca DOM-ul să fie complet încărcat
         }
 
         // Verificare status Firebase
@@ -3857,6 +3939,9 @@ ${mesaj}
                 }
             }
 
+            // Actualizează interfața cu valorile corecte
+            actualizeazaInterfata();
+            
             // Verifică statusul Firebase
             verificaStatusFirebase();
             
@@ -3903,6 +3988,7 @@ ${mesaj}
             console.log('💬 WhatsApp: INTEGRAT');
             console.log('🔥 Firebase:', db ? 'CONECTAT' : 'OFFLINE');
             console.log('📱 PWA: Service Worker înregistrat');
+            console.log('📞 Telefon firmă:', CONFIGURARI_FIRMA.telefon);
         });
 
         // Error handling
