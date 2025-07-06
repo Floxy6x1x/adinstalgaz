@@ -2016,12 +2016,6 @@
                 showAuthError('A apărut o eroare la conectare. Încearcă din nou.');
             }
         }
-
-        // Generează QR Code pentru 2FA
-        function genereazaQRCode() {
-        // Generează o cheie secretă pentru 2FA
-const secret = generateSecret();
-currentUser.secret2FA = secret;
 function genereazaQRCode() {
     // Generează o cheie secretă pentru 2FA
     const secret = generateSecret();
