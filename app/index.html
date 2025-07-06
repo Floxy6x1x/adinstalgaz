@@ -30,7 +30,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-functions-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -2022,74 +2022,100 @@
         // Generează o cheie secretă pentru 2FA
 const secret = generateSecret();
 currentUser.secret2FA = secret;
-
-// Generează coduri de rezervă
-backupCodes = generateBackupCodes();
-currentUser.backupCodes = backupCodes;
-
-// Creează URL-ul pentru Google Authenticator
-const appName = encodeURIComponent('GazTech Services');
-const userName = encodeURIComponent(currentUser.email);
-const otpUrl = `otpauth://totp/${appName}:${userName}?secret=${secret}&issuer=${appName}`;
-
-// Containerul pentru QR Code
-const qrContainer = document.getElementById('qrCode');
-qrContainer.innerHTML = `
-    <div style="background: white; padding: 20px; text-align: center; border-radius: 8px;">
-        <div id="qrCodeImage" style="margin-bottom: 15px;"></div>
-        <p style="margin: 10px 0; color: #2d3748; font-weight: 600;">Scanează cu Google Authenticator</p>
-        <div style="background: #f7fafc; padding: 10px; border-radius: 6px; margin-top: 10px;">
-            <p style="margin: 0; font-family: monospace; color: #4a5568; font-size: 11px; word-break: break-all;">
-                Secret manual: <strong>${secret}</strong>
-            </p>
-            <p style="margin: 5px 0 0 0; color: #718096; font-size: 10px;">
-                (pentru introducere manuală în caz de probleme)
-            </p>
-        </div>
-    </div>
-`;
-
-// Generează QR Code-ul real
-try {
-    if (typeof QRCode !== 'undefined') {
-        QRCode.toCanvas(document.createElement('canvas'), otpUrl, {
-            width: 200,
-            height: 200,
-            color: {
-                dark: '#1e40af',
-                light: '#ffffff'
-            }
-        }, function (error, canvas) {
-            if (error) {
-                console.error('Eroare QR Code:', error);
-                document.getElementById('qrCodeImage').innerHTML = `
-                    <div style="background: #fed7d7; padding: 15px; border-radius: 6px; color: #742a2a;">
-                        <strong>⚠️ Eroare generare QR Code</strong><br>
-                        Folosește codul manual de mai jos
+function genereazaQRCode() {
+    // Generează o cheie secretă pentru 2FA
+    const secret = generateSecret();
+    currentUser.secret2FA = secret;
+    
+    // Generează coduri de rezervă
+    backupCodes = generateBackupCodes();
+    currentUser.backupCodes = backupCodes;
+    
+    // Creează URL-ul pentru Google Authenticator
+    const appName = 'GazTech Services';
+    const userName = currentUser.email;
+    const otpUrl = `otpauth://totp/${appName}:${userName}?secret=${secret}&issuer=${appName}`;
+    
+    // Containerul pentru QR Code
+    const qrContainer = document.getElementById('qrCode');
+    qrContainer.innerHTML = `
+        <div style="background: white; padding: 20px; text-align: center; border-radius: 8px;">
+            <div id="qrCodeImage" style="margin-bottom: 15px;">
+                <div style="background: #e6fffa; padding: 20px; border-radius: 8px; border: 2px solid #38b2ac;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">📱</div>
+                    <p style="color: #2c7a7b; font-weight: 600; margin-bottom: 10px;">
+                        <strong>Configurare Google Authenticator</strong>
+                    </p>
+                    <div style="background: #f0fff4; padding: 15px; border-radius: 6px; margin: 15px 0;">
+                        <p style="color: #22543d; font-size: 14px; font-weight: 600; margin-bottom: 10px;">
+                            🔧 Pași de configurare:
+                        </p>
+                        <ol style="color: #22543d; font-size: 13px; text-align: left; margin: 0; padding-left: 20px;">
+                            <li>Deschide <strong>Google Authenticator</strong></li>
+                            <li>Apasă <strong>"+"</strong> → <strong>"Introduceți o cheie de configurare"</strong></li>
+                            <li>Nume cont: <strong>GazTech Services</strong></li>
+                            <li>Cheia ta: <strong style="color: #e53e3e;">${secret}</strong></li>
+                            <li>Tip timp: <strong>Bazat pe timp</strong></li>
+                            <li>Apasă <strong>"Adaugă"</strong></li>
+                        </ol>
                     </div>
-                `;
-            } else {
-                // Adaugă canvas-ul în container
-                canvas.style.border = '2px solid #e2e8f0';
-                canvas.style.borderRadius = '8px';
-                document.getElementById('qrCodeImage').appendChild(canvas);
-            }
-        });
-    } else {
-        throw new Error('Biblioteca QR Code nu este încărcată');
-    }
-} catch (error) {
-    console.error('Biblioteca QR Code nu este disponibilă:', error);
-    document.getElementById('qrCodeImage').innerHTML = `
-        <div style="background: #fef5e7; padding: 15px; border-radius: 6px; color: #744210;">
-            <div style="font-size: 48px; margin-bottom: 10px;">📱</div>
-            <strong>QR Code Manual</strong><br>
-            Deschide Google Authenticator și adaugă manual contul
+                    <div style="background: #fff5f5; padding: 10px; border-radius: 6px; border-left: 4px solid #f56565;">
+                        <p style="color: #742a2a; font-size: 12px; margin: 0;">
+                            <strong>⚠️ Important:</strong> Salvează această cheie într-un loc sigur!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div style="background: #f7fafc; padding: 15px; border-radius: 6px;">
+                <p style="margin: 0; font-family: monospace; color: #4a5568; font-size: 12px; word-break: break-all;">
+                    <strong>Cheia secretă:</strong><br>
+                    <span style="background: #edf2f7; padding: 5px 8px; border-radius: 4px; color: #2d3748; font-weight: bold;">${secret}</span>
+                </p>
+                <p style="margin: 10px 0 0 0; color: #718096; font-size: 11px;">
+                    Copiază această cheie și adaugă-o manual în Google Authenticator
+                </p>
+            </div>
         </div>
     `;
+    
+    // Încearcă să încarce QR Code dacă biblioteca devine disponibilă
+    let tentative = 0;
+    const checkQRCode = () => {
+        tentative++;
+        if (window.QRCode) {
+            console.log('✅ Biblioteca QR Code găsită!');
+            try {
+                QRCode.toDataURL(otpUrl, {
+                    width: 200,
+                    color: {
+                        dark: '#1e40af',
+                        light: '#ffffff'
+                    }
+                }, function (error, url) {
+                    if (!error) {
+                        document.getElementById('qrCodeImage').innerHTML = `
+                            <div style="background: #e6fffa; padding: 20px; border-radius: 8px; border: 2px solid #38b2ac;">
+                                <img src="${url}" style="border: 2px solid #2d3748; border-radius: 8px; margin-bottom: 15px;" alt="QR Code pentru 2FA">
+                                <p style="color: #2c7a7b; font-weight: 600; margin: 0;">
+                                    ✅ Scanează acest QR Code cu Google Authenticator
+                                </p>
+                            </div>
+                        `;
+                    }
+                });
+            } catch (e) {
+                console.warn('Eroare generare QR:', e);
+            }
+        } else if (tentative < 10) {
+            setTimeout(checkQRCode, 500);
+        }
+    };
+    
+    setTimeout(checkQRCode, 100);
 }
 
-        // Verifică și activează 2FA
+
+      // Verifică și activează 2FA
         async function verify2FASetup() {
             const code = document.getElementById('verify2FACode').value.trim();
             
