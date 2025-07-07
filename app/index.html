@@ -3942,72 +3942,7 @@ function veziHarta(adresa) {
     window.open(`https://maps.google.com/?q=${encodeURIComponent(adresa)}`, '_blank');
 }
     
-       function afiseazaLucrarileDeAzi() {
-    const container = document.getElementById('listaAbonati');
-    const azi = new Date().toLocaleDateString('ro-RO');
-    
-    const lucrariDemo = [
-        {
-            id: 1,
-            client: 'Ion Popescu',
-            telefon: '0722 123 456',
-            adresa: 'Str. Mihai Viteazu 25, Roșiori de Vede',
-            serviciu: 'Revizie centrală termică',
-            pret: '150 lei',
-            status: 'nou'
-        },
-        {
-            id: 2,
-            client: 'Maria Ionescu',
-            telefon: '0733 456 789',
-            adresa: 'Str. Libertății 10, Roșiori de Vede',
-            serviciu: 'Verificare instalație gaz',
-            pret: '150 lei',
-            status: 'nou'
-        }
-    ];
-    
-    let html = `
-        <div class="lucrari-container">
-            <h3 style="margin-bottom: 20px;">📅 Lucrările tale pentru ${azi}</h3>
-            <div class="cards-container">
-    `;
-    
-    lucrariDemo.forEach(lucrare => {
-        html += `
-            <div class="card-lucrare" style="background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h4 style="margin: 0 0 10px 0; color: #2c3e50;">🏠 ${lucrare.client}</h4>
-                <p style="margin: 5px 0;"><strong>📍 Adresă:</strong> ${lucrare.adresa}</p>
-                <p style="margin: 5px 0;"><strong>📞 Telefon:</strong> <a href="tel:${lucrare.telefon.replace(/\s/g, '')}">${lucrare.telefon}</a></p>
-                <p style="margin: 5px 0;"><strong>🔧 Serviciu:</strong> ${lucrare.serviciu}</p>
-                <p style="margin: 5px 0;"><strong>💰 Preț:</strong> ${lucrare.pret}</p>
-                <div style="margin-top: 15px; display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="preiaLucrare(${lucrare.id})">
-                        📋 Preia Lucrare
-                    </button>
-                    <button class="btn btn-secondary" onclick="veziHarta('${lucrare.adresa}')">
-                        🗺️ Vezi Hartă
-                    </button>
-                    <a href="tel:${lucrare.telefon.replace(/\s/g, '')}" class="btn btn-info">
-                        📞 Sună Client
-                    </a>
-                </div>
-            </div>
-        `;
-    });
-    
-    html += `
-            </div>
-        </div>
-    `;
-    
-    container.innerHTML = html;
-}
-        // Funcții helper pentru lucrători
-function preiaLucrare(idLucrare) {
-    showNotification(`Lucrare #${idLucrare} preluată! Mult succes!`, 'success');
-}
-
+     
 function veziHarta(adresa) {
     window.open(`https://maps.google.com/?q=${encodeURIComponent(adresa)}`, '_blank');
 }
