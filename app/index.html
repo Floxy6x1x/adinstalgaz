@@ -2366,48 +2366,82 @@
         // ===========================================
 
         function aplicaRestrictiiRol() {
-            if (!currentUser) return;
-            
-            const isLucrator = currentUser.role === 'lucrator';
-            
-            if (isLucrator) {
-                // Afișează notificări de permisiuni
-                document.getElementById('permisiuniDashboard').style.display = 'block';
-                
-                // Dezactivează funcții pentru lucrători
-                // Dashboard - restricții sincronizare și backup
-                const btnSincronizare = document.querySelector('[onclick*="sincronizareAvansata"]');
-                const btnBackup = document.querySelector('[onclick*="creeazaBackup"]');
-                if (btnSincronizare) {
-                    btnSincronizare.classList.add('restricted-access');
-                    btnSincronizare.onclick = () => showNotification('Nu aveți permisiunea să efectuați sincronizări avansate!', 'warning');
-                }
-                if (btnBackup) {
-                    btnBackup.classList.add('restricted-access');
-                    btnBackup.onclick = () => showNotification('Nu aveți permisiunea să creați backup-uri!', 'warning');
-                }
-                
-                // Rapoarte - restricții acțiuni avansate
-                const actiuniAvansate = document.getElementById('actiuniAvansate');
-                if (actiuniAvansate) {
-                    actiuniAvansate.style.display = 'none';
-                }
-                
-                // Setări - ascunde zona periculoasă
-                const zonaPericoloasa = document.getElementById('zonaPericoloasa');
-                if (zonaPericoloasa) {
-                    zonaPericoloasa.style.display = 'none';
-                }
-                
-                // Notificări în masă - dezactivează pentru lucrători
-                const btnNotificariMasa = document.querySelector('[onclick*="trimiteNotificariInMasa"]');
-                if (btnNotificariMasa) {
-                    btnNotificariMasa.classList.add('restricted-access');
-                    btnNotificariMasa.onclick = () => showNotification('Nu aveți permisiunea să trimiteți notificări în masă!', 'warning');
-                }
-            }
+    if (!currentUser) return;
+    
+    const isLucrator = currentUser.role === 'lucrator';
+    
+    if (isLucrator) {
+        console.log('👷 Mod Lucrător activat - restricții aplicate');
+        
+        // Afișează notificări de permisiuni
+        document.getElementById('permisiuniDashboard').style.display = 'block';
+        
+        // RESTRICȚII PRINCIPALE PENTRU LUCRĂTORI
+        
+        // 1. Ascunde butoanele de adăugare/ștergere clienți
+        const elementeDeAscuns = [
+            '#adaugaAbonati',
+            '.btn-adauga-client',
+            '.btn-sterge',
+            '.btn-delete',
+            '[onclick*="stergeAbonat"]',
+            '[onclick*="deleteClient"]',
+            '.actiuni-abonat .btn-danger'
+        ];
+        
+        elementeDeAscuns.forEach(selector => {
+            document.querySelectorAll(selector).forEach(el => {
+                el.style.display = 'none';
+            });
+        });
+        
+        // 2. Schimbă titlul pentru lucrători
+        const titluAbonati = document.querySelector('h3');
+        if (titluAbonati && titluAbonati.textContent.includes('Abonați')) {
+            titluAbonati.innerHTML = '📋 <strong>Lucrările Mele de Azi</strong>';
         }
-
+        
+        // 3. Modifică meniul lateral
+        const meniuAbonati = document.querySelector('[onclick*="showAbonati"]');
+        if (meniuAbonati) {
+            meniuAbonati.innerHTML = '<i class="fas fa-clipboard-list"></i> Lucrările Mele';
+        }
+        
+        // 4. Restricții existente (păstrăm)
+        const btnSincronizare = document.querySelector('[onclick*="sincronizareAvansata"]');
+        const btnBackup = document.querySelector('[onclick*="creeazaBackup"]');
+        if (btnSincronizare) {
+            btnSincronizare.classList.add('restricted-access');
+            btnSincronizare.onclick = () => showNotification('Nu aveți permisiunea să efectuați sincronizări avansate!', 'warning');
+        }
+        if (btnBackup) {
+            btnBackup.classList.add('restricted-access');
+            btnBackup.onclick = () => showNotification('Nu aveți permisiunea să creați backup-uri!', 'warning');
+        }
+        
+        // 5. Ascunde zona periculoasă din setări
+        const zonaPericoloasa = document.getElementById('zonaPericoloasa');
+        if (zonaPericoloasa) {
+            zonaPericoloasa.style.display = 'none';
+        }
+        
+        // 6. Adaugă mesaj informativ pentru lucrători
+        setTimeout(() => {
+            const containerAbonati = document.querySelector('.container-abonati');
+            if (containerAbonati && !document.getElementById('infoLucrator')) {
+                const infoDiv = document.createElement('div');
+                infoDiv.id = 'infoLucrator';
+                infoDiv.className = 'alert alert-info';
+                infoDiv.innerHTML = `
+                    <strong>👷 Mod Lucrător</strong><br>
+                    Vezi doar lucrările atribuite ție pentru azi. 
+                    Pentru modificări contactează administratorul.
+                `;
+                containerAbonati.insertBefore(infoDiv, containerAbonati.firstChild);
+            }
+        }, 500);
+    }
+}
         // ===========================================
         // CONFIGURĂRI FIRMĂ ACTUALIZATE
         // ===========================================
@@ -3817,10 +3851,98 @@ ${mesaj}
         }
 
         function updateListaAbonati() {
-            const container = document.getElementById('listaAbonati');
-            
-            if (abonati.length === 0) {
-                container.innerHTML = `
+    const container = document.getElementById('listaAbonati');
+    
+    // VERIFICĂ DACĂ E LUCRĂTOR (DOAR ASTA ADAUGI)
+    if (currentUser && currentUser.role === 'lucrator') {
+        afiseazaLucrarileDeAzi();
+        return;
+    }
+    
+    if (abonati.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">👥</div>
+                <h3>Nu există abonați înregistrați</h3>
+                <p>Adaugă primul abonat folosind formularul de mai jos.</p>
+            </div>
+        `;
+        return;
+    }
+    // Funcție nouă pentru lucrători - afișează doar lucrările de azi
+function afiseazaLucrarileDeAzi() {
+    const container = document.getElementById('listaAbonati');
+    const azi = new Date().toLocaleDateString('ro-RO');
+    
+    // Pentru moment - date demo
+    const lucrariDemo = [
+        {
+            id: 1,
+            client: 'Ion Popescu',
+            telefon: '0722 123 456',
+            adresa: 'Str. Mihai Viteazu 25, Roșiori de Vede',
+            serviciu: 'Revizie centrală termică',
+            pret: '150 lei',
+            status: 'nou'
+        },
+        {
+            id: 2,
+            client: 'Maria Ionescu',
+            telefon: '0733 456 789',
+            adresa: 'Str. Libertății 10, Roșiori de Vede',
+            serviciu: 'Verificare instalație gaz',
+            pret: '150 lei',
+            status: 'nou'
+        }
+    ];
+    
+    let html = `
+        <div class="lucrari-container">
+            <h3 style="margin-bottom: 20px;">📅 Lucrările tale pentru ${azi}</h3>
+            <div class="cards-container">
+    `;
+    
+    lucrariDemo.forEach(lucrare => {
+        html += `
+            <div class="card-lucrare" style="background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h4 style="margin: 0 0 10px 0; color: #2c3e50;">🏠 ${lucrare.client}</h4>
+                <p style="margin: 5px 0;"><strong>📍 Adresă:</strong> ${lucrare.adresa}</p>
+                <p style="margin: 5px 0;"><strong>📞 Telefon:</strong> <a href="tel:${lucrare.telefon.replace(/\s/g, '')}">${lucrare.telefon}</a></p>
+                <p style="margin: 5px 0;"><strong>🔧 Serviciu:</strong> ${lucrare.serviciu}</p>
+                <p style="margin: 5px 0;"><strong>💰 Preț:</strong> ${lucrare.pret}</p>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="preiaLucrare(${lucrare.id})">
+                        📋 Preia Lucrare
+                    </button>
+                    <button class="btn btn-secondary" onclick="veziHarta('${lucrare.adresa}')">
+                        🗺️ Vezi Hartă
+                    </button>
+                    <a href="tel:${lucrare.telefon.replace(/\s/g, '')}" class="btn btn-info">
+                        📞 Sună Client
+                    </a>
+                </div>
+            </div>
+        `;
+    });
+    
+    html += `
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// Funcții helper pentru lucrători
+function preiaLucrare(idLucrare) {
+    showNotification(`Lucrare #${idLucrare} preluată! Mult succes!`, 'success');
+}
+
+function veziHarta(adresa) {
+    window.open(`https://maps.google.com/?q=${encodeURIComponent(adresa)}`, '_blank');
+}
+    // RESTUL CODULUI CONTINUĂ...
+                            container.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">👥</div>
                         <h3>Nu există abonați înregistrați</h3>
