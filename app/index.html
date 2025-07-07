@@ -3849,11 +3849,10 @@ ${mesaj}
             // Reset cost display
             actualizareaCostului();
         }
-
-        function updateListaAbonati() {
+function updateListaAbonati() {
     const container = document.getElementById('listaAbonati');
     
-    // VERIFICĂ DACĂ E LUCRĂTOR (DOAR ASTA ADAUGI)
+    // VERIFICĂ DACĂ E LUCRĂTOR
     if (currentUser && currentUser.role === 'lucrator') {
         afiseazaLucrarileDeAzi();
         return;
@@ -3869,6 +3868,91 @@ ${mesaj}
         `;
         return;
     }
+    
+    let html = `
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nume</th>
+                    <th>Telefon</th>
+                    <th>Adresă</th>
+                    <th>Servicii</th>
+                    <th>Data Revizie</th>
+                    <th>Data Expirare</th>
+                    <th>Documente & Acțiuni</th>
+                    <th>Notificări</th>
+                    <th>Status</th>
+                    <th>Editare</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    abonati.forEach(abonat => {
+        const adresaCompleta = formatareAdresa(abonat.adresa);
+        const servicii = abonat.serviciiContractate ? abonat.serviciiContractate.join(', ') : '-';
+        const dataRevizie = abonat.dataRevizieEfectuata ? new Date(abonat.dataRevizieEfectuata).toLocaleDateString('ro-RO') : '-';
+        const dataExpirare = abonat.dataExpirare ? new Date(abonat.dataExpirare).toLocaleDateString('ro-RO') : '-';
+        const numarDocumente = abonat.documente ? abonat.documente.length : 0;
+        
+        let statusExpirare = 'status-active';
+        if (abonat.dataExpirare) {
+            const expirare = new Date(abonat.dataExpirare);
+            const astazi = new Date();
+            const zilePanaLaExpirare = Math.ceil((expirare - astazi) / (1000 * 60 * 60 * 24));
+            
+            if (zilePanaLaExpirare < 0) {
+                statusExpirare = 'status-urgent';
+            } else if (zilePanaLaExpirare <= 30) {
+                statusExpirare = 'status-inactive';
+            } else if (zilePanaLaExpirare <= 90) {
+                statusExpirare = 'status-pending';
+            }
+        }
+        
+        html += `
+            <tr>
+                <td><strong>${abonat.nume}</strong><br><small>${abonat.email || ''}</small></td>
+                <td>${abonat.telefon}</td>
+                <td><small>${adresaCompleta}</small></td>
+                <td><small>${servicii}</small></td>
+                <td><small>${dataRevizie}</small></td>
+                <td><span class="status-badge ${statusExpirare}"><small>${dataExpirare}</small></span></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary btn-small" onclick="gestioneazaDocumente(${abonat.id})" title="Documente">
+                            📎 ${numarDocumente}
+                        </button>
+                        <button class="btn btn-primary btn-small" onclick="trimiteNotificareExpirare(${abonat.id})" title="SMS">
+                            📱 SMS
+                        </button>
+                    </div>
+                </td>
+                <td>
+                    <span class="status-badge status-pending" style="font-size: 10px;">
+                        📱 ${abonat.numarNotificari || 0}
+                    </span>
+                </td>
+                <td><span class="status-badge status-active">${abonat.status || 'Activ'}</span></td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary btn-small" onclick="editaAbonat(${abonat.id})">✏️</button>
+                        <button class="btn btn-danger btn-small" onclick="stergeAbonat(${abonat.id})">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+// Funcție nouă pentru lucrători - AICI ÎNCEPE, SEPARAT!
+function afiseazaLucrarileDeAzi() {
+    // ... restul codului ...
+}
+        
     // Funcție nouă pentru lucrători - afișează doar lucrările de azi
 function afiseazaLucrarileDeAzi() {
     const container = document.getElementById('listaAbonati');
