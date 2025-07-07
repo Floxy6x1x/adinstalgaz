@@ -4,7 +4,7 @@ const STATIC_FILES = [
     './',
     './index.html',
     './manifest.json',
-    'https://cdn.tailwindcss.com',
+    
     'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
     'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
     'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'
