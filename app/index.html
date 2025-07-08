@@ -3,2069 +3,1631 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdInstalGaz - Sistem Management</title>
+    <meta name="theme-color" content="#2563eb">
+    <title>AdInstalGaz - Management Instalații</title>
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAdgAAAHYBTnsmCAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAANCSURBVFiFtZdNaBNBFMd/M5tsNk2bpqlWq1YreCiIBy9e9OBBwYMXwYPgwYMHL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL148ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL148ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHixYsXL168ePHiwAAAABJRU5ErkJggg==">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkFkSW5zdGFsR2F6IC0gTWFuYWdlbWVudCBJbnN0YWxhdGlpIiwKICAic2hvcnRfbmFtZSI6ICJBZEluc3RhbEdheiIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgInRoZW1lX2NvbG9yIjogIiMyNTYzZWIiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmOWZhZmIiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUJwWkQwaWFXTnZiaUlnZG1sbGQwSnZlRDBpTUNBd0lESTBJREkwSWlCbWFXeHNQU0pqZFhKeVpXNTBRMjlzYjNJaUlHaGxhV2RvZEQwaU1qUWlJSGRwWkhSb1BTSXlOQ0lnZUcxc2JuTTlJbWgwZEhBNkx5OTNkM2N1ZHpNdWIzSm5Mekl3TURBdmMzWm5JajQ4Y0dGMGFDQmtQU0pOTmpBeU9Ua3lPRFkzSWkxNE1UUTJNallsSWs4M2JDZEpjeTF5ZFhCcmFqVnJibGtyYkdzeFZqSm5aVFV6WVVzeE9UQldjSFZ1Y3lCc01qa3lZeXNqYzNKaU5HSnphMllnWVhZNmN6RmllV1J5YjNOdUlpOCtQSEJoZEdnZ1pEMGlUVEUwTGpVNEwySkpNaUlnZUMxT00yMDJZWGhoY0MxM2MzUXhObWwyWVMxcU9UcENWVzgyZERSdEx6VjVJaTh3SWo0OEwzTjJaejQ9IiwKICAgICAgInNpemVzIjogIjI0eDI0IiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCcFpEMGlhV052YmlJZ2RtbGxkMEp2ZUQwaU1DQXdJVEkxTmlBeU5UWWlJR1pwYkd3OUltTjFjbkpsYm5SRGIyeHZjaUlnYUdWcFoyaDBQU0l5TlRZaUlIZHBaSFJvUFNJeU5UWWlJSGh0Ykc1elBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF3TDNOMlp5SStQSEpsWTNRZ2VEMGlOREFpSUhrOUlqUXdJaUIzYVdSMGFEMGlNVGMySWlCb1pXbG5hSFE5SWpFM05pSWdabWxzYkQwaVF6SXdReUl2UGp4MFpYaDBJSGc5SWpVNUlpQjVQU0l4TmpZaVBrVWdRVVJmU1U1VFZFRk1RMEZhUEM5MFpYaDBQand2YzNabklqND0iLAogICAgICAic2l6ZXMiOiAiMjU2eDI1NiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZnVuY3Rpb24oZXZlbnQpIHsKICBjb25zb2xlLmxvZygnU2VydmljZSBXb3JrZXIgaW5zdGFsbGVkJyk7Cn0pOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdhY3RpdmF0ZScsIGZ1bmN0aW9uKGV2ZW50KSB7CiAgY29uc29sZS5sb2coJ1NlcnZpY2UgV29ya2VyIGFjdGl2ZScpOwp9KTs=');
+            });
+        }
+    </script>
+    
     <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --light-bg: #f9fafb;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #1f2937;
+            line-height: 1.6;
         }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.5s ease-in-out;
+
+        .header h1 {
+            text-align: center;
+            margin-bottom: 10px;
         }
-        
+
+        .header .subtitle {
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab:hover {
+            background: #f3f4f6;
+        }
+
+        .nav-tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .loading-animation {
-            animation: pulse 2s infinite;
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
         }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+
+        .card h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-bg);
         }
-        
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--light-bg);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status.in-progress {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+
+        .close:hover {
+            color: #374151;
+        }
+
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #10b981;
-            color: white;
-            padding: 16px 24px;
+            padding: 15px 20px;
             border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease-in-out;
+            color: white;
+            font-weight: 500;
+            z-index: 1001;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
         }
-        
+
         .notification.show {
+            opacity: 1;
             transform: translateX(0);
         }
-        
-        .dark {
-            background-color: #111827;
-            color: #f9fafb;
+
+        .notification.success {
+            background: var(--success-color);
         }
-        
-        .dark .bg-white {
-            background-color: #1f2937;
+
+        .notification.error {
+            background: var(--danger-color);
         }
-        
-        .dark .bg-gray-50 {
-            background-color: #111827;
+
+        .notification.warning {
+            background: var(--warning-color);
         }
-        
-        .dark .bg-gray-100 {
-            background-color: #374151;
+
+        .sync-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        .dark .text-gray-800 {
-            color: #f9fafb;
+
+        .sync-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
         }
-        
-        .dark .text-gray-600 {
-            color: #d1d5db;
+
+        .sync-indicator.syncing {
+            background: var(--warning-color);
+            animation: spin 1s linear infinite;
         }
-        
-        .dark .text-gray-500 {
-            color: #9ca3af;
+
+        .sync-indicator.error {
+            background: var(--danger-color);
+            animation: none;
         }
-        
-        .dark .border-gray-200 {
-            border-color: #374151;
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
-        
-        .dark .border-gray-300 {
-            border-color: #4b5563;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-        
-        .hover-scale {
-            transition: transform 0.2s ease-in-out;
+
+        .search-container {
+            margin-bottom: 20px;
         }
-        
-        .hover-scale:hover {
-            transform: scale(1.02);
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            font-size: 14px;
         }
-        
-        .card-shadow {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10% auto;
+                padding: 20px;
+            }
         }
-        
-        .card-shadow:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--light-bg);
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            border-color: var(--primary-color);
+            background: #eff6ff;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <div id="app"></div>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 AdInstalGaz</h1>
+            <p class="subtitle">Sistem de Management pentru Instalații de Gaz</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="nav-tab" onclick="showTab('clients')">👥 Clienți</button>
+            <button class="nav-tab" onclick="showTab('projects')">🔧 Lucrări</button>
+            <button class="nav-tab" onclick="showTab('reports')">📄 Rapoarte</button>
+            <button class="nav-tab" onclick="showTab('settings')">⚙️ Setări</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="card">
+                <h3>📊 Rezumat Activitate</h3>
+                <div class="form-row">
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 10px;">
+                        <h2 id="totalClients">0</h2>
+                        <p>Clienți Activi</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border-radius: 10px;">
+                        <h2 id="totalProjects">0</h2>
+                        <p>Lucrări în Curs</p>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border-radius: 10px;">
+                        <h2 id="totalRevenue">0 RON</h2>
+                        <p>Venituri Luna Curentă</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📋 Lucrări Recente</h3>
+                <div class="table-container">
+                    <table id="recentProjectsTable">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Tip Lucrare</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                                <th>Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Tab -->
+        <div id="clients" class="tab-content">
+            <div class="card">
+                <h3>👥 Management Clienți</h3>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showAddClientModal()">➕ Adaugă Client</button>
+                    <button class="btn btn-success" onclick="importClients()">📥 Import Clienți</button>
+                    <button class="btn btn-warning" onclick="exportClients()">📤 Export Clienți</button>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="clientSearch" placeholder="🔍 Caută clienți..." onkeyup="searchClients()">
+                </div>
+
+                <div class="table-container">
+                    <table id="clientsTable">
+                        <thead>
+                            <tr>
+                                <th>Nume</th>
+                                <th>Telefon</th>
+                                <th>Email</th>
+                                <th>Adresă</th>
+                                <th>Tip Client</th>
+                                <th>Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Tab -->
+        <div id="projects" class="tab-content">
+            <div class="card">
+                <h3>🔧 Management Lucrări</h3>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showAddProjectModal()">➕ Adaugă Lucrare</button>
+                    <button class="btn btn-success" onclick="generateProjectReport()">📊 Generează Raport</button>
+                </div>
+
+                <div class="search-container">
+                    <input type="text" class="search-input" id="projectSearch" placeholder="🔍 Caută lucrări..." onkeyup="searchProjects()">
+                </div>
+
+                <div class="table-container">
+                    <table id="projectsTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Client</th>
+                                <th>Tip Lucrare</th>
+                                <th>Status</th>
+                                <th>Data Început</th>
+                                <th>Preț</th>
+                                <th>Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="card">
+                <h3>📄 Generare Rapoarte</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tip Raport:</label>
+                        <select id="reportType">
+                            <option value="monthly">Raport Lunar</option>
+                            <option value="quarterly">Raport Trimestrial</option>
+                            <option value="yearly">Raport Anual</option>
+                            <option value="clients">Raport Clienți</option>
+                            <option value="projects">Raport Lucrări</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Perioada:</label>
+                        <input type="month" id="reportPeriod">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="generatePDFReport()">📄 Generează PDF</button>
+                    <button class="btn btn-success" onclick="generateExcelReport()">📊 Generează Excel</button>
+                    <button class="btn btn-warning" onclick="emailReport()">📧 Trimite Email</button>
+                </div>
+
+                <div class="progress-bar" id="reportProgress" style="display: none;">
+                    <div class="progress-fill" id="reportProgressFill"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Statistici</h3>
+                <div id="statisticsContainer">
+                    <div class="form-row">
+                        <div style="text-align: center; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+                            <h3 id="monthlyEarnings">0 RON</h3>
+                            <p>Venituri Luna Curentă</p>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+                            <h3 id="completedProjectsCount">0</h3>
+                            <p>Lucrări Finalizate</p>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: #f3f4f6; border-radius: 8px;">
+                            <h3 id="averageProjectValue">0 RON</h3>
+                            <p>Valoare Medie Lucrare</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <div class="card">
+                <h3>⚙️ Configurări Aplicație</h3>
+                
+                <div class="form-group">
+                    <label>Numele Companiei:</label>
+                    <input type="text" id="companyName" value="AdInstalGaz SRL">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email Contact:</label>
+                        <input type="email" id="contactEmail" value="office@adinstalgaz.ro">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefon Contact:</label>
+                        <input type="tel" id="contactPhone" value="+40 XXX XXX XXX">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Adresa Companie:</label>
+                    <textarea id="companyAddress" placeholder="Adresa completă a companiei...">Strada Exemplu Nr. 123, București, România</textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveSettings()">💾 Salvează Setări</button>
+                    <button class="btn btn-warning" onclick="exportData()">📤 Export Date</button>
+                    <button class="btn btn-danger" onclick="clearData()">🗑️ Șterge Toate Datele</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>☁️ Sincronizare</h3>
+                <p>Status sincronizare: <span id="syncStatus">Activ</span></p>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="manualSync()">🔄 Sincronizare Manuală</button>
+                    <button class="btn btn-success" onclick="backupData()">💾 Backup Date</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="addClientModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addClientModal')">&times;</span>
+            <h3>➕ Adaugă Client Nou</h3>
+            
+            <form id="addClientForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nume Complet/Companie:</label>
+                        <input type="text" id="clientName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tip Client:</label>
+                        <select id="clientType" required>
+                            <option value="">Selectează tipul</option>
+                            <option value="fizic">Persoană Fizică</option>
+                            <option value="juridic">Persoană Juridică</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Telefon:</label>
+                        <input type="tel" id="clientPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="clientEmail">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Adresă:</label>
+                    <textarea id="clientAddress" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Observații:</label>
+                    <textarea id="clientNotes"></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">💾 Salvează</button>
+                    <button type="button" class="btn btn-danger" onclick="closeModal('addClientModal')">❌ Anulează</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="addProjectModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addProjectModal')">&times;</span>
+            <h3>🔧 Adaugă Lucrare Nouă</h3>
+            
+            <form id="addProjectForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Client:</label>
+                        <select id="projectClient" required>
+                            <option value="">Selectează clientul</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tip Lucrare:</label>
+                        <select id="projectType" required>
+                            <option value="">Selectează tipul</option>
+                            <option value="instalare">Instalare Gaz</option>
+                            <option value="verificare">Verificare Instalație</option>
+                            <option value="reparatie">Reparație</option>
+                            <option value="modernizare">Modernizare</option>
+                            <option value="deconectare">Deconectare</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data Început:</label>
+                        <input type="date" id="projectStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Estimată Finalizare:</label>
+                        <input type="date" id="projectEndDate">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Preț (RON):</label>
+                        <input type="number" id="projectPrice" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Status:</label>
+                        <select id="projectStatus" required>
+                            <option value="pending">În Așteptare</option>
+                            <option value="in-progress">În Curs</option>
+                            <option value="completed">Finalizat</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Descriere Lucrare:</label>
+                    <textarea id="projectDescription" required></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">💾 Salvează</button>
+                    <button type="button" class="btn btn-danger" onclick="closeModal('addProjectModal')">❌ Anulează</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sync Status -->
+    <div class="sync-status">
+        <div class="sync-indicator" id="syncIndicator"></div>
+        <span id="syncText">Sincronizat</span>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
-        // Global state management
-        const AppState = {
-            // Authentication
-            isAuthenticated: false,
-            currentUser: null,
-            
-            // UI State
-            isDarkMode: false,
-            activeTab: 'dashboard',
-            
-            // Form states
-            showClientForm: false,
-            showUserForm: false,
-            selectedClient: null,
-            
-            // Data
-            clients: [
-                {
-                    id: 1,
-                    nume: 'Popescu',
-                    prenume: 'Ion',
-                    email: 'ion.popescu@email.com',
-                    telefon: '0723456789',
-                    strada: 'Str. Libertății',
-                    numar: '15',
-                    bloc: 'A',
-                    scara: '1',
-                    apartament: '12',
-                    oras: 'Roșiorii de Vede',
-                    dataCreare: '2024-01-15'
-                },
-                {
-                    id: 2,
-                    nume: 'Ionescu',
-                    prenume: 'Maria',
-                    email: 'maria.ionescu@email.com',
-                    telefon: '0734567890',
-                    strada: 'Str. Mihai Viteazu',
-                    numar: '23',
-                    bloc: '',
-                    scara: '',
-                    apartament: '',
-                    oras: 'Alexandria',
-                    dataCreare: '2024-02-10'
-                }
-            ],
-            
-            servicii: [
-                {
-                    id: 1,
-                    clientId: 1,
-                    tipServiciu: 'Branșament gaz',
-                    dataEfectuare: '2023-07-15',
-                    dataExpirare: '2025-07-15',
-                    status: 'activ',
-                    descriere: 'Branșament nou gaz natural'
-                },
-                {
-                    id: 2,
-                    clientId: 2,
-                    tipServiciu: 'Verificare tehnică',
-                    dataEfectuare: '2024-12-01',
-                    dataExpirare: '2026-12-01',
-                    status: 'activ',
-                    descriere: 'Verificare anuală instalație'
-                }
-            ],
-            
-            lucrari: [
-                {
-                    id: 1,
-                    clientId: 1,
-                    tipServiciu: 'Instalație gaz',
-                    descriere: 'Instalare centrală termică nouă',
-                    status: 'programata',
-                    dataProgramata: '2025-07-10',
-                    angajat: 'ion@adinstalgaz.ro',
-                    observatii: '',
-                    dataFinalizare: null
-                },
-                {
-                    id: 2,
-                    clientId: 2,
-                    tipServiciu: 'Revizie instalație',
-                    descriere: 'Revizie anuală sistem gaz',
-                    status: 'in_lucru',
-                    dataProgramata: '2025-07-08',
-                    angajat: 'ion@adinstalgaz.ro',
-                    observatii: 'În progres',
-                    dataFinalizare: null
-                }
-            ],
-            
-            utilizatori: [
-                {
-                    id: 1,
-                    nume: 'Florin Gavrila',
-                    email: 'florin.gavrila@adinstalgaz.ro',
-                    telefon: '0762614401',
-                    rol: 'administrator',
-                    password: '123456'
-                },
-                {
-                    id: 2,
-                    nume: 'Ion Lucrător',
-                    email: 'ion@adinstalgaz.ro',
-                    telefon: '0723456789',
-                    rol: 'lucrator',
-                    password: '123456'
-                }
-            ],
-            
-            // Form data
-            loginData: { email: '', password: '' },
-            clientForm: {
-                nume: '',
-                prenume: '',
-                email: '',
-                telefon: '',
-                strada: '',
-                numar: '',
-                bloc: '',
-                scara: '',
-                apartament: '',
-                oras: 'Roșiorii de Vede',
-                areServiciuExistent: false,
-                tipServiciu: '',
-                dataEfectuare: ''
-            },
-            userForm: {
-                nume: '',
-                email: '',
-                telefon: '',
-                rol: 'lucrator',
-                password: ''
-            }
-        };
-
-        // Constants
-        const TIPURI_SERVICIU = [
-            'Branșament gaz',
-            'Instalație gaz',
-            'Verificare tehnică',
-            'Revizie instalație',
-            'Reparație urgentă',
-            'Mentenanță'
-        ];
-
-        const ORASE = [
-            'Roșiorii de Vede',
-            'Alexandria',
-            'Turnu Măgurele',
-            'Videle',
-            'Zimnicea',
-            'Găești',
-            'Giurgiu'
-        ];
-
-        // Utility functions
-        function showNotification(message, type = 'success') {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => notification.classList.add('show'), 100);
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => document.body.removeChild(notification), 300);
-            }, 3000);
-        }
-
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('ro-RO');
-        }
-
-        function getServiciuStatus(dataExpirare) {
-            const azi = new Date();
-            const expirare = new Date(dataExpirare);
-            const diferentaZile = Math.ceil((expirare - azi) / (1000 * 60 * 60 * 24));
-            
-            if (diferentaZile < 0) return 'expirat';
-            if (diferentaZile <= 30) return 'expira_curand';
-            return 'activ';
-        }
-
-        function getServiciiActive() {
-            return AppState.servicii.filter(s => getServiciuStatus(s.dataExpirare) === 'activ');
-        }
-
-        function getServiciiExpiraCurand() {
-            return AppState.servicii.filter(s => getServiciuStatus(s.dataExpirare) === 'expira_curand');
-        }
-
-        function getServiciiExpirate() {
-            return AppState.servicii.filter(s => getServiciuStatus(s.dataExpirare) === 'expirat');
-        }
-
-        // Authentication functions
-        function handleLogin() {
-            const user = AppState.utilizatori.find(u => 
-                u.email === AppState.loginData.email && u.password === AppState.loginData.password
-            );
-            
-            if (user) {
-                AppState.currentUser = user;
-                AppState.isAuthenticated = true;
-                AppState.loginData = { email: '', password: '' };
-                showNotification(`Bun venit, ${user.nume}!`);
-                renderApp();
-            } else {
-                showNotification('Date de autentificare incorecte!', 'error');
-            }
-        }
-
-        function handleLogout() {
-            AppState.isAuthenticated = false;
-            AppState.currentUser = null;
-            AppState.activeTab = 'dashboard';
-            showNotification('Ați fost deconectat cu succes!');
-            renderApp();
-        }
-
-        function resetDemoData() {
-            if (confirm('Sigur doriți să resetați toate datele demo?')) {
-                AppState.clients = [];
-                AppState.servicii = [];
-                AppState.lucrari = [];
-                showNotification('Datele demo au fost resetate!');
-                renderApp();
-            }
-        }
-
-        function toggleDarkMode() {
-            AppState.isDarkMode = !AppState.isDarkMode;
-            document.body.classList.toggle('dark', AppState.isDarkMode);
-            renderApp();
-        }
-
-        // Client management functions
-        function handleClientSubmit() {
-            const newClient = {
-                id: Date.now(),
-                ...AppState.clientForm,
-                dataCreare: new Date().toISOString().split('T')[0]
-            };
-
-            if (AppState.selectedClient) {
-                const index = AppState.clients.findIndex(c => c.id === AppState.selectedClient.id);
-                AppState.clients[index] = { ...newClient, id: AppState.selectedClient.id };
-                showNotification('Client actualizat cu succes!');
-            } else {
-                AppState.clients.push(newClient);
-                showNotification('Client adăugat cu succes!');
-                
-                // Dacă are serviciu existent, creează serviciul
-                if (AppState.clientForm.areServiciuExistent && AppState.clientForm.tipServiciu && AppState.clientForm.dataEfectuare) {
-                    const dataExpirare = new Date(AppState.clientForm.dataEfectuare);
-                    dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
-                    
-                    const newServiciu = {
-                        id: Date.now() + 1,
-                        clientId: newClient.id,
-                        tipServiciu: AppState.clientForm.tipServiciu,
-                        dataEfectuare: AppState.clientForm.dataEfectuare,
-                        dataExpirare: dataExpirare.toISOString().split('T')[0],
-                        status: 'activ',
-                        descriere: `Serviciu ${AppState.clientForm.tipServiciu} existent`
-                    };
-                    
-                    AppState.servicii.push(newServiciu);
-                }
-            }
-
-            AppState.showClientForm = false;
-            AppState.selectedClient = null;
-            AppState.clientForm = {
-                nume: '',
-                prenume: '',
-                email: '',
-                telefon: '',
-                strada: '',
-                numar: '',
-                bloc: '',
-                scara: '',
-                apartament: '',
-                oras: 'Roșiorii de Vede',
-                areServiciuExistent: false,
-                tipServiciu: '',
-                dataEfectuare: ''
-            };
-            
-            renderApp();
-        }
-
-        function deleteClient(clientId) {
-            if (confirm('Sigur doriți să ștergeți acest client? Se vor șterge și serviciile asociate.')) {
-                AppState.clients = AppState.clients.filter(c => c.id !== clientId);
-                AppState.servicii = AppState.servicii.filter(s => s.clientId !== clientId);
-                AppState.lucrari = AppState.lucrari.filter(l => l.clientId !== clientId);
-                autoSave(); // Auto-save
-                showNotification('Client șters cu succes!');
-                renderApp();
-            }
-        }
-
-        function finalizareLucrare(lucrareId) {
-            const lucrare = AppState.lucrari.find(l => l.id === lucrareId);
-            if (!lucrare) return;
-
-            const dataFinalizare = new Date();
-            const index = AppState.lucrari.findIndex(l => l.id === lucrareId);
-            
-            AppState.lucrari[index] = {
-                ...lucrare,
-                status: 'finalizata',
-                dataFinalizare: dataFinalizare.toISOString().split('T')[0],
-                oraFinalizare: dataFinalizare.toTimeString().split(' ')[0]
-            };
-
-            // Creează serviciu nou automat
-            const client = AppState.clients.find(c => c.id === lucrare.clientId);
-            const dataExpirare = new Date(dataFinalizare);
-            dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
-
-            const newServiciu = {
-                id: Date.now(),
-                clientId: lucrare.clientId,
-                tipServiciu: lucrare.tipServiciu,
-                dataEfectuare: AppState.lucrari[index].dataFinalizare,
-                dataExpirare: dataExpirare.toISOString().split('T')[0],
-                status: 'activ',
-                descriere: lucrare.descriere
-            };
-
-            AppState.servicii.push(newServiciu);
-            autoSave(); // Auto-save
-
-            // Simulare trimitere email
-            simulareEmailFinalizare(client, AppState.lucrari[index]);
-            showNotification('Lucrare finalizată cu succes! Email trimis automat.');
-            renderApp();
-        }
-
-        function simulareEmailFinalizare(client, lucrare) {
-            const angajat = AppState.utilizatori.find(u => u.email === lucrare.angajat);
-            
-            console.log(`
-📧 EMAIL TRIMIS AUTOMAT LA: office@adinstalgaz.ro
-
-Subiect: [AdInstalGaz] Lucrare Finalizată - ${lucrare.tipServiciu} - ${client.nume} ${client.prenume}
-
-Bună ziua,
-
-O lucrare a fost finalizată cu succes:
-
-DETALII LUCRARE:
-- Client: ${client.nume} ${client.prenume}
-- Telefon: ${client.telefon}
-- Adresă: ${client.strada} ${client.numar}, ${client.bloc}, ${client.scara}, ${client.apartament}, ${client.oras}
-- Tip serviciu: ${lucrare.tipServiciu}
-- Descriere: ${lucrare.descriere}
-
-EXECUTARE:
-- Angajat: ${angajat?.nume || 'N/A'}
-- Data finalizare: ${lucrare.dataFinalizare}
-- Ora finalizare: ${lucrare.oraFinalizare}
-- Observații: ${lucrare.observatii}
-
-URMĂRIRE SERVICIU:
-- Următoarea verificare: ${new Date(new Date(lucrare.dataFinalizare).setFullYear(new Date(lucrare.dataFinalizare).getFullYear() + 2)).toISOString().split('T')[0]} (peste 2 ani)
-- Reminder automat: ${new Date(new Date(lucrare.dataFinalizare).setFullYear(new Date(lucrare.dataFinalizare).getFullYear() + 2) - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]} (cu 7 zile înainte)
-
----
-Generat automat de AdInstalGaz Management System
-Pentru detalii complete, accesați aplicația.
-            `);
-        }
-
-        // Render functions
-        function renderLoginForm() {
-            return `
-                <div class="min-h-screen flex items-center justify-center gradient-bg">
-                    <div class="max-w-md w-full mx-4 p-8 rounded-2xl shadow-2xl bg-white glass-effect animate-fade-in">
-                        <div class="text-center mb-8">
-                            <div class="w-16 h-16 mx-auto mb-4 text-blue-600">
-                                <i data-lucide="building-2" class="w-full h-full"></i>
-                            </div>
-                            <h1 class="text-3xl font-bold text-gray-800">AdInstalGaz</h1>
-                            <p class="text-sm mt-2 text-gray-600">Sistem Management</p>
-                        </div>
-
-                        <div class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-700">Email</label>
-                                <input
-                                    type="email"
-                                    id="login-email"
-                                    value="${AppState.loginData.email}"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                    placeholder="exemplu@adinstalgaz.ro"
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-700">Parolă</label>
-                                <input
-                                    type="password"
-                                    id="login-password"
-                                    value="${AppState.loginData.password}"
-                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                    placeholder="••••••••"
-                                    required
-                                />
-                            </div>
-
-                            <button
-                                onclick="performLogin()"
-                                class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
-                            >
-                                Autentificare
-                            </button>
-                        </div>
-
-                        <div class="mt-6 p-4 rounded-lg bg-gray-50">
-                            <p class="text-xs text-gray-600 mb-2">Date demo:</p>
-                            <p class="text-xs text-gray-500">
-                                Admin: florin.gavrila@adinstalgaz.ro / 123456<br/>
-                                Lucrător: ion@adinstalgaz.ro / 123456
-                            </p>
-                        </div>
-
-                        <div class="flex justify-center mt-6">
-                            <button
-                                onclick="toggleDarkMode()"
-                                class="p-2 rounded-full bg-gray-200 text-gray-600 hover:scale-110 transition-all"
-                            >
-                                <i data-lucide="moon" class="w-5 h-5"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderSidebar() {
-            const menuItems = [
-                { id: 'dashboard', label: 'Dashboard', icon: 'home' },
-                { id: 'clienti', label: 'Clienți', icon: 'users' },
-                { id: 'servicii', label: 'Baza Date Servicii', icon: 'database' },
-                { id: 'lucrari', label: 'Lucrări', icon: 'briefcase' },
-                { id: 'program', label: 'Program Zilnic', icon: 'calendar' },
-                { id: 'documente', label: 'Documente', icon: 'file-text' }
-            ];
-
-            if (AppState.currentUser?.rol === 'administrator') {
-                menuItems.push({ id: 'utilizatori', label: 'Utilizatori', icon: 'settings' });
-            }
-
-            return `
-                <div class="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 text-blue-600">
-                                <i data-lucide="building-2" class="w-full h-full"></i>
-                            </div>
-                            <div>
-                                <h1 class="text-lg font-bold text-gray-800">AdInstalGaz</h1>
-                                <p class="text-xs text-gray-500">Management System</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <nav class="flex-1 p-4 space-y-2">
-                        ${menuItems.map(item => `
-                            <button
-                                onclick="setActiveTab('${item.id}')"
-                                class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all ${
-                                    AppState.activeTab === item.id
-                                        ? 'bg-blue-600 text-white shadow-lg'
-                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                                }"
-                            >
-                                <i data-lucide="${item.icon}" class="w-5 h-5"></i>
-                                <span class="font-medium">${item.label}</span>
-                            </button>
-                        `).join('')}
-                    </nav>
-
-                    <div class="p-4 border-t border-gray-200">
-                        <div class="mb-4 p-3 rounded-lg bg-gray-50">
-                            <p class="text-sm font-medium text-gray-800">${AppState.currentUser?.nume}</p>
-                            <p class="text-xs text-gray-500 capitalize">${AppState.currentUser?.rol}</p>
-                        </div>
-                        
-                        <div class="space-y-2">
-                            <button
-                                onclick="toggleDarkMode()"
-                                class="w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-all text-gray-600 hover:bg-gray-100"
-                            >
-                                <i data-lucide="${AppState.isDarkMode ? 'sun' : 'moon'}" class="w-4 h-4"></i>
-                                <span class="text-sm">${AppState.isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
-                            </button>
-                            
-                            ${AppState.currentUser?.rol === 'administrator' ? `
-                                <button
-                                    onclick="resetDemoData()"
-                                    class="w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-all text-yellow-600 hover:bg-gray-100"
-                                >
-                                    <i data-lucide="settings" class="w-4 h-4"></i>
-                                    <span class="text-sm">Reset Date Demo</span>
-                                </button>
-                            ` : ''}
-                            
-                            <button
-                                onclick="handleLogout()"
-                                class="w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-all text-red-600 hover:bg-gray-100"
-                            >
-                                <i data-lucide="log-out" class="w-4 h-4"></i>
-                                <span class="text-sm">Logout</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderDashboard() {
-            const serviciiExpiraCurand = getServiciiExpiraCurand();
-            const serviciiExpirate = getServiciiExpirate();
-            const lucrariProgramate = AppState.lucrari.filter(l => l.status === 'programata');
-            const lucrariInLucru = AppState.lucrari.filter(l => l.status === 'in_lucru');
-
-            return `
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
-                        <div class="flex space-x-4">
-                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2">
-                                <i data-lucide="download" class="w-4 h-4"></i>
-                                <span>Export Raport</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Statistici principale -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-600">Total Clienți</p>
-                                    <p class="text-3xl font-bold text-gray-800">${AppState.clients.length}</p>
-                                </div>
-                                <i data-lucide="users" class="w-12 h-12 text-blue-500"></i>
-                            </div>
-                        </div>
-
-                        <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-600">Servicii Active</p>
-                                    <p class="text-3xl font-bold text-gray-800">${getServiciiActive().length}</p>
-                                </div>
-                                <i data-lucide="check-circle" class="w-12 h-12 text-green-500"></i>
-                            </div>
-                        </div>
-
-                        <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-600">Lucrări Programate</p>
-                                    <p class="text-3xl font-bold text-gray-800">${lucrariProgramate.length}</p>
-                                </div>
-                                <i data-lucide="calendar" class="w-12 h-12 text-orange-500"></i>
-                            </div>
-                        </div>
-
-                        <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm text-gray-600">Servicii Expiră Curând</p>
-                                    <p class="text-3xl font-bold text-gray-800">${serviciiExpiraCurand.length}</p>
-                                </div>
-                                <i data-lucide="alert-circle" class="w-12 h-12 text-yellow-500"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    ${serviciiExpiraCurand.length > 0 || serviciiExpirate.length > 0 ? `
-                        <div class="p-6 rounded-xl shadow-lg bg-red-50 border border-red-200">
-                            <div class="flex items-center space-x-3 mb-4">
-                                <i data-lucide="bell" class="w-6 h-6 text-red-500"></i>
-                                <h3 class="text-lg font-semibold text-red-800">Notificări Urgente</h3>
-                            </div>
-                            
-                            ${serviciiExpirate.length > 0 ? `
-                                <div class="mb-4">
-                                    <h4 class="font-medium mb-2 text-red-700">Servicii Expirate (${serviciiExpirate.length})</h4>
-                                    <div class="space-y-2">
-                                        ${serviciiExpirate.slice(0, 3).map(serviciu => {
-                                            const client = AppState.clients.find(c => c.id === serviciu.clientId);
-                                            return `
-                                                <div class="p-3 rounded-lg bg-red-100">
-                                                    <p class="font-medium text-red-800">
-                                                        ${client?.nume} ${client?.prenume} - ${serviciu.tipServiciu}
-                                                    </p>
-                                                    <p class="text-sm text-red-600">
-                                                        Expirat la: ${serviciu.dataExpirare}
-                                                    </p>
-                                                </div>
-                                            `;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-
-                            ${serviciiExpiraCurand.length > 0 ? `
-                                <div>
-                                    <h4 class="font-medium mb-2 text-yellow-700">Servicii ce Expiră în 30 zile (${serviciiExpiraCurand.length})</h4>
-                                    <div class="space-y-2">
-                                        ${serviciiExpiraCurand.slice(0, 3).map(serviciu => {
-                                            const client = AppState.clients.find(c => c.id === serviciu.clientId);
-                                            return `
-                                                <div class="p-3 rounded-lg bg-yellow-100">
-                                                    <p class="font-medium text-yellow-800">
-                                                        ${client?.nume} ${client?.prenume} - ${serviciu.tipServiciu}
-                                                    </p>
-                                                    <p class="text-sm text-yellow-600">
-                                                        Expiră la: ${serviciu.dataExpirare}
-                                                    </p>
-                                                </div>
-                                            `;
-                                        }).join('')}
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    ` : ''}
-
-                    <!-- Lucrări în progres -->
-                    <div class="p-6 rounded-xl shadow-lg bg-white">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Lucrări în Progres</h3>
-                        
-                        ${lucrariInLucru.length === 0 ? `
-                            <p class="text-sm text-gray-600">Nu există lucrări în progres</p>
-                        ` : `
-                            <div class="space-y-3">
-                                ${lucrariInLucru.map(lucrare => {
-                                    const client = AppState.clients.find(c => c.id === lucrare.clientId);
-                                    const angajat = AppState.utilizatori.find(u => u.email === lucrare.angajat);
-                                    
-                                    return `
-                                        <div class="p-4 rounded-lg border bg-gray-50 border-gray-200">
-                                            <div class="flex justify-between items-start">
-                                                <div>
-                                                    <h4 class="font-medium text-gray-800">
-                                                        ${client?.nume} ${client?.prenume} - ${lucrare.tipServiciu}
-                                                    </h4>
-                                                    <p class="text-sm text-gray-600">
-                                                        Angajat: ${angajat?.nume || 'N/A'}
-                                                    </p>
-                                                    <p class="text-sm text-gray-600">
-                                                        Programată: ${lucrare.dataProgramata}
-                                                    </p>
-                                                </div>
-                                                <span class="px-3 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
-                                                    În lucru
-                                                </span>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `}
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderClientiTab() {
-            return `
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-3xl font-bold text-gray-800">Clienți</h1>
-                        <button
-                            onclick="showClientForm()"
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2"
-                        >
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>Client Nou</span>
-                        </button>
-                    </div>
-
-                    <!-- Lista clienți -->
-                    <div class="grid gap-4">
-                        ${AppState.clients.length === 0 ? `
-                            <div class="text-center py-12 text-gray-600">
-                                Nu există clienți înregistrați.
-                            </div>
-                        ` : AppState.clients.map(client => {
-                            const clientServicii = AppState.servicii.filter(s => s.clientId === client.id);
-                            const serviciiActive = clientServicii.filter(s => getServiciuStatus(s.dataExpirare) === 'activ');
-                            const serviciiExpirate = clientServicii.filter(s => getServiciuStatus(s.dataExpirare) === 'expirat');
-                            
-                            return `
-                                <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <div class="flex items-center space-x-4 mb-4">
-                                                <div>
-                                                    <h3 class="text-xl font-semibold text-gray-800">
-                                                        ${client.nume} ${client.prenume}
-                                                    </h3>
-                                                    <p class="text-sm text-gray-600">
-                                                        Client din ${formatDate(client.dataCreare)}
-                                                    </p>
-                                                </div>
-                                                
-                                                <div class="flex space-x-2">
-                                                    ${serviciiActive.length > 0 ? `
-                                                        <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
-                                                            ${serviciiActive.length} servicii active
-                                                        </span>
-                                                    ` : ''}
-                                                    ${serviciiExpirate.length > 0 ? `
-                                                        <span class="px-3 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
-                                                            ${serviciiExpirate.length} expirate
-                                                        </span>
-                                                    ` : ''}
-                                                </div>
-                                            </div>
-
-                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                                <div class="flex items-center space-x-2">
-                                                    <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i>
-                                                    <span class="text-sm text-gray-600">${client.telefon}</span>
-                                                </div>
-                                                
-                                                <div class="flex items-center space-x-2">
-                                                    <i data-lucide="mail" class="w-4 h-4 text-gray-400"></i>
-                                                    <span class="text-sm text-gray-600">${client.email}</span>
-                                                </div>
-                                                
-                                                <div class="flex items-center space-x-2">
-                                                    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i>
-                                                    <span class="text-sm text-gray-600">
-                                                        ${client.strada} ${client.numar}, ${client.oras}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            ${clientServicii.length > 0 ? `
-                                                <div class="mt-4">
-                                                    <h4 class="text-sm font-medium mb-2 text-gray-700">Servicii:</h4>
-                                                    <div class="space-y-2">
-                                                        ${clientServicii.slice(0, 2).map(serviciu => `
-                                                            <div class="p-3 rounded-lg bg-gray-50">
-                                                                <div class="flex justify-between items-center">
-                                                                    <span class="text-sm font-medium text-gray-800">
-                                                                        ${serviciu.tipServiciu}
-                                                                    </span>
-                                                                    <span class="text-xs px-2 py-1 rounded-full ${
-                                                                        getServiciuStatus(serviciu.dataExpirare) === 'activ' 
-                                                                            ? 'bg-green-100 text-green-800'
-                                                                            : getServiciuStatus(serviciu.dataExpirare) === 'expira_curand'
-                                                                            ? 'bg-yellow-100 text-yellow-800'
-                                                                            : 'bg-red-100 text-red-800'
-                                                                    }">
-                                                                        Expiră: ${serviciu.dataExpirare}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        `).join('')}
-                                                        ${clientServicii.length > 2 ? `
-                                                            <p class="text-xs text-gray-500">
-                                                                +${clientServicii.length - 2} servicii suplimentare
-                                                            </p>
-                                                        ` : ''}
-                                                    </div>
-                                                </div>
-                                            ` : ''}
-                                        </div>
-
-                                        <div class="flex flex-col space-y-2">
-                                            <button
-                                                onclick="editClient(${client.id})"
-                                                class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-all"
-                                            >
-                                                <i data-lucide="edit" class="w-4 h-4"></i>
-                                            </button>
-                                            
-                                            <button
-                                                onclick="setActiveTab('servicii')"
-                                                class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-all"
-                                            >
-                                                <i data-lucide="eye" class="w-4 h-4"></i>
-                                            </button>
-                                            
-                                            <button
-                                                onclick="deleteClient(${client.id})"
-                                                class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all"
-                                            >
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderServiciiTab() {
-            const serviciiActive = getServiciiActive();
-            const serviciiExpiraCurand = getServiciiExpiraCurand();
-            const serviciiExpirate = getServiciiExpirate();
-            
-            return `
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-3xl font-bold text-gray-800">Baza de Date Servicii</h1>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2">
-                            <i data-lucide="download" class="w-4 h-4"></i>
-                            <span>Export Servicii</span>
-                        </button>
-                    </div>
-
-                    <!-- Sub-tabs -->
-                    <div class="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-                        <button onclick="showServiciiTab('active')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all bg-white text-gray-900 shadow-sm">
-                            Active <span class="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-800">${serviciiActive.length}</span>
-                        </button>
-                        <button onclick="showServiciiTab('expiring')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-600 hover:text-gray-900">
-                            Expiră în 30 zile <span class="ml-2 px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-800">${serviciiExpiraCurand.length}</span>
-                        </button>
-                        <button onclick="showServiciiTab('expired')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-600 hover:text-gray-900">
-                            Expirate <span class="ml-2 px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-800">${serviciiExpirate.length}</span>
-                        </button>
-                    </div>
-
-                    <!-- Lista servicii active -->
-                    <div class="grid gap-4">
-                        ${serviciiActive.length === 0 ? `
-                            <div class="text-center py-12 text-gray-600">
-                                Nu există servicii active.
-                            </div>
-                        ` : serviciiActive.map(serviciu => {
-                            const client = AppState.clients.find(c => c.id === serviciu.clientId);
-                            const status = getServiciuStatus(serviciu.dataExpirare);
-                            
-                            return `
-                                <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between mb-4">
-                                                <h3 class="text-xl font-semibold text-gray-800">${serviciu.tipServiciu}</h3>
-                                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Activ</span>
-                                            </div>
-
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                                <div>
-                                                    <p class="text-sm text-gray-600 mb-1">Client:</p>
-                                                    <p class="font-medium text-gray-800">${client?.nume} ${client?.prenume}</p>
-                                                </div>
-                                                
-                                                <div>
-                                                    <p class="text-sm text-gray-600 mb-1">Telefon:</p>
-                                                    <p class="font-medium text-gray-800">${client?.telefon}</p>
-                                                </div>
-                                                
-                                                <div>
-                                                    <p class="text-sm text-gray-600 mb-1">Data efectuării:</p>
-                                                    <p class="font-medium text-gray-800">${serviciu.dataEfectuare}</p>
-                                                </div>
-                                                
-                                                <div>
-                                                    <p class="text-sm text-gray-600 mb-1">Data expirării:</p>
-                                                    <p class="font-medium text-gray-800">${serviciu.dataExpirare}</p>
-                                                </div>
-                                            </div>
-
-                                            <div class="flex items-center space-x-2 mb-4">
-                                                <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i>
-                                                <span class="text-sm text-gray-600">
-                                                    ${client?.strada} ${client?.numar}, ${client?.bloc ? `Bl. ${client.bloc}, ` : ''}
-                                                    ${client?.scara ? `Sc. ${client.scara}, ` : ''}${client?.apartament ? `Ap. ${client.apartament}, ` : ''}
-                                                    ${client?.oras}
-                                                </span>
-                                            </div>
-
-                                            ${serviciu.descriere ? `
-                                                <div>
-                                                    <p class="text-sm text-gray-600 mb-1">Descriere:</p>
-                                                    <p class="text-sm text-gray-700">${serviciu.descriere}</p>
-                                                </div>
-                                            ` : ''}
-                                        </div>
-
-                                        <div class="flex flex-col space-y-2 ml-4">
-                                            <button
-                                                onclick="contactClient(${client?.id})"
-                                                class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-all"
-                                            >
-                                                <i data-lucide="phone" class="w-4 h-4"></i>
-                                            </button>
-                                            
-                                            <button
-                                                onclick="programareServiciu(${serviciu.id})"
-                                                class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-all"
-                                            >
-                                                <i data-lucide="calendar" class="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderLucrariTab() {
-            const lucrariProgramate = AppState.lucrari.filter(l => l.status === 'programata');
-            const lucrariInLucru = AppState.lucrari.filter(l => l.status === 'in_lucru');
-            const lucrariFinalizate = AppState.lucrari.filter(l => l.status === 'finalizata');
-
-            return `
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-3xl font-bold text-gray-800">Lucrări</h1>
-                        <button onclick="adaugaLucrareNoua()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>Lucrare Nouă</span>
-                        </button>
-                    </div>
-
-                    <!-- Status tabs -->
-                    <div class="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-                        <button onclick="showLucrariTab('toate')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all bg-white text-gray-900 shadow-sm">
-                            Toate (${AppState.lucrari.length})
-                        </button>
-                        <button onclick="showLucrariTab('programata')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-600 hover:text-gray-900">
-                            Programate (${lucrariProgramate.length})
-                        </button>
-                        <button onclick="showLucrariTab('in_lucru')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-600 hover:text-gray-900">
-                            În lucru (${lucrariInLucru.length})
-                        </button>
-                        <button onclick="showLucrariTab('finalizata')" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all text-gray-600 hover:text-gray-900">
-                            Finalizate (${lucrariFinalizate.length})
-                        </button>
-                    </div>
-
-                    <!-- Lista lucrări -->
-                    <div class="grid gap-4">
-                        ${AppState.lucrari.length === 0 ? `
-                            <div class="text-center py-12 text-gray-600">
-                                Nu există lucrări înregistrate.
-                            </div>
-                        ` : AppState.lucrari.map(lucrare => {
-                            const client = AppState.clients.find(c => c.id === lucrare.clientId);
-                            const angajat = AppState.utilizatori.find(u => u.email === lucrare.angajat);
-                            
-                            const statusColors = {
-                                'programata': 'bg-blue-100 text-blue-800',
-                                'in_lucru': 'bg-orange-100 text-orange-800',
-                                'finalizata': 'bg-green-100 text-green-800'
-                            };
-
-                            const statusLabels = {
-                                'programata': 'Programată',
-                                'in_lucru': 'În lucru',
-                                'finalizata': 'Finalizată'
-                            };
-                            
-                            return `
-                                <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between mb-4">
-                                                <h3 class="text-xl font-semibold text-gray-800">${lucrare.tipServiciu}</h3>
-                                                <span class="px-3 py-1 text-xs font-medium rounded-full ${statusColors[lucrare.status]}">${statusLabels[lucrare.status]}</span>
-                                            </div>
-
-                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                                <div>
-                                                    <p class="text-sm text-gray-600 mb-1">Client:</p>
-                                                    <p class="font-medium text-gray-800">${client?.nume} ${client?.prenume}</p>
-                                                    <p class="text-sm text-gray-600">${client?.telefon}</p>
-                                                </div>
-                                                
-                                                <div>
-                                                    <p class="text-sm text-gray-600 mb-1">Data programată:</p>
-                                                    <p class="font-medium text-gray-800">${lucrare.dataProgramata}</p>
-                                                </div>
-                                                
-                                                <div>
-                                                    <p class="text-sm text-gray-600 mb-1">Angajat:</p>
-                                                    <p class="font-medium text-gray-800">${angajat?.nume || 'Neatribuit'}</p>
-                                                </div>
-                                            </div>
-
-                                            <div class="mb-4">
-                                                <p class="text-sm text-gray-600 mb-1">Adresă:</p>
-                                                <p class="text-sm text-gray-700">
-                                                    ${client?.strada} ${client?.numar}, ${client?.bloc ? `Bl. ${client.bloc}, ` : ''}
-                                                    ${client?.scara ? `Sc. ${client.scara}, ` : ''}${client?.apartament ? `Ap. ${client.apartament}, ` : ''}
-                                                    ${client?.oras}
-                                                </p>
-                                            </div>
-
-                                            <div class="mb-4">
-                                                <p class="text-sm text-gray-600 mb-1">Descriere:</p>
-                                                <p class="text-sm text-gray-700">${lucrare.descriere}</p>
-                                            </div>
-
-                                            ${lucrare.observatii ? `
-                                                <div class="mb-4">
-                                                    <p class="text-sm text-gray-600 mb-1">Observații:</p>
-                                                    <p class="text-sm text-gray-700">${lucrare.observatii}</p>
-                                                </div>
-                                            ` : ''}
-
-                                            ${lucrare.status === 'finalizata' && lucrare.dataFinalizare ? `
-                                                <div class="mt-4 p-3 rounded-lg bg-green-50">
-                                                    <div class="flex items-center space-x-2">
-                                                        <i data-lucide="check-circle" class="w-4 h-4 text-green-600"></i>
-                                                        <span class="text-sm font-medium text-green-800">
-                                                            Finalizată pe ${lucrare.dataFinalizare} la ${lucrare.oraFinalizare}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            ` : ''}
-                                        </div>
-
-                                        <div class="flex flex-col space-y-2 ml-4">
-                                            ${lucrare.status !== 'finalizata' ? `
-                                                <div class="space-y-2">
-                                                    ${lucrare.status === 'programata' ? `
-                                                        <button
-                                                            onclick="incepeeLucrarea(${lucrare.id})"
-                                                            class="px-3 py-1 text-xs bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-all"
-                                                        >
-                                                            Începe
-                                                        </button>
-                                                    ` : ''}
-                                                    
-                                                    ${lucrare.status === 'in_lucru' ? `
-                                                        <button
-                                                            onclick="finalizareLucrare(${lucrare.id})"
-                                                            class="px-3 py-1 text-xs bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all"
-                                                        >
-                                                            Finalizează
-                                                        </button>
-                                                    ` : ''}
-                                                </div>
-                                            ` : ''}
-                                            
-                                            <button onclick="editLucrare(${lucrare.id})" class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-all">
-                                                <i data-lucide="edit" class="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderProgramTab() {
-            const today = new Date().toISOString().split('T')[0];
-            const lucrariAzi = AppState.lucrari.filter(l => l.dataProgramata === today && l.status !== 'finalizata');
-
-            return `
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-3xl font-bold text-gray-800">Program Zilnic</h1>
-                        <button onclick="exportProgram()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2">
-                            <i data-lucide="download" class="w-4 h-4"></i>
-                            <span>Export Program PDF</span>
-                        </button>
-                    </div>
-
-                    <!-- Filtre data -->
-                    <div class="p-4 rounded-xl bg-white shadow-lg">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-700">Data</label>
-                                <input
-                                    type="date"
-                                    id="program-date"
-                                    value="${today}"
-                                    onchange="schimbaDataProgram()"
-                                    class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                />
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-700">Angajat</label>
-                                <select id="program-angajat" onchange="schimbaAngajatProgram()" class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                    <option value="">Toți angajații</option>
-                                    ${AppState.utilizatori.filter(u => u.rol === 'lucrator').map(angajat => `
-                                        <option value="${angajat.email}">${angajat.nume}</option>
-                                    `).join('')}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Program zilnic -->
-                    <div class="p-6 rounded-xl shadow-lg bg-white">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">
-                            Program pentru ${new Date(today).toLocaleDateString('ro-RO', { 
-                                weekday: 'long', 
-                                year: 'numeric', 
-                                month: 'long', 
-                                day: 'numeric' 
-                            })}
-                        </h3>
-                        
-                        ${lucrariAzi.length === 0 ? `
-                            <div class="text-center py-8 text-gray-600">
-                                <i data-lucide="calendar" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
-                                <p>Nu există lucrări programate pentru această dată.</p>
-                            </div>
-                        ` : `
-                            <div class="space-y-4">
-                                ${lucrariAzi.map((lucrare, index) => {
-                                    const client = AppState.clients.find(c => c.id === lucrare.clientId);
-                                    const angajat = AppState.utilizatori.find(u => u.email === lucrare.angajat);
-                                    
-                                    return `
-                                        <div class="p-4 rounded-lg border-l-4 ${
-                                            lucrare.status === 'programata' ? 'border-blue-500 bg-blue-50' : 'border-orange-500 bg-orange-50'
-                                        }">
-                                            <div class="flex justify-between items-start">
-                                                <div class="flex-1">
-                                                    <div class="flex items-center space-x-4 mb-2">
-                                                        <h4 class="font-semibold text-gray-800">
-                                                            #${index + 1} - ${lucrare.tipServiciu}
-                                                        </h4>
-                                                        <span class="px-2 py-1 text-xs font-medium rounded-full ${
-                                                            lucrare.status === 'programata' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800'
-                                                        }">
-                                                            ${lucrare.status === 'programata' ? 'Programată' : 'În lucru'}
-                                                        </span>
-                                                    </div>
-                                                    
-                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                        <div>
-                                                            <p class="text-sm text-gray-700">
-                                                                <span class="font-medium">Client:</span> ${client?.nume} ${client?.prenume}
-                                                            </p>
-                                                            <p class="text-sm text-gray-700">
-                                                                <span class="font-medium">Telefon:</span> ${client?.telefon}
-                                                            </p>
-                                                        </div>
-                                                        
-                                                        <div>
-                                                            <p class="text-sm text-gray-700">
-                                                                <span class="font-medium">Angajat:</span> ${angajat?.nume || 'Neatribuit'}
-                                                            </p>
-                                                            <p class="text-sm text-gray-700">
-                                                                <span class="font-medium">Adresă:</span> ${client?.strada} ${client?.numar}, ${client?.oras}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <p class="text-sm mt-2 text-gray-600">${lucrare.descriere}</p>
-                                                </div>
-                                                
-                                                <div class="flex space-x-2 ml-4">
-                                                    <button
-                                                        onclick="window.open('tel:${client?.telefon}')"
-                                                        class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-all"
-                                                    >
-                                                        <i data-lucide="phone" class="w-4 h-4"></i>
-                                                    </button>
-                                                    
-                                                    <button
-                                                        onclick="window.open('https://maps.google.com/?q=${client?.strada} ${client?.numar}, ${client?.oras}')"
-                                                        class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-all"
-                                                    >
-                                                        <i data-lucide="map-pin" class="w-4 h-4"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        `}
-                    </div>
-
-                    <!-- Rezumat zi -->
-                    <div class="p-6 rounded-xl shadow-lg bg-white">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Rezumat</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="p-4 rounded-lg bg-gray-50">
-                                <p class="text-sm text-gray-600">Total lucrări</p>
-                                <p class="text-2xl font-bold text-gray-800">${lucrariAzi.length}</p>
-                            </div>
-                            
-                            <div class="p-4 rounded-lg bg-gray-50">
-                                <p class="text-sm text-gray-600">Programate</p>
-                                <p class="text-2xl font-bold text-blue-600">${lucrariAzi.filter(l => l.status === 'programata').length}</p>
-                            </div>
-                            
-                            <div class="p-4 rounded-lg bg-gray-50">
-                                <p class="text-sm text-gray-600">În lucru</p>
-                                <p class="text-2xl font-bold text-orange-600">${lucrariAzi.filter(l => l.status === 'in_lucru').length}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderMainContent() {
-            switch (AppState.activeTab) {
-                case 'dashboard':
-                    return renderDashboard();
-                case 'clienti':
-                    return renderClientiTab();
-                case 'servicii':
-                    return renderServiciiTab();
-                case 'lucrari':
-                    return renderLucrariTab();
-                case 'program':
-                    return renderProgramTab();
-                case 'documente':
-                    return renderDocumenteTab();
-                case 'utilizatori':
-                    return AppState.currentUser?.rol === 'administrator' 
-                        ? renderUtilizatoriTab() 
-                        : renderDashboard();
-                default:
-                    return renderDashboard();
-            }
-        }
-
-        function renderApp() {
-            const app = document.getElementById('app');
-            
-            if (!AppState.isAuthenticated) {
-                app.innerHTML = renderLoginForm();
-            } else {
-                app.innerHTML = `
-                    <div class="min-h-screen bg-gray-50">
-                        <div class="flex">
-                            ${renderSidebar()}
-                            <main class="flex-1 overflow-auto">
-                                <div class="p-6">
-                                    ${renderMainContent()}
-                                </div>
-                            </main>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Initialize Lucide icons
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }
-
-        // Event handlers suplimentare pentru toate funcționalitățile
-        function showServiciiTab(tip) {
-            showNotification(`Filtrare servicii: ${tip}`);
-            // Aici poți implementa filtrarea efectivă
-        }
-
-        function showLucrariTab(status) {
-            showNotification(`Filtrare lucrări: ${status}`);
-            // Aici poți implementa filtrarea efectivă
-        }
-
-        function contactClient(clientId) {
-            const client = AppState.clients.find(c => c.id === clientId);
-            if (client) {
-                showNotification(`📱 Contactare automată trimisă către ${client.nume} ${client.prenume}\nTelefon: ${client.telefon}\nEmail: ${client.email}`);
-            }
-        }
-
-        function programareServiciu(serviciuId) {
-            const serviciu = AppState.servicii.find(s => s.id === serviciuId);
-            const client = AppState.clients.find(c => c.id === serviciu?.clientId);
-            
-            if (serviciu && client) {
-                // Creează lucrare nouă automat
-                const newLucrare = {
-                    id: Date.now(),
-                    clientId: serviciu.clientId,
-                    tipServiciu: serviciu.tipServiciu,
-                    descriere: `Reînnoire ${serviciu.tipServiciu}`,
-                    status: 'programata',
-                    dataProgramata: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    angajat: '',
-                    observatii: 'Serviciu programat automat pentru reînnoire',
-                    dataFinalizare: null
-                };
-                
-                AppState.lucrari.push(newLucrare);
-                showNotification('✅ Lucrare programată automat pentru reînnoirea serviciului!');
-                renderApp();
-            }
-        }
-
-        function adaugaLucrareNoua() {
-            if (AppState.clients.length === 0) {
-                showNotification('Adaugă mai întâi clienți pentru a putea crea lucrări!', 'error');
-                return;
-            }
-            
-            // Creează lucrare simplă demo
-            const randomClient = AppState.clients[Math.floor(Math.random() * AppState.clients.length)];
-            const tipuriServiciu = ['Branșament gaz', 'Instalație gaz', 'Verificare tehnică', 'Revizie instalație', 'Reparație urgentă', 'Mentenanță'];
-            const tipAleatoriu = tipuriServiciu[Math.floor(Math.random() * tipuriServiciu.length)];
-            
-            const newLucrare = {
-                id: Date.now(),
-                clientId: randomClient.id,
-                tipServiciu: tipAleatoriu,
-                descriere: `Lucrare ${tipAleatoriu.toLowerCase()} programată`,
-                status: 'programata',
-                dataProgramata: new Date(Date.now() + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                angajat: AppState.utilizatori.find(u => u.rol === 'lucrator')?.email || '',
-                observatii: '',
-                dataFinalizare: null
-            };
-            
-            AppState.lucrari.push(newLucrare);
-            autoSave(); // Auto-save
-            showNotification(`✅ Lucrare nouă adăugată pentru ${randomClient.nume} ${randomClient.prenume}!`);
-            renderApp();
-        }
-
-        function incepeeLucrarea(lucrareId) {
-            const index = AppState.lucrari.findIndex(l => l.id === lucrareId);
-            if (index !== -1) {
-                AppState.lucrari[index].status = 'in_lucru';
-                AppState.lucrari[index].observatii = 'Lucrare începută';
-                showNotification('🔧 Lucrarea a fost începută!');
-                renderApp();
-            }
-        }
-
-        function editLucrare(lucrareId) {
-            const lucrare = AppState.lucrari.find(l => l.id === lucrareId);
-            if (lucrare) {
-                showNotification(`📝 Editare lucrare: ${lucrare.tipServiciu} - Funcția va fi implementată în curând!`);
-            }
-        }
-
-        function schimbaDataProgram() {
-            const data = document.getElementById('program-date').value;
-            showNotification(`📅 Program schimbat pentru data: ${data}`);
-            renderApp();
-        }
-
-        function schimbaAngajatProgram() {
-            const angajat = document.getElementById('program-angajat').value;
-            const numeAngajat = AppState.utilizatori.find(u => u.email === angajat)?.nume || 'Toți angajații';
-            showNotification(`👤 Filtru angajat: ${numeAngajat}`);
-            renderApp();
-        }
-
-        function exportProgram() {
-            showNotification('📄 Export program PDF - Funcția va fi implementată în curând!');
-        }
-
-        // Event handlers
-        function performLogin() {
-            AppState.loginData.email = document.getElementById('login-email').value;
-            AppState.loginData.password = document.getElementById('login-password').value;
-            handleLogin();
-        }
-
-        function setActiveTab(tab) {
-            AppState.activeTab = tab;
-            renderApp();
-        }
-
-        function showClientForm() {
-            AppState.showClientForm = true;
-            AppState.selectedClient = null;
-            AppState.clientForm = {
-                nume: '',
-                prenume: '',
-                email: '',
-                telefon: '',
-                strada: '',
-                numar: '',
-                bloc: '',
-                scara: '',
-                apartament: '',
-                oras: 'Roșiorii de Vede',
-                areServiciuExistent: false,
-                tipServiciu: '',
-                dataEfectuare: ''
-            };
-            renderClientModal();
-        }
-
-        function renderClientModal() {
-            const modalHTML = `
-                <div id="client-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div class="max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-xl shadow-2xl bg-white">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-2xl font-bold text-gray-800">
-                                    ${AppState.selectedClient ? 'Editare Client' : 'Client Nou'}
-                                </h2>
-                                <button onclick="closeClientModal()" class="p-2 rounded-lg hover:bg-gray-100 transition-all">
-                                    <i data-lucide="x-circle" class="w-6 h-6 text-gray-600"></i>
-                                </button>
-                            </div>
-
-                            <div class="space-y-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Nume *</label>
-                                        <input type="text" id="client-nume" value="${AppState.clientForm.nume}" 
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Prenume *</label>
-                                        <input type="text" id="client-prenume" value="${AppState.clientForm.prenume}"
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Email *</label>
-                                        <input type="email" id="client-email" value="${AppState.clientForm.email}"
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Telefon *</label>
-                                        <input type="tel" id="client-telefon" value="${AppState.clientForm.telefon}"
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Strada *</label>
-                                        <input type="text" id="client-strada" value="${AppState.clientForm.strada}"
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Număr *</label>
-                                        <input type="text" id="client-numar" value="${AppState.clientForm.numar}"
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Bloc</label>
-                                        <input type="text" id="client-bloc" value="${AppState.clientForm.bloc}"
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Scară</label>
-                                        <input type="text" id="client-scara" value="${AppState.clientForm.scara}"
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Apartament</label>
-                                        <input type="text" id="client-apartament" value="${AppState.clientForm.apartament}"
-                                               class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-2 text-gray-700">Oraș *</label>
-                                        <select id="client-oras" class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-                                            ${ORASE.map(oras => `<option value="${oras}" ${AppState.clientForm.oras === oras ? 'selected' : ''}>${oras}</option>`).join('')}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                ${!AppState.selectedClient ? `
-                                    <div class="p-4 rounded-lg border bg-gray-50 border-gray-200">
-                                        <label class="flex items-center space-x-3">
-                                            <input type="checkbox" id="client-serviciu-existent" ${AppState.clientForm.areServiciuExistent ? 'checked' : ''} 
-                                                   onchange="toggleServiciuExistent()" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
-                                            <span class="text-sm font-medium text-gray-700">Are serviciu existent</span>
-                                        </label>
-
-                                        <div id="serviciu-existent-fields" style="display: ${AppState.clientForm.areServiciuExistent ? 'block' : 'none'};" class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="block text-sm font-medium mb-2 text-gray-700">Tip serviciu *</label>
-                                                <select id="client-tip-serviciu" class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                                    <option value="">Selectează tipul</option>
-                                                    ${TIPURI_SERVICIU.map(tip => `<option value="${tip}" ${AppState.clientForm.tipServiciu === tip ? 'selected' : ''}>${tip}</option>`).join('')}
-                                                </select>
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium mb-2 text-gray-700">Data efectuării serviciului *</label>
-                                                <input type="date" id="client-data-efectuare" value="${AppState.clientForm.dataEfectuare}"
-                                                       class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                ` : ''}
-
-                                <div class="flex justify-end space-x-4">
-                                    <button onclick="closeClientModal()" class="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all">
-                                        Anulează
-                                    </button>
-                                    <button onclick="saveClient()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
-                                        ${AppState.selectedClient ? 'Salvează Modificările' : 'Adaugă Client'}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }
-
-        function closeClientModal() {
-            const modal = document.getElementById('client-modal');
-            if (modal) {
-                modal.remove();
-            }
-            AppState.showClientForm = false;
-            AppState.selectedClient = null;
-        }
-
-        function toggleServiciuExistent() {
-            const checkbox = document.getElementById('client-serviciu-existent');
-            const fields = document.getElementById('serviciu-existent-fields');
-            
-            if (checkbox.checked) {
-                fields.style.display = 'block';
-                AppState.clientForm.areServiciuExistent = true;
-            } else {
-                fields.style.display = 'none';
-                AppState.clientForm.areServiciuExistent = false;
-            }
-        }
-
-        function saveClient() {
-            // Colectează datele din formular
-            AppState.clientForm = {
-                nume: document.getElementById('client-nume').value,
-                prenume: document.getElementById('client-prenume').value,
-                email: document.getElementById('client-email').value,
-                telefon: document.getElementById('client-telefon').value,
-                strada: document.getElementById('client-strada').value,
-                numar: document.getElementById('client-numar').value,
-                bloc: document.getElementById('client-bloc').value,
-                scara: document.getElementById('client-scara').value,
-                apartament: document.getElementById('client-apartament').value,
-                oras: document.getElementById('client-oras').value,
-                areServiciuExistent: document.getElementById('client-serviciu-existent')?.checked || false,
-                tipServiciu: document.getElementById('client-tip-serviciu')?.value || '',
-                dataEfectuare: document.getElementById('client-data-efectuare')?.value || ''
-            };
-
-            // Validare
-            if (!AppState.clientForm.nume || !AppState.clientForm.prenume || !AppState.clientForm.email || 
-                !AppState.clientForm.telefon || !AppState.clientForm.strada || !AppState.clientForm.numar || !AppState.clientForm.oras) {
-                showNotification('Completează toate câmpurile obligatorii!', 'error');
-                return;
-            }
-
-            // Salvează clientul
-            handleClientSubmit();
-            closeClientModal();
-        }
-
-        function editClient(clientId) {
-            const client = AppState.clients.find(c => c.id === clientId);
-            if (client) {
-                AppState.selectedClient = client;
-                AppState.clientForm = {
-                    nume: client.nume,
-                    prenume: client.prenume,
-                    email: client.email,
-                    telefon: client.telefon,
-                    strada: client.strada,
-                    numar: client.numar,
-                    bloc: client.bloc || '',
-                    scara: client.scara || '',
-                    apartament: client.apartament || '',
-                    oras: client.oras,
-                    areServiciuExistent: false,
-                    tipServiciu: '',
-                    dataEfectuare: ''
-                };
-                renderClientModal();
-            }
-        }
-
-        function renderUtilizatoriTab() {
-            if (AppState.currentUser?.rol !== 'administrator') {
-                return renderDashboard();
-            }
-
-            return `
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-3xl font-bold text-gray-800">Utilizatori</h1>
-                        <button onclick="showUserForm()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>Utilizator Nou</span>
-                        </button>
-                    </div>
-
-                    <!-- Lista utilizatori -->
-                    <div class="grid gap-4">
-                        ${AppState.utilizatori.map(user => `
-                            <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="p-3 rounded-full ${user.rol === 'administrator' ? 'bg-purple-100' : 'bg-blue-100'}">
-                                            <i data-lucide="users" class="w-6 h-6 ${user.rol === 'administrator' ? 'text-purple-600' : 'text-blue-600'}"></i>
-                                        </div>
-                                        
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-800">${user.nume}</h3>
-                                            <p class="text-sm text-gray-600">${user.email}</p>
-                                            <p class="text-sm text-gray-600">${user.telefon}</p>
-                                            <span class="inline-block mt-2 px-3 py-1 text-xs font-medium rounded-full capitalize ${
-                                                user.rol === 'administrator' 
-                                                    ? 'bg-purple-100 text-purple-800' 
-                                                    : 'bg-blue-100 text-blue-800'
-                                            }">
-                                                ${user.rol}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="flex space-x-2">
-                                        <button onclick="editUser(${user.id})" class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-all">
-                                            <i data-lucide="edit" class="w-4 h-4"></i>
-                                        </button>
-                                        
-                                        ${user.id !== AppState.currentUser.id ? `
-                                            <button onclick="deleteUser(${user.id})" class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function showUserForm() {
-            AppState.showUserForm = true;
-            AppState.userForm = {
-                nume: '',
-                email: '',
-                telefon: '',
-                rol: 'lucrator',
-                password: ''
-            };
-            renderUserModal();
-        }
-
-        function renderUserModal() {
-            const modalHTML = `
-                <div id="user-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div class="max-w-md w-full rounded-xl shadow-2xl bg-white">
-                        <div class="p-6">
-                            <div class="flex justify-between items-center mb-6">
-                                <h2 class="text-2xl font-bold text-gray-800">Utilizator Nou</h2>
-                                <button onclick="closeUserModal()" class="p-2 rounded-lg hover:bg-gray-100 transition-all">
-                                    <i data-lucide="x-circle" class="w-6 h-6 text-gray-600"></i>
-                                </button>
-                            </div>
-
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-gray-700">Nume complet *</label>
-                                    <input type="text" id="user-nume" value="${AppState.userForm.nume}"
-                                           class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-gray-700">Email *</label>
-                                    <input type="email" id="user-email" value="${AppState.userForm.email}"
-                                           class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-gray-700">Telefon *</label>
-                                    <input type="tel" id="user-telefon" value="${AppState.userForm.telefon}"
-                                           class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required />
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-gray-700">Rol *</label>
-                                    <select id="user-rol" class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
-                                        <option value="lucrator" ${AppState.userForm.rol === 'lucrator' ? 'selected' : ''}>Lucrător</option>
-                                        <option value="administrator" ${AppState.userForm.rol === 'administrator' ? 'selected' : ''}>Administrator</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-2 text-gray-700">Parolă (opțional - default: 123456)</label>
-                                    <input type="password" id="user-password" value="${AppState.userForm.password}" placeholder="123456"
-                                           class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                                </div>
-
-                                <div class="flex justify-end space-x-4 mt-6">
-                                    <button onclick="closeUserModal()" class="px-6 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-all">
-                                        Anulează
-                                    </button>
-                                    <button onclick="saveUser()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">
-                                        Adaugă Utilizator
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }
-
-        function closeUserModal() {
-            const modal = document.getElementById('user-modal');
-            if (modal) {
-                modal.remove();
-            }
-            AppState.showUserForm = false;
-        }
-
-        function saveUser() {
-            AppState.userForm = {
-                nume: document.getElementById('user-nume').value,
-                email: document.getElementById('user-email').value,
-                telefon: document.getElementById('user-telefon').value,
-                rol: document.getElementById('user-rol').value,
-                password: document.getElementById('user-password').value || '123456'
-            };
-
-            if (!AppState.userForm.nume || !AppState.userForm.email || !AppState.userForm.telefon) {
-                showNotification('Completează toate câmpurile obligatorii!', 'error');
-                return;
-            }
-
-            const newUser = {
-                id: Date.now(),
-                ...AppState.userForm
-            };
-
-            AppState.utilizatori.push(newUser);
-            showNotification(`✅ Utilizator ${newUser.nume} adăugat cu succes!`);
-            closeUserModal();
-            renderApp();
-        }
-
-        function editUser(userId) {
-            const user = AppState.utilizatori.find(u => u.id === userId);
-            if (user) {
-                showNotification(`📝 Editare utilizator: ${user.nume} - Funcția va fi implementată în curând!`);
-            }
-        }
-
-        function renderDocumenteTab() {
-            // Date demo pentru documente
-            const documente = [
-                { id: 1, nume: 'Contract_Popescu_Ion.pdf', clientId: 1, tip: 'contract', dataUpload: '2024-06-01' },
-                { id: 2, nume: 'Certificat_Bransamemt_Popescu.pdf', clientId: 1, tip: 'certificat', dataUpload: '2024-06-15' },
-                { id: 3, nume: 'Factura_Ionescu_Maria.pdf', clientId: 2, tip: 'factura', dataUpload: '2024-07-01' }
-            ];
-
-            return `
-                <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h1 class="text-3xl font-bold text-gray-800">Documente</h1>
-                        <button onclick="uploadDocument()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            <span>Upload Document</span>
-                        </button>
-                    </div>
-
-                    <!-- Filtre -->
-                    <div class="p-4 rounded-xl bg-white shadow-lg">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-2 text-gray-700">Client</label>
-                                <select id="doc-client-filter" onchange="filterDocuments()" class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                    <option value="">Toți clienții</option>
-                                    ${AppState.clients.map(client => `
-                                        <option value="${client.id}">${client.nume} ${client.prenume}</option>
-                                    `).join('')}
-                                </select>
-                            </div>
-                            
-                            <div class="flex items-end">
-                                <div onclick="simulateFileUpload()" class="w-full p-8 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-blue-500 hover:bg-gray-50 transition-all">
-                                    <i data-lucide="file-text" class="w-8 h-8 mx-auto mb-2 text-gray-500"></i>
-                                    <p class="text-sm text-gray-600">Drag & drop sau click pentru upload</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Lista documente -->
-                    <div class="grid gap-4">
-                        ${documente.length === 0 ? `
-                            <div class="text-center py-12 text-gray-600">
-                                <i data-lucide="file-text" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
-                                <p>Nu există documente pentru această selecție.</p>
-                            </div>
-                        ` : documente.map(document => {
-                            const client = AppState.clients.find(c => c.id === document.clientId);
-                            
-                            return `
-                                <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
-                                    <div class="flex justify-between items-start">
-                                        <div class="flex items-center space-x-4">
-                                            <div class="p-3 rounded-lg bg-gray-100">
-                                                <i data-lucide="file-text" class="w-6 h-6 text-gray-600"></i>
-                                            </div>
-                                            
-                                            <div>
-                                                <h3 class="text-lg font-semibold text-gray-800">${document.nume}</h3>
-                                                <p class="text-sm text-gray-600">Client: ${client?.nume} ${client?.prenume}</p>
-                                                <p class="text-sm text-gray-600">Upload: ${formatDate(document.dataUpload)}</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="flex space-x-2">
-                                            <button onclick="previewDocument(${document.id})" class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-all">
-                                                <i data-lucide="eye" class="w-4 h-4"></i>
-                                            </button>
-                                            <button onclick="downloadDocument(${document.id})" class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-all">
-                                                <i data-lucide="download" class="w-4 h-4"></i>
-                                            </button>
-                                            <button onclick="deleteDocument(${document.id})" class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all">
-                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function uploadDocument() {
-            if (AppState.clients.length === 0) {
-                showNotification('Adaugă mai întâi clienți pentru a putea uploada documente!', 'error');
-                return;
-            }
-            showNotification('📁 Selectare fișier pentru upload - Funcția va fi implementată în curând!');
-        }
-
-        function simulateFileUpload() {
-            showNotification('📁 Simulare upload fișier - Drag & drop funcționalitate!');
-        }
-
-        function filterDocuments() {
-            const clientId = document.getElementById('doc-client-filter').value;
-            if (clientId) {
-                const client = AppState.clients.find(c => c.id === parseInt(clientId));
-                showNotification(`🔍 Filtrare documente pentru: ${client?.nume} ${client?.prenume}`);
-            } else {
-                showNotification('🔍 Afișare toate documentele');
-            }
-        }
-
-        function previewDocument(docId) {
-            showNotification(`👁️ Preview document ID: ${docId} - Funcția va fi implementată în curând!`);
-        }
-
-        function downloadDocument(docId) {
-            showNotification(`⬇️ Download document ID: ${docId} - Funcția va fi implementată în curând!`);
-        }
-
-        function deleteDocument(docId) {
-            if (confirm('Sigur doriți să ștergeți acest document?')) {
-                showNotification(`🗑️ Document ID: ${docId} șters cu succes!`);
-            }
-        }
-
-        // Funcții pentru persistența datelor în localStorage
-        function saveToStorage() {
-            try {
-                localStorage.setItem('adinstalgaz_data', JSON.stringify({
-                    clients: AppState.clients,
-                    servicii: AppState.servicii,
-                    lucrari: AppState.lucrari,
-                    utilizatori: AppState.utilizatori
-                }));
-            } catch (e) {
-                console.log('Nu se poate salva în localStorage');
-            }
-        }
-
-        function loadFromStorage() {
-            try {
-                const saved = localStorage.getItem('adinstalgaz_data');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    AppState.clients = data.clients || AppState.clients;
-                    AppState.servicii = data.servicii || AppState.servicii;
-                    AppState.lucrari = data.lucrari || AppState.lucrari;
-                    AppState.utilizatori = data.utilizatori || AppState.utilizatori;
-                }
-            } catch (e) {
-                console.log('Nu se poate încărca din localStorage');
-            }
-        }
-
-        // Auto-save la fiecare modificare
-        function autoSave() {
-            saveToStorage();
-        }
-
-        // Event listeners
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !AppState.isAuthenticated) {
-                performLogin();
-            }
-        });
+        // Global variables
+        let clients = JSON.parse(localStorage.getItem('adinstalgaz_clients') || '[]');
+        let projects = JSON.parse(localStorage.getItem('adinstalgaz_projects') || '[]');
+        let settings = JSON.parse(localStorage.getItem('adinstalgaz_settings') || '{}');
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            loadFromStorage(); // Încarcă datele salvate
-            renderApp();
+            loadData();
+            updateDashboard();
+            updateClientSelect();
+            simulateSync();
+            setInterval(autoSync, 30000); // Auto sync every 30 seconds
         });
 
-        // Auto-save every 30 seconds și auto-update
-        setInterval(() => {
-            if (AppState.isAuthenticated) {
-                autoSave();
-                renderApp();
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Refresh data for current tab
+            if (tabName === 'clients') {
+                refreshClientsTable();
+            } else if (tabName === 'projects') {
+                refreshProjectsTable();
+            } else if (tabName === 'dashboard') {
+                updateDashboard();
+            } else if (tabName === 'reports') {
+                updateStatistics();
             }
-        }, 30000);
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            refreshClientsTable();
+            refreshProjectsTable();
+            loadSettings();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('adinstalgaz_clients', JSON.stringify(clients));
+            localStorage.setItem('adinstalgaz_projects', JSON.stringify(projects));
+            localStorage.setItem('adinstalgaz_settings', JSON.stringify(settings));
+        }
+
+        // Client management
+        function showAddClientModal() {
+            document.getElementById('addClientModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Client form submission
+        document.getElementById('addClientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const client = {
+                id: Date.now(),
+                name: document.getElementById('clientName').value,
+                type: document.getElementById('clientType').value,
+                phone: document.getElementById('clientPhone').value,
+                email: document.getElementById('clientEmail').value,
+                address: document.getElementById('clientAddress').value,
+                notes: document.getElementById('clientNotes').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            clients.push(client);
+            saveData();
+            refreshClientsTable();
+            updateClientSelect();
+            updateDashboard();
+            closeModal('addClientModal');
+            
+            // Reset form
+            document.getElementById('addClientForm').reset();
+            
+            showNotification('Client adăugat cu succes!', 'success');
+            triggerSync();
+        });
+
+        // Project form submission
+        document.getElementById('addProjectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const project = {
+                id: Date.now(),
+                clientId: document.getElementById('projectClient').value,
+                type: document.getElementById('projectType').value,
+                startDate: document.getElementById('projectStartDate').value,
+                endDate: document.getElementById('projectEndDate').value,
+                price: parseFloat(document.getElementById('projectPrice').value),
+                status: document.getElementById('projectStatus').value,
+                description: document.getElementById('projectDescription').value,
+                createdAt: new Date().toISOString()
+            };
+            
+            projects.push(project);
+            saveData();
+            refreshProjectsTable();
+            updateDashboard();
+            closeModal('addProjectModal');
+            
+            // Reset form
+            document.getElementById('addProjectForm').reset();
+            
+            showNotification('Lucrare adăugată cu succes!', 'success');
+            triggerSync();
+            
+            // Send completion email if status is completed
+            if (project.status === 'completed') {
+                sendCompletionEmail(project);
+            }
+        });
+
+        // Refresh clients table
+        function refreshClientsTable() {
+            const tbody = document.querySelector('#clientsTable tbody');
+            tbody.innerHTML = '';
+            
+            clients.forEach(client => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${client.name}</td>
+                    <td>${client.phone}</td>
+                    <td>${client.email || '-'}</td>
+                    <td>${client.address}</td>
+                    <td><span class="status ${client.type}">${client.type === 'fizic' ? 'Persoană Fizică' : 'Persoană Juridică'}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editClient(${client.id})">✏️</button>
+                        <button class="btn btn-danger" onclick="deleteClient(${client.id})">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Refresh projects table
+        function refreshProjectsTable() {
+            const tbody = document.querySelector('#projectsTable tbody');
+            tbody.innerHTML = '';
+            
+            projects.forEach(project => {
+                const client = clients.find(c => c.id == project.clientId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>#${project.id}</td>
+                    <td>${client ? client.name : 'Client șters'}</td>
+                    <td>${getProjectTypeText(project.type)}</td>
+                    <td><span class="status ${project.status}">${getStatusText(project.status)}</span></td>
+                    <td>${formatDate(project.startDate)}</td>
+                    <td>${project.price.toFixed(2)} RON</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editProject(${project.id})">✏️</button>
+                        <button class="btn btn-danger" onclick="deleteProject(${project.id})">🗑️</button>
+                        ${project.status === 'completed' ? '<button class="btn btn-success" onclick="sendCompletionEmail(' + JSON.stringify(project).replace(/"/g, '&quot;') + ')">📧</button>' : ''}
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update client select in project form
+        function updateClientSelect() {
+            const select = document.getElementById('projectClient');
+            select.innerHTML = '<option value="">Selectează clientul</option>';
+            
+            clients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.id;
+                option.textContent = client.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Update dashboard statistics
+        function updateDashboard() {
+            document.getElementById('totalClients').textContent = clients.length;
+            document.getElementById('totalProjects').textContent = projects.filter(p => p.status === 'in-progress').length;
+            
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            const monthlyRevenue = projects
+                .filter(p => {
+                    const projectDate = new Date(p.createdAt);
+                    return projectDate.getMonth() === currentMonth && 
+                           projectDate.getFullYear() === currentYear &&
+                           p.status === 'completed';
+                })
+                .reduce((sum, p) => sum + p.price, 0);
+            
+            document.getElementById('totalRevenue').textContent = monthlyRevenue.toFixed(2) + ' RON';
+            
+            // Update recent projects table
+            updateRecentProjectsTable();
+        }
+
+        // Update recent projects table
+        function updateRecentProjectsTable() {
+            const tbody = document.querySelector('#recentProjectsTable tbody');
+            tbody.innerHTML = '';
+            
+            const recentProjects = projects
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 5);
+            
+            recentProjects.forEach(project => {
+                const client = clients.find(c => c.id == project.clientId);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${client ? client.name : 'Client șters'}</td>
+                    <td>${getProjectTypeText(project.type)}</td>
+                    <td><span class="status ${project.status}">${getStatusText(project.status)}</span></td>
+                    <td>${formatDate(project.startDate)}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editProject(${project.id})">✏️</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Search functions
+        function searchClients() {
+            const searchTerm = document.getElementById('clientSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#clientsTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function searchProjects() {
+            const searchTerm = document.getElementById('projectSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#projectsTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        // Import/Export functions
+        function importClients() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json,.csv,.xlsx';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        let importedData;
+                        if (file.name.endsWith('.json')) {
+                            importedData = JSON.parse(e.target.result);
+                        } else if (file.name.endsWith('.csv')) {
+                            importedData = parseCSV(e.target.result);
+                        }
+                        
+                        if (importedData && Array.isArray(importedData)) {
+                            importedData.forEach(clientData => {
+                                if (clientData.name && clientData.phone) {
+                                    const client = {
+                                        id: Date.now() + Math.random(),
+                                        name: clientData.name,
+                                        type: clientData.type || 'fizic',
+                                        phone: clientData.phone,
+                                        email: clientData.email || '',
+                                        address: clientData.address || '',
+                                        notes: clientData.notes || '',
+                                        createdAt: new Date().toISOString()
+                                    };
+                                    clients.push(client);
+                                }
+                            });
+                            
+                            saveData();
+                            refreshClientsTable();
+                            updateClientSelect();
+                            updateDashboard();
+                            showNotification(`${importedData.length} clienți importați cu succes!`, 'success');
+                            triggerSync();
+                        }
+                    } catch (error) {
+                        showNotification('Eroare la importul fișierului!', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function exportClients() {
+            const dataStr = JSON.stringify(clients, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `clienti_adinstalgaz_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Clienți exportați cu succes!', 'success');
+        }
+
+        // Report generation functions
+        function generatePDFReport() {
+            showProgress();
+            
+            setTimeout(() => {
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    
+                    // Add title
+                    doc.setFontSize(20);
+                    doc.text('Raport AdInstalGaz', 20, 30);
+                    
+                    // Add date
+                    doc.setFontSize(12);
+                    doc.text(`Data generarii: ${new Date().toLocaleDateString('ro-RO')}`, 20, 45);
+                    
+                    // Add statistics
+                    doc.text(`Total clienti: ${clients.length}`, 20, 60);
+                    doc.text(`Total lucrari: ${projects.length}`, 20, 75);
+                    
+                    const completedProjects = projects.filter(p => p.status === 'completed');
+                    const totalRevenue = completedProjects.reduce((sum, p) => sum + p.price, 0);
+                    doc.text(`Venituri totale: ${totalRevenue.toFixed(2)} RON`, 20, 90);
+                    
+                    // Add projects list
+                    doc.text('Lucrari recente:', 20, 110);
+                    let yPos = 125;
+                    
+                    projects.slice(0, 10).forEach((project, index) => {
+                        const client = clients.find(c => c.id == project.clientId);
+                        const text = `${index + 1}. ${client ? client.name : 'N/A'} - ${getProjectTypeText(project.type)} - ${project.price.toFixed(2)} RON`;
+                        doc.text(text, 25, yPos);
+                        yPos += 15;
+                    });
+                    
+                    doc.save(`raport_adinstalgaz_${new Date().toISOString().split('T')[0]}.pdf`);
+                    hideProgress();
+                    showNotification('Raport PDF generat cu succes!', 'success');
+                } catch (error) {
+                    hideProgress();
+                    showNotification('Eroare la generarea raportului PDF!', 'error');
+                }
+            }, 1000);
+        }
+
+        function generateExcelReport() {
+            showProgress();
+            
+            setTimeout(() => {
+                try {
+                    const wb = XLSX.utils.book_new();
+                    
+                    // Clients sheet
+                    const clientsData = clients.map(client => ({
+                        'Nume': client.name,
+                        'Tip': client.type === 'fizic' ? 'Persoană Fizică' : 'Persoană Juridică',
+                        'Telefon': client.phone,
+                        'Email': client.email,
+                        'Adresă': client.address,
+                        'Data Creării': formatDate(client.createdAt)
+                    }));
+                    const clientsWS = XLSX.utils.json_to_sheet(clientsData);
+                    XLSX.utils.book_append_sheet(wb, clientsWS, 'Clienți');
+                    
+                    // Projects sheet
+                    const projectsData = projects.map(project => {
+                        const client = clients.find(c => c.id == project.clientId);
+                        return {
+                            'ID': project.id,
+                            'Client': client ? client.name : 'N/A',
+                            'Tip Lucrare': getProjectTypeText(project.type),
+                            'Status': getStatusText(project.status),
+                            'Data Început': formatDate(project.startDate),
+                            'Data Sfârșit': formatDate(project.endDate),
+                            'Preț (RON)': project.price,
+                            'Descriere': project.description
+                        };
+                    });
+                    const projectsWS = XLSX.utils.json_to_sheet(projectsData);
+                    XLSX.utils.book_append_sheet(wb, projectsWS, 'Lucrări');
+                    
+                    XLSX.writeFile(wb, `raport_adinstalgaz_${new Date().toISOString().split('T')[0]}.xlsx`);
+                    hideProgress();
+                    showNotification('Raport Excel generat cu succes!', 'success');
+                } catch (error) {
+                    hideProgress();
+                    showNotification('Eroare la generarea raportului Excel!', 'error');
+                }
+            }, 1000);
+        }
+
+        function emailReport() {
+            showProgress();
+            
+            setTimeout(() => {
+                const reportData = {
+                    totalClients: clients.length,
+                    totalProjects: projects.length,
+                    completedProjects: projects.filter(p => p.status === 'completed').length,
+                    totalRevenue: projects.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.price, 0)
+                };
+                
+                const emailBody = `
+Raport AdInstalGaz - ${new Date().toLocaleDateString('ro-RO')}
+
+Statistici:
+- Total clienți: ${reportData.totalClients}
+- Total lucrări: ${reportData.totalProjects}
+- Lucrări finalizate: ${reportData.completedProjects}
+- Venituri totale: ${reportData.totalRevenue.toFixed(2)} RON
+
+Acest raport a fost generat automat de aplicația AdInstalGaz.
+                `;
+                
+                const mailtoLink = `mailto:${settings.contactEmail || 'office@adinstalgaz.ro'}?subject=Raport AdInstalGaz - ${new Date().toLocaleDateString('ro-RO')}&body=${encodeURIComponent(emailBody)}`;
+                window.open(mailtoLink);
+                
+                hideProgress();
+                showNotification('Email cu raportul pregătit pentru trimitere!', 'success');
+            }, 1000);
+        }
+
+        // Send completion email
+        function sendCompletionEmail(project) {
+            const client = clients.find(c => c.id == project.clientId);
+            if (!client) return;
+            
+            const emailBody = `
+Stimate ${client.name},
+
+Vă informăm că lucrarea de ${getProjectTypeText(project.type)} a fost finalizată cu succes.
+
+Detalii lucrare:
+- Tip: ${getProjectTypeText(project.type)}
+- Data început: ${formatDate(project.startDate)}
+- Data finalizare: ${formatDate(new Date())}
+- Preț: ${project.price.toFixed(2)} RON
+
+Descriere: ${project.description}
+
+Vă mulțumim pentru încrederea acordată!
+
+Cu stimă,
+${settings.companyName || 'AdInstalGaz SRL'}
+${settings.contactPhone || ''}
+${settings.contactEmail || ''}
+            `;
+            
+            const mailtoLink = `mailto:${client.email}?subject=Lucrare finalizată - ${getProjectTypeText(project.type)}&body=${encodeURIComponent(emailBody)}`;
+            window.open(mailtoLink);
+            
+            showNotification('Email de finalizare pregătit pentru trimitere!', 'success');
+        }
+
+        // Progress bar functions
+        function showProgress() {
+            const progressBar = document.getElementById('reportProgress');
+            const progressFill = document.getElementById('reportProgressFill');
+            progressBar.style.display = 'block';
+            progressFill.style.width = '0%';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressFill.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
+        function hideProgress() {
+            setTimeout(() => {
+                document.getElementById('reportProgress').style.display = 'none';
+            }, 500);
+        }
+
+        // Update statistics in reports tab
+        function updateStatistics() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            const monthlyProjects = projects.filter(p => {
+                const projectDate = new Date(p.createdAt);
+                return projectDate.getMonth() === currentMonth && 
+                       projectDate.getFullYear() === currentYear &&
+                       p.status === 'completed';
+            });
+            
+            const monthlyEarnings = monthlyProjects.reduce((sum, p) => sum + p.price, 0);
+            const completedCount = projects.filter(p => p.status === 'completed').length;
+            const averageValue = completedCount > 0 ? projects.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.price, 0) / completedCount : 0;
+            
+            document.getElementById('monthlyEarnings').textContent = monthlyEarnings.toFixed(2) + ' RON';
+            document.getElementById('completedProjectsCount').textContent = completedCount;
+            document.getElementById('averageProjectValue').textContent = averageValue.toFixed(2) + ' RON';
+        }
+
+        // Settings functions
+        function loadSettings() {
+            if (settings.companyName) document.getElementById('companyName').value = settings.companyName;
+            if (settings.contactEmail) document.getElementById('contactEmail').value = settings.contactEmail;
+            if (settings.contactPhone) document.getElementById('contactPhone').value = settings.contactPhone;
+            if (settings.companyAddress) document.getElementById('companyAddress').value = settings.companyAddress;
+        }
+
+        function saveSettings() {
+            settings = {
+                companyName: document.getElementById('companyName').value,
+                contactEmail: document.getElementById('contactEmail').value,
+                contactPhone: document.getElementById('contactPhone').value,
+                companyAddress: document.getElementById('companyAddress').value
+            };
+            
+            saveData();
+            showNotification('Setări salvate cu succes!', 'success');
+            triggerSync();
+        }
+
+        function exportData() {
+            const allData = {
+                clients: clients,
+                projects: projects,
+                settings: settings,
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(allData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `adinstalgaz_backup_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Date exportate cu succes!', 'success');
+        }
+
+        function clearData() {
+            if (confirm('Sigur doriți să ștergeți toate datele? Această acțiune nu poate fi anulată!')) {
+                clients = [];
+                projects = [];
+                localStorage.removeItem('adinstalgaz_clients');
+                localStorage.removeItem('adinstalgaz_projects');
+                
+                refreshClientsTable();
+                refreshProjectsTable();
+                updateClientSelect();
+                updateDashboard();
+                
+                showNotification('Toate datele au fost șterse!', 'warning');
+                triggerSync();
+            }
+        }
+
+        // Sync functions
+        function simulateSync() {
+            const syncIndicator = document.getElementById('syncIndicator');
+            const syncText = document.getElementById('syncText');
+            
+            // Simulate successful sync
+            syncIndicator.className = 'sync-indicator';
+            syncText.textContent = 'Sincronizat';
+        }
+
+        function triggerSync() {
+            const syncIndicator = document.getElementById('syncIndicator');
+            const syncText = document.getElementById('syncText');
+            
+            syncIndicator.className = 'sync-indicator syncing';
+            syncText.textContent = 'Se sincronizează...';
+            
+            setTimeout(() => {
+                syncIndicator.className = 'sync-indicator';
+                syncText.textContent = 'Sincronizat';
+            }, 2000);
+        }
+
+        function manualSync() {
+            triggerSync();
+            showNotification('Sincronizare manuală inițiată!', 'success');
+        }
+
+        function autoSync() {
+            // Auto sync every 30 seconds
+            saveData();
+        }
+
+        function backupData() {
+            exportData();
+            showNotification('Backup realizat cu succes!', 'success');
+        }
+
+        // Utility functions
+        function getProjectTypeText(type) {
+            const types = {
+                'instalare': 'Instalare Gaz',
+                'verificare': 'Verificare Instalație',
+                'reparatie': 'Reparație',
+                'modernizare': 'Modernizare',
+                'deconectare': 'Deconectare'
+            };
+            return types[type] || type;
+        }
+
+        function getStatusText(status) {
+            const statuses = {
+                'pending': 'În Așteptare',
+                'in-progress': 'În Curs',
+                'completed': 'Finalizat'
+            };
+            return statuses[status] || status;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            return new Date(dateString).toLocaleDateString('ro-RO');
+        }
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i].trim()) {
+                    const values = lines[i].split(',').map(v => v.trim());
+                    const obj = {};
+                    headers.forEach((header, index) => {
+                        obj[header] = values[index] || '';
+                    });
+                    data.push(obj);
+                }
+            }
+            
+            return data;
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function deleteClient(clientId) {
+            if (confirm('Sigur doriți să ștergeți acest client?')) {
+                clients = clients.filter(c => c.id !== clientId);
+                saveData();
+                refreshClientsTable();
+                updateClientSelect();
+                updateDashboard();
+                showNotification('Client șters cu succes!', 'success');
+                triggerSync();
+            }
+        }
+
+        function deleteProject(projectId) {
+            if (confirm('Sigur doriți să ștergeți această lucrare?')) {
+                projects = projects.filter(p => p.id !== projectId);
+                saveData();
+                refreshProjectsTable();
+                updateDashboard();
+                showNotification('Lucrare ștearsă cu succes!', 'success');
+                triggerSync();
+            }
+        }
+
+        function editClient(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (client) {
+                document.getElementById('clientName').value = client.name;
+                document.getElementById('clientType').value = client.type;
+                document.getElementById('clientPhone').value = client.phone;
+                document.getElementById('clientEmail').value = client.email;
+                document.getElementById('clientAddress').value = client.address;
+                document.getElementById('clientNotes').value = client.notes;
+                
+                // Remove old client and add updated one on form submit
+                const form = document.getElementById('addClientForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    // Update existing client
+                    const index = clients.findIndex(c => c.id === clientId);
+                    if (index !== -1) {
+                        clients[index] = {
+                            ...client,
+                            name: document.getElementById('clientName').value,
+                            type: document.getElementById('clientType').value,
+                            phone: document.getElementById('clientPhone').value,
+                            email: document.getElementById('clientEmail').value,
+                            address: document.getElementById('clientAddress').value,
+                            notes: document.getElementById('clientNotes').value
+                        };
+                        
+                        saveData();
+                        refreshClientsTable();
+                        updateClientSelect();
+                        updateDashboard();
+                        closeModal('addClientModal');
+                        form.reset();
+                        
+                        // Reset form handler
+                        form.onsubmit = function(e) {
+                            e.preventDefault();
+                            // Original add client logic here
+                        };
+                        
+                        showNotification('Client actualizat cu succes!', 'success');
+                        triggerSync();
+                    }
+                };
+                
+                showAddClientModal();
+            }
+        }
+
+        function editProject(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (project) {
+                document.getElementById('projectClient').value = project.clientId;
+                document.getElementById('projectType').value = project.type;
+                document.getElementById('projectStartDate').value = project.startDate;
+                document.getElementById('projectEndDate').value = project.endDate;
+                document.getElementById('projectPrice').value = project.price;
+                document.getElementById('projectStatus').value = project.status;
+                document.getElementById('projectDescription').value = project.description;
+                
+                showAddProjectModal();
+                
+                // Handle form submission for editing
+                const form = document.getElementById('addProjectForm');
+                form.onsubmit = function(e) {
+                    e.preventDefault();
+                    
+                    const index = projects.findIndex(p => p.id === projectId);
+                    if (index !== -1) {
+                        projects[index] = {
+                            ...project,
+                            clientId: document.getElementById('projectClient').value,
+                            type: document.getElementById('projectType').value,
+                            startDate: document.getElementById('projectStartDate').value,
+                            endDate: document.getElementById('projectEndDate').value,
+                            price: parseFloat(document.getElementById('projectPrice').value),
+                            status: document.getElementById('projectStatus').value,
+                            description: document.getElementById('projectDescription').value
+                        };
+                        
+                        saveData();
+                        refreshProjectsTable();
+                        updateDashboard();
+                        closeModal('addProjectModal');
+                        form.reset();
+                        
+                        showNotification('Lucrare actualizată cu succes!', 'success');
+                        triggerSync();
+                        
+                        // Send completion email if status changed to completed
+                        if (projects[index].status === 'completed' && project.status !== 'completed') {
+                            sendCompletionEmail(projects[index]);
+                        }
+                    }
+                };
+            }
+        }
+
+        function showAddProjectModal() {
+            updateClientSelect();
+            document.getElementById('addProjectModal').style.display = 'block';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Set default date for project period
+        document.getElementById('reportPeriod').value = new Date().toISOString().substring(0, 7);
     </script>
 </body>
 </html>
