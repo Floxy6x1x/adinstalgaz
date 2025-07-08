@@ -3,2495 +3,1043 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdInstalGaz - Portal Angajați</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>AdInstalGaz - Sistem Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Login Screen */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        
+        .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-
-        .login-card {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        .login-card h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
         }
-
-        .login-card p {
-            color: #7f8c8d;
-            margin-bottom: 30px;
-            font-size: 1.1em;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
+        
+        .loading-animation {
+            animation: pulse 2s infinite;
         }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #2c3e50;
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
-
-        .form-group input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #ecf0f1;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(52,152,219,0.3);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Main App Layout */
-        .app-container {
-            display: none;
-            min-height: 100vh;
-            background: #f8f9fa;
-        }
-
-        .header {
-            background: white;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-badge {
-            background: #27ae60;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .user-badge.worker {
-            background: #f39c12;
-        }
-
-        .logout-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background: #c0392b;
-        }
-
-        .nav-tabs {
-            background: white;
-            padding: 0 20px;
-            border-bottom: 2px solid #ecf0f1;
-        }
-
-        .nav-tabs button {
-            background: none;
-            border: none;
-            padding: 15px 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            color: #7f8c8d;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .nav-tabs button.active {
-            color: #3498db;
-            border-bottom-color: #3498db;
-        }
-
-        .nav-tabs button:hover {
-            color: #2980b9;
-        }
-
-        .content {
-            padding: 30px 20px;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-
-        .card h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-
-        /* Dashboard Stats */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-
-        .stat-card .icon {
-            font-size: 3em;
-            margin-bottom: 15px;
-        }
-
-        .stat-card .number {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .stat-card .label {
-            color: #7f8c8d;
-            font-size: 1.1em;
-        }
-
-        .stat-card.blue { color: #3498db; }
-        .stat-card.green { color: #27ae60; }
-        .stat-card.orange { color: #f39c12; }
-        .stat-card.red { color: #e74c3c; }
-
-        /* Buttons */
-        .btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .btn.btn-success {
-            background: #27ae60;
-        }
-
-        .btn.btn-success:hover {
-            background: #219a52;
-        }
-
-        .btn.btn-danger {
-            background: #e74c3c;
-        }
-
-        .btn.btn-danger:hover {
-            background: #c0392b;
-        }
-
-        .btn.btn-warning {
-            background: #f39c12;
-        }
-
-        .btn.btn-warning:hover {
-            background: #d68910;
-        }
-
-        /* Tables */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th,
-        .table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ecf0f1;
-        }
-
-        .table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        .table tr:hover {
-            background: #f8f9fa;
-        }
-
-        /* Status badges */
-        .status-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-badge.programat {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .status-badge.in-lucru {
-            background: #fff3e0;
-            color: #f57c00;
-        }
-
-        .status-badge.finalizat {
-            background: #e8f5e8;
-            color: #2e7d32;
-        }
-
-        .status-badge.anulat {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            color: #2c3e50;
-        }
-
-        .close {
-            background: none;
-            border: none;
-            font-size: 30px;
-            cursor: pointer;
-            color: #7f8c8d;
-        }
-
-        .close:hover {
-            color: #2c3e50;
-        }
-
-        /* Form styles */
-        .form-row {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-        }
-
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ecf0f1;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Notifications */
+        
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #27ae60;
+            background: #10b981;
             color: white;
-            padding: 15px 25px;
+            padding: 16px 24px;
             border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 1001;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
             transform: translateX(400px);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease-in-out;
         }
-
+        
         .notification.show {
             transform: translateX(0);
         }
-
-        .notification.error {
-            background: #e74c3c;
+        
+        .dark {
+            background-color: #111827;
+            color: #f9fafb;
         }
-
-        /* Reset button */
-        .reset-demo-btn {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            z-index: 1000;
+        
+        .dark .bg-white {
+            background-color: #1f2937;
         }
-
-        .reset-demo-btn:hover {
-            background: #c0392b;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        
+        .dark .bg-gray-50 {
+            background-color: #111827;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .nav-tabs {
-                overflow-x: auto;
-                white-space: nowrap;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row {
-                flex-direction: column;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 10px auto;
-                padding: 20px;
-            }
+        
+        .dark .bg-gray-100 {
+            background-color: #374151;
         }
-
-        /* File upload styles */
-        .file-upload {
-            border: 2px dashed #ecf0f1;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        
+        .dark .text-gray-800 {
+            color: #f9fafb;
         }
-
-        .file-upload:hover {
-            border-color: #3498db;
-            background: #f8f9fa;
+        
+        .dark .text-gray-600 {
+            color: #d1d5db;
         }
-
-        .file-upload.dragover {
-            border-color: #27ae60;
-            background: #e8f5e8;
+        
+        .dark .text-gray-500 {
+            color: #9ca3af;
         }
-
-        .file-list {
-            margin-top: 15px;
+        
+        .dark .border-gray-200 {
+            border-color: #374151;
         }
-
-        .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        
+        .dark .border-gray-300 {
+            border-color: #4b5563;
         }
-
-        .file-item button {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
+        
+        .hover-scale {
+            transition: transform 0.2s ease-in-out;
         }
-
-        .file-item button:hover {
-            background: #c0392b;
+        
+        .hover-scale:hover {
+            transform: scale(1.02);
         }
-
-        /* Search and filter */
-        .search-filters {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-
-        .search-filters input,
-        .search-filters select {
-            padding: 10px;
-            border: 2px solid #ecf0f1;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .search-filters input:focus,
-        .search-filters select:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        /* Action buttons */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-buttons button {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .action-buttons .btn-edit {
-            background: #3498db;
-            color: white;
-        }
-
-        .action-buttons .btn-edit:hover {
-            background: #2980b9;
-        }
-
-        .action-buttons .btn-delete {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .action-buttons .btn-delete:hover {
-            background: #c0392b;
-        }
-
-        .action-buttons .btn-status {
-            background: #27ae60;
-            color: white;
-        }
-
-        .action-buttons .btn-status:hover {
-            background: #219a52;
-        }
-
-        /* Program zilnic styles */
-        .program-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .program-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .program-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-        }
-
-        .program-card h4 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .program-time {
-            color: #7f8c8d;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .program-client {
-            color: #3498db;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .program-description {
-            color: #555;
-            line-height: 1.5;
-        }
-
-        /* Expiry warning styles */
-        .expiry-warning {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .expiry-critical {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-        }
-
-        /* PDF export styles */
-        .export-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .export-buttons button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .export-pdf {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .export-pdf:hover {
-            background: #c0392b;
-        }
-
-        .export-excel {
-            background: #27ae60;
-            color: white;
-        }
-
-        .export-excel:hover {
-            background: #219a52;
-        }
-
-        /* Loading animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Tabs for services */
-        .service-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ecf0f1;
-        }
-
-        .service-tabs button {
-            background: none;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            color: #7f8c8d;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .service-tabs button.active {
-            color: #3498db;
-            border-bottom-color: #3498db;
-        }
-
-        .service-tabs button:hover {
-            color: #2980b9;
-        }
-
-        /* Quick actions */
-        .quick-actions {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .quick-actions button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quick-actions button i {
-            font-size: 16px;
-        }
-
-        .quick-actions .btn-primary {
-            background: #3498db;
-            color: white;
-        }
-
-        .quick-actions .btn-primary:hover {
-            background: #2980b9;
-        }
-
-        .quick-actions .btn-secondary {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .quick-actions .btn-secondary:hover {
-            background: #7f8c8d;
+        
+        .card-shadow:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-container">
-        <div class="login-card">
-            <h1><i class="fas fa-lock"></i></h1>
-            <h2>🔐 Portal Angajați</h2>
-            <p>Acces restricționat</p>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">Parolă:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="submit" class="login-btn">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Main Application -->
-    <div id="appContainer" class="app-container">
-        <header class="header">
-            <div class="logo">
-                <i class="fas fa-fire"></i> AdInstalGaz
-            </div>
-            <div class="user-info">
-                <span id="userName"></span>
-                <span id="userRole" class="user-badge"></span>
-                <button class="logout-btn" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </div>
-        </header>
-
-        <nav class="nav-tabs">
-            <button class="tab-btn active" onclick="showTab('dashboard')">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
-            </button>
-            <button class="tab-btn" onclick="showTab('lucrari')">
-                <i class="fas fa-wrench"></i> Lucrări
-            </button>
-            <button class="tab-btn" onclick="showTab('clienti')">
-                <i class="fas fa-users"></i> Clienți
-            </button>
-            <button class="tab-btn" onclick="showTab('servicii')">
-                <i class="fas fa-database"></i> Baza de Date Servicii
-            </button>
-            <button class="tab-btn" onclick="showTab('program')">
-                <i class="fas fa-calendar-alt"></i> Program Zilnic
-            </button>
-            <button class="tab-btn" onclick="showTab('documente')">
-                <i class="fas fa-file-alt"></i> Documente
-            </button>
-            <button class="tab-btn admin-only" onclick="showTab('utilizatori')">
-                <i class="fas fa-user-cog"></i> Utilizatori
-            </button>
-        </nav>
-
-        <main class="content">
-            <!-- Dashboard Tab -->
-            <div id="dashboard" class="tab-content active">
-                <div class="stats-grid">
-                    <div class="stat-card blue">
-                        <div class="icon"><i class="fas fa-wrench"></i></div>
-                        <div class="number" id="totalLucrari">0</div>
-                        <div class="label">Total Lucrări</div>
-                    </div>
-                    <div class="stat-card green">
-                        <div class="icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="number" id="lucrariFinalizate">0</div>
-                        <div class="label">Finalizate</div>
-                    </div>
-                    <div class="stat-card orange">
-                        <div class="icon"><i class="fas fa-clock"></i></div>
-                        <div class="number" id="lucrariInLucru">0</div>
-                        <div class="label">În Lucru</div>
-                    </div>
-                    <div class="stat-card red">
-                        <div class="icon"><i class="fas fa-users"></i></div>
-                        <div class="number" id="totalClienti">0</div>
-                        <div class="label">Clienți</div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3><i class="fas fa-chart-line"></i> Statistici Rapide</h3>
-                    <div class="export-buttons">
-                        <button class="export-pdf" onclick="exportToPDF()">
-                            <i class="fas fa-file-pdf"></i> Export PDF
-                        </button>
-                        <button class="export-excel" onclick="exportToExcel()">
-                            <i class="fas fa-file-excel"></i> Export Excel
-                        </button>
-                    </div>
-                    <div id="dashboardStats"></div>
-                </div>
-            </div>
-
-            <!-- Lucrări Tab -->
-            <div id="lucrari" class="tab-content">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3><i class="fas fa-wrench"></i> Gestionare Lucrări</h3>
-                        <button class="btn admin-only" onclick="showAddLucrareModal()">
-                            <i class="fas fa-plus"></i> Adaugă Lucrare
-                        </button>
-                    </div>
-                    
-                    <div class="search-filters">
-                        <input type="text" id="searchLucrari" placeholder="Caută lucrări..." onkeyup="searchLucrari()">
-                        <select id="filterStatus" onchange="filterLucrari()">
-                            <option value="">Toate statusurile</option>
-                            <option value="programat">Programat</option>
-                            <option value="in-lucru">În Lucru</option>
-                            <option value="finalizat">Finalizat</option>
-                            <option value="anulat">Anulat</option>
-                        </select>
-                        <select id="filterWorker" onchange="filterLucrari()">
-                            <option value="">Toți lucrătorii</option>
-                        </select>
-                    </div>
-                    
-                    <div id="lucrariList"></div>
-                </div>
-            </div>
-
-            <!-- Clienți Tab -->
-            <div id="clienti" class="tab-content">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3><i class="fas fa-users"></i> Gestionare Clienți</h3>
-                        <button class="btn admin-only" onclick="showAddClientModal()">
-                            <i class="fas fa-plus"></i> Adaugă Client
-                        </button>
-                    </div>
-                    
-                    <div class="search-filters">
-                        <input type="text" id="searchClienti" placeholder="Caută clienți..." onkeyup="searchClienti()">
-                    </div>
-                    
-                    <div id="clientiList"></div>
-                </div>
-            </div>
-
-            <!-- Servicii Tab -->
-            <div id="servicii" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-database"></i> Baza de Date Servicii</h3>
-                    <p>Urmărește serviciile efectuate și datele de expirare ale certificatelor.</p>
-                    
-                    <div class="service-tabs">
-                        <button class="service-tab active" onclick="showServiceTab('active')">
-                            <i class="fas fa-check-circle"></i> Active
-                        </button>
-                        <button class="service-tab" onclick="showServiceTab('expiring')">
-                            <i class="fas fa-exclamation-triangle"></i> Expiră în 30 zile
-                        </button>
-                        <button class="service-tab" onclick="showServiceTab('expired')">
-                            <i class="fas fa-times-circle"></i> Expirate
-                        </button>
-                    </div>
-                    
-                    <div class="search-filters">
-                        <input type="text" id="searchServicii" placeholder="Caută servicii..." onkeyup="searchServicii()">
-                        <select id="filterTipServiciu" onchange="filterServicii()">
-                            <option value="">Toate tipurile</option>
-                            <option value="Branșament gaz">Branșament gaz</option>
-                            <option value="Instalație gaz">Instalație gaz</option>
-                            <option value="Verificare tehnică">Verificare tehnică</option>
-                            <option value="Reparație">Reparație</option>
-                            <option value="Mentenanță">Mentenanță</option>
-                        </select>
-                    </div>
-                    
-                    <div id="serviciiList"></div>
-                </div>
-            </div>
-
-            <!-- Program Zilnic Tab -->
-            <div id="program" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-calendar-alt"></i> Program Zilnic</h3>
-                    <p>Vizualizează programul de lucru pentru astăzi.</p>
-                    
-                    <div class="search-filters">
-                        <input type="date" id="programDate" onchange="loadProgram()" value="">
-                        <select id="filterProgramWorker" onchange="filterProgram()">
-                            <option value="">Toți lucrătorii</option>
-                        </select>
-                    </div>
-                    
-                    <div id="programList"></div>
-                </div>
-            </div>
-
-            <!-- Documente Tab -->
-            <div id="documente" class="tab-content">
-                <div class="card">
-                    <h3><i class="fas fa-file-alt"></i> Gestionare Documente</h3>
-                    <p>Upload și gestionare documente pentru lucrări.</p>
-                    
-                    <div class="file-upload" id="fileUpload">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 3em; color: #3498db;"></i>
-                        <p>Drag & drop files here or click to select</p>
-                        <input type="file" id="fileInput" multiple style="display: none;">
-                        <div class="form-group" style="margin-top: 15px;">
-                            <select id="documentLucrareId">
-                                <option value="">Selectează lucrarea</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div id="documentsList"></div>
-                </div>
-            </div>
-
-            <!-- Utilizatori Tab -->
-            <div id="utilizatori" class="tab-content admin-only">
-                <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3><i class="fas fa-user-cog"></i> Gestionare Utilizatori</h3>
-                        <button class="btn" onclick="showAddUserModal()">
-                            <i class="fas fa-plus"></i> Adaugă Utilizator
-                        </button>
-                    </div>
-                    
-                    <div id="utilizatoriList"></div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Modals -->
-    <!-- Lucrare Modal -->
-    <div id="lucrareModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="lucrareModalTitle">Adaugă Lucrare</h2>
-                <button class="close" onclick="closeLucrareModal()">&times;</button>
-            </div>
-            <form id="lucrareForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="lucrareClient">Client *</label>
-                        <select id="lucrareClient" name="clientId" required>
-                            <option value="">Selectează client</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="lucrareTipServiciu">Tip Serviciu *</label>
-                        <select id="lucrareTipServiciu" name="tipServiciu" required>
-                            <option value="">Selectează serviciu</option>
-                            <option value="Branșament gaz">Branșament gaz</option>
-                            <option value="Instalație gaz">Instalație gaz</option>
-                            <option value="Verificare tehnică">Verificare tehnică</option>
-                            <option value="Reparație">Reparație</option>
-                            <option value="Mentenanță">Mentenanță</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="lucrareStatus">Status</label>
-                        <select id="lucrareStatus" name="status">
-                            <option value="programat">Programat</option>
-                            <option value="in-lucru">În Lucru</option>
-                            <option value="finalizat">Finalizat</option>
-                            <option value="anulat">Anulat</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="lucrareWorker">Lucrător Atribuit</label>
-                        <select id="lucrareWorker" name="workerId">
-                            <option value="">Selectează lucrător</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="lucrareDataProgramata">Data Programată</label>
-                        <input type="date" id="lucrareDataProgramata" name="dataProgramata">
-                    </div>
-                    <div class="form-group">
-                        <label for="lucrareDataFinalizare">Data Finalizare</label>
-                        <input type="date" id="lucrareDataFinalizare" name="dataFinalizare">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="lucrareDescriere">Descriere *</label>
-                    <textarea id="lucrareDescriere" name="descriere" rows="4" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="lucrareObservatii">Observații</label>
-                    <textarea id="lucrareObservatii" name="observatii" rows="3"></textarea>
-                </div>
-                <div style="text-align: center; margin-top: 20px;">
-                    <button type="submit" class="btn">Salvează</button>
-                    <button type="button" class="btn btn-danger" onclick="closeLucrareModal()">Anulează</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Client Modal -->
-    <div id="clientModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="clientModalTitle">Adaugă Client</h2>
-                <button class="close" onclick="closeClientModal()">&times;</button>
-            </div>
-            <form id="clientForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="clientNume">Nume *</label>
-                        <input type="text" id="clientNume" name="nume" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="clientTelefon">Telefon *</label>
-                        <input type="tel" id="clientTelefon" name="telefon" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="clientEmail">Email</label>
-                    <input type="email" id="clientEmail" name="email">
-                </div>
-                <div class="form-group">
-                    <label for="clientAdresa">Adresa *</label>
-                    <textarea id="clientAdresa" name="adresa" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="clientObservatii">Observații</label>
-                    <textarea id="clientObservatii" name="observatii" rows="3"></textarea>
-                </div>
-                <div style="text-align: center; margin-top: 20px;">
-                    <button type="submit" class="btn">Salvează</button>
-                    <button type="button" class="btn btn-danger" onclick="closeClientModal()">Anulează</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- User Modal -->
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="userModalTitle">Adaugă Utilizator</h2>
-                <button class="close" onclick="closeUserModal()">&times;</button>
-            </div>
-            <form id="userForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="userNume">Nume *</label>
-                        <input type="text" id="userNume" name="nume" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="userEmail">Email *</label>
-                        <input type="email" id="userEmail" name="email" required>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="userPassword">Parolă *</label>
-                        <input type="password" id="userPassword" name="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="userRol">Rol *</label>
-                        <select id="userRol" name="rol" required>
-                            <option value="lucrător">Lucrător</option>
-                            <option value="administrator">Administrator</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="userTelefon">Telefon</label>
-                    <input type="tel" id="userTelefon" name="telefon">
-                </div>
-                <div style="text-align: center; margin-top: 20px;">
-                    <button type="submit" class="btn">Salvează</button>
-                    <button type="button" class="btn btn-danger" onclick="closeUserModal()">Anulează</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Reset Demo Button -->
-    <button class="reset-demo-btn" onclick="resetDemoData()">
-        <i class="fas fa-redo-alt"></i> Reset Date Demo
-    </button>
-
-    <!-- Notification -->
-    <div id="notification" class="notification"></div>
+<body class="bg-gray-50">
+    <div id="app"></div>
 
     <script>
-        // Global variables
-        let currentUser = null;
-        let currentTab = 'dashboard';
-        let editingId = null;
-        let editingType = null;
-
-        // Database arrays
-        let utilizatoriDB = [];
-        let clientiDB = [];
-        let lucrariDB = [];
-        let serviciiDB = [];
-        let documenteDB = [];
-
-        // Initialize demo data
-        function initializeDemoData() {
-            // Users
-            utilizatoriDB = [
+        // Global state management
+        const AppState = {
+            // Authentication
+            isAuthenticated: false,
+            currentUser: null,
+            
+            // UI State
+            isDarkMode: false,
+            activeTab: 'dashboard',
+            
+            // Form states
+            showClientForm: false,
+            showUserForm: false,
+            selectedClient: null,
+            
+            // Data
+            clients: [
                 {
                     id: 1,
-                    nume: "Florin Gavrilă",
-                    email: "florin.gavrila@adinstalgaz.ro",
-                    password: "123456",
-                    rol: "administrator",
-                    telefon: "0722123456",
-                    dataCreare: "2024-01-15"
+                    nume: 'Popescu',
+                    prenume: 'Ion',
+                    email: 'ion.popescu@email.com',
+                    telefon: '0723456789',
+                    strada: 'Str. Libertății',
+                    numar: '15',
+                    bloc: 'A',
+                    scara: '1',
+                    apartament: '12',
+                    oras: 'Roșiorii de Vede',
+                    dataCreare: '2024-01-15'
                 },
                 {
                     id: 2,
-                    nume: "Ion Popescu",
-                    email: "ion@adinstalgaz.ro",
-                    password: "123456",
-                    rol: "lucrător",
-                    telefon: "0733234567",
-                    dataCreare: "2024-01-20"
+                    nume: 'Ionescu',
+                    prenume: 'Maria',
+                    email: 'maria.ionescu@email.com',
+                    telefon: '0734567890',
+                    strada: 'Str. Mihai Viteazu',
+                    numar: '23',
+                    bloc: '',
+                    scara: '',
+                    apartament: '',
+                    oras: 'Alexandria',
+                    dataCreare: '2024-02-10'
                 }
-            ];
-
-            // Clients
-            clientiDB = [
-                {
-                    id: 1,
-                    nume: "Maria Ionescu",
-                    telefon: "0755123456",
-                    email: "maria.ionescu@email.com",
-                    adresa: "Str. Libertății nr. 25, Alexandria, Teleorman",
-                    observatii: "Client fidel",
-                    dataCreare: "2024-01-10"
-                },
-                {
-                    id: 2,
-                    nume: "Gheorghe Popescu",
-                    telefon: "0766234567",
-                    email: "gheorghe.popescu@email.com",
-                    adresa: "Str. Mihai Viteazu nr. 10, Turnu Măgurele, Teleorman",
-                    observatii: "Apartament bloc",
-                    dataCreare: "2024-01-12"
-                },
-                {
-                    id: 3,
-                    nume: "Ana Dumitrescu",
-                    telefon: "0777345678",
-                    email: "ana.dumitrescu@email.com",
-                    adresa: "Str. Victoriei nr. 5, Roșiori de Vede, Teleorman",
-                    observatii: "Casă individuală",
-                    dataCreare: "2024-01-15"
-                }
-            ];
-
-            // Lucrări
-            lucrariDB = [
+            ],
+            
+            servicii: [
                 {
                     id: 1,
                     clientId: 1,
-                    tipServiciu: "Branșament gaz",
-                    descriere: "Instalare branșament gaz pentru casă nouă",
-                    status: "finalizat",
-                    workerId: 2,
-                    dataProgramata: "2024-01-20",
-                    dataFinalizare: "2024-01-22",
-                    dataCreare: "2024-01-18",
-                    observatii: "Lucrare finalizată cu succes"
+                    tipServiciu: 'Branșament gaz',
+                    dataEfectuare: '2023-07-15',
+                    dataExpirare: '2025-07-15',
+                    status: 'activ',
+                    descriere: 'Branșament nou gaz natural'
                 },
                 {
                     id: 2,
                     clientId: 2,
-                    tipServiciu: "Verificare tehnică",
-                    descriere: "Verificare tehnică anuală instalație gaz",
-                    status: "programat",
-                    workerId: 2,
-                    dataProgramata: "2024-07-15",
-                    dataFinalizare: "",
-                    dataCreare: "2024-07-05",
-                    observatii: "Programat pentru următoarea săptămână"
+                    tipServiciu: 'Verificare tehnică',
+                    dataEfectuare: '2024-12-01',
+                    dataExpirare: '2026-12-01',
+                    status: 'activ',
+                    descriere: 'Verificare anuală instalație'
+                }
+            ],
+            
+            lucrari: [
+                {
+                    id: 1,
+                    clientId: 1,
+                    tipServiciu: 'Instalație gaz',
+                    descriere: 'Instalare centrală termică nouă',
+                    status: 'programata',
+                    dataProgramata: '2025-07-10',
+                    angajat: 'ion@adinstalgaz.ro',
+                    observatii: '',
+                    dataFinalizare: null
                 },
                 {
-                    id: 3,
-                    clientId: 3,
-                    tipServiciu: "Instalație gaz",
-                    descriere: "Instalație gaz pentru bucătărie nouă",
-                    status: "in-lucru",
-                    workerId: 2,
-                    dataProgramata: "2024-07-08",
-                    dataFinalizare: "",
-                    dataCreare: "2024-07-01",
-                    observatii: "În curs de execuție"
+                    id: 2,
+                    clientId: 2,
+                    tipServiciu: 'Revizie instalație',
+                    descriere: 'Revizie anuală sistem gaz',
+                    status: 'in_lucru',
+                    dataProgramata: '2025-07-08',
+                    angajat: 'ion@adinstalgaz.ro',
+                    observatii: 'În progres',
+                    dataFinalizare: null
                 }
-            ];
-
-            // Servicii - generat automat din lucrări finalizate
-            serviciiDB = [];
-            lucrariDB.forEach(lucrare => {
-                if (lucrare.status === 'finalizat' && lucrare.dataFinalizare) {
-                    const client = clientiDB.find(c => c.id === lucrare.clientId);
-                    if (client) {
-                        // Calculează data de expirare (2 ani de la finalizare)
-                        const dataFinalizare = new Date(lucrare.dataFinalizare);
-                        const dataExpirare = new Date(dataFinalizare);
-                        dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
-                        
-                        // Verifică dacă serviciul nu există deja
-                        const serviciiExistente = serviciiDB.filter(s => 
-                            s.clientId === lucrare.clientId && 
-                            s.tipServiciu === lucrare.tipServiciu &&
-                            s.dataFinalizare === lucrare.dataFinalizare
-                        );
-                        
-                        if (serviciiExistente.length === 0) {
-                            serviciiDB.push({
-                                id: Date.now() + Math.random(),
-                                clientId: lucrare.clientId,
-                                numeClient: client.nume,
-                                telefon: client.telefon,
-                                adresa: client.adresa,
-                                tipServiciu: lucrare.tipServiciu,
-                                dataFinalizare: lucrare.dataFinalizare,
-                                dataExpirare: dataExpirare.toISOString().split('T')[0],
-                                status: 'activ'
-                            });
-                        }
-                    }
+            ],
+            
+            utilizatori: [
+                {
+                    id: 1,
+                    nume: 'Florin Gavrila',
+                    email: 'florin.gavrila@adinstalgaz.ro',
+                    telefon: '0762614401',
+                    rol: 'administrator',
+                    password: '123456'
+                },
+                {
+                    id: 2,
+                    nume: 'Ion Lucrător',
+                    email: 'ion@adinstalgaz.ro',
+                    telefon: '0723456789',
+                    rol: 'lucrator',
+                    password: '123456'
                 }
-            });
-
-            // Documents
-            documenteDB = [];
-
-            // Save to localStorage
-            localStorage.setItem('utilizatoriDB', JSON.stringify(utilizatoriDB));
-            localStorage.setItem('clientiDB', JSON.stringify(clientiDB));
-            localStorage.setItem('lucrariDB', JSON.stringify(lucrariDB));
-            localStorage.setItem('serviciiDB', JSON.stringify(serviciiDB));
-            localStorage.setItem('documenteDB', JSON.stringify(documenteDB));
-        }
-
-        // Load data from localStorage
-        function loadData() {
-            const storedUtilizatori = localStorage.getItem('utilizatoriDB');
-            const storedClienti = localStorage.getItem('clientiDB');
-            const storedLucrari = localStorage.getItem('lucrariDB');
-            const storedServicii = localStorage.getItem('serviciiDB');
-            const storedDocumente = localStorage.getItem('documenteDB');
-
-            if (storedUtilizatori) utilizatoriDB = JSON.parse(storedUtilizatori);
-            if (storedClienti) clientiDB = JSON.parse(storedClienti);
-            if (storedLucrari) lucrariDB = JSON.parse(storedLucrari);
-            if (storedServicii) serviciiDB = JSON.parse(storedServicii);
-            if (storedDocumente) documenteDB = JSON.parse(storedDocumente);
-
-            // If no data exists, initialize demo data
-            if (!storedUtilizatori || !storedClienti || !storedLucrari) {
-                initializeDemoData();
+            ],
+            
+            // Form data
+            loginData: { email: '', password: '' },
+            clientForm: {
+                nume: '',
+                prenume: '',
+                email: '',
+                telefon: '',
+                strada: '',
+                numar: '',
+                bloc: '',
+                scara: '',
+                apartament: '',
+                oras: 'Roșiorii de Vede',
+                areServiciuExistent: false,
+                tipServiciu: '',
+                dataEfectuare: ''
+            },
+            userForm: {
+                nume: '',
+                email: '',
+                telefon: '',
+                rol: 'lucrator',
+                password: ''
             }
-        }
+        };
 
-        // Reset demo data
-        function resetDemoData() {
-            if (confirm('Sigur doriți să resetați toate datele demo? Această acțiune nu poate fi anulată.')) {
-                // Clear localStorage
-                localStorage.removeItem('utilizatoriDB');
-                localStorage.removeItem('clientiDB');
-                localStorage.removeItem('lucrariDB');
-                localStorage.removeItem('serviciiDB');
-                localStorage.removeItem('documenteDB');
-                localStorage.removeItem('currentUser');
+        // Constants
+        const TIPURI_SERVICIU = [
+            'Branșament gaz',
+            'Instalație gaz',
+            'Verificare tehnică',
+            'Revizie instalație',
+            'Reparație urgentă',
+            'Mentenanță'
+        ];
 
-                // Reinitialize
-                initializeDemoData();
-                
-                showNotification('Datele demo au fost resetate cu succes!');
-                
-                // Reload page after 2 seconds
-                setTimeout(() => {
-                    location.reload();
-                }, 2000);
-            }
-        }
+        const ORASE = [
+            'Roșiorii de Vede',
+            'Alexandria',
+            'Turnu Măgurele',
+            'Videle',
+            'Zimnicea',
+            'Găești',
+            'Giurgiu'
+        ];
 
-        // Authentication
-        function login(email, password) {
-            loadData();
+        // Utility functions
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
             
-            // Auto-correct roles if needed
-            const user = utilizatoriDB.find(u => u.email === email);
-            if (user && user.password === password) {
-                // Auto-correct specific user roles
-                if (user.email === 'florin.gavrila@adinstalgaz.ro') {
-                    user.rol = 'administrator';
-                } else if (user.email === 'ion@adinstalgaz.ro') {
-                    user.rol = 'lucrător';
-                }
-                
-                // Save corrected data
-                localStorage.setItem('utilizatoriDB', JSON.stringify(utilizatoriDB));
-                
-                currentUser = user;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                
-                showNotification(`Bun venit, ${user.nume}! [${user.rol === 'administrator' ? 'Administrator (acces complet)' : 'Lucrător (acces limitat)'}]`);
-                
-                showApp();
-                return true;
-            }
-            return false;
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 3000);
         }
 
-        function logout() {
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            showLogin();
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('ro-RO');
         }
 
-        function showLogin() {
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('appContainer').style.display = 'none';
-        }
-
-        function showApp() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
+        function getServiciuStatus(dataExpirare) {
+            const azi = new Date();
+            const expirare = new Date(dataExpirare);
+            const diferentaZile = Math.ceil((expirare - azi) / (1000 * 60 * 60 * 24));
             
-            // Update user info
-            document.getElementById('userName').textContent = currentUser.nume;
-            const userRoleElement = document.getElementById('userRole');
-            userRoleElement.textContent = currentUser.rol === 'administrator' ? 'ADMIN' : 'Lucrător';
-            userRoleElement.className = currentUser.rol === 'administrator' ? 'user-badge' : 'user-badge worker';
-            
-            // Show/hide admin elements
-            const adminElements = document.querySelectorAll('.admin-only');
-            adminElements.forEach(el => {
-                el.style.display = currentUser.rol === 'administrator' ? 'block' : 'none';
-            });
-            
-            // Load initial data
-            renderDashboard();
-            loadSelectOptions();
+            if (diferentaZile < 0) return 'expirat';
+            if (diferentaZile <= 30) return 'expira_curand';
+            return 'activ';
         }
 
-        // Check if user is logged in
-        function checkAuth() {
-            const storedUser = localStorage.getItem('currentUser');
-            if (storedUser) {
-                currentUser = JSON.parse(storedUser);
-                showApp();
+        function getServiciiActive() {
+            return AppState.servicii.filter(s => getServiciuStatus(s.dataExpirare) === 'activ');
+        }
+
+        function getServiciiExpiraCurand() {
+            return AppState.servicii.filter(s => getServiciuStatus(s.dataExpirare) === 'expira_curand');
+        }
+
+        function getServiciiExpirate() {
+            return AppState.servicii.filter(s => getServiciuStatus(s.dataExpirare) === 'expirat');
+        }
+
+        // Authentication functions
+        function handleLogin() {
+            const user = AppState.utilizatori.find(u => 
+                u.email === AppState.loginData.email && u.password === AppState.loginData.password
+            );
+            
+            if (user) {
+                AppState.currentUser = user;
+                AppState.isAuthenticated = true;
+                AppState.loginData = { email: '', password: '' };
+                showNotification(`Bun venit, ${user.nume}!`);
+                renderApp();
             } else {
-                showLogin();
+                showNotification('Date de autentificare incorecte!', 'error');
             }
         }
 
-        // Tab management
-        function showTab(tabName) {
-            // Update active tab button
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Update active tab content
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            
-            currentTab = tabName;
-            
-            // Load content based on tab
-            switch(tabName) {
-                case 'dashboard':
-                    renderDashboard();
-                    break;
-                case 'lucrari':
-                    renderLucrari();
-                    break;
-                case 'clienti':
-                    renderClienti();
-                    break;
-                case 'servicii':
-                    renderServicii();
-                    break;
-                case 'program':
-                    renderProgram();
-                    break;
-                case 'documente':
-                    renderDocumente();
-                    break;
-                case 'utilizatori':
-                    renderUtilizatori();
-                    break;
+        function handleLogout() {
+            AppState.isAuthenticated = false;
+            AppState.currentUser = null;
+            AppState.activeTab = 'dashboard';
+            showNotification('Ați fost deconectat cu succes!');
+            renderApp();
+        }
+
+        function resetDemoData() {
+            if (confirm('Sigur doriți să resetați toate datele demo?')) {
+                AppState.clients = [];
+                AppState.servicii = [];
+                AppState.lucrari = [];
+                showNotification('Datele demo au fost resetate!');
+                renderApp();
             }
         }
 
-        // Dashboard functions
-        function renderDashboard() {
-            const totalLucrari = lucrariDB.length;
-            const lucrariFinalizate = lucrariDB.filter(l => l.status === 'finalizat').length;
-            const lucrariInLucru = lucrariDB.filter(l => l.status === 'in-lucru').length;
-            const totalClienti = clientiDB.length;
+        function toggleDarkMode() {
+            AppState.isDarkMode = !AppState.isDarkMode;
+            document.body.classList.toggle('dark', AppState.isDarkMode);
+            renderApp();
+        }
+
+        // Client management functions
+        function handleClientSubmit() {
+            const newClient = {
+                id: Date.now(),
+                ...AppState.clientForm,
+                dataCreare: new Date().toISOString().split('T')[0]
+            };
+
+            if (AppState.selectedClient) {
+                const index = AppState.clients.findIndex(c => c.id === AppState.selectedClient.id);
+                AppState.clients[index] = { ...newClient, id: AppState.selectedClient.id };
+                showNotification('Client actualizat cu succes!');
+            } else {
+                AppState.clients.push(newClient);
+                showNotification('Client adăugat cu succes!');
+                
+                // Dacă are serviciu existent, creează serviciul
+                if (AppState.clientForm.areServiciuExistent && AppState.clientForm.tipServiciu && AppState.clientForm.dataEfectuare) {
+                    const dataExpirare = new Date(AppState.clientForm.dataEfectuare);
+                    dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
+                    
+                    const newServiciu = {
+                        id: Date.now() + 1,
+                        clientId: newClient.id,
+                        tipServiciu: AppState.clientForm.tipServiciu,
+                        dataEfectuare: AppState.clientForm.dataEfectuare,
+                        dataExpirare: dataExpirare.toISOString().split('T')[0],
+                        status: 'activ',
+                        descriere: `Serviciu ${AppState.clientForm.tipServiciu} existent`
+                    };
+                    
+                    AppState.servicii.push(newServiciu);
+                }
+            }
+
+            AppState.showClientForm = false;
+            AppState.selectedClient = null;
+            AppState.clientForm = {
+                nume: '',
+                prenume: '',
+                email: '',
+                telefon: '',
+                strada: '',
+                numar: '',
+                bloc: '',
+                scara: '',
+                apartament: '',
+                oras: 'Roșiorii de Vede',
+                areServiciuExistent: false,
+                tipServiciu: '',
+                dataEfectuare: ''
+            };
             
-            document.getElementById('totalLucrari').textContent = totalLucrari;
-            document.getElementById('lucrariFinalizate').textContent = lucrariFinalizate;
-            document.getElementById('lucrariInLucru').textContent = lucrariInLucru;
-            document.getElementById('totalClienti').textContent = totalClienti;
+            renderApp();
+        }
+
+        function deleteClient(clientId) {
+            if (confirm('Sigur doriți să ștergeți acest client? Se vor șterge și serviciile asociate.')) {
+                AppState.clients = AppState.clients.filter(c => c.id !== clientId);
+                AppState.servicii = AppState.servicii.filter(s => s.clientId !== clientId);
+                AppState.lucrari = AppState.lucrari.filter(l => l.clientId !== clientId);
+                showNotification('Client șters cu succes!');
+                renderApp();
+            }
+        }
+
+        function finalizareLucrare(lucrareId) {
+            const lucrare = AppState.lucrari.find(l => l.id === lucrareId);
+            if (!lucrare) return;
+
+            const dataFinalizare = new Date();
+            const index = AppState.lucrari.findIndex(l => l.id === lucrareId);
             
-            // Dashboard stats
-            const statsContainer = document.getElementById('dashboardStats');
-            statsContainer.innerHTML = `
-                <div class="stats-details">
-                    <h4>Statistici detaliate:</h4>
-                    <p><strong>Lucrări programate:</strong> ${lucrariDB.filter(l => l.status === 'programat').length}</p>
-                    <p><strong>Lucrări anulate:</strong> ${lucrariDB.filter(l => l.status === 'anulat').length}</p>
-                    <p><strong>Servicii active:</strong> ${serviciiDB.filter(s => s.status === 'activ').length}</p>
-                    <p><strong>Servicii care expiră în 30 zile:</strong> ${getExpiringServices().length}</p>
+            AppState.lucrari[index] = {
+                ...lucrare,
+                status: 'finalizata',
+                dataFinalizare: dataFinalizare.toISOString().split('T')[0],
+                oraFinalizare: dataFinalizare.toTimeString().split(' ')[0]
+            };
+
+            // Creează serviciu nou automat
+            const client = AppState.clients.find(c => c.id === lucrare.clientId);
+            const dataExpirare = new Date(dataFinalizare);
+            dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
+
+            const newServiciu = {
+                id: Date.now(),
+                clientId: lucrare.clientId,
+                tipServiciu: lucrare.tipServiciu,
+                dataEfectuare: AppState.lucrari[index].dataFinalizare,
+                dataExpirare: dataExpirare.toISOString().split('T')[0],
+                status: 'activ',
+                descriere: lucrare.descriere
+            };
+
+            AppState.servicii.push(newServiciu);
+
+            // Simulare trimitere email
+            simulareEmailFinalizare(client, AppState.lucrari[index]);
+            showNotification('Lucrare finalizată cu succes! Email trimis automat.');
+            renderApp();
+        }
+
+        function simulareEmailFinalizare(client, lucrare) {
+            const angajat = AppState.utilizatori.find(u => u.email === lucrare.angajat);
+            
+            console.log(`
+📧 EMAIL TRIMIS AUTOMAT LA: office@adinstalgaz.ro
+
+Subiect: [AdInstalGaz] Lucrare Finalizată - ${lucrare.tipServiciu} - ${client.nume} ${client.prenume}
+
+Bună ziua,
+
+O lucrare a fost finalizată cu succes:
+
+DETALII LUCRARE:
+- Client: ${client.nume} ${client.prenume}
+- Telefon: ${client.telefon}
+- Adresă: ${client.strada} ${client.numar}, ${client.bloc}, ${client.scara}, ${client.apartament}, ${client.oras}
+- Tip serviciu: ${lucrare.tipServiciu}
+- Descriere: ${lucrare.descriere}
+
+EXECUTARE:
+- Angajat: ${angajat?.nume || 'N/A'}
+- Data finalizare: ${lucrare.dataFinalizare}
+- Ora finalizare: ${lucrare.oraFinalizare}
+- Observații: ${lucrare.observatii}
+
+URMĂRIRE SERVICIU:
+- Următoarea verificare: ${new Date(new Date(lucrare.dataFinalizare).setFullYear(new Date(lucrare.dataFinalizare).getFullYear() + 2)).toISOString().split('T')[0]} (peste 2 ani)
+- Reminder automat: ${new Date(new Date(lucrare.dataFinalizare).setFullYear(new Date(lucrare.dataFinalizare).getFullYear() + 2) - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]} (cu 7 zile înainte)
+
+---
+Generat automat de AdInstalGaz Management System
+Pentru detalii complete, accesați aplicația.
+            `);
+        }
+
+        // Render functions
+        function renderLoginForm() {
+            return `
+                <div class="min-h-screen flex items-center justify-center gradient-bg">
+                    <div class="max-w-md w-full mx-4 p-8 rounded-2xl shadow-2xl bg-white glass-effect animate-fade-in">
+                        <div class="text-center mb-8">
+                            <div class="w-16 h-16 mx-auto mb-4 text-blue-600">
+                                <i data-lucide="building-2" class="w-full h-full"></i>
+                            </div>
+                            <h1 class="text-3xl font-bold text-gray-800">AdInstalGaz</h1>
+                            <p class="text-sm mt-2 text-gray-600">Sistem Management</p>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-700">Email</label>
+                                <input
+                                    type="email"
+                                    id="login-email"
+                                    value="${AppState.loginData.email}"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    placeholder="exemplu@adinstalgaz.ro"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-gray-700">Parolă</label>
+                                <input
+                                    type="password"
+                                    id="login-password"
+                                    value="${AppState.loginData.password}"
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                    placeholder="••••••••"
+                                    required
+                                />
+                            </div>
+
+                            <button
+                                onclick="performLogin()"
+                                class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
+                            >
+                                Autentificare
+                            </button>
+                        </div>
+
+                        <div class="mt-6 p-4 rounded-lg bg-gray-50">
+                            <p class="text-xs text-gray-600 mb-2">Date demo:</p>
+                            <p class="text-xs text-gray-500">
+                                Admin: florin.gavrila@adinstalgaz.ro / 123456<br/>
+                                Lucrător: ion@adinstalgaz.ro / 123456
+                            </p>
+                        </div>
+
+                        <div class="flex justify-center mt-6">
+                            <button
+                                onclick="toggleDarkMode()"
+                                class="p-2 rounded-full bg-gray-200 text-gray-600 hover:scale-110 transition-all"
+                            >
+                                <i data-lucide="moon" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             `;
         }
 
-        // Lucrări functions
-        function renderLucrari() {
-            const lucrariContainer = document.getElementById('lucrariList');
-            let filteredLucrari = lucrariDB;
-            
-            // Apply filters for workers
-            if (currentUser.rol === 'lucrător') {
-                filteredLucrari = filteredLucrari.filter(l => l.workerId === currentUser.id);
+        function renderSidebar() {
+            const menuItems = [
+                { id: 'dashboard', label: 'Dashboard', icon: 'home' },
+                { id: 'clienti', label: 'Clienți', icon: 'users' },
+                { id: 'servicii', label: 'Baza Date Servicii', icon: 'database' },
+                { id: 'lucrari', label: 'Lucrări', icon: 'briefcase' },
+                { id: 'program', label: 'Program Zilnic', icon: 'calendar' },
+                { id: 'documente', label: 'Documente', icon: 'file-text' }
+            ];
+
+            if (AppState.currentUser?.rol === 'administrator') {
+                menuItems.push({ id: 'utilizatori', label: 'Utilizatori', icon: 'settings' });
             }
-            
-            if (filteredLucrari.length === 0) {
-                lucrariContainer.innerHTML = '<p>Nu există lucrări disponibile.</p>';
-                return;
-            }
-            
-            let html = '<table class="table"><thead><tr>';
-            html += '<th>Client</th><th>Tip Serviciu</th><th>Status</th><th>Data Programată</th><th>Lucrător</th><th>Acțiuni</th>';
-            html += '</tr></thead><tbody>';
-            
-            filteredLucrari.forEach(lucrare => {
-                const client = clientiDB.find(c => c.id === lucrare.clientId);
-                const worker = utilizatoriDB.find(u => u.id === lucrare.workerId);
-                
-                html += `<tr>
-                    <td>${client ? client.nume : 'Client necunoscut'}</td>
-                    <td>${lucrare.tipServiciu}</td>
-                    <td><span class="status-badge ${lucrare.status}">${lucrare.status}</span></td>
-                    <td>${lucrare.dataProgramata || 'Nu este programată'}</td>
-                    <td>${worker ? worker.nume : 'Neatribuit'}</td>
-                    <td>
-                        <div class="action-buttons">
-                            ${currentUser.rol === 'administrator' ? `
-                                <button class="btn-edit" onclick="editLucrare(${lucrare.id})">
-                                    <i class="fas fa-edit"></i> Editează
-                                </button>
-                                <button class="btn-delete" onclick="deleteLucrare(${lucrare.id})">
-                                    <i class="fas fa-trash"></i> Șterge
+
+            return `
+                <div class="w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 text-blue-600">
+                                <i data-lucide="building-2" class="w-full h-full"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-lg font-bold text-gray-800">AdInstalGaz</h1>
+                                <p class="text-xs text-gray-500">Management System</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav class="flex-1 p-4 space-y-2">
+                        ${menuItems.map(item => `
+                            <button
+                                onclick="setActiveTab('${item.id}')"
+                                class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all ${
+                                    AppState.activeTab === item.id
+                                        ? 'bg-blue-600 text-white shadow-lg'
+                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                }"
+                            >
+                                <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                                <span class="font-medium">${item.label}</span>
+                            </button>
+                        `).join('')}
+                    </nav>
+
+                    <div class="p-4 border-t border-gray-200">
+                        <div class="mb-4 p-3 rounded-lg bg-gray-50">
+                            <p class="text-sm font-medium text-gray-800">${AppState.currentUser?.nume}</p>
+                            <p class="text-xs text-gray-500 capitalize">${AppState.currentUser?.rol}</p>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <button
+                                onclick="toggleDarkMode()"
+                                class="w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-all text-gray-600 hover:bg-gray-100"
+                            >
+                                <i data-lucide="${AppState.isDarkMode ? 'sun' : 'moon'}" class="w-4 h-4"></i>
+                                <span class="text-sm">${AppState.isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+                            </button>
+                            
+                            ${AppState.currentUser?.rol === 'administrator' ? `
+                                <button
+                                    onclick="resetDemoData()"
+                                    class="w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-all text-yellow-600 hover:bg-gray-100"
+                                >
+                                    <i data-lucide="settings" class="w-4 h-4"></i>
+                                    <span class="text-sm">Reset Date Demo</span>
                                 </button>
                             ` : ''}
-                            ${(currentUser.rol === 'lucrător' && lucrare.workerId === currentUser.id) || currentUser.rol === 'administrator' ? `
-                                <select onchange="updateStatusLucrare(${lucrare.id}, this.value)">
-                                    <option value="${lucrare.status}">${lucrare.status}</option>
-                                    ${lucrare.status !== 'programat' ? '<option value="programat">programat</option>' : ''}
-                                    ${lucrare.status !== 'in-lucru' ? '<option value="in-lucru">in-lucru</option>' : ''}
-                                    ${lucrare.status !== 'finalizat' ? '<option value="finalizat">finalizat</option>' : ''}
-                                    ${lucrare.status !== 'anulat' ? '<option value="anulat">anulat</option>' : ''}
-                                </select>
+                            
+                            <button
+                                onclick="handleLogout()"
+                                class="w-full flex items-center space-x-3 px-4 py-2 rounded-lg transition-all text-red-600 hover:bg-gray-100"
+                            >
+                                <i data-lucide="log-out" class="w-4 h-4"></i>
+                                <span class="text-sm">Logout</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDashboard() {
+            const serviciiExpiraCurand = getServiciiExpiraCurand();
+            const serviciiExpirate = getServiciiExpirate();
+            const lucrariProgramate = AppState.lucrari.filter(l => l.status === 'programata');
+            const lucrariInLucru = AppState.lucrari.filter(l => l.status === 'in_lucru');
+
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+                        <div class="flex space-x-4">
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                <span>Export Raport</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Statistici principale -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Total Clienți</p>
+                                    <p class="text-3xl font-bold text-gray-800">${AppState.clients.length}</p>
+                                </div>
+                                <i data-lucide="users" class="w-12 h-12 text-blue-500"></i>
+                            </div>
+                        </div>
+
+                        <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Servicii Active</p>
+                                    <p class="text-3xl font-bold text-gray-800">${getServiciiActive().length}</p>
+                                </div>
+                                <i data-lucide="check-circle" class="w-12 h-12 text-green-500"></i>
+                            </div>
+                        </div>
+
+                        <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Lucrări Programate</p>
+                                    <p class="text-3xl font-bold text-gray-800">${lucrariProgramate.length}</p>
+                                </div>
+                                <i data-lucide="calendar" class="w-12 h-12 text-orange-500"></i>
+                            </div>
+                        </div>
+
+                        <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600">Servicii Expiră Curând</p>
+                                    <p class="text-3xl font-bold text-gray-800">${serviciiExpiraCurand.length}</p>
+                                </div>
+                                <i data-lucide="alert-circle" class="w-12 h-12 text-yellow-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${serviciiExpiraCurand.length > 0 || serviciiExpirate.length > 0 ? `
+                        <div class="p-6 rounded-xl shadow-lg bg-red-50 border border-red-200">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <i data-lucide="bell" class="w-6 h-6 text-red-500"></i>
+                                <h3 class="text-lg font-semibold text-red-800">Notificări Urgente</h3>
+                            </div>
+                            
+                            ${serviciiExpirate.length > 0 ? `
+                                <div class="mb-4">
+                                    <h4 class="font-medium mb-2 text-red-700">Servicii Expirate (${serviciiExpirate.length})</h4>
+                                    <div class="space-y-2">
+                                        ${serviciiExpirate.slice(0, 3).map(serviciu => {
+                                            const client = AppState.clients.find(c => c.id === serviciu.clientId);
+                                            return `
+                                                <div class="p-3 rounded-lg bg-red-100">
+                                                    <p class="font-medium text-red-800">
+                                                        ${client?.nume} ${client?.prenume} - ${serviciu.tipServiciu}
+                                                    </p>
+                                                    <p class="text-sm text-red-600">
+                                                        Expirat la: ${serviciu.dataExpirare}
+                                                    </p>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${serviciiExpiraCurand.length > 0 ? `
+                                <div>
+                                    <h4 class="font-medium mb-2 text-yellow-700">Servicii ce Expiră în 30 zile (${serviciiExpiraCurand.length})</h4>
+                                    <div class="space-y-2">
+                                        ${serviciiExpiraCurand.slice(0, 3).map(serviciu => {
+                                            const client = AppState.clients.find(c => c.id === serviciu.clientId);
+                                            return `
+                                                <div class="p-3 rounded-lg bg-yellow-100">
+                                                    <p class="font-medium text-yellow-800">
+                                                        ${client?.nume} ${client?.prenume} - ${serviciu.tipServiciu}
+                                                    </p>
+                                                    <p class="text-sm text-yellow-600">
+                                                        Expiră la: ${serviciu.dataExpirare}
+                                                    </p>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
                             ` : ''}
                         </div>
-                    </td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            lucrariContainer.innerHTML = html;
-        }
+                    ` : ''}
 
-        function showAddLucrareModal() {
-            document.getElementById('lucrareModalTitle').textContent = 'Adaugă Lucrare';
-            document.getElementById('lucrareModal').style.display = 'block';
-            resetLucrareForm();
-        }
-
-        function editLucrare(id) {
-            const lucrare = lucrariDB.find(l => l.id === id);
-            if (!lucrare) return;
-            
-            editingId = id;
-            document.getElementById('lucrareModalTitle').textContent = 'Editează Lucrare';
-            
-            // Populate form
-            document.getElementById('lucrareClient').value = lucrare.clientId;
-            document.getElementById('lucrareTipServiciu').value = lucrare.tipServiciu;
-            document.getElementById('lucrareStatus').value = lucrare.status;
-            document.getElementById('lucrareWorker').value = lucrare.workerId || '';
-            document.getElementById('lucrareDataProgramata').value = lucrare.dataProgramata || '';
-            document.getElementById('lucrareDataFinalizare').value = lucrare.dataFinalizare || '';
-            document.getElementById('lucrareDescriere').value = lucrare.descriere;
-            document.getElementById('lucrareObservatii').value = lucrare.observatii || '';
-            
-            document.getElementById('lucrareModal').style.display = 'block';
-        }
-
-        function deleteLucrare(id) {
-            if (confirm('Sigur doriți să ștergeți această lucrare?')) {
-                const index = lucrariDB.findIndex(l => l.id === id);
-                if (index !== -1) {
-                    lucrariDB.splice(index, 1);
-                    localStorage.setItem('lucrariDB', JSON.stringify(lucrariDB));
-                    renderLucrari();
-                    renderDashboard();
-                    showNotification('Lucrarea a fost ștearsă cu succes!');
-                }
-            }
-        }
-
-        function updateStatusLucrare(id, newStatus) {
-            const lucrare = lucrariDB.find(l => l.id === id);
-            if (!lucrare) return;
-            
-            const oldStatus = lucrare.status;
-            lucrare.status = newStatus;
-            
-            // Dacă se finalizează lucrarea, setează data de finalizare și calculează expirarea
-            if (newStatus === 'finalizat' && oldStatus !== 'finalizat') {
-                lucrare.dataFinalizare = new Date().toISOString().split('T')[0];
-                
-                // Adaugă în baza de date servicii
-                const client = clientiDB.find(c => c.id === lucrare.clientId);
-                if (client) {
-                    const dataFinalizare = new Date(lucrare.dataFinalizare);
-                    const dataExpirare = new Date(dataFinalizare);
-                    dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
-                    
-                    // Verifică dacă serviciul nu există deja
-                    const serviciiExistente = serviciiDB.filter(s => 
-                        s.clientId === lucrare.clientId && 
-                        s.tipServiciu === lucrare.tipServiciu &&
-                        s.dataFinalizare === lucrare.dataFinalizare
-                    );
-                    
-                    if (serviciiExistente.length === 0) {
-                        serviciiDB.push({
-                            id: Date.now() + Math.random(),
-                            clientId: lucrare.clientId,
-                            numeClient: client.nume,
-                            telefon: client.telefon,
-                            adresa: client.adresa,
-                            tipServiciu: lucrare.tipServiciu,
-                            dataFinalizare: lucrare.dataFinalizare,
-                            dataExpirare: dataExpirare.toISOString().split('T')[0],
-                            status: 'activ'
-                        });
-                    }
-                }
-            }
-            
-            // Salvează modificările
-            localStorage.setItem('lucrariDB', JSON.stringify(lucrariDB));
-            localStorage.setItem('serviciiDB', JSON.stringify(serviciiDB));
-            
-            showNotification(`Status schimbat în: ${newStatus}`);
-            renderLucrari();
-            renderDashboard();
-        }
-
-        function closeLucrareModal() {
-            document.getElementById('lucrareModal').style.display = 'none';
-            resetLucrareForm();
-        }
-
-        function resetLucrareForm() {
-            document.getElementById('lucrareForm').reset();
-            editingId = null;
-        }
-
-        // Clienți functions
-        function renderClienti() {
-            const clientiContainer = document.getElementById('clientiList');
-            
-            if (clientiDB.length === 0) {
-                clientiContainer.innerHTML = '<p>Nu există clienți înregistrați.</p>';
-                return;
-            }
-            
-            let html = '<table class="table"><thead><tr>';
-            html += '<th>Nume</th><th>Telefon</th><th>Email</th><th>Adresa</th><th>Acțiuni</th>';
-            html += '</tr></thead><tbody>';
-            
-            clientiDB.forEach(client => {
-                html += `<tr>
-                    <td>${client.nume}</td>
-                    <td>${client.telefon}</td>
-                    <td>${client.email || 'Nu există'}</td>
-                    <td>${client.adresa}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-edit" onclick="editClient(${client.id})">
-                                <i class="fas fa-edit"></i> Editează
-                            </button>
-                            <button class="btn-delete" onclick="deleteClient(${client.id})">
-                                <i class="fas fa-trash"></i> Șterge
-                            </button>
-                        </div>
-                    </td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            clientiContainer.innerHTML = html;
-        }
-
-        function showAddClientModal() {
-            document.getElementById('clientModalTitle').textContent = 'Adaugă Client';
-            document.getElementById('clientModal').style.display = 'block';
-            resetClientForm();
-        }
-
-        function editClient(id) {
-            const client = clientiDB.find(c => c.id === id);
-            if (!client) return;
-            
-            editingId = id;
-            document.getElementById('clientModalTitle').textContent = 'Editează Client';
-            
-            // Populate form
-            document.getElementById('clientNume').value = client.nume;
-            document.getElementById('clientTelefon').value = client.telefon;
-            document.getElementById('clientEmail').value = client.email || '';
-            document.getElementById('clientAdresa').value = client.adresa;
-            document.getElementById('clientObservatii').value = client.observatii || '';
-            
-            document.getElementById('clientModal').style.display = 'block';
-        }
-
-        function deleteClient(id) {
-            if (confirm('Sigur doriți să ștergeți acest client?')) {
-                const index = clientiDB.findIndex(c => c.id === id);
-                if (index !== -1) {
-                    clientiDB.splice(index, 1);
-                    localStorage.setItem('clientiDB', JSON.stringify(clientiDB));
-                    renderClienti();
-                    renderDashboard();
-                    showNotification('Clientul a fost șters cu succes!');
-                }
-            }
-        }
-
-        function closeClientModal() {
-            document.getElementById('clientModal').style.display = 'none';
-            resetClientForm();
-        }
-
-        function resetClientForm() {
-            document.getElementById('clientForm').reset();
-            editingId = null;
-        }
-
-        // Servicii functions
-        function renderServicii() {
-            const serviciiContainer = document.getElementById('serviciiList');
-            
-            if (serviciiDB.length === 0) {
-                serviciiContainer.innerHTML = '<p>Nu există servicii înregistrate.</p>';
-                return;
-            }
-            
-            let html = '<table class="table"><thead><tr>';
-            html += '<th>Client</th><th>Tip Serviciu</th><th>Data Finalizare</th><th>Data Expirare</th><th>Status</th><th>Acțiuni</th>';
-            html += '</tr></thead><tbody>';
-            
-            serviciiDB.forEach(serviciu => {
-                const today = new Date();
-                const expireDate = new Date(serviciu.dataExpirare);
-                const daysToExpire = Math.ceil((expireDate - today) / (1000 * 60 * 60 * 24));
-                
-                let statusClass = 'activ';
-                if (daysToExpire < 0) statusClass = 'expirat';
-                else if (daysToExpire <= 30) statusClass = 'expira-curand';
-                
-                html += `<tr>
-                    <td>${serviciu.numeClient}</td>
-                    <td>${serviciu.tipServiciu}</td>
-                    <td>${serviciu.dataFinalizare}</td>
-                    <td>${serviciu.dataExpirare}</td>
-                    <td><span class="status-badge ${statusClass}">${statusClass}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-edit" onclick="contactClient('${serviciu.telefon}')">
-                                <i class="fas fa-phone"></i> Contactează
-                            </button>
-                        </div>
-                    </td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            serviciiContainer.innerHTML = html;
-        }
-
-        function showServiceTab(tabType) {
-            // Update active tab
-            document.querySelectorAll('.service-tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Filter services based on tab
-            const serviciiContainer = document.getElementById('serviciiList');
-            let filteredServices = serviciiDB;
-            
-            const today = new Date();
-            
-            switch(tabType) {
-                case 'active':
-                    filteredServices = serviciiDB.filter(s => {
-                        const expireDate = new Date(s.dataExpirare);
-                        return expireDate > today;
-                    });
-                    break;
-                case 'expiring':
-                    filteredServices = serviciiDB.filter(s => {
-                        const expireDate = new Date(s.dataExpirare);
-                        const daysToExpire = Math.ceil((expireDate - today) / (1000 * 60 * 60 * 24));
-                        return daysToExpire <= 30 && daysToExpire > 0;
-                    });
-                    break;
-                case 'expired':
-                    filteredServices = serviciiDB.filter(s => {
-                        const expireDate = new Date(s.dataExpirare);
-                        return expireDate < today;
-                    });
-                    break;
-            }
-            
-            if (filteredServices.length === 0) {
-                serviciiContainer.innerHTML = '<p>Nu există servicii pentru această categorie.</p>';
-                return;
-            }
-            
-            let html = '<table class="table"><thead><tr>';
-            html += '<th>Client</th><th>Tip Serviciu</th><th>Data Finalizare</th><th>Data Expirare</th><th>Status</th><th>Acțiuni</th>';
-            html += '</tr></thead><tbody>';
-            
-            filteredServices.forEach(serviciu => {
-                const today = new Date();
-                const expireDate = new Date(serviciu.dataExpirare);
-                const daysToExpire = Math.ceil((expireDate - today) / (1000 * 60 * 60 * 24));
-                
-                let statusClass = 'activ';
-                let statusText = 'Activ';
-                if (daysToExpire < 0) {
-                    statusClass = 'expirat';
-                    statusText = 'Expirat';
-                } else if (daysToExpire <= 30) {
-                    statusClass = 'expira-curand';
-                    statusText = `Expiră în ${daysToExpire} zile`;
-                }
-                
-                html += `<tr>
-                    <td>${serviciu.numeClient}</td>
-                    <td>${serviciu.tipServiciu}</td>
-                    <td>${serviciu.dataFinalizare}</td>
-                    <td>${serviciu.dataExpirare}</td>
-                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-edit" onclick="contactClient('${serviciu.telefon}')">
-                                <i class="fas fa-phone"></i> Contactează
-                            </button>
-                        </div>
-                    </td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            serviciiContainer.innerHTML = html;
-        }
-
-        function contactClient(telefon) {
-            window.open(`tel:${telefon}`, '_blank');
-        }
-
-        function getExpiringServices() {
-            const today = new Date();
-            return serviciiDB.filter(s => {
-                const expireDate = new Date(s.dataExpirare);
-                const daysToExpire = Math.ceil((expireDate - today) / (1000 * 60 * 60 * 24));
-                return daysToExpire <= 30 && daysToExpire > 0;
-            });
-        }
-
-        // Program functions
-        function renderProgram() {
-            const programContainer = document.getElementById('programList');
-            const today = new Date().toISOString().split('T')[0];
-            
-            // Set default date to today
-            document.getElementById('programDate').value = today;
-            
-            let filteredLucrari = lucrariDB.filter(l => 
-                l.dataProgramata === today && 
-                (l.status === 'programat' || l.status === 'in-lucru')
-            );
-            
-            // Apply worker filter if not admin
-            if (currentUser.rol === 'lucrător') {
-                filteredLucrari = filteredLucrari.filter(l => l.workerId === currentUser.id);
-            }
-            
-            if (filteredLucrari.length === 0) {
-                programContainer.innerHTML = '<p>Nu există lucrări programate pentru astăzi.</p>';
-                return;
-            }
-            
-            let html = '<div class="program-grid">';
-            
-            filteredLucrari.forEach(lucrare => {
-                const client = clientiDB.find(c => c.id === lucrare.clientId);
-                const worker = utilizatoriDB.find(u => u.id === lucrare.workerId);
-                
-                html += `<div class="program-card">
-                    <h4>${lucrare.tipServiciu}</h4>
-                    <div class="program-time">
-                        <i class="fas fa-calendar"></i> ${lucrare.dataProgramata}
+                    <!-- Lucrări în progres -->
+                    <div class="p-6 rounded-xl shadow-lg bg-white">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">Lucrări în Progres</h3>
+                        
+                        ${lucrariInLucru.length === 0 ? `
+                            <p class="text-sm text-gray-600">Nu există lucrări în progres</p>
+                        ` : `
+                            <div class="space-y-3">
+                                ${lucrariInLucru.map(lucrare => {
+                                    const client = AppState.clients.find(c => c.id === lucrare.clientId);
+                                    const angajat = AppState.utilizatori.find(u => u.email === lucrare.angajat);
+                                    
+                                    return `
+                                        <div class="p-4 rounded-lg border bg-gray-50 border-gray-200">
+                                            <div class="flex justify-between items-start">
+                                                <div>
+                                                    <h4 class="font-medium text-gray-800">
+                                                        ${client?.nume} ${client?.prenume} - ${lucrare.tipServiciu}
+                                                    </h4>
+                                                    <p class="text-sm text-gray-600">
+                                                        Angajat: ${angajat?.nume || 'N/A'}
+                                                    </p>
+                                                    <p class="text-sm text-gray-600">
+                                                        Programată: ${lucrare.dataProgramata}
+                                                    </p>
+                                                </div>
+                                                <span class="px-3 py-1 text-xs font-medium bg-orange-100 text-orange-800 rounded-full">
+                                                    În lucru
+                                                </span>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `}
                     </div>
-                    <div class="program-client">
-                        <i class="fas fa-user"></i> ${client ? client.nume : 'Client necunoscut'}
-                    </div>
-                    <div class="program-worker">
-                        <i class="fas fa-user-hard-hat"></i> ${worker ? worker.nume : 'Neatribuit'}
-                    </div>
-                    <div class="program-description">
-                        ${lucrare.descriere}
-                    </div>
-                    <div class="program-status">
-                        <span class="status-badge ${lucrare.status}">${lucrare.status}</span>
-                    </div>
-                </div>`;
-            });
-            
-            html += '</div>';
-            programContainer.innerHTML = html;
+                </div>
+            `;
         }
 
-        function loadProgram() {
-            const selectedDate = document.getElementById('programDate').value;
-            const programContainer = document.getElementById('programList');
-            
-            let filteredLucrari = lucrariDB.filter(l => 
-                l.dataProgramata === selectedDate && 
-                (l.status === 'programat' || l.status === 'in-lucru')
-            );
-            
-            // Apply worker filter if not admin
-            if (currentUser.rol === 'lucrător') {
-                filteredLucrari = filteredLucrari.filter(l => l.workerId === currentUser.id);
-            }
-            
-            if (filteredLucrari.length === 0) {
-                programContainer.innerHTML = '<p>Nu există lucrări programate pentru această dată.</p>';
-                return;
-            }
-            
-            let html = '<div class="program-grid">';
-            
-            filteredLucrari.forEach(lucrare => {
-                const client = clientiDB.find(c => c.id === lucrare.clientId);
-                const worker = utilizatoriDB.find(u => u.id === lucrare.workerId);
-                
-                html += `<div class="program-card">
-                    <h4>${lucrare.tipServiciu}</h4>
-                    <div class="program-time">
-                        <i class="fas fa-calendar"></i> ${lucrare.dataProgramata}
-                    </div>
-                    <div class="program-client">
-                        <i class="fas fa-user"></i> ${client ? client.nume : 'Client necunoscut'}
-                    </div>
-                    <div class="program-worker">
-                        <i class="fas fa-user-hard-hat"></i> ${worker ? worker.nume : 'Neatribuit'}
-                    </div>
-                    <div class="program-description">
-                        ${lucrare.descriere}
-                    </div>
-                    <div class="program-status">
-                        <span class="status-badge ${lucrare.status}">${lucrare.status}</span>
-                    </div>
-                </div>`;
-            });
-            
-            html += '</div>';
-            programContainer.innerHTML = html;
-        }
-
-        // Documente functions
-        function renderDocumente() {
-            const documenteContainer = document.getElementById('documentsList');
-            
-            if (documenteDB.length === 0) {
-                documenteContainer.innerHTML = '<p>Nu există documente încărcate.</p>';
-                return;
-            }
-            
-            let html = '<div class="file-list">';
-            
-            documenteDB.forEach(doc => {
-                const lucrare = lucrariDB.find(l => l.id === doc.lucrareId);
-                
-                html += `<div class="file-item">
-                    <div>
-                        <strong>${doc.nume}</strong><br>
-                        <small>Lucrare: ${lucrare ? lucrare.tipServiciu : 'Necunoscută'}</small><br>
-                        <small>Încărcat: ${doc.dataIncarcare}</small>
-                    </div>
-                    <div>
-                        <button onclick="downloadDocument(${doc.id})">
-                            <i class="fas fa-download"></i> Download
-                        </button>
-                        <button onclick="deleteDocument(${doc.id})">
-                            <i class="fas fa-trash"></i> Șterge
+        function renderClientiTab() {
+            return `
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h1 class="text-3xl font-bold text-gray-800">Clienți</h1>
+                        <button
+                            onclick="showClientForm()"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all flex items-center space-x-2"
+                        >
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Client Nou</span>
                         </button>
                     </div>
-                </div>`;
-            });
-            
-            html += '</div>';
-            documenteContainer.innerHTML = html;
+
+                    <!-- Lista clienți -->
+                    <div class="grid gap-4">
+                        ${AppState.clients.length === 0 ? `
+                            <div class="text-center py-12 text-gray-600">
+                                Nu există clienți înregistrați.
+                            </div>
+                        ` : AppState.clients.map(client => {
+                            const clientServicii = AppState.servicii.filter(s => s.clientId === client.id);
+                            const serviciiActive = clientServicii.filter(s => getServiciuStatus(s.dataExpirare) === 'activ');
+                            const serviciiExpirate = clientServicii.filter(s => getServiciuStatus(s.dataExpirare) === 'expirat');
+                            
+                            return `
+                                <div class="p-6 rounded-xl shadow-lg bg-white card-shadow hover-scale">
+                                    <div class="flex justify-between items-start">
+                                        <div class="flex-1">
+                                            <div class="flex items-center space-x-4 mb-4">
+                                                <div>
+                                                    <h3 class="text-xl font-semibold text-gray-800">
+                                                        ${client.nume} ${client.prenume}
+                                                    </h3>
+                                                    <p class="text-sm text-gray-600">
+                                                        Client din ${formatDate(client.dataCreare)}
+                                                    </p>
+                                                </div>
+                                                
+                                                <div class="flex space-x-2">
+                                                    ${serviciiActive.length > 0 ? `
+                                                        <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                                                            ${serviciiActive.length} servicii active
+                                                        </span>
+                                                    ` : ''}
+                                                    ${serviciiExpirate.length > 0 ? `
+                                                        <span class="px-3 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
+                                                            ${serviciiExpirate.length} expirate
+                                                        </span>
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                                <div class="flex items-center space-x-2">
+                                                    <i data-lucide="phone" class="w-4 h-4 text-gray-400"></i>
+                                                    <span class="text-sm text-gray-600">${client.telefon}</span>
+                                                </div>
+                                                
+                                                <div class="flex items-center space-x-2">
+                                                    <i data-lucide="mail" class="w-4 h-4 text-gray-400"></i>
+                                                    <span class="text-sm text-gray-600">${client.email}</span>
+                                                </div>
+                                                
+                                                <div class="flex items-center space-x-2">
+                                                    <i data-lucide="map-pin" class="w-4 h-4 text-gray-400"></i>
+                                                    <span class="text-sm text-gray-600">
+                                                        ${client.strada} ${client.numar}, ${client.oras}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            ${clientServicii.length > 0 ? `
+                                                <div class="mt-4">
+                                                    <h4 class="text-sm font-medium mb-2 text-gray-700">Servicii:</h4>
+                                                    <div class="space-y-2">
+                                                        ${clientServicii.slice(0, 2).map(serviciu => `
+                                                            <div class="p-3 rounded-lg bg-gray-50">
+                                                                <div class="flex justify-between items-center">
+                                                                    <span class="text-sm font-medium text-gray-800">
+                                                                        ${serviciu.tipServiciu}
+                                                                    </span>
+                                                                    <span class="text-xs px-2 py-1 rounded-full ${
+                                                                        getServiciuStatus(serviciu.dataExpirare) === 'activ' 
+                                                                            ? 'bg-green-100 text-green-800'
+                                                                            : getServiciuStatus(serviciu.dataExpirare) === 'expira_curand'
+                                                                            ? 'bg-yellow-100 text-yellow-800'
+                                                                            : 'bg-red-100 text-red-800'
+                                                                    }">
+                                                                        Expiră: ${serviciu.dataExpirare}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        `).join('')}
+                                                        ${clientServicii.length > 2 ? `
+                                                            <p class="text-xs text-gray-500">
+                                                                +${clientServicii.length - 2} servicii suplimentare
+                                                            </p>
+                                                        ` : ''}
+                                                    </div>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+
+                                        <div class="flex flex-col space-y-2">
+                                            <button
+                                                onclick="editClient(${client.id})"
+                                                class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-all"
+                                            >
+                                                <i data-lucide="edit" class="w-4 h-4"></i>
+                                            </button>
+                                            
+                                            <button
+                                                onclick="setActiveTab('servicii')"
+                                                class="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-all"
+                                            >
+                                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                            </button>
+                                            
+                                            <button
+                                                onclick="deleteClient(${client.id})"
+                                                class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-all"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
         }
 
-        function downloadDocument(id) {
-            const doc = documenteDB.find(d => d.id === id);
-            if (doc) {
-                // Create download link
-                const link = document.createElement('a');
-                link.href = doc.url;
-                link.download = doc.nume;
-                link.click();
+        function renderMainContent() {
+            switch (AppState.activeTab) {
+                case 'dashboard':
+                    return renderDashboard();
+                case 'clienti':
+                    return renderClientiTab();
+                case 'servicii':
+                    return '<div class="p-8 text-center"><h2 class="text-2xl font-bold">Servicii - În dezvoltare</h2></div>';
+                case 'lucrari':
+                    return '<div class="p-8 text-center"><h2 class="text-2xl font-bold">Lucrări - În dezvoltare</h2></div>';
+                case 'program':
+                    return '<div class="p-8 text-center"><h2 class="text-2xl font-bold">Program Zilnic - În dezvoltare</h2></div>';
+                case 'documente':
+                    return '<div class="p-8 text-center"><h2 class="text-2xl font-bold">Documente - În dezvoltare</h2></div>';
+                case 'utilizatori':
+                    return AppState.currentUser?.rol === 'administrator' 
+                        ? '<div class="p-8 text-center"><h2 class="text-2xl font-bold">Utilizatori - În dezvoltare</h2></div>' 
+                        : renderDashboard();
+                default:
+                    return renderDashboard();
             }
         }
 
-        function deleteDocument(id) {
-            if (confirm('Sigur doriți să ștergeți acest document?')) {
-                const index = documenteDB.findIndex(d => d.id === id);
-                if (index !== -1) {
-                    documenteDB.splice(index, 1);
-                    localStorage.setItem('documenteDB', JSON.stringify(documenteDB));
-                    renderDocumente();
-                    showNotification('Documentul a fost șters cu succes!');
-                }
-            }
-        }
-
-        // Utilizatori functions
-        function renderUtilizatori() {
-            const utilizatoriContainer = document.getElementById('utilizatoriList');
+        function renderApp() {
+            const app = document.getElementById('app');
             
-            if (utilizatoriDB.length === 0) {
-                utilizatoriContainer.innerHTML = '<p>Nu există utilizatori înregistrați.</p>';
-                return;
-            }
-            
-            let html = '<table class="table"><thead><tr>';
-            html += '<th>Nume</th><th>Email</th><th>Rol</th><th>Telefon</th><th>Acțiuni</th>';
-            html += '</tr></thead><tbody>';
-            
-            utilizatoriDB.forEach(user => {
-                html += `<tr>
-                    <td>${user.nume}</td>
-                    <td>${user.email}</td>
-                    <td><span class="status-badge ${user.rol === 'administrator' ? 'finalizat' : 'programat'}">${user.rol}</span></td>
-                    <td>${user.telefon || 'Nu există'}</td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-edit" onclick="editUser(${user.id})">
-                                <i class="fas fa-edit"></i> Editează
-                            </button>
-                            ${user.id !== currentUser.id ? `
-                                <button class="btn-delete" onclick="deleteUser(${user.id})">
-                                    <i class="fas fa-trash"></i> Șterge
-                                </button>
-                            ` : ''}
-                        </div>
-                    </td>
-                </tr>`;
-            });
-            
-            html += '</tbody></table>';
-            utilizatoriContainer.innerHTML = html;
-        }
-
-        function showAddUserModal() {
-            document.getElementById('userModalTitle').textContent = 'Adaugă Utilizator';
-            document.getElementById('userModal').style.display = 'block';
-            resetUserForm();
-        }
-
-        function editUser(id) {
-            const user = utilizatoriDB.find(u => u.id === id);
-            if (!user) return;
-            
-            editingId = id;
-            document.getElementById('userModalTitle').textContent = 'Editează Utilizator';
-            
-            // Populate form
-            document.getElementById('userNume').value = user.nume;
-            document.getElementById('userEmail').value = user.email;
-            document.getElementById('userPassword').value = user.password;
-            document.getElementById('userRol').value = user.rol;
-            document.getElementById('userTelefon').value = user.telefon || '';
-            
-            document.getElementById('userModal').style.display = 'block';
-        }
-
-        function deleteUser(id) {
-            if (confirm('Sigur doriți să ștergeți acest utilizator?')) {
-                const index = utilizatoriDB.findIndex(u => u.id === id);
-                if (index !== -1) {
-                    utilizatoriDB.splice(index, 1);
-                    localStorage.setItem('utilizatoriDB', JSON.stringify(utilizatoriDB));
-                    renderUtilizatori();
-                    showNotification('Utilizatorul a fost șters cu succes!');
-                }
-            }
-        }
-
-        function closeUserModal() {
-            document.getElementById('userModal').style.display = 'none';
-            resetUserForm();
-        }
-
-        function resetUserForm() {
-            document.getElementById('userForm').reset();
-            editingId = null;
-        }
-
-        // Form submissions
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const email = formData.get('email');
-            const password = formData.get('password');
-            
-            if (login(email, password)) {
-                this.reset();
+            if (!AppState.isAuthenticated) {
+                app.innerHTML = renderLoginForm();
             } else {
-                showNotification('Email sau parolă incorectă!', 'error');
-            }
-        });
-
-        document.getElementById('lucrareForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const lucrareData = Object.fromEntries(formData);
-            
-            // Convertește ID-urile din string în număr
-            lucrareData.clientId = parseInt(lucrareData.clientId);
-            lucrareData.workerId = lucrareData.workerId ? parseInt(lucrareData.workerId) : null;
-            
-            // Validare câmpuri obligatorii
-            if (!lucrareData.clientId || !lucrareData.tipServiciu || !lucrareData.descriere) {
-                alert('Completați toate câmpurile obligatorii!');
-                return;
+                app.innerHTML = `
+                    <div class="min-h-screen bg-gray-50">
+                        <div class="flex">
+                            ${renderSidebar()}
+                            <main class="flex-1 overflow-auto">
+                                <div class="p-6">
+                                    ${renderMainContent()}
+                                </div>
+                            </main>
+                        </div>
+                    </div>
+                `;
             }
 
-            // Salvează lucrarea
-            const lucrareDataObj = {
-                ...lucrareData,
-                id: editingId || Date.now(),
-                dataCreare: editingId ? lucrariDB.find(l => l.id === editingId).dataCreare : new Date().toISOString().split('T')[0],
-                dataFinalizare: lucrareData.status === 'finalizat' && !lucrareData.dataFinalizare ? new Date().toISOString().split('T')[0] : lucrareData.dataFinalizare
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // Event handlers
+        function performLogin() {
+            AppState.loginData.email = document.getElementById('login-email').value;
+            AppState.loginData.password = document.getElementById('login-password').value;
+            handleLogin();
+        }
+
+        function setActiveTab(tab) {
+            AppState.activeTab = tab;
+            renderApp();
+        }
+
+        function showClientForm() {
+            AppState.showClientForm = true;
+            AppState.selectedClient = null;
+            AppState.clientForm = {
+                nume: '',
+                prenume: '',
+                email: '',
+                telefon: '',
+                strada: '',
+                numar: '',
+                bloc: '',
+                scara: '',
+                apartament: '',
+                oras: 'Roșiorii de Vede',
+                areServiciuExistent: false,
+                tipServiciu: '',
+                dataEfectuare: ''
             };
+            // Aici ar trebui să afișezi modal-ul pentru formular
+            showNotification('Funcția de adăugare client va fi implementată în curând!');
+        }
 
-            if (editingId) {
-                const index = lucrariDB.findIndex(l => l.id === editingId);
-                const oldStatus = lucrariDB[index].status;
-                lucrariDB[index] = lucrareDataObj;
-                
-                // Dacă statusul s-a schimbat în "finalizat", calculează data de expirare
-                if (oldStatus !== 'finalizat' && lucrareDataObj.status === 'finalizat') {
-                    adaugaInServiciiDB(lucrareDataObj);
-                }
-            } else {
-                lucrariDB.push(lucrareDataObj);
-                
-                // Dacă lucrarea este finalizată de la început, adaugă în servicii
-                if (lucrareDataObj.status === 'finalizat') {
-                    adaugaInServiciiDB(lucrareDataObj);
-                }
+        function editClient(clientId) {
+            const client = AppState.clients.find(c => c.id === clientId);
+            if (client) {
+                AppState.selectedClient = client;
+                AppState.clientForm = { ...client };
+                AppState.showClientForm = true;
+                // Aici ar trebui să afișezi modal-ul pentru editare
+                showNotification('Funcția de editare client va fi implementată în curând!');
             }
+        }
 
-            // Salvează în localStorage
-            localStorage.setItem('lucrariDB', JSON.stringify(lucrariDB));
-            localStorage.setItem('serviciiDB', JSON.stringify(serviciiDB));
-
-            showNotification('Lucrarea a fost salvată cu succes!');
-            document.getElementById('lucrareModal').style.display = 'none';
-            renderLucrari();
-            renderDashboard();
-            resetLucrareForm();
-            
-            // Funcție pentru adăugarea în baza de date servicii
-            function adaugaInServiciiDB(lucrare) {
-                const client = clientiDB.find(c => c.id === lucrare.clientId);
-                if (!client) return;
-                
-                const dataFinalizare = new Date(lucrare.dataFinalizare);
-                const dataExpirare = new Date(dataFinalizare);
-                dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
-                
-                // Verifică dacă serviciul nu există deja
-                const serviciiExistente = serviciiDB.filter(s => 
-                    s.clientId === lucrare.clientId && 
-                    s.tipServiciu === lucrare.tipServiciu &&
-                    s.dataFinalizare === lucrare.dataFinalizare
-                );
-                
-                if (serviciiExistente.length === 0) {
-                    serviciiDB.push({
-                        id: Date.now() + Math.random(),
-                        clientId: lucrare.clientId,
-                        numeClient: client.nume,
-                        telefon: client.telefon,
-                        adresa: client.adresa,
-                        tipServiciu: lucrare.tipServiciu,
-                        dataFinalizare: lucrare.dataFinalizare,
-                        dataExpirare: dataExpirare.toISOString().split('T')[0],
-                        status: 'activ'
-                    });
-                }
+        // Event listeners
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !AppState.isAuthenticated) {
+                performLogin();
             }
         });
-
-        document.getElementById('clientForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const clientData = Object.fromEntries(formData);
-            
-            if (editingId) {
-                const index = clientiDB.findIndex(c => c.id === editingId);
-                clientiDB[index] = { ...clientData, id: editingId };
-            } else {
-                clientiDB.push({
-                    ...clientData,
-                    id: Date.now(),
-                    dataCreare: new Date().toISOString().split('T')[0]
-                });
-            }
-            
-            localStorage.setItem('clientiDB', JSON.stringify(clientiDB));
-            showNotification('Clientul a fost salvat cu succes!');
-            document.getElementById('clientModal').style.display = 'none';
-            renderClienti();
-            renderDashboard();
-            resetClientForm();
-        });
-
-        document.getElementById('userForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const userData = Object.fromEntries(formData);
-            
-            if (editingId) {
-                const index = utilizatoriDB.findIndex(u => u.id === editingId);
-                utilizatoriDB[index] = { ...userData, id: editingId };
-            } else {
-                userData.id = Date.now();
-                userData.dataCreare = new Date().toISOString().split('T')[0];
-                utilizatoriDB.push(userData);
-            }
-            
-            localStorage.setItem('utilizatoriDB', JSON.stringify(utilizatoriDB));
-            showNotification('Utilizatorul a fost salvat cu succes!');
-            document.getElementById('userModal').style.display = 'none';
-            renderUtilizatori();
-            resetUserForm();
-        });
-
-        // Load select options
-        function loadSelectOptions() {
-            // Load clients for lucrare form
-            const clientSelect = document.getElementById('lucrareClient');
-            clientSelect.innerHTML = '<option value="">Selectează client</option>';
-            clientiDB.forEach(client => {
-                clientSelect.innerHTML += `<option value="${client.id}">${client.nume}</option>`;
-            });
-            
-            // Load workers for lucrare form
-            const workerSelect = document.getElementById('lucrareWorker');
-            workerSelect.innerHTML = '<option value="">Selectează lucrător</option>';
-            utilizatoriDB.filter(u => u.rol === 'lucrător').forEach(worker => {
-                workerSelect.innerHTML += `<option value="${worker.id}">${worker.nume}</option>`;
-            });
-            
-            // Load workers for filter
-            const filterWorkerSelect = document.getElementById('filterWorker');
-            filterWorkerSelect.innerHTML = '<option value="">Toți lucrătorii</option>';
-            utilizatoriDB.filter(u => u.rol === 'lucrător').forEach(worker => {
-                filterWorkerSelect.innerHTML += `<option value="${worker.id}">${worker.nume}</option>`;
-            });
-            
-            // Load workers for program filter
-            const programFilterWorkerSelect = document.getElementById('filterProgramWorker');
-            programFilterWorkerSelect.innerHTML = '<option value="">Toți lucrătorii</option>';
-            utilizatoriDB.filter(u => u.rol === 'lucrător').forEach(worker => {
-                programFilterWorkerSelect.innerHTML += `<option value="${worker.id}">${worker.nume}</option>`;
-            });
-            
-            // Load lucrari for documents
-            const documentLucrareSelect = document.getElementById('documentLucrareId');
-            documentLucrareSelect.innerHTML = '<option value="">Selectează lucrarea</option>';
-            lucrariDB.forEach(lucrare => {
-                const client = clientiDB.find(c => c.id === lucrare.clientId);
-                documentLucrareSelect.innerHTML += `<option value="${lucrare.id}">${lucrare.tipServiciu} - ${client ? client.nume : 'Client necunoscut'}</option>`;
-            });
-        }
-
-        // Search and filter functions
-        function searchLucrari() {
-            const searchTerm = document.getElementById('searchLucrari').value.toLowerCase();
-            const rows = document.querySelectorAll('#lucrariList tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        }
-
-        function filterLucrari() {
-            const statusFilter = document.getElementById('filterStatus').value;
-            const workerFilter = document.getElementById('filterWorker').value;
-            
-            renderLucrari(); // Re-render with filters
-        }
-
-        function searchClienti() {
-            const searchTerm = document.getElementById('searchClienti').value.toLowerCase();
-            const rows = document.querySelectorAll('#clientiList tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        }
-
-        function searchServicii() {
-            const searchTerm = document.getElementById('searchServicii').value.toLowerCase();
-            const rows = document.querySelectorAll('#serviciiList tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        }
-
-        function filterServicii() {
-            const tipFilter = document.getElementById('filterTipServiciu').value;
-            const rows = document.querySelectorAll('#serviciiList tbody tr');
-            
-            rows.forEach(row => {
-                const tipCell = row.children[1]; // Tip Serviciu column
-                const tipText = tipCell.textContent;
-                row.style.display = (!tipFilter || tipText === tipFilter) ? '' : 'none';
-            });
-        }
-
-        function filterProgram() {
-            const workerFilter = document.getElementById('filterProgramWorker').value;
-            loadProgram(); // Re-render with filters
-        }
-
-        // Export functions
-        function exportToPDF() {
-            showNotification('Funcția de export PDF va fi implementată în curând!');
-        }
-
-        function exportToExcel() {
-            showNotification('Funcția de export Excel va fi implementată în curând!');
-        }
-
-        // File upload functions
-        document.getElementById('fileUpload').addEventListener('click', function() {
-            document.getElementById('fileInput').click();
-        });
-
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const files = e.target.files;
-            const lucrareId = document.getElementById('documentLucrareId').value;
-            
-            if (!lucrareId) {
-                alert('Selectați o lucrare înainte de a încărca documente!');
-                return;
-            }
-            
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const document = {
-                        id: Date.now() + Math.random(),
-                        lucrareId: parseInt(lucrareId),
-                        nume: file.name,
-                        tip: file.type,
-                        dimensiune: file.size,
-                        url: e.target.result,
-                        dataIncarcare: new Date().toISOString().split('T')[0]
-                    };
-                    
-                    documenteDB.push(document);
-                    localStorage.setItem('documenteDB', JSON.stringify(documenteDB));
-                    renderDocumente();
-                    showNotification(`Document ${file.name} încărcat cu succes!`);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
-
-        // Drag and drop
-        const fileUpload = document.getElementById('fileUpload');
-        fileUpload.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.classList.add('dragover');
-        });
-
-        fileUpload.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-        });
-
-        fileUpload.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.classList.remove('dragover');
-            
-            const files = e.dataTransfer.files;
-            const lucrareId = document.getElementById('documentLucrareId').value;
-            
-            if (!lucrareId) {
-                alert('Selectați o lucrare înainte de a încărca documente!');
-                return;
-            }
-            
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const document = {
-                        id: Date.now() + Math.random(),
-                        lucrareId: parseInt(lucrareId),
-                        nume: file.name,
-                        tip: file.type,
-                        dimensiune: file.size,
-                        url: e.target.result,
-                        dataIncarcare: new Date().toISOString().split('T')[0]
-                    };
-                    
-                    documenteDB.push(document);
-                    localStorage.setItem('documenteDB', JSON.stringify(documenteDB));
-                    renderDocumente();
-                    showNotification(`Document ${file.name} încărcat cu succes!`);
-                };
-                reader.readAsDataURL(file);
-            });
-        });
-
-        // Notification function
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            checkAuth();
+            renderApp();
         });
+
+        // Auto-update every 30 seconds
+        setInterval(() => {
+            if (AppState.isAuthenticated) {
+                renderApp();
+            }
+        }, 30000);
     </script>
 </body>
 </html>
