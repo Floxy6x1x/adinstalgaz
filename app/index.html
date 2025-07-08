@@ -983,6 +983,12 @@
                 Experiență de peste 20 de ani în domeniu.
             </p>
             
+            <!-- Alerta pentru probleme de login -->
+            <div style="background: #fef5e7; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #ed8936; max-width: 600px; margin: 20px auto;">
+                <strong>⚠️ Probleme la autentificare?</strong><br>
+                Dacă nu puteți accesa cu rolul de Administrator, folosiți butonul <strong>"Reset Date Demo"</strong> din colțul stânga jos al ecranului.
+            </div>
+            
             <div class="contact-info">
                 <h3>📞 Contact</h3>
                 <p>📱 Telefon: <a href="tel:0762614401">0762 614 401</a></p>
@@ -997,6 +1003,16 @@
         
         <!-- Portal secret - invizibil -->
         <div class="secret-portal" id="secretPortal"></div>
+        
+        <!-- Buton resetare date (doar pentru dezvoltare) -->
+        <div style="position: fixed; bottom: 20px; left: 20px; z-index: 1000;">
+            <button onclick="resetareDate()" style="background: #e53e3e; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(229, 62, 62, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(229, 62, 62, 0.3)'">
+                🔄 Reset Date Demo
+            </button>
+            <div style="margin-top: 5px; font-size: 11px; color: white; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+                Folosiți dacă login-ul nu funcționează corect
+            </div>
+        </div>
     </div>
 
     <!-- SISTEM AUTENTIFICARE (ASCUNS) -->
@@ -1005,6 +1021,14 @@
             <div class="auth-logo">🔐</div>
             <h1 class="auth-title">Portal Angajați</h1>
             <p class="auth-subtitle">Acces restricționat</p>
+            
+            <!-- Mesaj informativ -->
+            <div style="background: #ebf8ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #2a4365; border-left: 4px solid #4299e1;">
+                <strong>📌 Conturi disponibile:</strong><br>
+                👨‍💼 Admin: florin.gavrila@adinstalgaz.ro<br>
+                👷 Lucrător: ion@adinstalgaz.ro<br>
+                🔑 Parolă pentru ambele: 123456
+            </div>
             
             <!-- Login Form -->
             <div id="loginForm" class="auth-form">
@@ -1537,8 +1561,15 @@
             // Actualizează informațiile utilizatorului
             if (currentUser) {
                 document.getElementById('currentUser').textContent = currentUser.nume;
-                document.getElementById('userRole').textContent = currentUser.rol === 'administrator' ? 'Admin' : 'Lucrător';
-                document.getElementById('userRole').className = `status-badge ${currentUser.rol === 'administrator' ? 'status-active' : 'status-pending'}`;
+                const userRoleElement = document.getElementById('userRole');
+                
+                if (currentUser.rol === 'administrator') {
+                    userRoleElement.textContent = 'ADMIN';
+                    userRoleElement.className = 'status-badge status-active';
+                } else {
+                    userRoleElement.textContent = 'Lucrător';
+                    userRoleElement.className = 'status-badge status-pending';
+                }
                 
                 // Aplică restricții bazate pe rol
                 aplicaRestrictiiRol();
@@ -1599,10 +1630,25 @@
                 return;
             }
 
+            // Verifică și corectează rolul pentru Florin Gavrilă
+            if (user.email === 'florin.gavrila@adinstalgaz.ro' && user.rol !== 'administrator') {
+                console.log('⚠️ Corectare rol pentru Florin Gavrilă...');
+                user.rol = 'administrator';
+                // Actualizează în array
+                const index = utilizatori.findIndex(u => u.id === user.id);
+                if (index !== -1) {
+                    utilizatori[index].rol = 'administrator';
+                    localStorage.setItem('adinstalgaz_utilizatori', JSON.stringify(utilizatori));
+                }
+            }
+
             currentUser = user;
             localStorage.setItem('adinstalgaz_current_user', JSON.stringify(user));
             
-            showNotification(`Bun venit, ${user.nume}!`, 'success');
+            // Afișează mesaj cu rolul utilizatorului
+            const rolText = user.rol === 'administrator' ? 'Administrator (acces complet)' : 'Lucrător (acces limitat)';
+            showNotification(`Bun venit, ${user.nume}! [${rolText}]`, 'success');
+            
             afiseazaAplicatia();
             
             // Resetează formularul
@@ -1938,6 +1984,16 @@
 
             // Afișează servicii care expiră
             afiseazaServiciiExpira();
+            
+            // Afișează ultima sincronizare
+            const ultimaSincronizare = localStorage.getItem('adinstalgaz_ultima_sincronizare');
+            if (ultimaSincronizare) {
+                const elementDashboard = document.getElementById('ultimaSincronizareDashboard');
+                if (elementDashboard) {
+                    const data = new Date(ultimaSincronizare);
+                    elementDashboard.innerHTML = `Ultima salvare: <strong>${data.toLocaleTimeString('ro-RO')}</strong>`;
+                }
+            }
         }
 
         function afiseazaServiciiExpira() {
@@ -3636,6 +3692,73 @@
         }
 
         // ===========================================
+        // RESETARE DATE
+        // ===========================================
+        
+        function resetareDate() {
+            if (confirm('⚠️ Aceasta va șterge TOATE datele și va reîncărca datele demo cu ROLURILE CORECTE.\n\nFlorin Gavrilă → ADMINISTRATOR\nIon Popescu → Lucrător\n\nContinuați?')) {
+                // Șterge tot din localStorage pentru AdInstalGaz
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.includes('adinstalgaz')) {
+                        keysToRemove.push(key);
+                    }
+                }
+                
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+                
+                // Resetează variabilele
+                clienti = [];
+                lucrari = [];
+                utilizatori = [];
+                servicii = [];
+                documente = {};
+                currentUser = null;
+                
+                // Reîncarcă datele demo
+                adaugaDateDemo();
+                
+                // Forțează adăugarea utilizatorilor cu rolurile corecte
+                utilizatori = [
+                    {
+                        id: 1,
+                        nume: 'Florin Gavrilă',
+                        email: 'florin.gavrila@adinstalgaz.ro',
+                        parola: '123456',
+                        rol: 'administrator',
+                        dataCreare: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        nume: 'Ion Popescu',
+                        email: 'ion@adinstalgaz.ro',
+                        parola: '123456',
+                        rol: 'lucrator',
+                        dataCreare: new Date().toISOString()
+                    },
+                    {
+                        id: 3,
+                        nume: 'Vasile Georgescu',
+                        email: 'vasile@adinstalgaz.ro',
+                        parola: '123456',
+                        rol: 'lucrator',
+                        dataCreare: new Date().toISOString()
+                    }
+                ];
+                
+                localStorage.setItem('adinstalgaz_utilizatori', JSON.stringify(utilizatori));
+                
+                showNotification('✅ Date resetate cu succes! Acum puteți loga cu rolurile corecte.', 'success');
+                
+                // Reload după 2 secunde
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        }
+
+        // ===========================================
         // DATE DEMO
         // ===========================================
         
@@ -3797,6 +3920,17 @@
         
         // Verifică dacă utilizatorul era autentificat
         window.addEventListener('DOMContentLoaded', function() {
+            // Verifică versiunea aplicației și resetează dacă e necesară
+            const versiuneApp = '2.0';
+            const versiuneSalvata = localStorage.getItem('adinstalgaz_versiune');
+            
+            if (versiuneSalvata !== versiuneApp) {
+                console.log('🔄 Actualizare aplicație detectată. Resetare date...');
+                resetareDate();
+                localStorage.setItem('adinstalgaz_versiune', versiuneApp);
+                return;
+            }
+            
             const savedUser = localStorage.getItem('adinstalgaz_current_user');
             
             if (savedUser) {
@@ -3836,8 +3970,13 @@
 
         console.log('🚀 AdInstalGaz - Sistem Complet cu Toate Funcționalitățile');
         console.log('📍 Portal Secret: Click pe logo de 5 ori sau colțul din dreapta jos');
-        console.log('👨‍💼 Admin demo: florin.gavrila@adinstalgaz.ro / 123456');
-        console.log('👷 Lucrător demo: ion@adinstalgaz.ro / 123456');
+        console.log('');
+        console.log('👥 CONTURI DISPONIBILE:');
+        console.log('👨‍💼 ADMINISTRATOR: florin.gavrila@adinstalgaz.ro / 123456');
+        console.log('👷 LUCRĂTOR: ion@adinstalgaz.ro / 123456');
+        console.log('');
+        console.log('⚠️ Dacă nu funcționează cu rolul corect, folosiți butonul "Reset Date Demo" din colțul stânga jos!');
+        console.log('');
         console.log('✅ Funcționalități implementate:');
         console.log('   - Upload documente (Admin + Lucrători)');
         console.log('   - Bază de date servicii cu monitoring expirare');
@@ -3845,6 +3984,14 @@
         console.log('   - Program zilnic cu export PDF');
         console.log('   - Export rapoarte complete PDF + Excel');
         console.log('   - Indicator sincronizare vizibil în header');
+        
+        // Funcție debug pentru verificare roluri
+        window.verificaRoluri = function() {
+            console.log('📋 UTILIZATORI ÎN SISTEM:');
+            utilizatori.forEach(u => {
+                console.log(`${u.nume} (${u.email}) → ${u.rol === 'administrator' ? '👨‍💼 ADMINISTRATOR' : '👷 LUCRĂTOR'}`);
+            });
+        };
     </script>
 </body>
 </html>
