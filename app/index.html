@@ -2901,8 +2901,8 @@ Echipa AdInstalGaz`
                             <th>Email</th>
                             <th>Telefon</th>
                             <th>Rol</th>
-                            <th>Status</th>
                             <th>Data Creare</th>
+                            <th>Tip</th>
                             <th>Acțiuni</th>
                         </tr>
                     </thead>
@@ -2910,23 +2910,22 @@ Echipa AdInstalGaz`
             `;
 
             allUsers.forEach(user => {
-                const isPredefined = UTILIZATORI_PREDEFINITI[user.email];
-                const statusClass = isPredefined ? 'status-active' : 'status-pending';
-                const statusText = isPredefined ? 'Predefinit' : 'Custom';
+                const isPredefinit = UTILIZATORI_PREDEFINITI[user.email];
+                const tipUser = isPredefinit ? 'Predefinit' : 'Custom';
                 
                 html += `
                     <tr>
                         <td><strong>${user.nume}</strong></td>
                         <td>${user.email}</td>
                         <td>${user.telefon || 'N/A'}</td>
-                        <td><span class="status-badge ${user.rol === 'Administrator' ? 'status-urgent' : 'status-active'}">${user.rol}</span></td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td><span class="status-badge ${user.rol === 'Administrator' ? 'status-active' : 'status-pending'}">${user.rol}</span></td>
                         <td>${user.dataCreare ? new Date(user.dataCreare).toLocaleDateString('ro-RO') : 'N/A'}</td>
+                        <td><span class="status-badge ${isPredefinit ? 'status-inactive' : 'status-active'}">${tipUser}</span></td>
                         <td>
                             <div class="action-buttons">
-                                <button class="btn btn-secondary btn-small" onclick="veziDetaliiUtilizator(${user.id})" title="Detalii">👁️</button>
-                                ${!isPredefined ? `<button class="btn btn-warning btn-small" onclick="resetParolaUtilizator(${user.id})" title="Reset parolă">🔑</button>` : ''}
-                                ${!isPredefined ? `<button class="btn btn-danger btn-small" onclick="stergeUtilizator(${user.id})" title="Șterge">🗑️</button>` : ''}
+                                ${!isPredefinit ? `<button class="btn btn-secondary btn-small" onclick="editUtilizator(${user.id})" title="Editează">✏️</button>` : ''}
+                                <button class="btn btn-warning btn-small" onclick="resetaParola(${user.id})" title="Resetează parola">🔑</button>
+                                ${!isPredefinit ? `<button class="btn btn-danger btn-small" onclick="stergeUtilizator(${user.id})" title="Șterge">🗑️</button>` : ''}
                             </div>
                         </td>
                     </tr>
@@ -2957,16 +2956,25 @@ Echipa AdInstalGaz`
             }
         }
 
-        function resetParolaUtilizator(id) {
-            const novaParola = prompt('Introduceți noua parolă:');
-            if (novaParola && novaParola.length >= 6) {
-                const user = utilizatori.find(u => u.id === id);
+        function resetaParola(id) {
+            const parolaNoua = prompt('Introdu noua parolă:');
+            if (parolaNoua && parolaNoua.length >= 6) {
+                // Încearcă să găsești în utilizatori custom
+                let user = utilizatori.find(u => u.id === id);
                 if (user) {
-                    user.parola = novaParola;
+                    user.parola = parolaNoua;
                     saveData();
-                    showNotification(`Parola pentru ${user.nume} a fost resetată!`, 'success');
+                } else {
+                    // Verifică în utilizatori predefiniti
+                    const predefinitUser = Object.values(UTILIZATORI_PREDEFINITI).find(u => u.id === id);
+                    if (predefinitUser) {
+                        // Pentru utilizatori predefiniti, nu putem schimba parola permanent
+                        showNotification('Pentru utilizatori predefiniti, parola se resetează la restart!', 'warning');
+                        return;
+                    }
                 }
-            } else if (novaParola !== null) {
+                showNotification('Parola a fost resetată cu succes!', 'success');
+            } else {
                 showNotification('Parola trebuie să aibă cel puțin 6 caractere!', 'error');
             }
         }
@@ -2979,20 +2987,16 @@ Echipa AdInstalGaz`
             // Actualizează statisticile
             document.getElementById('totalClienti').textContent = clienti.length;
             
-            // Actualizează statusurile serviciilor
-            servicii.forEach(serviciu => {
-                serviciu.status = calculeazaStatusServiciu(serviciu.dataExpirare);
-            });
-            
-            const serviciiActive = servicii.filter(s => s.status === 'active').length;
-            const serviciiExpira = servicii.filter(s => s.status === 'expiring').length;
-            const serviciiExpirate = servicii.filter(s => s.status === 'expired').length;
+            // Calculează servicii pe status
+            const serviciiActive = servicii.filter(s => calculeazaStatusServiciu(s.dataExpirare) === 'active').length;
+            const serviciiExpira = servicii.filter(s => calculeazaStatusServiciu(s.dataExpirare) === 'expiring').length;
+            const serviciiExpirate = servicii.filter(s => calculeazaStatusServiciu(s.dataExpirare) === 'expired').length;
             
             document.getElementById('serviciiActive').textContent = serviciiActive;
             document.getElementById('serviciiExpira').textContent = serviciiExpira;
             document.getElementById('serviciiExpirate').textContent = serviciiExpirate;
             
-            // Verifică alerte urgente
+            // Verifică pentru alerte urgente
             verificaAlerteUrgente();
         }
 
@@ -3005,48 +3009,57 @@ Echipa AdInstalGaz`
             if (serviciiExpirate.length > 0) {
                 alerteHtml += `
                     <div class="alert alert-danger">
-                        <strong>🚨 URGENT: ${serviciiExpirate.length} servicii expirate!</strong><br>
-                        Contactați clienții pentru reprogramare urgentă.
-                        <button class="btn btn-danger btn-small" onclick="showSection('servicii'); showServiciiTab('expired')" style="margin-left: 10px;">Vezi Lista</button>
+                        <strong>🚨 URGENT!</strong> ${serviciiExpirate.length} servicii au expirat și necesită reînnoire imediată!
+                        <button class="btn btn-danger btn-small" onclick="showSection('servicii'); showServiciiTab('expired');" style="margin-left: 10px;">Vezi Servicii Expirate</button>
                     </div>
                 `;
             }
             
-            // Servicii ce expiră în 30 zile
+            // Servicii care expiră în 30 zile
             const serviciiExpira = servicii.filter(s => calculeazaStatusServiciu(s.dataExpirare) === 'expiring');
             if (serviciiExpira.length > 0) {
                 alerteHtml += `
                     <div class="alert alert-warning">
-                        <strong>⚠️ ${serviciiExpira.length} servicii expiră în următoarele 30 zile</strong><br>
-                        Programați reviziile din timp pentru a evita expirarea.
-                        <button class="btn btn-warning btn-small" onclick="showSection('servicii'); showServiciiTab('expiring')" style="margin-left: 10px;">Vezi Lista</button>
+                        <strong>⚠️ Atenție!</strong> ${serviciiExpira.length} servicii expiră în următoarele 30 de zile.
+                        <button class="btn btn-warning btn-small" onclick="showSection('servicii'); showServiciiTab('expiring');" style="margin-left: 10px;">Vezi Servicii</button>
                     </div>
                 `;
             }
             
-            // Lucrări pentru astăzi
+            // Lucrări programate astăzi
             const astazi = new Date().toDateString();
-            const lucrariAstazi = lucrari.filter(l => {
-                return new Date(l.dataProgramata).toDateString() === astazi && l.status === 'Programată';
-            });
-            
+            const lucrariAstazi = lucrari.filter(l => new Date(l.dataProgramata).toDateString() === astazi);
             if (lucrariAstazi.length > 0) {
                 alerteHtml += `
                     <div class="alert alert-info">
-                        <strong>📅 ${lucrariAstazi.length} lucrări programate pentru astăzi</strong><br>
-                        Verificați programul zilnic pentru detalii complete.
-                        <button class="btn btn-primary btn-small" onclick="showSection('program')" style="margin-left: 10px;">Vezi Program</button>
+                        <strong>📅 Astăzi!</strong> Ai ${lucrariAstazi.length} lucrări programate pentru astăzi.
+                        <button class="btn btn-primary btn-small" onclick="showSection('program');" style="margin-left: 10px;">Vezi Programul</button>
                     </div>
                 `;
             }
             
-            alerteContainer.innerHTML = alerteHtml;
+            if (alerteContainer) {
+                alerteContainer.innerHTML = alerteHtml;
+            }
         }
 
         // ===========================================
-        // FUNCȚII EXPORT ȘI RAPOARTE
+        // FUNCȚII UTILITARE DIVERSE
         // ===========================================
         
+        function sincronizeazaDatele() {
+            updateDashboard();
+            updateListaClienti();
+            updateListaServicii();
+            updateListaLucrari();
+            updateListaDocumente();
+            updateListaUtilizatori();
+            updateClientiDropdown();
+            updateLucratoriDropdowns();
+            updateClientiDropdownDocumente();
+            showSyncIndicator();
+        }
+
         function exportRaportComplet() {
             if (typeof window.jsPDF === 'undefined') {
                 showNotification('Biblioteca PDF nu este încărcată!', 'error');
@@ -3062,224 +3075,75 @@ Echipa AdInstalGaz`
             
             doc.setFontSize(12);
             doc.text(`Generat pe: ${new Date().toLocaleDateString('ro-RO')}`, 20, 35);
-            doc.text(`De către: ${currentUser.nume} (${currentUser.rol})`, 20, 45);
+            doc.text(`Utilizator: ${currentUser.nume}`, 20, 45);
             
-            let yPos = 60;
+            let yPosition = 60;
             
             // Statistici generale
             doc.setFontSize(16);
-            doc.text('STATISTICI GENERALE', 20, yPos);
-            yPos += 15;
+            doc.text('STATISTICI GENERALE', 20, yPosition);
+            yPosition += 15;
             
             doc.setFontSize(12);
-            doc.text(`Total clienți: ${clienti.length}`, 20, yPos);
-            yPos += 7;
-            doc.text(`Servicii active: ${servicii.filter(s => s.status === 'active').length}`, 20, yPos);
-            yPos += 7;
-            doc.text(`Servicii expirate: ${servicii.filter(s => s.status === 'expired').length}`, 20, yPos);
-            yPos += 7;
-            doc.text(`Total lucrări: ${lucrari.length}`, 20, yPos);
-            yPos += 7;
-            doc.text(`Lucrări finalizate: ${lucrari.filter(l => l.status === 'Finalizată').length}`, 20, yPos);
-            yPos += 20;
+            doc.text(`Total Clienți: ${clienti.length}`, 20, yPosition);
+            yPosition += 8;
+            doc.text(`Total Servicii: ${servicii.length}`, 20, yPosition);
+            yPosition += 8;
+            doc.text(`Total Lucrări: ${lucrari.length}`, 20, yPosition);
+            yPosition += 8;
+            doc.text(`Total Documente: ${documente.length}`, 20, yPosition);
+            yPosition += 15;
             
-            // Lista clienților cu servicii
+            // Servicii pe status
+            const serviciiActive = servicii.filter(s => calculeazaStatusServiciu(s.dataExpirare) === 'active').length;
+            const serviciiExpira = servicii.filter(s => calculeazaStatusServiciu(s.dataExpirare) === 'expiring').length;
+            const serviciiExpirate = servicii.filter(s => calculeazaStatusServiciu(s.dataExpirare) === 'expired').length;
+            
+            doc.text(`Servicii Active: ${serviciiActive}`, 20, yPosition);
+            yPosition += 8;
+            doc.text(`Servicii ce Expiră în 30 zile: ${serviciiExpira}`, 20, yPosition);
+            yPosition += 8;
+            doc.text(`Servicii Expirate: ${serviciiExpirate}`, 20, yPosition);
+            yPosition += 15;
+            
+            // Lucrări pe status
+            const lucrariProgramate = lucrari.filter(l => l.status === 'Programată').length;
+            const lucrariInLucru = lucrari.filter(l => l.status === 'În lucru').length;
+            const lucrariFinalizate = lucrari.filter(l => l.status === 'Finalizată').length;
+            
+            doc.text(`Lucrări Programate: ${lucrariProgramate}`, 20, yPosition);
+            yPosition += 8;
+            doc.text(`Lucrări În Lucru: ${lucrariInLucru}`, 20, yPosition);
+            yPosition += 8;
+            doc.text(`Lucrări Finalizate: ${lucrariFinalizate}`, 20, yPosition);
+            yPosition += 20;
+            
+            // Lista clienți (primii 10)
             if (clienti.length > 0) {
                 doc.setFontSize(16);
-                doc.text('CLIENȚI CU SERVICII', 20, yPos);
-                yPos += 15;
+                doc.text('CLIENȚI RECENȚI (ultimii 10)', 20, yPosition);
+                yPosition += 15;
                 
-                clienti.forEach((client, index) => {
-                    if (yPos > 250) {
+                const clientiRecenti = clienti.slice(-10).reverse();
+                clientiRecenti.forEach((client, index) => {
+                    if (yPosition > 250) {
                         doc.addPage();
-                        yPos = 20;
+                        yPosition = 20;
                     }
                     
                     doc.setFontSize(10);
-                    doc.text(`${index + 1}. ${client.nume} ${client.prenume}`, 20, yPos);
-                    yPos += 5;
-                    doc.text(`   Tel: ${client.telefon} | ${formatareAdresaCompleta(client.adresa)}`, 20, yPos);
-                    yPos += 5;
-                    
-                    const serviciiClient = servicii.filter(s => s.clientId === client.id);
-                    if (serviciiClient.length > 0) {
-                        serviciiClient.forEach(serviciu => {
-                            doc.text(`   - ${serviciu.tipServiciu} (Expirare: ${new Date(serviciu.dataExpirare).toLocaleDateString('ro-RO')})`, 20, yPos);
-                            yPos += 5;
-                        });
-                    } else {
-                        doc.text('   - Fără servicii active', 20, yPos);
-                        yPos += 5;
-                    }
-                    yPos += 3;
+                    doc.text(`${index + 1}. ${client.nume} ${client.prenume}`, 20, yPosition);
+                    yPosition += 6;
+                    doc.text(`   Tel: ${client.telefon} | Email: ${client.email || 'N/A'}`, 20, yPosition);
+                    yPosition += 6;
+                    doc.text(`   Adresa: ${formatareAdresaCompleta(client.adresa)}`, 20, yPosition);
+                    yPosition += 10;
                 });
             }
             
             // Salvare
             doc.save(`AdInstalGaz_Raport_Complet_${new Date().toISOString().split('T')[0]}.pdf`);
-            showNotification('Raport complet exportat cu succes!', 'success');
-        }
-
-        // ===========================================
-        // FUNCȚII UTILITARE ȘI MODALE
-        // ===========================================
-        
-        function veziDetaliiClient(id) {
-            const client = clienti.find(c => c.id === id);
-            if (!client) return;
-            
-            const serviciiClient = servicii.filter(s => s.clientId === id);
-            const lucrariClient = lucrari.filter(l => l.clientId === id);
-            const documenteClient = documente.filter(d => d.clientId === id);
-            
-            let modalContent = `
-                <h3>👤 ${client.nume} ${client.prenume}</h3>
-                <div style="margin: 20px 0;">
-                    <p><strong>📞 Telefon:</strong> ${client.telefon}</p>
-                    <p><strong>📧 Email:</strong> ${client.email || 'N/A'}</p>
-                    <p><strong>📍 Adresă:</strong> ${formatareAdresaCompleta(client.adresa)}</p>
-                    <p><strong>📅 Înregistrat:</strong> ${new Date(client.dataCreare).toLocaleDateString('ro-RO')}</p>
-                </div>
-                
-                <h4>⚙️ Servicii (${serviciiClient.length})</h4>
-                <div style="margin: 15px 0;">
-            `;
-            
-            if (serviciiClient.length > 0) {
-                serviciiClient.forEach(serviciu => {
-                    modalContent += `
-                        <div style="background: #f7fafc; padding: 10px; margin: 5px 0; border-radius: 6px; border-left: 3px solid ${serviciu.status === 'expired' ? '#f56565' : serviciu.status === 'expiring' ? '#ed8936' : '#48bb78'};">
-                            <strong>${serviciu.tipServiciu}</strong><br>
-                            <small>Efectuat: ${new Date(serviciu.dataEfectuare).toLocaleDateString('ro-RO')} | Expiră: ${new Date(serviciu.dataExpirare).toLocaleDateString('ro-RO')}</small>
-                        </div>
-                    `;
-                });
-            } else {
-                modalContent += '<p style="color: #718096;">Nu are servicii active</p>';
-            }
-            
-            modalContent += `
-                </div>
-                
-                <h4>🔧 Lucrări (${lucrariClient.length})</h4>
-                <div style="margin: 15px 0;">
-            `;
-            
-            if (lucrariClient.length > 0) {
-                lucrariClient.forEach(lucrare => {
-                    modalContent += `
-                        <div style="background: #f7fafc; padding: 10px; margin: 5px 0; border-radius: 6px;">
-                            <strong>${lucrare.tipServiciu}</strong> - <span class="status-badge ${getStatusClassLucrare(lucrare.status)}">${lucrare.status}</span><br>
-                            <small>Programat: ${new Date(lucrare.dataProgramata).toLocaleString('ro-RO')}</small><br>
-                            <small>${lucrare.descriere}</small>
-                        </div>
-                    `;
-                });
-            } else {
-                modalContent += '<p style="color: #718096;">Nu are lucrări înregistrate</p>';
-            }
-            
-            modalContent += `
-                </div>
-                
-                <h4>📁 Documente (${documenteClient.length})</h4>
-                <div style="margin: 15px 0;">
-            `;
-            
-            if (documenteClient.length > 0) {
-                documenteClient.forEach(document => {
-                    modalContent += `
-                        <div style="background: #f7fafc; padding: 10px; margin: 5px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
-                            <span>
-                                ${getFileIcon(document.tip)} <strong>${document.nume}</strong><br>
-                                <small>${(document.marime / (1024 * 1024)).toFixed(2)} MB - ${new Date(document.dataIncarcare).toLocaleDateString('ro-RO')}</small>
-                            </span>
-                            <button class="btn btn-primary btn-small" onclick="descarcaDocument(${document.id})">📥</button>
-                        </div>
-                    `;
-                });
-            } else {
-                modalContent += '<p style="color: #718096;">Nu are documente încărcate</p>';
-            }
-            
-            modalContent += '</div>';
-            
-            afiseazaModal('Detalii Client', modalContent);
-        }
-
-        function afiseazaModal(titlu, continut) {
-            document.getElementById('modalTitle').textContent = titlu;
-            document.getElementById('modalContent').innerHTML = continut;
-            document.getElementById('modalDetalii').style.display = 'block';
-        }
-
-        function inchideModal() {
-            document.getElementById('modalDetalii').style.display = 'none';
-        }
-
-        function sunaClient(telefon) {
-            // Simulare apel telefonic
-            if (confirm(`Dorești să suni clientul la numărul ${telefon}?`)) {
-                window.open(`tel:${telefon}`);
-            }
-        }
-
-        function contacteazaClient(clientId) {
-            const client = clienti.find(c => c.id === clientId);
-            if (client) {
-                sunaClient(client.telefon);
-            }
-        }
-
-        function programeazaServiciuNou(serviciuId) {
-            const serviciu = servicii.find(s => s.id === serviciuId);
-            if (serviciu) {
-                // Redirecționează la lucrări și precompletează datele
-                showSection('lucrari');
-                document.getElementById('clientLucrare').value = serviciu.clientId;
-                document.getElementById('tipServiciuLucrare').value = serviciu.tipServiciu;
-                showNotification('Client și serviciu precompletate în formularul de lucrări', 'info');
-            }
-        }
-
-        // ===========================================
-        // DARK MODE
-        // ===========================================
-        
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-mode', isDarkMode);
-            localStorage.setItem('adinstalgaz_darkmode', isDarkMode.toString());
-            
-            const toggle = document.querySelector('.dark-mode-toggle');
-            toggle.textContent = isDarkMode ? '☀️' : '🌙';
-            
-            showNotification(`Mod ${isDarkMode ? 'întunecat' : 'luminos'} activat`, 'info');
-        }
-
-        // ===========================================
-        // FUNCȚII SINCRONIZARE ȘI RESET
-        // ===========================================
-        
-        function sincronizeazaDatele() {
-            // Actualizează toate dropdown-urile
-            updateClientiDropdown();
-            updateClientiDropdownDocumente();
-            updateLucratoriDropdowns();
-            
-            // Actualizează toate listele
-            updateListaClienti();
-            updateListaServicii();
-            updateListaLucrari();
-            updateListaDocumente();
-            if (currentUser && currentUser.rol === 'Administrator') {
-                updateListaUtilizatori();
-            }
-            
-            // Actualizează dashboard-ul
-            updateDashboard();
-            
-            showSyncIndicator();
+            showNotification('Raport complet generat cu succes!', 'success');
         }
 
         function resetDateDemo() {
@@ -3287,29 +3151,31 @@ Echipa AdInstalGaz`
                 showNotification('Doar administratorii pot reseta datele demo!', 'error');
                 return;
             }
-            
-            if (confirm('Ești sigur că vrei să resetezi toate datele? Această acțiune nu poate fi anulată!')) {
-                // Resetează toate datele
-                clienti = [];
-                servicii = [];
-                lucrari = [];
-                documente = [];
-                utilizatori = Object.values(UTILIZATORI_PREDEFINITI);
-                
-                // Șterge din localStorage
-                localStorage.removeItem('adinstalgaz_clienti');
-                localStorage.removeItem('adinstalgaz_servicii');
-                localStorage.removeItem('adinstalgaz_lucrari');
-                localStorage.removeItem('adinstalgaz_documente');
-                localStorage.setItem('adinstalgaz_utilizatori', JSON.stringify(utilizatori));
-                
-                // Adaugă date demo
-                adaugaDateDemo();
-                
-                // Actualizează interfața
-                sincronizeazaDatele();
-                
-                showNotification('Date demo resetate și reîncărcate cu succes!', 'success');
+
+            if (confirm('ATENȚIE! Această acțiune va șterge TOATE datele (clienți, servicii, lucrări, documente) și va reseta aplicația la starea inițială.\n\nEști sigur că vrei să continui?')) {
+                if (confirm('ULTIMĂ CONFIRMARE! Datele nu pot fi recuperate după această acțiune. Continui?')) {
+                    // Resetează toate datele
+                    clienti = [];
+                    servicii = [];
+                    lucrari = [];
+                    documente = [];
+                    utilizatori = Object.values(UTILIZATORI_PREDEFINITI);
+                    
+                    // Salvează în localStorage
+                    localStorage.removeItem('adinstalgaz_clienti');
+                    localStorage.removeItem('adinstalgaz_servicii');
+                    localStorage.removeItem('adinstalgaz_lucrari');
+                    localStorage.removeItem('adinstalgaz_documente');
+                    localStorage.removeItem('adinstalgaz_utilizatori');
+                    
+                    // Actualizează toate componentele
+                    sincronizeazaDatele();
+                    
+                    showNotification('✅ Datele demo au fost resetate complet!', 'success');
+                    
+                    // Adaugă date demo de test
+                    setTimeout(adaugaDateDemo, 1000);
+                }
             }
         }
 
@@ -3317,156 +3183,315 @@ Echipa AdInstalGaz`
             // Clienți demo
             const clientiDemo = [
                 {
-                    id: 1001,
-                    nume: 'Popescu',
-                    prenume: 'Ion',
-                    email: 'ion.popescu@email.ro',
-                    telefon: '0721234567',
+                    id: 1,
+                    nume: "Popescu",
+                    prenume: "Ion",
+                    email: "ion.popescu@gmail.com",
+                    telefon: "0721234567",
                     adresa: {
-                        strada: 'Str. Libertății',
-                        numar: '45',
-                        bloc: '',
-                        scara: '',
-                        apartament: '',
-                        oras: 'Roșiorii de Vede'
+                        strada: "Str. Libertății",
+                        numar: "15",
+                        bloc: "",
+                        scara: "",
+                        apartament: "",
+                        oras: "Roșiorii de Vede"
                     },
-                    dataCreare: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+                    dataCreare: "2024-01-15T10:30:00.000Z"
                 },
                 {
-                    id: 1002,
-                    nume: 'Ionescu',
-                    prenume: 'Maria',
-                    email: 'maria.ionescu@yahoo.com',
-                    telefon: '0734567890',
+                    id: 2,
+                    nume: "Ionescu",
+                    prenume: "Maria",
+                    email: "maria.ionescu@yahoo.ro",
+                    telefon: "0734567890",
                     adresa: {
-                        strada: 'Bd. Republicii',
-                        numar: '23',
-                        bloc: 'A1',
-                        scara: 'B',
-                        apartament: '15',
-                        oras: 'Alexandria'
+                        strada: "Bd. Republicii",
+                        numar: "42",
+                        bloc: "A3",
+                        scara: "B",
+                        apartament: "15",
+                        oras: "Alexandria"
                     },
-                    dataCreare: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString()
+                    dataCreare: "2024-02-20T14:15:00.000Z"
                 },
                 {
-                    id: 1003,
-                    nume: 'Georgescu',
-                    prenume: 'Andrei',
-                    email: '',
-                    telefon: '0756789012',
+                    id: 3,
+                    nume: "Gheorghe",
+                    prenume: "Andrei",
+                    email: "",
+                    telefon: "0756789012",
                     adresa: {
-                        strada: 'Str. Mihai Viteazu',
-                        numar: '78',
-                        bloc: '',
-                        scara: '',
-                        apartament: '',
-                        oras: 'Turnu Măgurele'
+                        strada: "Str. Mihai Viteazu",
+                        numar: "78",
+                        bloc: "",
+                        scara: "",
+                        apartament: "",
+                        oras: "Turnu Măgurele"
                     },
-                    dataCreare: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+                    dataCreare: "2024-03-10T09:45:00.000Z"
                 }
             ];
-            
+
             // Servicii demo
             const serviciiDemo = [
                 {
-                    id: 2001,
-                    clientId: 1001,
-                    tipServiciu: 'Instalație gaz',
-                    dataEfectuare: new Date(Date.now() - 300 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    dataExpirare: new Date(Date.now() + 430 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    status: 'active',
-                    dataCreare: new Date(Date.now() - 300 * 24 * 60 * 60 * 1000).toISOString()
+                    id: 101,
+                    clientId: 1,
+                    tipServiciu: "Instalație gaz",
+                    dataEfectuare: "2023-06-15",
+                    dataExpirare: "2025-06-15",
+                    status: "active",
+                    dataCreare: "2023-06-15T10:00:00.000Z"
                 },
                 {
-                    id: 2002,
-                    clientId: 1002,
-                    tipServiciu: 'Verificare tehnică',
-                    dataEfectuare: new Date(Date.now() - 700 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    dataExpirare: new Date(Date.now() + 25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    status: 'expiring',
-                    dataCreare: new Date(Date.now() - 700 * 24 * 60 * 60 * 1000).toISOString()
+                    id: 102,
+                    clientId: 2,
+                    tipServiciu: "Verificare tehnică",
+                    dataEfectuare: "2024-11-01",
+                    dataExpirare: "2026-11-01",
+                    status: "active",
+                    dataCreare: "2024-11-01T14:30:00.000Z"
                 },
                 {
-                    id: 2003,
-                    clientId: 1003,
-                    tipServiciu: 'Revizie instalație',
-                    dataEfectuare: new Date(Date.now() - 800 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    dataExpirare: new Date(Date.now() - 70 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    status: 'expired',
-                    dataCreare: new Date(Date.now() - 800 * 24 * 60 * 60 * 1000).toISOString()
+                    id: 103,
+                    clientId: 1,
+                    tipServiciu: "Revizie instalație",
+                    dataEfectuare: "2022-12-10",
+                    dataExpirare: "2024-12-10",
+                    status: "expired",
+                    dataCreare: "2022-12-10T11:15:00.000Z"
                 }
             ];
-            
+
             // Lucrări demo
             const lucrariDemo = [
                 {
-                    id: 3001,
-                    clientId: 1001,
-                    clientNume: 'Popescu Ion',
-                    tipServiciu: 'Mentenanță',
+                    id: 201,
+                    clientId: 3,
+                    clientNume: "Gheorghe Andrei",
+                    tipServiciu: "Branșament gaz",
                     lucratorId: 2,
-                    lucratorNume: 'Ion Lucrător',
-                    dataProgramata: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-                    descriere: 'Verificare și curățare instalație',
-                    status: 'Programată',
+                    lucratorNume: "Ion Lucrător",
+                    dataProgramata: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Mâine
+                    descriere: "Instalare branșament nou pentru casă individuală",
+                    status: "Programată",
                     dataCreare: new Date().toISOString(),
                     createdBy: 1
                 },
                 {
-                    id: 3002,
-                    clientId: 1002,
-                    clientNume: 'Ionescu Maria',
-                    tipServiciu: 'Reparație urgentă',
+                    id: 202,
+                    clientId: 1,
+                    clientNume: "Popescu Ion",
+                    tipServiciu: "Revizie instalație",
                     lucratorId: 2,
-                    lucratorNume: 'Ion Lucrător',
-                    dataProgramata: new Date().toISOString(),
-                    descriere: 'Reparare fugă de gaz',
-                    status: 'În lucru',
-                    dataCreare: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+                    lucratorNume: "Ion Lucrător",
+                    dataProgramata: new Date().toISOString(), // Astăzi
+                    descriere: "Revizie instalație expirată - urgent",
+                    status: "În lucru",
+                    dataCreare: new Date().toISOString(),
                     createdBy: 1
                 },
                 {
-                    id: 3003,
-                    clientId: 1003,
-                    clientNume: 'Georgescu Andrei',
-                    tipServiciu: 'Instalație gaz',
+                    id: 203,
+                    clientId: 2,
+                    clientNume: "Ionescu Maria",
+                    tipServiciu: "Verificare tehnică",
                     lucratorId: 2,
-                    lucratorNume: 'Ion Lucrător',
-                    dataProgramata: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-                    descriere: 'Instalare nouă branșament gaz',
-                    status: 'Finalizată',
-                    dataCreare: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-                    dataFinalizare: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-                    createdBy: 1
+                    lucratorNume: "Ion Lucrător",
+                    dataProgramata: "2024-11-01T10:00:00.000Z",
+                    descriere: "Verificare tehnică pentru apartament",
+                    status: "Finalizată",
+                    dataCreare: "2024-10-25T09:00:00.000Z",
+                    createdBy: 1,
+                    dataFinalizare: "2024-11-01T12:30:00.000Z"
                 }
             ];
-            
+
             // Adaugă datele demo
             clienti.push(...clientiDemo);
             servicii.push(...serviciiDemo);
             lucrari.push(...lucrariDemo);
-            
-            // Recalculează statusurile serviciilor
+
+            // Actualizează statusurile serviciilor
             servicii.forEach(serviciu => {
                 serviciu.status = calculeazaStatusServiciu(serviciu.dataExpirare);
             });
-            
+
             saveData();
+            sincronizeazaDatele();
+            
+            showNotification('📊 Date demo adăugate cu succes!', 'success');
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            localStorage.setItem('adinstalgaz_darkmode', isDarkMode.toString());
+            
+            const toggleBtn = document.querySelector('.dark-mode-toggle');
+            toggleBtn.textContent = isDarkMode ? '☀️' : '🌙';
+            
+            showNotification(`Mod ${isDarkMode ? 'întunecat' : 'luminos'} activat!`, 'info');
         }
 
         // ===========================================
-        // INIȚIALIZARE PWA
+        // FUNCȚII PENTRU ACȚIUNI SPECIFICE
         // ===========================================
         
-        function initializePWA() {
-            // Service Worker pentru PWA
-            if ('serviceWorker' in navigator) {
+        function veziDetaliiClient(id) {
+            const client = clienti.find(c => c.id === id);
+            if (!client) return;
+
+            const serviciiClient = servicii.filter(s => s.clientId === id);
+            const lucrariClient = lucrari.filter(l => l.clientId === id);
+            const documenteClient = documente.filter(d => d.clientId === id);
+
+            document.getElementById('modalTitle').textContent = `Detalii Client: ${client.nume} ${client.prenume}`;
+            
+            let html = `
+                <div class="form-container">
+                    <h3>📞 Informații Contact</h3>
+                    <p><strong>Nume:</strong> ${client.nume} ${client.prenume}</p>
+                    <p><strong>Telefon:</strong> ${client.telefon}</p>
+                    <p><strong>Email:</strong> ${client.email || 'N/A'}</p>
+                    <p><strong>Adresă:</strong> ${formatareAdresaCompleta(client.adresa)}</p>
+                    <p><strong>Data înregistrare:</strong> ${new Date(client.dataCreare).toLocaleDateString('ro-RO')}</p>
+                </div>
+
+                <div class="form-container">
+                    <h3>⚙️ Servicii (${serviciiClient.length})</h3>
+                    ${serviciiClient.length > 0 ? 
+                        serviciiClient.map(s => `
+                            <div style="padding: 10px; margin: 5px 0; background: #f7fafc; border-radius: 6px;">
+                                <strong>${s.tipServiciu}</strong><br>
+                                <small>Efectuat: ${new Date(s.dataEfectuare).toLocaleDateString('ro-RO')} | 
+                                Expiră: ${new Date(s.dataExpirare).toLocaleDateString('ro-RO')} | 
+                                Status: <span class="status-badge ${getStatusClassServiciu(s.status)}">${getStatusTextServiciu(s.status)}</span></small>
+                            </div>
+                        `).join('') :
+                        '<p style="color: #718096;">Nu are servicii înregistrate</p>'
+                    }
+                </div>
+
+                <div class="form-container">
+                    <h3>🔧 Lucrări (${lucrariClient.length})</h3>
+                    ${lucrariClient.length > 0 ? 
+                        lucrariClient.map(l => `
+                            <div style="padding: 10px; margin: 5px 0; background: #f7fafc; border-radius: 6px;">
+                                <strong>${l.tipServiciu}</strong><br>
+                                <small>Programat: ${new Date(l.dataProgramata).toLocaleDateString('ro-RO')} | 
+                                Status: <span class="status-badge ${getStatusClassLucrare(l.status)}">${l.status}</span></small><br>
+                                <small>Descriere: ${l.descriere}</small>
+                            </div>
+                        `).join('') :
+                        '<p style="color: #718096;">Nu are lucrări înregistrate</p>'
+                    }
+                </div>
+
+                <div class="form-container">
+                    <h3>📁 Documente (${documenteClient.length})</h3>
+                    ${documenteClient.length > 0 ? 
+                        documenteClient.map(d => `
+                            <div style="padding: 10px; margin: 5px 0; background: #f7fafc; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>${d.nume}</strong><br>
+                                    <small>Încărcat: ${new Date(d.dataIncarcare).toLocaleDateString('ro-RO')} | 
+                                    Mărime: ${(d.marime / (1024 * 1024)).toFixed(2)} MB</small>
+                                </div>
+                                <button class="btn btn-primary btn-small" onclick="descarcaDocument(${d.id})">📥 Descarcă</button>
+                            </div>
+                        `).join('') :
+                        '<p style="color: #718096;">Nu are documente încărcate</p>'
+                    }
+                </div>
+            `;
+
+            document.getElementById('modalContent').innerHTML = html;
+            document.getElementById('modalDetalii').style.display = 'block';
+        }
+
+        function contacteazaClient(clientId) {
+            const client = clienti.find(c => c.id === clientId);
+            if (!client) return;
+
+            const serviciiClient = servicii.filter(s => s.clientId === clientId && calculeazaStatusServiciu(s.dataExpirare) !== 'active');
+            
+            if (serviciiClient.length === 0) {
+                showNotification('Clientul nu are servicii care necesită contactare.', 'info');
+                return;
+            }
+
+            // Generează mesajul automat
+            const mesaj = EMAIL_TEMPLATES.notificareExpirare(client, serviciiClient[0]);
+            
+            // Simulare trimitere notificare
+            console.log('📧 NOTIFICARE EXPIRARE TRIMISĂ:');
+            console.log('='.repeat(50));
+            console.log(`Către: ${client.nume} ${client.prenume}`);
+            console.log(`Telefon: ${client.telefon}`);
+            console.log(`Email: ${client.email || 'N/A'}`);
+            console.log('='.repeat(50));
+            console.log(mesaj);
+            console.log('='.repeat(50));
+            
+            showNotification(`📧 Notificare trimisă către ${client.nume} ${client.prenume}`, 'success');
+        }
+
+        function programeazaServiciuNou(serviciuId) {
+            const serviciu = servicii.find(s => s.id === serviciuId);
+            if (!serviciu) return;
+
+            const client = clienti.find(c => c.id === serviciu.clientId);
+            if (!client) return;
+
+            // Pre-completează formularul de lucrare
+            showSection('lucrari');
+            setTimeout(() => {
+                document.getElementById('clientLucrare').value = client.id;
+                document.getElementById('tipServiciuLucrare').value = serviciu.tipServiciu;
+                document.getElementById('descriereLucrare').value = `Reînnoire ${serviciu.tipServiciu} - Serviciu expirat pe ${new Date(serviciu.dataExpirare).toLocaleDateString('ro-RO')}`;
+                
+                // Setează data pentru săptămâna viitoare
+                const dataProgramata = new Date();
+                dataProgramata.setDate(dataProgramata.getDate() + 7);
+                dataProgramata.setHours(9, 0, 0, 0);
+                document.getElementById('dataProgramataLucrare').value = dataProgramata.toISOString().slice(0, 16);
+                
+                showNotification('Formular pre-completat pentru serviciu nou!', 'success');
+            }, 500);
+        }
+
+        function sunaClient(telefon) {
+            // Simulare apel
+            if (confirm(`Apelezi numărul ${telefon}?`)) {
+                // În realitate aici s-ar integra cu un sistem de telefonie
+                window.open(`tel:${telefon}`, '_self');
+                showNotification(`📞 Apel inițiat către ${telefon}`, 'success');
+            }
+        }
+
+        function inchideModal() {
+            document.getElementById('modalDetalii').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('modalDetalii');
+            if (e.target === modal) {
+                inchideModal();
+            }
+        });
+
+        // ===========================================
+        // INIȚIALIZARE APLICAȚIE
+        // ===========================================
+        
+        // PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
                 const swCode = `
                     const CACHE_NAME = 'adinstalgaz-v1.0';
-                    const urlsToCache = [
-                        '/',
-                        '/offline.html'
-                    ];
+                    const urlsToCache = ['/'];
                     
                     self.addEventListener('install', event => {
                         event.waitUntil(
@@ -3478,12 +3503,7 @@ Echipa AdInstalGaz`
                     self.addEventListener('fetch', event => {
                         event.respondWith(
                             caches.match(event.request)
-                                .then(response => {
-                                    if (response) {
-                                        return response;
-                                    }
-                                    return fetch(event.request);
-                                })
+                                .then(response => response || fetch(event.request))
                         );
                     });
                 `;
@@ -3496,217 +3516,84 @@ Echipa AdInstalGaz`
                         console.log('✅ PWA Service Worker înregistrat:', registration.scope);
                     })
                     .catch(error => {
-                        console.warn('❌ Eroare Service Worker:', error);
+                        console.log('❌ Eroare Service Worker:', error);
                     });
-            }
-            
-            // Install prompt pentru PWA
-            let deferredPrompt;
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                
-                showNotification('📱 AdInstalGaz poate fi instalată ca aplicație!', 'info');
-                
-                setTimeout(() => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        deferredPrompt.userChoice.then((choiceResult) => {
-                            if (choiceResult.outcome === 'accepted') {
-                                showNotification('✅ AdInstalGaz instalată cu succes!', 'success');
-                            }
-                            deferredPrompt = null;
-                        });
-                    }
-                }, 3000);
             });
         }
 
-        // ===========================================
-        // FUNCȚII PLACEHOLDER PENTRU DEZVOLTARE VIITOARE
-        // ===========================================
-        
-        function veziDetaliiServiciu(id) {
-            showNotification('Funcționalitate în dezvoltare', 'info');
-        }
-        
-        function veziDetaliiLucrare(id) {
-            showNotification('Funcționalitate în dezvoltare', 'info');
-        }
-        
-        function veziDetaliiUtilizator(id) {
-            showNotification('Funcționalitate în dezvoltare', 'info');
-        }
-        
-        function veziDocument(id) {
-            showNotification('Funcționalitate în dezvoltare', 'info');
-        }
-        
-        function editClient(id) {
-            showNotification('Funcționalitate de editare va fi implementată în versiunea următoare', 'info');
-        }
-        
-        function editLucrare(id) {
-            showNotification('Funcționalitate de editare va fi implementată în versiunea următoare', 'info');
-        }
-
-        // ===========================================
-        // INIȚIALIZARE APLICAȚIE
-        // ===========================================
-        
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Verifică autentificarea înainte de a continua
-            if (!verificaAutentificare()) {
-                return;
-            }
-
-            // Inițializează PWA
-            initializePWA();
-
-            // Inițializează file upload
-            setTimeout(initializeFileUpload, 100);
-
-            // Aplică dark mode dacă este activat
-            if (isDarkMode) {
-                document.body.classList.add('dark-mode');
-                document.querySelector('.dark-mode-toggle').textContent = '☀️';
-            }
-
-            // Adaugă date demo dacă nu există
-            if (clienti.length === 0) {
-                adaugaDateDemo();
-            }
-
-            // Sincronizare inițială
-            sincronizeazaDatele();
-            
-            // Sincronizare automată la fiecare 30 secunde
-            setInterval(sincronizeazaDatele, 30000);
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', (e) => {
-                const modal = document.getElementById('modalDetalii');
-                if (e.target === modal) {
-                    inchideModal();
-                }
-            });
-            
-            console.log('✅ AdInstalGaz SRL Management System încărcat complet!');
-            console.log('🔐 Utilizator autentificat:', currentUser ? currentUser.nume : 'Necunoscut');
-            console.log('👤 Rol:', currentUser ? currentUser.rol : 'N/A');
-            console.log('👥 Clienți:', clienti.length);
-            console.log('⚙️ Servicii:', servicii.length);
-            console.log('🔧 Lucrări:', lucrari.length);
-            console.log('📁 Documente:', documente.length);
-            console.log('👤 Utilizatori:', utilizatori.length + Object.keys(UTILIZATORI_PREDEFINITI).length);
-            console.log('🔄 Sincronizare: ACTIVĂ');
-            console.log('📱 PWA: Service Worker înregistrat');
-            console.log('📞 Contact firmă:', ADINSTALGAZ_CONFIG.telefon);
-            console.log('📧 Email principal:', ADINSTALGAZ_CONFIG.emails.principal);
-            console.log('🌐 Website:', ADINSTALGAZ_CONFIG.website);
-        });
-
-        // Error handling
-        window.addEventListener('error', function(e) {
-            console.error('Error captat:', e.error);
-            showNotification('A apărut o eroare, dar aplicația continuă să funcționeze.', 'warning');
-        });
-
-        // Cleanup la închidere
-        window.addEventListener('beforeunload', function(e) {
+        // Auto-save la fiecare 30 secunde
+        setInterval(() => {
             if (currentUser) {
                 saveData();
             }
+        }, 30000);
+
+        // Verificare automată alerte la fiecare 60 secunde
+        setInterval(() => {
+            if (currentUser) {
+                verificaAlerteUrgente();
+            }
+        }, 60000);
+
+        // Initialize file upload when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initializeFileUpload, 1000);
         });
 
-        // Verifică autentificarea la încărcare
-        verificaAutentificare();
+        // Dark mode CSS
+        const darkModeCSS = `
+            .dark-mode {
+                background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            }
+            .dark-mode .header {
+                background: rgba(26, 32, 44, 0.95);
+            }
+            .dark-mode .section {
+                background: rgba(45, 55, 72, 0.9);
+                color: #f7fafc;
+            }
+            .dark-mode .form-container {
+                background: rgba(26, 32, 44, 0.8);
+            }
+            .dark-mode .data-table {
+                background: #2d3748;
+                color: #f7fafc;
+            }
+            .dark-mode .data-table th {
+                background: linear-gradient(135deg, #4a5568, #2d3748);
+            }
+            .dark-mode .form-input,
+            .dark-mode .form-select {
+                background: #4a5568;
+                border-color: #718096;
+                color: #f7fafc;
+            }
+            .dark-mode .modal-content {
+                background: #2d3748;
+                color: #f7fafc;
+            }
+        `;
+
+        // Add dark mode styles to head
+        const styleSheet = document.createElement('style');
+        styleSheet.innerText = darkModeCSS;
+        document.head.appendChild(styleSheet);
+
+        console.log('✅ AdInstalGaz SRL Management System încărcat complet!');
+        console.log('📊 Funcționalități disponibile:');
+        console.log('   - 🔐 Sistem autentificare cu roluri (Admin/Lucrător)');
+        console.log('   - 👥 Gestionare clienți completă');
+        console.log('   - ⚙️ Baza servicii cu expirări automate');
+        console.log('   - 🔧 Management lucrări cu workflow');
+        console.log('   - 📅 Program zilnic și planificare');
+        console.log('   - 📁 Upload și gestionare documente');
+        console.log('   - 👤 Administrare utilizatori (Admin only)');
+        console.log('   - 📧 Email automat la finalizare lucrări');
+        console.log('   - 📱 PWA cu funcționare offline');
+        console.log('   - 🌙 Dark mode toggle');
+        console.log('   - 💾 Auto-save și sincronizare');
+        console.log('   - 📊 Export rapoarte PDF');
+        console.log('   - 🔄 Reset date demo (Admin only)');
     </script>
-
-    <!-- Stiluri pentru Dark Mode -->
-    <style>
-        .dark-mode {
-            --bg-primary: #1a202c;
-            --bg-secondary: #2d3748;
-            --text-primary: #f7fafc;
-            --text-secondary: #e2e8f0;
-        }
-
-        .dark-mode body {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-            color: var(--text-primary);
-        }
-
-        .dark-mode .header {
-            background: rgba(45, 55, 72, 0.95);
-        }
-
-        .dark-mode .section {
-            background: rgba(45, 55, 72, 0.9);
-            color: var(--text-primary);
-        }
-
-        .dark-mode .form-container {
-            background: rgba(26, 32, 44, 0.8);
-        }
-
-        .dark-mode .form-input,
-        .dark-mode .form-select {
-            background: var(--bg-secondary);
-            border-color: #4a5568;
-            color: var(--text-primary);
-        }
-
-        .dark-mode .data-table {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        .dark-mode .data-table th {
-            background: linear-gradient(135deg, #4a5568, #2d3748);
-        }
-
-        .dark-mode .modal-content {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        .dark-mode .alert {
-            background: rgba(45, 55, 72, 0.8);
-            border-left-color: #667eea;
-        }
-
-        .dark-mode .stats-card {
-            background: linear-gradient(135deg, #4a5568, #2d3748);
-        }
-
-        /* PWA Install Button */
-        .pwa-install-btn {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            animation: pulse 2s infinite;
-            display: none;
-        }
-
-        .pwa-install-btn.show {
-            display: block;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-    </style>
 </body>
 </html>
