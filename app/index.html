@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdInstalGaz - Aplicație Gestionare</title>
     <meta name="description" content="Aplicație profesională pentru gestionarea lucrărilor AdInstalGaz">
-    <meta name="theme-color" content="#1e40af">
+    <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AdInstalGaz">
@@ -22,6 +22,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    
+    <script>
+        // Verificare încărcare biblioteci
+        window.addEventListener('load', function() {
+            if (typeof window.jspdf === 'undefined') {
+                console.warn('⚠️ Biblioteca jsPDF nu s-a încărcat. Încercați refresh.');
+            } else {
+                console.log('✅ Biblioteci externe încărcate cu succes!');
+            }
+        });
+    </script>
     
     <style>
         * {
@@ -334,6 +345,31 @@
             border-radius: 20px;
             font-size: 12px;
             color: #22543d;
+            border: 1px solid #9ae6b4;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sync-status:hover {
+            background: #e6fffa;
+            border-color: #4fd1c5;
+            transform: translateY(-1px);
+        }
+
+        .sync-status:hover::after {
+            content: 'Salvare automată activă';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d3748;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 1000;
         }
 
         .sync-indicator {
@@ -341,7 +377,12 @@
             height: 8px;
             background: #48bb78;
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            animation: syncPulse 2s infinite;
+        }
+
+        @keyframes syncPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
         }
 
         .logout-btn {
@@ -907,6 +948,27 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .header, .nav-menu, .logout-btn, .sync-status, .btn {
+                display: none !important;
+            }
+            
+            .section {
+                box-shadow: none;
+                margin: 0;
+                padding: 20px;
+            }
+            
+            .data-table {
+                box-shadow: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -995,6 +1057,9 @@
                             <a href="#" class="nav-link" data-section="servicii">Servicii Clienți</a>
                         </li>
                         <li class="nav-item">
+                            <a href="#" class="nav-link" data-section="program">Program Zilnic</a>
+                        </li>
+                        <li class="nav-item">
                             <a href="#" class="nav-link" data-section="rapoarte">Rapoarte</a>
                         </li>
                         <li class="nav-item" id="menuAdmin" style="display: none;">
@@ -1004,9 +1069,9 @@
                 </nav>
 
                 <div class="user-menu">
-                    <div class="sync-status">
+                    <div class="sync-status" id="syncStatus">
                         <div class="sync-indicator"></div>
-                        <span>Sincronizat</span>
+                        <span id="syncText">Sincronizat</span>
                     </div>
                     <div class="user-info">
                         <span>👤</span>
@@ -1038,15 +1103,19 @@
                         <button class="btn btn-secondary" onclick="exportRaportExcel()" style="width: 100%;">📊 Raport Excel</button>
                     </div>
                     <div class="form-container">
-                        <h3 style="color: #4a5568; margin-bottom: 15px;">📱 Notificări</h3>
+                        <h3 style="color: #4a5568; margin-bottom: 15px;">📱 Notificări și Sincronizare</h3>
                         <div style="padding: 10px; background: #f0fff4; border-radius: 6px; border-left: 3px solid #38a169;">
                             <small style="color: #22543d;">Sistem: <strong>Activ ✅</strong></small><br>
                             <small style="color: #22543d;">Telefon firmă: <strong>0762614401</strong></small><br>
                             <small style="color: #22543d;">WhatsApp Business: <strong>Activ ✅</strong></small><br>
-                            <small style="color: #22543d;">Sincronizare: <strong>Activă ✅</strong></small>
+                            <small style="color: #22543d;">Sincronizare automată: <strong>La fiecare 30 sec ✅</strong></small><br>
+                            <small style="color: #22543d;" id="ultimaSincronizareDashboard">Ultima salvare: <strong>-</strong></small>
                         </div>
                         <button class="btn btn-success" onclick="testeazaWhatsApp()" style="margin-top: 10px; width: 100%; background: #25d366;">
                             💬 Test WhatsApp
+                        </button>
+                        <button class="btn btn-secondary" onclick="sincronizeazaDate()" style="margin-top: 10px; width: 100%;">
+                            🔄 Sincronizare Manuală
                         </button>
                     </div>
                     <div class="form-container">
@@ -1204,6 +1273,51 @@
 
                 <div id="listaServicii" style="margin-top: 30px;">
                     <!-- Lista serviciilor va fi generată dinamic -->
+                </div>
+            </section>
+
+            <!-- Program Zilnic Section -->
+            <section id="program" class="section">
+                <h1 class="section-title">📅 Program Zilnic</h1>
+                
+                <div class="form-container">
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">📆 Selectează Data</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <input type="date" class="form-input" id="dataProgramZilnic" value="${new Date().toISOString().split('T')[0]}" onchange="afiseazaProgramZilnic()">
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary" onclick="afiseazaProgramMaine()">
+                                ➡️ Vezi Program Mâine
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="programZilnicContainer" style="margin-top: 30px;">
+                    <!-- Programul zilnic va fi generat dinamic -->
+                </div>
+
+                <div class="form-container" style="margin-top: 30px;">
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">📊 Statistici Program</h3>
+                    <div class="form-grid">
+                        <div style="text-align: center; padding: 20px; background: #f7fafc; border-radius: 8px;">
+                            <div style="font-size: 36px; color: #667eea; font-weight: bold;" id="totalLucrariZi">0</div>
+                            <div style="color: #718096;">Total Lucrări</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: #f7fafc; border-radius: 8px;">
+                            <div style="font-size: 36px; color: #48bb78; font-weight: bold;" id="lucrariFinalizateZi">0</div>
+                            <div style="color: #718096;">Finalizate</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: #f7fafc; border-radius: 8px;">
+                            <div style="font-size: 36px; color: #ed8936; font-weight: bold;" id="lucrariInLucruZi">0</div>
+                            <div style="color: #718096;">În Lucru</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: #f7fafc; border-radius: 8px;">
+                            <div style="font-size: 36px; color: #f56565; font-weight: bold;" id="lucrariNeatribuiteZi">0</div>
+                            <div style="color: #718096;">Neatribuite</div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -1435,6 +1549,11 @@
                 
                 // Start sincronizare simulată
                 startSincronizare();
+                
+                // Sincronizare imediată la pornire
+                setTimeout(() => {
+                    sincronizeazaDate();
+                }, 2000);
             }
         }
 
@@ -1608,6 +1727,9 @@
                 case 'servicii':
                     afiseazaServicii();
                     break;
+                case 'program':
+                    afiseazaProgramZilnic();
+                    break;
                 case 'rapoarte':
                     updateRapoarte();
                     break;
@@ -1633,10 +1755,42 @@
         // ===========================================
         
         function startSincronizare() {
+            console.log('🔄 Pornire sistem de sincronizare automată...');
+            
+            // Arată sincronizare la pornire
+            const syncText = document.getElementById('syncText');
+            const syncStatus = document.getElementById('syncStatus');
+            
+            if (syncText) {
+                syncText.textContent = 'Inițializare...';
+                setTimeout(() => {
+                    syncText.textContent = 'Sincronizat';
+                    showNotification('✅ Sistem de sincronizare automată activ!', 'success');
+                }, 1000);
+            }
+            
             // Simulare sincronizare la fiecare 30 secunde
             setInterval(() => {
                 if (sincronizareActiva) {
                     sincronizeazaDate();
+                }
+            }, 30000);
+            
+            // Indicator vizual de sincronizare
+            setInterval(() => {
+                const syncText = document.getElementById('syncText');
+                const syncStatus = document.getElementById('syncStatus');
+                
+                if (syncText) {
+                    syncText.textContent = 'Sincronizare...';
+                    syncStatus.style.background = '#fef5e7';
+                    syncStatus.style.borderColor = '#f6ad55';
+                    
+                    setTimeout(() => {
+                        syncText.textContent = 'Sincronizat';
+                        syncStatus.style.background = '#f0fff4';
+                        syncStatus.style.borderColor = '#9ae6b4';
+                    }, 2000);
                 }
             }, 30000);
         }
@@ -1649,9 +1803,25 @@
             localStorage.setItem('adinstalgaz_lucrari', JSON.stringify(lucrari));
             localStorage.setItem('adinstalgaz_servicii', JSON.stringify(servicii));
             localStorage.setItem('adinstalgaz_documente', JSON.stringify(documente));
+            localStorage.setItem('adinstalgaz_ultima_sincronizare', new Date().toISOString());
             
             // În producție aici ar fi apel către server
             console.log('✅ Date sincronizate cu succes!');
+            
+            // Actualizează data ultimei sincronizări în dashboard
+            const elementDashboard = document.getElementById('ultimaSincronizareDashboard');
+            if (elementDashboard) {
+                elementDashboard.innerHTML = `Ultima salvare: <strong>${new Date().toLocaleTimeString('ro-RO')}</strong>`;
+            }
+            
+            // Arată notificare subtilă
+            const syncText = document.getElementById('syncText');
+            if (syncText) {
+                syncText.textContent = '✅ Salvat';
+                setTimeout(() => {
+                    syncText.textContent = 'Sincronizat';
+                }, 3000);
+            }
         }
 
         // ===========================================
@@ -2161,6 +2331,9 @@
             lucrari.push(lucrareNoua);
             localStorage.setItem('adinstalgaz_lucrari', JSON.stringify(lucrari));
             
+            // Sincronizare automată
+            sincronizeazaDate();
+            
             inchideModal();
             afiseazaLucrari();
             showNotification('Lucrare adăugată cu succes!', 'success');
@@ -2298,7 +2471,252 @@
         }
 
         // ===========================================
-        // SISTEM DOCUMENTE
+        // PROGRAM ZILNIC
+        // ===========================================
+        
+        function afiseazaProgramZilnic(data = null) {
+            const container = document.getElementById('programZilnicContainer');
+            const dataSelectata = data || document.getElementById('dataProgramZilnic').value;
+            const isAdmin = currentUser && currentUser.rol === 'administrator';
+            
+            // Filtrează lucrările pentru data selectată
+            const lucrariZi = lucrari.filter(l => {
+                const dataLucrare = new Date(l.dataProgramare || l.dataCreare).toISOString().split('T')[0];
+                return dataLucrare === dataSelectata;
+            });
+            
+            // Filtrează pentru lucrători
+            let lucrariFiltrate = lucrariZi;
+            if (!isAdmin) {
+                lucrariFiltrate = lucrariZi.filter(l => l.lucratorId === currentUser.id);
+            }
+            
+            // Actualizează statisticile
+            document.getElementById('totalLucrariZi').textContent = lucrariFiltrate.length;
+            document.getElementById('lucrariFinalizateZi').textContent = lucrariFiltrate.filter(l => l.status === 'finalizata').length;
+            document.getElementById('lucrariInLucruZi').textContent = lucrariFiltrate.filter(l => l.status === 'in_lucru').length;
+            document.getElementById('lucrariNeatribuiteZi').textContent = lucrariFiltrate.filter(l => l.status === 'neatribuita').length;
+            
+            if (lucrariFiltrate.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <h3>Nu există lucrări programate pentru ${new Date(dataSelectata).toLocaleDateString('ro-RO', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}</h3>
+                        <p>${isAdmin ? 'Puteți adăuga lucrări noi din secțiunea Lucrări.' : 'Verificați mai târziu pentru actualizări.'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Tabel cu programul zilnic
+            let html = `
+                <h3 style="color: #4a5568; margin-bottom: 20px;">
+                    📋 Program pentru ${new Date(dataSelectata).toLocaleDateString('ro-RO', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    })}
+                </h3>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Ora</th>
+                            <th>Client</th>
+                            <th>Serviciu</th>
+                            <th>Adresă</th>
+                            <th>Telefon</th>
+                            ${isAdmin ? '<th>Lucrător</th>' : ''}
+                            <th>Status</th>
+                            <th>Acțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Sortează după oră (simulată) sau status
+            lucrariFiltrate.sort((a, b) => {
+                const statusOrder = { neatribuita: 0, atribuita: 1, in_lucru: 2, finalizata: 3 };
+                return statusOrder[a.status] - statusOrder[b.status];
+            });
+            
+            lucrariFiltrate.forEach((lucrare, index) => {
+                const client = clienti.find(c => c.id === lucrare.clientId);
+                const lucrator = utilizatori.find(u => u.id === lucrare.lucratorId);
+                
+                // Simulare oră (în producție ar fi ora reală)
+                const ora = `${8 + index * 2}:00`;
+                
+                let statusBadge = '';
+                switch(lucrare.status) {
+                    case 'neatribuita':
+                        statusBadge = '<span class="status-badge status-urgent">Neatribuită</span>';
+                        break;
+                    case 'atribuita':
+                        statusBadge = '<span class="status-badge status-pending">Atribuită</span>';
+                        break;
+                    case 'in_lucru':
+                        statusBadge = '<span class="status-badge status-active">În Lucru</span>';
+                        break;
+                    case 'finalizata':
+                        statusBadge = '<span class="status-badge status-inactive">Finalizată</span>';
+                        break;
+                }
+                
+                html += `
+                    <tr>
+                        <td><strong>${ora}</strong></td>
+                        <td>${client ? client.nume : 'N/A'}</td>
+                        <td>${lucrare.serviciu}</td>
+                        <td>${client ? formatareAdresa(client) : '-'}</td>
+                        <td>${client ? `<a href="tel:${client.telefon}">${client.telefon}</a>` : '-'}</td>
+                        ${isAdmin ? `<td>${lucrator ? lucrator.nume : '-'}</td>` : ''}
+                        <td>${statusBadge}</td>
+                        <td>
+                            ${client ? `
+                                <button class="btn btn-secondary btn-small" onclick="veziHarta('${formatareAdresa(client)}')">
+                                    🗺️
+                                </button>
+                                <button class="btn btn-success btn-small" onclick="trimiteWhatsApp('${client.telefon}', 'Bună ziua! Confirmăm programarea pentru ora ${ora}.')">
+                                    💬
+                                </button>
+                            ` : ''}
+                            ${lucrare.status === 'atribuita' && !isAdmin ? `
+                                <button class="btn btn-primary btn-small" onclick="incepeLocru(${lucrare.id})">
+                                    ▶️
+                                </button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            // Buton export program
+            html += `
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="exportProgramZilnic('${dataSelectata}')">
+                        📄 Exportă Program PDF
+                    </button>
+                    <button class="btn btn-secondary" onclick="printeazaProgramZilnic('${dataSelectata}')" style="margin-left: 10px;">
+                        🖨️ Printează
+                    </button>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        function afiseazaProgramMaine() {
+            const maine = new Date();
+            maine.setDate(maine.getDate() + 1);
+            const dataMaine = maine.toISOString().split('T')[0];
+            
+            document.getElementById('dataProgramZilnic').value = dataMaine;
+            afiseazaProgramZilnic(dataMaine);
+        }
+        
+        function exportProgramZilnic(data) {
+            try {
+                if (typeof window.jspdf !== 'undefined') {
+                    const { jsPDF } = window.jspdf || window;
+                    const doc = new jsPDF();
+                    
+                    doc.setFontSize(16);
+                    doc.text(`Program AdInstalGaz - ${new Date(data).toLocaleDateString('ro-RO')}`, 20, 20);
+                    
+                    doc.save(`Program_${data}.pdf`);
+                    showNotification('📄 Program exportat în PDF!', 'success');
+                } else {
+                    // Alternativă - creează un format printabil
+                    const printWindow = window.open('', '_blank');
+                    const lucrariZi = lucrari.filter(l => {
+                        const dataLucrare = new Date(l.dataProgramare || l.dataCreare).toISOString().split('T')[0];
+                        return dataLucrare === data;
+                    });
+                    
+                    let html = `
+                        <html>
+                        <head>
+                            <title>Program ${new Date(data).toLocaleDateString('ro-RO')}</title>
+                            <style>
+                                body { font-family: Arial, sans-serif; padding: 20px; }
+                                h1 { color: #667eea; }
+                                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                                th { background: #667eea; color: white; }
+                                @media print { button { display: none; } }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>Program AdInstalGaz - ${new Date(data).toLocaleDateString('ro-RO')}</h1>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ora</th>
+                                        <th>Client</th>
+                                        <th>Serviciu</th>
+                                        <th>Adresă</th>
+                                        <th>Telefon</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    lucrariZi.forEach((lucrare, index) => {
+                        const client = clienti.find(c => c.id === lucrare.clientId);
+                        const ora = `${8 + index * 2}:00`;
+                        
+                        html += `
+                            <tr>
+                                <td>${ora}</td>
+                                <td>${client ? client.nume : 'N/A'}</td>
+                                <td>${lucrare.serviciu}</td>
+                                <td>${client ? formatareAdresa(client) : '-'}</td>
+                                <td>${client ? client.telefon : '-'}</td>
+                                <td>${lucrare.status}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += `
+                                </tbody>
+                            </table>
+                            <button onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                🖨️ Printează
+                            </button>
+                        </body>
+                        </html>
+                    `;
+                    
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    
+                    showNotification('📄 Document deschis pentru export/printare!', 'success');
+                }
+            } catch (error) {
+                console.error('Eroare export:', error);
+                showNotification('Folosiți funcția de printare pentru export.', 'info');
+            }
+        }
+        
+        function printeazaProgramZilnic(data) {
+            window.print();
+        }
+
+        // ===========================================
+        // SISTEM DOCUMENTE (Clarificare)
         // ===========================================
         
         function adaugaDocument(lucrareId) {
@@ -2310,7 +2728,17 @@
             
             const documenteLucrare = documente[lucrareId] || [];
             
+            // Mesaj clarificare permisiuni
+            const permisiuniText = currentUser.rol === 'administrator' 
+                ? '✅ Ca administrator, puteți încărca și gestiona toate documentele.'
+                : '✅ Ca lucrător, puteți încărca documente pentru lucrările dvs.';
+            
             let html = `
+                <div class="alert alert-info">
+                    <strong>📌 Permisiuni Upload</strong><br>
+                    ${permisiuniText}
+                </div>
+                
                 <div class="form-container">
                     <h4 style="color: #4a5568; margin-bottom: 20px;">Încarcă Document Nou</h4>
                     
@@ -2323,13 +2751,14 @@
                             Selectați Fișiere
                         </button>
                         <p style="font-size: 12px; color: #718096; margin-top: 10px;">
-                            Formate acceptate: PDF, DOC, DOCX, JPG, PNG
+                            Formate acceptate: PDF, DOC, DOCX, JPG, PNG<br>
+                            Dimensiune maximă: 10MB per fișier
                         </p>
                     </div>
                 </div>
                 
                 <div style="margin-top: 20px;">
-                    <h4 style="color: #4a5568; margin-bottom: 15px;">Documente Existente</h4>
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">Documente Existente (${documenteLucrare.length})</h4>
             `;
             
             if (documenteLucrare.length === 0) {
@@ -2337,17 +2766,23 @@
             } else {
                 html += '<div class="document-list">';
                 documenteLucrare.forEach((doc, index) => {
+                    const iconTip = doc.tip === 'pdf' ? '📑' : 
+                                  ['jpg', 'jpeg', 'png'].includes(doc.tip) ? '🖼️' : '📄';
+                    
                     html += `
                         <div class="document-item" style="padding: 10px; margin-bottom: 10px; background: #f7fafc; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <div style="font-weight: 600;">${doc.nume}</div>
+                                <div style="font-weight: 600;">${iconTip} ${doc.nume}</div>
                                 <div style="font-size: 12px; color: #718096;">
-                                    Încărcat: ${new Date(doc.dataIncarcare).toLocaleDateString('ro-RO')}
+                                    Încărcat: ${new Date(doc.dataIncarcare).toLocaleDateString('ro-RO')} | 
+                                    Dimensiune: ${(doc.dimensiune / 1024).toFixed(1)} KB
                                 </div>
                             </div>
-                            <button class="btn btn-danger btn-small" onclick="stergeDocument(${lucrareId}, ${index})">
-                                🗑️
-                            </button>
+                            ${currentUser.rol === 'administrator' || doc.incarcatDe === currentUser.id ? `
+                                <button class="btn btn-danger btn-small" onclick="stergeDocument(${lucrareId}, ${index})">
+                                    🗑️
+                                </button>
+                            ` : ''}
                         </div>
                     `;
                 });
@@ -2422,7 +2857,9 @@
                     nume: file.name,
                     tip: extensie,
                     dimensiune: file.size,
-                    dataIncarcare: new Date().toISOString()
+                    dataIncarcare: new Date().toISOString(),
+                    incarcatDe: currentUser.id,
+                    numeUtilizator: currentUser.nume
                 };
                 
                 documente[lucrareId].push(document);
@@ -2873,23 +3310,26 @@
         }
 
         function exportRaportPDF() {
-            if (typeof window.jsPDF === 'undefined') {
-                showNotification('Biblioteca PDF nu este încărcată!', 'error');
-                return;
-            }
+            try {
+                if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
+                    showNotification('Biblioteca PDF nu este încărcată! Reîncărcați pagina.', 'error');
+                    return;
+                }
 
-            const { jsPDF } = window.jsPDF;
-            const doc = new jsPDF();
-            
-            // Header
-            doc.setFontSize(20);
-            doc.text('RAPORT ADINSTALGAZ', 20, 20);
-            
-            doc.setFontSize(12);
-            doc.text(`Generat pe: ${new Date().toLocaleDateString('ro-RO')}`, 20, 30);
-            doc.text(`Website: ${CONFIGURARI_FIRMA.website}`, 20, 37);
-            
-            let yPosition = 50;
+                const { jsPDF } = window.jspdf || window;
+                const doc = new jsPDF();
+                
+                // Header
+                doc.setFontSize(20);
+                doc.setTextColor(102, 126, 234);
+                doc.text('RAPORT ADINSTALGAZ', 20, 20);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Generat pe: ${new Date().toLocaleDateString('ro-RO')}`, 20, 30);
+                doc.text(`Website: ${CONFIGURARI_FIRMA.website}`, 20, 37);
+                
+                let yPosition = 50;
             
             // Statistici
             doc.setFontSize(16);
@@ -2977,6 +3417,10 @@
             
             doc.save(`AdInstalGaz_Raport_${new Date().toISOString().split('T')[0]}.pdf`);
             showNotification('Raport PDF generat!', 'success');
+            } catch (error) {
+                console.error('Eroare la generare PDF:', error);
+                showNotification('Eroare la generarea PDF-ului. Verificați consola.', 'error');
+            }
         }
 
         function exportRaportExcel() {
@@ -3278,6 +3722,28 @@
                         lucratorId: 3,
                         dataCreare: new Date(Date.now() - 86400000).toISOString(),
                         dataFinalizare: new Date().toISOString()
+                    },
+                    {
+                        id: 4,
+                        clientId: 1,
+                        serviciu: 'Urgență - Pierdere Gaz',
+                        pret: '300 Lei',
+                        dataProgramare: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Mâine
+                        observatii: 'Verificare urgentă',
+                        status: 'atribuita',
+                        lucratorId: 2,
+                        dataCreare: new Date().toISOString()
+                    },
+                    {
+                        id: 5,
+                        clientId: 2,
+                        serviciu: 'Verificare Centrală',
+                        pret: '180 Lei',
+                        dataProgramare: new Date(Date.now() + 86400000).toISOString().split('T')[0], // Mâine
+                        observatii: 'Control anual',
+                        status: 'neatribuita',
+                        lucratorId: null,
+                        dataCreare: new Date().toISOString()
                     }
                 ];
 
@@ -3352,6 +3818,13 @@
                 }
             });
             
+            // Verifică dacă trebuie să afișeze ultima sincronizare
+            const ultimaSincronizare = localStorage.getItem('adinstalgaz_ultima_sincronizare');
+            if (ultimaSincronizare && currentUser) {
+                const data = new Date(ultimaSincronizare);
+                console.log(`📅 Ultima sincronizare: ${data.toLocaleString('ro-RO')}`);
+            }
+            
             // Click în afara modalului pentru a-l închide
             window.addEventListener('click', (e) => {
                 const modal = document.getElementById('modalDetalii');
@@ -3365,11 +3838,13 @@
         console.log('📍 Portal Secret: Click pe logo de 5 ori sau colțul din dreapta jos');
         console.log('👨‍💼 Admin demo: florin.gavrila@adinstalgaz.ro / 123456');
         console.log('👷 Lucrător demo: ion@adinstalgaz.ro / 123456');
-        console.log('✅ Funcționalități noi implementate:');
-        console.log('   - Upload documente pentru fiecare lucrare');
+        console.log('✅ Funcționalități implementate:');
+        console.log('   - Upload documente (Admin + Lucrători)');
         console.log('   - Bază de date servicii cu monitoring expirare');
-        console.log('   - Sincronizare în timp real');
+        console.log('   - Sincronizare automată la fiecare 30 secunde');
+        console.log('   - Program zilnic cu export PDF');
         console.log('   - Export rapoarte complete PDF + Excel');
+        console.log('   - Indicator sincronizare vizibil în header');
     </script>
 </body>
 </html>
