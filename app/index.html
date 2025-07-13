@@ -517,7 +517,8 @@
             <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
                 <strong>Conturi demo:</strong><br>
                 👨‍💼 Admin: admin@adinstalgaz.ro / 123456<br>
-                👷‍♂️ Lucrător: lucrator@adinstalgaz.ro / 123456
+                👷‍♂️ Lucrător 1: lucrator1@adinstalgaz.ro / 123456<br>
+                👷‍♂️ Lucrător 2: lucrator2@adinstalgaz.ro / 123456
             </div>
         </div>
     </div>
@@ -559,13 +560,13 @@
 
             <!-- Navigation Tabs -->
             <div class="tabs">
-                <button class="tab active" onclick="showTab('clients')">👥 Clienți</button>
-                <button class="tab" onclick="showTab('services')">🔧 Servicii</button>
-                <button class="tab" onclick="showTab('programming')">📅 Programări</button>
-                <button class="tab" onclick="showTab('work')">🛠️ Lucrări</button>
-                <button class="tab" id="reportsTab" onclick="showTab('reports')">📊 Rapoarte</button>
-                <button class="tab" onclick="showTab('documents')">📄 Documente</button>
-                <button class="tab" onclick="showTab('notifications')">📱 Notificări</button>
+                <button class="tab active" onclick="showTab('clients', this)">👥 Clienți</button>
+                <button class="tab" onclick="showTab('services', this)">🔧 Servicii</button>
+                <button class="tab" onclick="showTab('programming', this)">📅 Programări</button>
+                <button class="tab" onclick="showTab('work', this)">🛠️ Lucrări</button>
+                <button class="tab" id="reportsTab" onclick="showTab('reports', this)">📊 Rapoarte</button>
+                <button class="tab" onclick="showTab('documents', this)">📄 Documente</button>
+                <button class="tab" onclick="showTab('notifications', this)">📱 Notificări</button>
             </div>
 
             <!-- Content Area -->
@@ -970,16 +971,19 @@
 
                 <div class="form-row">
                     <div>
-                        <label>Orașul:</label>
-                        <input type="text" id="clientCity" value="Alexandria" placeholder="Alexandria">
+                        <label>Orașul: <span class="required">*</span></label>
+                        <select id="clientCity" required>
+                            <option value="Alexandria">Alexandria</option>
+                            <option value="Rosiorii de Vede">Rosiorii de Vede</option>
+                            <option value="Turnu Magurele">Turnu Magurele</option>
+                            <option value="Videle">Videle</option>
+                            <option value="Zimnicea">Zimnicea</option>
+                        </select>
                     </div>
                     <div>
                         <label>Județul:</label>
                         <select id="clientCounty">
                             <option value="teleorman">Teleorman</option>
-                            <option value="giurgiu">Giurgiu</option>
-                            <option value="bucuresti">București</option>
-                            <option value="ilfov">Ilfov</option>
                         </select>
                     </div>
                 </div>
@@ -1031,12 +1035,11 @@
                         <label>Tip Serviciu: <span class="required">*</span></label>
                         <select id="serviceType" required onchange="calculateServiceEndDate()">
                             <option value="">Selectează...</option>
-                            <option value="instalare_gaz">🔧 Instalare Gaz Nouă</option>
-                            <option value="verificare_anuala">✅ Verificare Anuală</option>
-                            <option value="reparatie">🔨 Reparație</option>
-                            <option value="intretinere">🛠️ Întreținere</option>
-                            <option value="inlocuire_echipament">🔄 Înlocuire Echipament</option>
-                            <option value="revizie_completa">🔍 Revizie Completă</option>
+                            <option value="verificare_instalatie">🔧 Verificare Instalație Gaz - 150 Lei (valabilitate 2 ani)</option>
+                            <option value="revizie_instalatie">🔍 Revizie Instalație Gaz - 250 Lei (valabilitate 2 ani)</option>
+                            <option value="verificare_centrala">✅ Verificare Centrală - 150 Lei (valabilitate 2 ani)</option>
+                            <option value="oferta_completa">💰 OFERTĂ: Instalații Gaz + Centrală - 250 Lei (valabilitate 2 ani)</option>
+                            <option value="serviciu_urgenta">🚨 Serviciu de Urgență</option>
                         </select>
                     </div>
                 </div>
@@ -1095,12 +1098,13 @@
                         <label>Tip Lucrare: <span class="required">*</span></label>
                         <select id="workType" required>
                             <option value="">Selectează...</option>
-                            <option value="instalare">🔧 Instalare Nouă</option>
-                            <option value="verificare">✅ Verificare Anuală</option>
+                            <option value="verificare_instalatie">🔧 Verificare Instalație Gaz</option>
+                            <option value="revizie_instalatie">🔍 Revizie Instalație Gaz</option>
+                            <option value="verificare_centrala">✅ Verificare Centrală</option>
+                            <option value="instalare_completa">💰 Instalare Completă (Gaz + Centrală)</option>
                             <option value="reparatie">🔨 Reparație</option>
                             <option value="intretinere">🛠️ Întreținere</option>
                             <option value="urgenta">🚨 Intervenție Urgentă</option>
-                            <option value="revizie">🔍 Revizie Completă</option>
                         </select>
                     </div>
                 </div>
@@ -1110,9 +1114,11 @@
                         <label>Lucrător Atribuit: <span class="required">*</span></label>
                         <select id="workAssignee" required>
                             <option value="">Selectează lucrător...</option>
-                            <option value="lucrator@adinstalgaz.ro">👨‍🔧 Ion Popescu</option>
-                            <option value="lucrator2@adinstalgaz.ro">👨‍🔧 Vasile Ionescu</option>
-                            <option value="lucrator3@adinstalgaz.ro">👨‍🔧 George Marinescu</option>
+                            <option value="lucrator1@adinstalgaz.ro">👨‍🔧 Lucrător 1 - Ion Popescu</option>
+                            <option value="lucrator2@adinstalgaz.ro">👨‍🔧 Lucrător 2 - Vasile Ionescu</option>
+                            <option value="lucrator3@adinstalgaz.ro">👨‍🔧 Lucrător 3 - George Marinescu</option>
+                            <option value="lucrator4@adinstalgaz.ro">👨‍🔧 Lucrător 4 - Mihai Popescu</option>
+                            <option value="lucrator5@adinstalgaz.ro">👨‍🔧 Lucrător 5 - Andrei Stoica</option>
                         </select>
                     </div>
                     <div>
@@ -1181,10 +1187,34 @@
                 name: 'Administrator',
                 permissions: ['all']
             },
-            'lucrator@adinstalgaz.ro': {
+            'lucrator1@adinstalgaz.ro': {
                 password: '123456',
                 role: 'worker',
                 name: 'Ion Popescu',
+                permissions: ['clients', 'services', 'programming', 'work', 'documents', 'notifications']
+            },
+            'lucrator2@adinstalgaz.ro': {
+                password: '123456',
+                role: 'worker',
+                name: 'Vasile Ionescu',
+                permissions: ['clients', 'services', 'programming', 'work', 'documents', 'notifications']
+            },
+            'lucrator3@adinstalgaz.ro': {
+                password: '123456',
+                role: 'worker',
+                name: 'George Marinescu',
+                permissions: ['clients', 'services', 'programming', 'work', 'documents', 'notifications']
+            },
+            'lucrator4@adinstalgaz.ro': {
+                password: '123456',
+                role: 'worker',
+                name: 'Mihai Popescu',
+                permissions: ['clients', 'services', 'programming', 'work', 'documents', 'notifications']
+            },
+            'lucrator5@adinstalgaz.ro': {
+                password: '123456',
+                role: 'worker',
+                name: 'Andrei Stoica',
                 permissions: ['clients', 'services', 'programming', 'work', 'documents', 'notifications']
             }
         };
@@ -1240,12 +1270,29 @@
                         block: 'B',
                         stair: '1',
                         apartment: '12',
-                        city: 'Alexandria',
+                        city: 'Rosiorii de Vede',
                         county: 'teleorman',
                         type: 'comercial',
                         status: 'complet',
                         notes: 'Contract anual de întreținere',
                         dateAdded: '2023-02-20'
+                    },
+                    {
+                        id: 3,
+                        name: 'Ionescu Gheorghe',
+                        phone: '0745123456',
+                        email: 'ionescu.gh@email.com',
+                        street: 'Str. Mihai Viteazul',
+                        number: '8',
+                        block: '',
+                        stair: '',
+                        apartment: '',
+                        city: 'Turnu Magurele',
+                        county: 'teleorman',
+                        type: 'rezidential',
+                        status: 'complet',
+                        notes: 'Client nou',
+                        dateAdded: '2024-01-10'
                     }
                 ];
                 
@@ -1253,10 +1300,10 @@
                     {
                         id: 1,
                         clientId: 1,
-                        type: 'verificare_anuala',
+                        type: 'verificare_instalatie',
                         startDate: '2024-07-01',
-                        endDate: '2025-07-01',
-                        details: 'Verificare anuală instalație gaz',
+                        endDate: '2026-07-01',
+                        details: 'Verificare instalație gaz conform normelor în vigoare',
                         cost: 150.00,
                         certificate: 'CERT-2024-001',
                         status: 'activ'
@@ -1264,12 +1311,23 @@
                     {
                         id: 2,
                         clientId: 2,
-                        type: 'instalare_gaz',
+                        type: 'oferta_completa',
                         startDate: '2024-06-15',
                         endDate: '2026-06-15',
-                        details: 'Instalare sistem gaz complet',
-                        cost: 800.00,
+                        details: 'Instalații Gaz + Centrală - pachet complet cu reducere',
+                        cost: 250.00,
                         certificate: 'CERT-2024-002',
+                        status: 'activ'
+                    },
+                    {
+                        id: 3,
+                        clientId: 3,
+                        type: 'verificare_centrala',
+                        startDate: '2024-07-15',
+                        endDate: '2026-07-15',
+                        details: 'Verificare centrală termică pentru siguranță',
+                        cost: 150.00,
+                        certificate: 'CERT-2024-003',
                         status: 'activ'
                     }
                 ];
@@ -1278,13 +1336,39 @@
                     {
                         id: 1,
                         clientId: 1,
-                        type: 'verificare',
-                        assignee: 'lucrator@adinstalgaz.ro',
+                        type: 'verificare_instalatie',
+                        assignee: 'lucrator1@adinstalgaz.ro',
                         scheduledDate: '2024-07-20',
                         priority: 'normala',
                         duration: '2',
-                        description: 'Verificare anuală programată',
+                        description: 'Verificare instalație gaz programată',
                         status: 'programata',
+                        createdBy: 'admin@adinstalgaz.ro',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        clientId: 2,
+                        type: 'intretinere',
+                        assignee: 'lucrator2@adinstalgaz.ro',
+                        scheduledDate: '2024-07-25',
+                        priority: 'normala',
+                        duration: '3',
+                        description: 'Întreținere sistem gaz comercial',
+                        status: 'in_progress',
+                        createdBy: 'admin@adinstalgaz.ro',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 3,
+                        clientId: 3,
+                        type: 'verificare_centrala',
+                        assignee: 'lucrator3@adinstalgaz.ro',
+                        scheduledDate: '2024-07-18',
+                        priority: 'ridicata',
+                        duration: '2',
+                        description: 'Verificare centrală termică',
+                        status: 'finalizata',
                         createdBy: 'admin@adinstalgaz.ro',
                         createdAt: new Date().toISOString()
                     }
@@ -1331,7 +1415,7 @@
             updateDashboard();
             loadClients();
             loadServices();
-            showTab('clients');
+            showTab('clients', document.querySelector('.tab.active'));
         }
 
         function setupUserInterface() {
@@ -1342,7 +1426,7 @@
             }
         }
 
-        function showTab(tabName) {
+        function showTab(tabName, clickedElement = null) {
             // Verifică permisiunile
             if (currentUser.role === 'worker' && tabName === 'reports') {
                 alert('❌ Nu aveți permisiunea să accesați rapoartele!');
@@ -1360,10 +1444,23 @@
             });
 
             // Afișează tab-ul selectat
-            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            const targetTab = document.getElementById(tabName + 'Tab');
+            if (targetTab) {
+                targetTab.classList.remove('hidden');
+            }
             
             // Activează butonul corespunzător
-            event.target.classList.add('active');
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            } else {
+                // Găsește butonul pe baza onclick-ului
+                document.querySelectorAll('.tab').forEach(btn => {
+                    const onclickAttr = btn.getAttribute('onclick');
+                    if (onclickAttr && onclickAttr.includes(`'${tabName}'`)) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
 
             // Încarcă datele pentru tab-ul curent
             switch(tabName) {
@@ -1633,21 +1730,46 @@
             
             if (startDate && serviceType) {
                 const start = new Date(startDate);
-                let yearsToAdd = 2; // Default 2 ani
+                let yearsToAdd = 2; // Default 2 ani pentru majoritatea serviciilor
+                let cost = 0;
                 
                 switch(serviceType) {
-                    case 'verificare_anuala':
-                        yearsToAdd = 1;
+                    case 'verificare_instalatie':
+                        yearsToAdd = 2;
+                        cost = 150;
                         break;
-                    case 'intretinere':
-                        yearsToAdd = 1;
+                    case 'revizie_instalatie':
+                        yearsToAdd = 2;
+                        cost = 250;
+                        break;
+                    case 'verificare_centrala':
+                        yearsToAdd = 2;
+                        cost = 150;
+                        break;
+                    case 'oferta_completa':
+                        yearsToAdd = 2;
+                        cost = 250;
+                        break;
+                    case 'serviciu_urgenta':
+                        yearsToAdd = 0; // Serviciul de urgență nu are perioada de valabilitate
+                        cost = 0; // Se stabilește pe caz
                         break;
                     default:
                         yearsToAdd = 2;
+                        cost = 0;
                 }
                 
-                const end = new Date(start.getTime() + (yearsToAdd * 365 * 24 * 60 * 60 * 1000));
-                document.getElementById('serviceEndDate').value = end.toISOString().split('T')[0];
+                // Setează costul automat
+                document.getElementById('serviceCost').value = cost;
+                
+                // Calculează data de expirare
+                if (yearsToAdd > 0) {
+                    const end = new Date(start.getTime() + (yearsToAdd * 365 * 24 * 60 * 60 * 1000));
+                    document.getElementById('serviceEndDate').value = end.toISOString().split('T')[0];
+                } else {
+                    // Pentru servicii de urgență, nu setăm data de expirare
+                    document.getElementById('serviceEndDate').value = '';
+                }
             }
         }
 
@@ -2007,16 +2129,40 @@
         }
 
         function uploadFiles(files) {
-            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+            console.log('Upload files called with:', files); // Debug
+            
+            if (!files || files.length === 0) {
+                alert('❌ Nu au fost selectate fișiere!');
+                return;
+            }
+            
+            const allowedTypes = [
+                'application/pdf', 
+                'application/msword', 
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                'image/jpeg', 
+                'image/jpg',
+                'image/png', 
+                'application/vnd.ms-excel', 
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ];
+            
+            let uploadedCount = 0;
             
             for (let file of files) {
-                if (file.size > 10 * 1024 * 1024) {
+                console.log('Processing file:', file.name, file.type, file.size); // Debug
+                
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
                     alert(`❌ Fișierul ${file.name} este prea mare. Limita este 10MB.`);
                     continue;
                 }
                 
-                if (!allowedTypes.includes(file.type)) {
-                    alert(`❌ Tipul fișierului ${file.name} nu este suportat.`);
+                // Verifică extensia dacă tipul MIME nu este detectat corect
+                const extension = file.name.split('.').pop().toLowerCase();
+                const allowedExtensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'xlsx', 'xls'];
+                
+                if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(extension)) {
+                    alert(`❌ Tipul fișierului ${file.name} nu este suportat.\nTipuri acceptate: PDF, DOC, DOCX, JPG, PNG, XLSX`);
                     continue;
                 }
                 
@@ -2032,11 +2178,17 @@
                 };
                 
                 documents.push(document);
+                uploadedCount++;
+                console.log('Document added:', document); // Debug
             }
             
-            saveData();
-            loadDocuments();
-            alert(`✅ ${files.length} fișier(e) încărcat(e) cu succes!`);
+            if (uploadedCount > 0) {
+                saveData();
+                loadDocuments();
+                alert(`✅ ${uploadedCount} fișier(e) încărcat(e) cu succes!`);
+            } else {
+                alert('❌ Nu au fost încărcate fișiere din cauza erorilor!');
+            }
         }
 
         function getDocumentType(fileName) {
@@ -2497,39 +2649,48 @@ ${companyName}`;
             const reportType = document.getElementById('reportType').value;
             const reportPeriod = document.getElementById('reportPeriod').value;
             
+            console.log('Generating report:', reportType, reportPeriod); // Debug
+            
             let reportData = [];
             let reportTitle = '';
             
             const dateRange = getDateRange(reportPeriod);
             
-            switch(reportType) {
-                case 'clients':
-                    reportData = generateClientsReport(dateRange);
-                    reportTitle = '👥 Raport Baza de Date Clienți';
-                    break;
-                case 'services':
-                    reportData = generateServicesReport(dateRange);
-                    reportTitle = '🔧 Raport Servicii Implementate';
-                    break;
-                case 'work':
-                    reportData = generateWorkReport(dateRange);
-                    reportTitle = '🛠️ Raport Lucrări Efectuate';
-                    break;
-                case 'expiring':
-                    reportData = generateExpiringReport();
-                    reportTitle = '⚠️ Raport Servicii care Expiră';
-                    break;
-                case 'statistics':
-                    reportData = generateStatisticsReport();
-                    reportTitle = '📈 Statistici Generale';
-                    break;
-                case 'revenue':
-                    reportData = generateRevenueReport(dateRange);
-                    reportTitle = '💰 Analiza Venituri';
-                    break;
+            try {
+                switch(reportType) {
+                    case 'clients':
+                        reportData = generateClientsReport(dateRange);
+                        reportTitle = '👥 Raport Baza de Date Clienți';
+                        break;
+                    case 'services':
+                        reportData = generateServicesReport(dateRange);
+                        reportTitle = '🔧 Raport Servicii Implementate';
+                        break;
+                    case 'work':
+                        reportData = generateWorkReport(dateRange);
+                        reportTitle = '🛠️ Raport Lucrări Efectuate';
+                        break;
+                    case 'expiring':
+                        reportData = generateExpiringReport();
+                        reportTitle = '⚠️ Raport Servicii care Expiră';
+                        break;
+                    case 'statistics':
+                        reportData = generateStatisticsReport();
+                        reportTitle = '📈 Statistici Generale';
+                        break;
+                    case 'revenue':
+                        reportData = generateRevenueReport(dateRange);
+                        reportTitle = '💰 Analiza Venituri';
+                        break;
+                }
+                
+                console.log('Report data:', reportData); // Debug
+                displayReport(reportTitle, reportData, reportType);
+                
+            } catch (error) {
+                console.error('Error generating report:', error);
+                alert('❌ Eroare la generarea raportului: ' + error.message);
             }
-            
-            displayReport(reportTitle, reportData, reportType);
         }
 
         function getDateRange(period) {
@@ -2782,6 +2943,12 @@ ${companyName}`;
 
         function getServiceTypeText(type) {
             switch(type) {
+                case 'verificare_instalatie': return '🔧 Verificare Instalație Gaz - 150 Lei';
+                case 'revizie_instalatie': return '🔍 Revizie Instalație Gaz - 250 Lei';
+                case 'verificare_centrala': return '✅ Verificare Centrală - 150 Lei';
+                case 'oferta_completa': return '💰 OFERTĂ: Instalații Gaz + Centrală - 250 Lei';
+                case 'serviciu_urgenta': return '🚨 Serviciu de Urgență';
+                // Păstrăm și vechile tipuri pentru compatibilitate
                 case 'instalare_gaz': return '🔧 Instalare Gaz';
                 case 'verificare_anuala': return '✅ Verificare Anuală';
                 case 'reparatie': return '🔨 Reparație';
@@ -2794,11 +2961,16 @@ ${companyName}`;
 
         function getWorkTypeText(type) {
             switch(type) {
-                case 'instalare': return '🔧 Instalare Nouă';
-                case 'verificare': return '✅ Verificare Anuală';
+                case 'verificare_instalatie': return '🔧 Verificare Instalație Gaz';
+                case 'revizie_instalatie': return '🔍 Revizie Instalație Gaz';
+                case 'verificare_centrala': return '✅ Verificare Centrală';
+                case 'instalare_completa': return '💰 Instalare Completă (Gaz + Centrală)';
                 case 'reparatie': return '🔨 Reparație';
                 case 'intretinere': return '🛠️ Întreținere';
                 case 'urgenta': return '🚨 Intervenție Urgentă';
+                // Păstrăm și vechile tipuri pentru compatibilitate
+                case 'instalare': return '🔧 Instalare Nouă';
+                case 'verificare': return '✅ Verificare Anuală';
                 case 'revizie': return '🔍 Revizie Completă';
                 default: return type;
             }
@@ -2824,9 +2996,11 @@ ${companyName}`;
 
         function getWorkerName(email) {
             switch(email) {
-                case 'lucrator@adinstalgaz.ro': return '👨‍🔧 Ion Popescu';
+                case 'lucrator1@adinstalgaz.ro': return '👨‍🔧 Ion Popescu';
                 case 'lucrator2@adinstalgaz.ro': return '👨‍🔧 Vasile Ionescu';
                 case 'lucrator3@adinstalgaz.ro': return '👨‍🔧 George Marinescu';
+                case 'lucrator4@adinstalgaz.ro': return '👨‍🔧 Mihai Popescu';
+                case 'lucrator5@adinstalgaz.ro': return '👨‍🔧 Andrei Stoica';
                 default: return email || 'Neatribuit';
             }
         }
