@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdInstalGaz SRL - ULTRA CURAT ✨</title>
-    <meta name="description" content="Sistem ULTRA CURAT pentru gestionarea clienților și serviciilor AdInstalGaz SRL">
+    <title>AdInstalGaz SRL - Management Sistem</title>
+    <meta name="description" content="Sistem pentru gestionarea clienților și serviciilor AdInstalGaz SRL">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -335,6 +335,10 @@
         /* USER ROLE STYLES */
         .admin-only { display: none; }
         body.admin .admin-only { display: block; }
+        
+        /* 🌟 FIX PENTRU SECȚIUNEA UTILIZATORI - NU SE AFIȘEAZĂ DECÂT CÂND E ACTIVĂ */
+        #utilizatori { display: none !important; }
+        #utilizatori.active { display: block !important; }
 
         .spinner {
             border: 4px solid #f3f3f3; border-top: 4px solid #ff6b6b; border-radius: 50%;
@@ -374,12 +378,12 @@
         <div class="auth-box">
             <div class="auth-logo">🔧</div>
             <h1 class="auth-title">AdInstalGaz SRL ✨</h1>
-            <p class="auth-subtitle">ULTRA CURAT - Fără Management Utilizatori în Secțiuni ❌</p>
+            <p class="auth-subtitle">Management Sistem Optimizat</p>
             
             <div id="loginForm" class="auth-form">
                 <input type="email" id="loginEmail" class="auth-input" placeholder="📧 Email" required>
                 <input type="password" id="loginPassword" class="auth-input" placeholder="🔒 Parolă" required>
-                <button id="loginBtn" class="auth-btn">🚀 CONECTARE ULTRA CURAT</button>
+                <button id="loginBtn" class="auth-btn">🚀 CONECTARE</button>
             </div>
 
             <div id="authError" class="auth-error" style="display: none;"></div>
@@ -395,30 +399,30 @@
     <div id="appContainer" class="app-container">
         <header class="header">
             <div class="nav-container">
-                <a href="#" class="logo">🔧 AdInstalGaz ULTRA CURAT ✨</a>
+                <a href="#" class="logo">🔧 AdInstalGaz SRL</a>
                 
                 <nav>
                     <ul class="nav-menu" id="navMenu">
                         <li class="nav-item">
-                            <a href="#" class="nav-link active" data-section="dashboard">📊 Dashboard<span class="ultra-clean-badge">CURAT</span></a>
+                            <a href="#" class="nav-link active" data-section="dashboard">📊 Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-section="clienti">👥 Clienți<span class="ultra-clean-badge">CURAT</span></a>
+                            <a href="#" class="nav-link" data-section="clienti">👥 Clienți</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-section="servicii">⚙️ Servicii<span class="ultra-clean-badge">CURAT</span></a>
+                            <a href="#" class="nav-link" data-section="servicii">⚙️ Servicii</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-section="lucrari">🔧 Lucrări<span class="ultra-clean-badge">CURAT</span></a>
+                            <a href="#" class="nav-link" data-section="lucrari">🔧 Lucrări</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-section="program">📅 Program<span class="ultra-clean-badge">CURAT</span></a>
+                            <a href="#" class="nav-link" data-section="program">📅 Program</a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link" data-section="documente">📁 Documente<span class="ultra-clean-badge">CURAT</span></a>
+                            <a href="#" class="nav-link" data-section="documente">📁 Documente</a>
                         </li>
                         <li class="nav-item admin-only">
-                            <a href="#" class="nav-link" data-section="utilizatori">👤 Utilizatori<span class="ultra-clean-badge">COMPLET</span></a>
+                            <a href="#" class="nav-link" data-section="utilizatori">👤 Utilizatori</a>
                         </li>
                     </ul>
                 </nav>
@@ -438,11 +442,11 @@
         <main class="main-content">
             <!-- Dashboard Section -->
             <section id="dashboard" class="section active">
-                <h1 class="section-title">📊 Dashboard ULTRA CURAT ✨</h1>
+                <h1 class="section-title">📊 Dashboard AdInstalGaz</h1>
                 
                 <div class="alert alert-success">
-                    <strong>✨ VERSIUNE ULTRA CURAT ACTIVĂ!</strong><br>
-                    ❌ Management utilizatori ELIMINAT complet din Dashboard, Clienți, Servicii, Lucrări, Program, Documente<br>
+                    <strong>✨ SISTEM OPTIMIZAT ACTIV!</strong><br>
+                    ❌ Management utilizatori ELIMINAT din secțiunile principale<br>
                     ✅ TOATE funcțiile utilizatori DOAR în secțiunea "Utilizatori" (Admin only)
                 </div>
                 
@@ -468,7 +472,7 @@
                 </div>
 
                 <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 15px;">⚡ Acțiuni Rapide - ULTRA CURATE ✨</h3>
+                    <h3 style="color: #4a5568; margin-bottom: 15px;">⚡ Acțiuni Rapide</h3>
                     <div class="form-grid">
                         <button class="btn btn-primary" onclick="showSection('clienti')">➕ Adaugă Client Nou</button>
                         <button class="btn btn-primary" onclick="showSection('lucrari')">🔧 Adaugă Lucrare</button>
@@ -476,14 +480,6 @@
                         <button class="btn btn-secondary" onclick="exportRaportComplet()">📊 Export PDF</button>
                         <button class="btn btn-warning" onclick="verificaServiciiExpirate()">⚠️ Verifică Expirări</button>
                         <button class="btn btn-success" onclick="backupDatele()">💾 Backup Complet</button>
-                    </div>
-                </div>
-
-                <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 15px;">🌟 ULTRA CURAT - Zero Management Utilizatori</h3>
-                    <div class="alert alert-info">
-                        <strong>✅ CONFIRMAT!</strong> Nu există funcții pentru utilizatori în Dashboard.<br>
-                        <strong>📍 Management utilizatori disponibil DOAR în secțiunea "Utilizatori"</strong>
                     </div>
                 </div>
 
@@ -500,11 +496,7 @@
 
             <!-- Clienți Section -->
             <section id="clienti" class="section">
-                <h1 class="section-title">👥 Clienți ULTRA CURAT ✨</h1>
-                
-                <div class="alert alert-success">
-                    <strong>✨ SECȚIUNEA ULTRA CURĂȚATĂ!</strong> Fără funcții pentru utilizatori - doar gestionare clienți pură!
-                </div>
+                <h1 class="section-title">👥 Gestionare Clienți</h1>
                 
                 <div class="search-container">
                     <input type="text" class="search-input" id="searchClienti" placeholder="🔍 Caută clienți..." onkeyup="searchClienti()">
@@ -521,7 +513,7 @@
                 <div style="height: 3px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border-radius: 50px; margin: 30px 0;"></div>
 
                 <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Adaugă Client Nou - ULTRA CURAT</h3>
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Adaugă Client Nou</h3>
                     
                     <div class="form-grid">
                         <div class="form-group">
@@ -616,23 +608,11 @@
                         <button class="btn btn-secondary" onclick="resetFormClient()">🔄 Resetează</button>
                     </div>
                 </div>
-
-                <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 15px;">🌟 CONFIRMARE ULTRA CURAT</h3>
-                    <div class="alert alert-success">
-                        <strong>✅ PERFECT!</strong> Secțiunea Clienți este complet curățată de funcții utilizatori.<br>
-                        <strong>📍 Pentru utilizatori, mergi la secțiunea "Utilizatori"</strong>
-                    </div>
-                </div>
             </section>
 
             <!-- Servicii Section -->
             <section id="servicii" class="section">
-                <h1 class="section-title">⚙️ Servicii ULTRA CURAT ✨</h1>
-                
-                <div class="alert alert-success">
-                    <strong>✨ SECȚIUNEA ULTRA CURĂȚATĂ!</strong> Doar servicii pure - fără management utilizatori!
-                </div>
+                <h1 class="section-title">⚙️ Baza de Date Servicii</h1>
                 
                 <div class="nav-tabs">
                     <button class="nav-tab active" onclick="showServiciiTab('active')" style="background: linear-gradient(45deg, #4ecdc4, #96ceb4); color: white;">🟢 Active</button>
@@ -651,24 +631,11 @@
                         <p>Serviciile vor apărea automat când adaugi clienți cu servicii existente.</p>
                     </div>
                 </div>
-
-                <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 15px;">🌟 ULTRA CURAT - Zero Management Utilizatori</h3>
-                    <div class="alert alert-success">
-                        <strong>✅ CONFIRMAT!</strong> Secțiunea Servicii este 100% curată.<br>
-                        <strong>❌ Fără adăugare/editare/ștergere utilizatori aici</strong><br>
-                        <strong>📍 Pentru utilizatori, accesează secțiunea dedicată "Utilizatori"</strong>
-                    </div>
-                </div>
             </section>
 
             <!-- Lucrări Section -->
             <section id="lucrari" class="section">
-                <h1 class="section-title">🔧 Lucrări ULTRA CURAT ✨</h1>
-                
-                <div class="alert alert-success">
-                    <strong>✨ SECȚIUNEA ULTRA CURĂȚATĂ!</strong> Doar lucrări - management utilizatori ELIMINAT!
-                </div>
+                <h1 class="section-title">🔧 Gestionare Lucrări</h1>
                 
                 <div class="nav-tabs">
                     <button class="nav-tab active" onclick="showLucrariTab('programate')" style="background: linear-gradient(45deg, #45b7d1, #96ceb4); color: white;">📅 Programate</button>
@@ -691,7 +658,7 @@
                 <div style="height: 3px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border-radius: 50px; margin: 30px 0;"></div>
 
                 <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Adaugă Lucrare Nouă - ULTRA CURAT</h3>
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Adaugă Lucrare Nouă</h3>
                     
                     <div class="form-grid">
                         <div class="form-group">
@@ -734,24 +701,11 @@
                         <button class="btn btn-secondary" onclick="resetFormLucrare()">🔄 Resetează</button>
                     </div>
                 </div>
-
-                <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 15px;">🌟 ULTRA CURAT - Zero Management Utilizatori</h3>
-                    <div class="alert alert-success">
-                        <strong>✅ CONFIRMAT!</strong> Secțiunea Lucrări este 100% curată.<br>
-                        <strong>❌ Fără adăugare/editare/ștergere utilizatori aici</strong><br>
-                        <strong>📍 Dropdown lucrători se populează automat din secțiunea "Utilizatori"</strong>
-                    </div>
-                </div>
             </section>
 
             <!-- Program Section -->
             <section id="program" class="section">
-                <h1 class="section-title">📅 Program ULTRA CURAT ✨</h1>
-                
-                <div class="alert alert-success">
-                    <strong>✨ SECȚIUNEA ULTRA CURĂȚATĂ!</strong> Doar program zilnic - fără management utilizatori!
-                </div>
+                <h1 class="section-title">📅 Program Zilnic</h1>
                 
                 <div class="form-container">
                     <div class="form-grid">
@@ -778,24 +732,11 @@
                         <p>Alege data pentru a vedea programul zilnic.</p>
                     </div>
                 </div>
-
-                <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 15px;">🌟 ULTRA CURAT - Zero Management Utilizatori</h3>
-                    <div class="alert alert-success">
-                        <strong>✅ CONFIRMAT!</strong> Secțiunea Program este 100% curată.<br>
-                        <strong>❌ Fără funcții utilizatori aici</strong><br>
-                        <strong>📍 Filtrele lucrători se populează din secțiunea "Utilizatori"</strong>
-                    </div>
-                </div>
             </section>
 
             <!-- Documente Section -->
             <section id="documente" class="section">
-                <h1 class="section-title">📁 Documente ULTRA CURAT ✨</h1>
-                
-                <div class="alert alert-success">
-                    <strong>✨ SECȚIUNEA ULTRA CURĂȚATĂ!</strong> Doar documente - fără management utilizatori!
-                </div>
+                <h1 class="section-title">📁 Gestionare Documente</h1>
                 
                 <div class="form-container">
                     <h3 style="color: #4a5568; margin-bottom: 20px;">📤 Încărcare Documente</h3>
@@ -827,23 +768,14 @@
                         <p>Încarcă primul document folosind formularul de mai sus.</p>
                     </div>
                 </div>
-
-                <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 15px;">🌟 ULTRA CURAT - Zero Management Utilizatori</h3>
-                    <div class="alert alert-success">
-                        <strong>✅ CONFIRMAT!</strong> Secțiunea Documente este 100% curată.<br>
-                        <strong>❌ Fără funcții utilizatori aici</strong><br>
-                        <strong>📍 Dropdown clienți se populează din secțiunea "Clienți"</strong>
-                    </div>
-                </div>
             </section>
 
             <!-- Utilizatori Section - SINGURA CU TOATE FUNCȚIILE -->
             <section id="utilizatori" class="section admin-only">
-                <h1 class="section-title">👤 UTILIZATORI - FUNCȚIILE COMPLETE 🌟</h1>
+                <h1 class="section-title">👤 Gestionare Utilizatori</h1>
                 
                 <div class="alert alert-info">
-                    <strong>🌟 SECȚIUNEA COMPLETĂ PENTRU UTILIZATORI!</strong><br>
+                    <strong>🔒 SECȚIUNEA COMPLETĂ PENTRU UTILIZATORI!</strong><br>
                     ✅ TOATE funcțiile pentru utilizatori sunt DOAR aici<br>
                     ❌ Zero funcții utilizatori în celelalte secțiuni<br>
                     🔒 Disponibilă doar pentru administratori
@@ -864,7 +796,7 @@
                 <div style="height: 3px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); border-radius: 50px; margin: 30px 0;"></div>
 
                 <div class="form-container">
-                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Adaugă Utilizator Nou - COMPLET</h3>
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">➕ Adaugă Utilizator Nou</h3>
                     
                     <div class="form-grid">
                         <div class="form-group">
@@ -928,7 +860,7 @@
         <div id="notification" class="notification"></div>
 
         <!-- Sync Indicator -->
-        <div id="syncIndicator" class="sync-indicator">✨ Sincronizat ULTRA CURAT</div>
+        <div id="syncIndicator" class="sync-indicator">✨ Sincronizat</div>
     </div>
 
     <script>
