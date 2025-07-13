@@ -309,6 +309,12 @@
             color: #721c24;
         }
         
+        .alert-warning {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
         .loading {
             display: none;
             text-align: center;
@@ -334,6 +340,58 @@
             display: none !important;
         }
         
+        .expiring-urgent {
+            background-color: #ffebee !important;
+        }
+        
+        .expiring-warning {
+            background-color: #fff3e0 !important;
+        }
+        
+        .notifications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .city-badge {
+            background: #e3f2fd;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1565c0;
+        }
+        
+        .client-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .address-tooltip {
+            cursor: help;
+            border-bottom: 1px dotted #999;
+        }
+        
+        .modal-content h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -355,6 +413,16 @@
             .export-buttons {
                 grid-template-columns: 1fr;
             }
+            
+            .form-grid-2, .form-grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 2% auto;
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -363,7 +431,7 @@
         <!-- Header -->
         <div class="header">
             <h1>🔧 AdInstalGaz SRL</h1>
-            <p class="subtitle">Sistem de Management Instalații</p>
+            <p class="subtitle">Sistem de Management Instalații cu Notificări SMS</p>
             <div class="user-info" id="userInfo" style="display: none;">
                 <span id="userEmail"></span>
                 <span id="userRole"></span>
@@ -448,10 +516,11 @@
                     <table class="data-table" id="clientsTable">
                         <thead>
                             <tr>
-                                <th>👤 Nume</th>
+                                <th>👤 Nume Complet</th>
                                 <th>📞 Telefon</th>
                                 <th>📧 Email</th>
-                                <th>🏠 Adresă</th>
+                                <th>🏙️ Orașul</th>
+                                <th>🏠 Adresa</th>
                                 <th>📅 Data adăugării</th>
                                 <th>⚡ Acțiuni</th>
                             </tr>
@@ -498,6 +567,7 @@
                             <tr>
                                 <th>👤 Client</th>
                                 <th>🔧 Tip Lucrare</th>
+                                <th>💰 Preț</th>
                                 <th>📅 Data Asignării</th>
                                 <th>📊 Status</th>
                                 <th>⚡ Acțiuni</th>
@@ -519,8 +589,9 @@
                             <tr>
                                 <th>👤 Client</th>
                                 <th>🔧 Tip Lucrare</th>
+                                <th>💰 Preț</th>
                                 <th>📅 Data Finalizării</th>
-                                <th>⭐ Evaluare</th>
+                                <th>📅 Următorul Serviciu</th>
                                 <th>📄 Documente</th>
                             </tr>
                         </thead>
@@ -544,6 +615,7 @@
                                 <th>👤 Client</th>
                                 <th>👨‍🔧 Lucrător</th>
                                 <th>🔧 Tip Lucrare</th>
+                                <th>💰 Preț</th>
                                 <th>📅 Data Asignării</th>
                                 <th>📊 Status</th>
                                 <th>⚡ Acțiuni</th>
@@ -553,6 +625,14 @@
                             <!-- Assignments will be loaded here -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- Notificări Tab (Admin only) -->
+            <div id="notificari" class="tab-content" style="display: none;">
+                <h2>🔔 Notificări și Expirări Servicii</h2>
+                <div id="notificationsContainer">
+                    <!-- Notifications content will be loaded by JavaScript -->
                 </div>
             </div>
 
@@ -623,27 +703,118 @@
         <!-- Modals -->
         <!-- Add Client Modal -->
         <div id="addClientModal" class="modal">
-            <div class="modal-content">
+            <div class="modal-content" style="max-width: 600px;">
                 <span class="close" onclick="closeModal('addClientModal')">&times;</span>
                 <h2>➕ Adaugă Client Nou</h2>
                 <form onsubmit="addClient(event)">
-                    <div class="form-group">
-                        <label for="clientName">👤 Nume:</label>
-                        <input type="text" id="clientName" required>
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="clientFirstName">👤 Nume:</label>
+                            <input type="text" id="clientFirstName" required placeholder="ex: Popescu">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientLastName">👤 Prenume:</label>
+                            <input type="text" id="clientLastName" required placeholder="ex: Ion">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="clientPhone">📞 Telefon:</label>
-                        <input type="tel" id="clientPhone" required>
+                    
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="clientPhone">📞 Telefon:</label>
+                            <input type="tel" id="clientPhone" required placeholder="ex: 0755123456">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientEmail">📧 Email:</label>
+                            <input type="email" id="clientEmail" placeholder="ex: client@email.ro">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="clientEmail">📧 Email:</label>
-                        <input type="email" id="clientEmail">
+
+                    <h3 style="margin: 20px 0 15px 0; color: #2c3e50;">🏠 Adresa Completă</h3>
+                    
+                    <div class="form-grid-2">
+                        <div class="form-group">
+                            <label for="clientStreet">🛣️ Strada:</label>
+                            <input type="text" id="clientStreet" required placeholder="ex: Calea Victoriei">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientNumber">🔢 Numărul:</label>
+                            <input type="text" id="clientNumber" required placeholder="ex: 15A">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="clientAddress">🏠 Adresă:</label>
-                        <textarea id="clientAddress" rows="3"></textarea>
+
+                    <div class="form-grid-4">
+                        <div class="form-group">
+                            <label for="clientBlock">🏢 Bloc:</label>
+                            <input type="text" id="clientBlock" placeholder="ex: A1">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientStair">🪜 Scara:</label>
+                            <input type="text" id="clientStair" placeholder="ex: B">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientApartment">🚪 Apartament:</label>
+                            <input type="text" id="clientApartment" placeholder="ex: 15">
+                        </div>
+                        <div class="form-group">
+                            <label for="clientFloor">📶 Etaj:</label>
+                            <input type="number" id="clientFloor" min="0" max="50" placeholder="ex: 3">
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Adaugă Client</button>
+
+                    <div class="form-group">
+                        <label for="clientCity">🏙️ Oraș:</label>
+                        <select id="clientCity" required>
+                            <option value="">Selectează orașul</option>
+                            <option value="Bucuresti">București</option>
+                            <option value="Cluj-Napoca">Cluj-Napoca</option>
+                            <option value="Timisoara">Timișoara</option>
+                            <option value="Iasi">Iași</option>
+                            <option value="Constanta">Constanța</option>
+                            <option value="Craiova">Craiova</option>
+                            <option value="Brasov">Brașov</option>
+                            <option value="Galati">Galați</option>
+                            <option value="Ploiesti">Ploiești</option>
+                            <option value="Oradea">Oradea</option>
+                            <option value="Braila">Brăila</option>
+                            <option value="Arad">Arad</option>
+                            <option value="Pitesti">Pitești</option>
+                            <option value="Sibiu">Sibiu</option>
+                            <option value="Bacau">Bacău</option>
+                            <option value="Targu-Mures">Târgu Mureș</option>
+                            <option value="Baia-Mare">Baia Mare</option>
+                            <option value="Buzau">Buzău</option>
+                            <option value="Botosani">Botoșani</option>
+                            <option value="Satu-Mare">Satu Mare</option>
+                            <option value="Ramnicu-Valcea">Râmnicu Vâlcea</option>
+                            <option value="Suceava">Suceava</option>
+                            <option value="Piatra-Neamt">Piatra Neamț</option>
+                            <option value="Drobeta-Turnu-Severin">Drobeta-Turnu Severin</option>
+                            <option value="Focsani">Focșani</option>
+                            <option value="Targu-Jiu">Târgu Jiu</option>
+                            <option value="Tulcea">Tulcea</option>
+                            <option value="Resita">Reșița</option>
+                            <option value="Alba-Iulia">Alba Iulia</option>
+                            <option value="Bistrita">Bistrița</option>
+                            <option value="Slatina">Slatina</option>
+                            <option value="Calarasi">Călărași</option>
+                            <option value="Deva">Deva</option>
+                            <option value="Hunedoara">Hunedoara</option>
+                            <option value="Vaslui">Vaslui</option>
+                            <option value="Roman">Roman</option>
+                            <option value="Turda">Turda</option>
+                            <option value="Medias">Mediaș</option>
+                            <option value="Sfantu-Gheorghe">Sfântu Gheorghe</option>
+                            <option value="Alexandria">Alexandria</option>
+                            <option value="Miercurea-Ciuc">Miercurea Ciuc</option>
+                            <option value="Zalau">Zalău</option>
+                            <option value="Giurgiu">Giurgiu</option>
+                            <option value="Slobozia">Slobozia</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                        ➕ Adaugă Client
+                    </button>
                 </form>
             </div>
         </div>
@@ -671,11 +842,49 @@
                         <select id="workerZone" required>
                             <option value="">Selectează zona</option>
                             <option value="Bucuresti">București</option>
-                            <option value="Cluj">Cluj</option>
+                            <option value="Cluj-Napoca">Cluj-Napoca</option>
                             <option value="Timisoara">Timișoara</option>
-                            <option value="Constanta">Constanța</option>
-                            <option value="Brasov">Brașov</option>
                             <option value="Iasi">Iași</option>
+                            <option value="Constanta">Constanța</option>
+                            <option value="Craiova">Craiova</option>
+                            <option value="Brasov">Brașov</option>
+                            <option value="Galati">Galați</option>
+                            <option value="Ploiesti">Ploiești</option>
+                            <option value="Oradea">Oradea</option>
+                            <option value="Braila">Brăila</option>
+                            <option value="Arad">Arad</option>
+                            <option value="Pitesti">Pitești</option>
+                            <option value="Sibiu">Sibiu</option>
+                            <option value="Bacau">Bacău</option>
+                            <option value="Targu-Mures">Târgu Mureș</option>
+                            <option value="Baia-Mare">Baia Mare</option>
+                            <option value="Buzau">Buzău</option>
+                            <option value="Botosani">Botoșani</option>
+                            <option value="Satu-Mare">Satu Mare</option>
+                            <option value="Ramnicu-Valcea">Râmnicu Vâlcea</option>
+                            <option value="Suceava">Suceava</option>
+                            <option value="Piatra-Neamt">Piatra Neamț</option>
+                            <option value="Drobeta-Turnu-Severin">Drobeta-Turnu Severin</option>
+                            <option value="Focsani">Focșani</option>
+                            <option value="Targu-Jiu">Târgu Jiu</option>
+                            <option value="Tulcea">Tulcea</option>
+                            <option value="Resita">Reșița</option>
+                            <option value="Alba-Iulia">Alba Iulia</option>
+                            <option value="Bistrita">Bistrița</option>
+                            <option value="Slatina">Slatina</option>
+                            <option value="Calarasi">Călărași</option>
+                            <option value="Deva">Deva</option>
+                            <option value="Hunedoara">Hunedoara</option>
+                            <option value="Vaslui">Vaslui</option>
+                            <option value="Roman">Roman</option>
+                            <option value="Turda">Turda</option>
+                            <option value="Medias">Mediaș</option>
+                            <option value="Sfantu-Gheorghe">Sfântu Gheorghe</option>
+                            <option value="Alexandria">Alexandria</option>
+                            <option value="Miercurea-Ciuc">Miercurea Ciuc</option>
+                            <option value="Zalau">Zalău</option>
+                            <option value="Giurgiu">Giurgiu</option>
+                            <option value="Slobozia">Slobozia</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Adaugă Lucrător</button>
@@ -703,15 +912,18 @@
                     </div>
                     <div class="form-group">
                         <label for="workType">🔧 Tip Lucrare:</label>
-                        <select id="workType" required>
+                        <select id="workType" required onchange="updateServicePrice()">
                             <option value="">Selectează tipul</option>
-                            <option value="instalare_gaz">Instalare Gaz</option>
-                            <option value="reparatie_gaz">Reparație Gaz</option>
-                            <option value="verificare_gaz">Verificare Gaz</option>
-                            <option value="instalare_termica">Instalare Termică</option>
-                            <option value="reparatie_termica">Reparație Termică</option>
-                            <option value="mentenanta">Mentenanță</option>
+                            <option value="verificare_instalatie_gaz" data-price="150">Verificare Instalație Gaz (150 lei)</option>
+                            <option value="revizie_instalatie_gaz" data-price="250">Revizie Instalație Gaz (250 lei)</option>
+                            <option value="verificare_centrala" data-price="250">Verificare Centrală (250 lei)</option>
+                            <option value="oferta_instalatii_centrala" data-price="250">OFERTĂ: Instalații Gaz + Centrală (250 lei)</option>
+                            <option value="servicii_urgenta" data-price="0">Servicii de Urgență (preț personalizat)</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="workPrice">💰 Preț (lei):</label>
+                        <input type="number" id="workPrice" min="0" step="1" placeholder="Preț automat sau personalizat">
                     </div>
                     <div class="form-group">
                         <label for="workDescription">📝 Descriere:</label>
@@ -729,18 +941,49 @@
                 </form>
             </div>
         </div>
+
+        <!-- Complete Work Modal -->
+        <div id="completeWorkModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('completeWorkModal')">&times;</span>
+                <h2>✅ Finalizează Lucrarea</h2>
+                <form onsubmit="completeWorkWithDetails(event)">
+                    <input type="hidden" id="completeWorkId" />
+                    <div class="form-group">
+                        <label for="nextServiceDate">📅 Data următorului serviciu:</label>
+                        <input type="date" id="nextServiceDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="workNotes">📝 Observații:</label>
+                        <textarea id="workNotes" rows="3" placeholder="Detalii despre lucrarea executată..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Finalizează cu Expirare</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Client Details Modal -->
+        <div id="clientDetailsModal" class="modal">
+            <div class="modal-content" style="max-width: 600px;">
+                <span class="close" onclick="closeModal('clientDetailsModal')">&times;</span>
+                <h2>👁️ Detalii Client</h2>
+                <div id="clientDetailsContent">
+                    <!-- Client details will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // 🔥 Firebase Configuration
-       const firebaseConfig = {
-    apiKey: "AIzaSyD9yoIQ__cK0zIPlvSRlu1h7O1MtmrfLXA",
-    authDomain: "adinstalgaz-pwa.firebaseapp.com",
-    projectId: "adinstalgaz-pwa",
-    storageBucket: "adinstalgaz-pwa.firebasestorage.app",
-    messagingSenderId: "623851795901",
-    appId: "1:623851795901:web:63072fdef30693f4698ed4"
-};
+        // 🔥 Firebase Configuration - ACTUALIZAT pentru adinstalgaz-pwa
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9yoIQ__cK0zIPlvSRlu1h7O1MtmrfLXA",
+            authDomain: "adinstalgaz-pwa.firebaseapp.com",
+            projectId: "adinstalgaz-pwa",
+            storageBucket: "adinstalgaz-pwa.firebasestorage.app",
+            messagingSenderId: "623851795901",
+            appId: "1:623851795901:web:63072fdef30693f4698ed4"
+        };
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
@@ -753,7 +996,156 @@
         let userRole = null;
         let workerId = null;
 
+        // Funcție pentru actualizarea automată a prețului
+        function updateServicePrice() {
+            const workTypeSelect = document.getElementById('workType');
+            const priceInput = document.getElementById('workPrice');
+            const selectedOption = workTypeSelect.options[workTypeSelect.selectedIndex];
+            
+            if (selectedOption && selectedOption.dataset.price) {
+                const price = selectedOption.dataset.price;
+                if (price === "0") {
+                    priceInput.value = '';
+                    priceInput.placeholder = 'Introduceți prețul personalizat';
+                    priceInput.required = true;
+                } else {
+                    priceInput.value = price;
+                    priceInput.placeholder = 'Preț standard';
+                    priceInput.required = false;
+                }
+            }
+        }
+
+        // Funcție pentru formatarea tipului de serviciu
+        function formatServiceType(serviceType) {
+            const serviceNames = {
+                'verificare_instalatie_gaz': 'Verificare Instalație Gaz',
+                'revizie_instalatie_gaz': 'Revizie Instalație Gaz',
+                'verificare_centrala': 'Verificare Centrală',
+                'oferta_instalatii_centrala': 'Instalații Gaz + Centrală',
+                'servicii_urgenta': 'Servicii de Urgență'
+            };
+            return serviceNames[serviceType] || serviceType;
+        }
+
+        // Funcție pentru afișarea detaliilor clientului
+        async function showClientDetails(clientId) {
+            try {
+                const clientDoc = await db.collection('clients').doc(clientId).get();
+                
+                if (!clientDoc.exists) {
+                    alert('Clientul nu a fost găsit');
+                    return;
+                }
+                
+                const client = clientDoc.data();
+                const createdAt = client.createdAt ? client.createdAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                
+                // Calculează numărul de lucrări ale clientului
+                const worksSnapshot = await db.collection('lucrari').where('clientId', '==', clientId).get();
+                const totalWorks = worksSnapshot.size;
+                const completedWorks = worksSnapshot.docs.filter(doc => doc.data().status === 'completed').length;
+                const totalSpent = worksSnapshot.docs
+                    .filter(doc => doc.data().status === 'completed' && doc.data().price)
+                    .reduce((sum, doc) => sum + (doc.data().price || 0), 0);
+                
+                let detailsHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="card" style="margin: 0;">
+                            <h3>👤 Informații Personale</h3>
+                            <p><strong>Nume complet:</strong> ${client.name || 'N/A'}</p>
+                            <p><strong>Telefon:</strong> ${client.phone || 'N/A'}</p>
+                            <p><strong>Email:</strong> ${client.email || 'N/A'}</p>
+                            <p><strong>Data înregistrării:</strong> ${createdAt}</p>
+                        </div>
+                        
+                        <div class="card" style="margin: 0;">
+                            <h3>📊 Statistici Lucrări</h3>
+                            <p><strong>Total lucrări:</strong> ${totalWorks}</p>
+                            <p><strong>Lucrări completate:</strong> ${completedWorks}</p>
+                            <p><strong>În progres:</strong> ${worksSnapshot.docs.filter(doc => doc.data().status === 'in_progress').length}</p>
+                            <p><strong>Total cheltuit:</strong> ${totalSpent} lei</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card" style="margin: 20px 0 0 0;">
+                        <h3>🏠 Adresa Completă</h3>
+                `;
+                
+                if (client.addressDetails) {
+                    const addr = client.addressDetails;
+                    detailsHTML += `
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <p><strong>🛣️ Strada:</strong> ${addr.street || 'N/A'}</p>
+                                <p><strong>🔢 Numărul:</strong> ${addr.number || 'N/A'}</p>
+                                <p><strong>🏙️ Orașul:</strong> ${addr.city || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p><strong>🏢 Bloc:</strong> ${addr.block || 'N/A'}</p>
+                                <p><strong>🪜 Scara:</strong> ${addr.stair || 'N/A'}</p>
+                                <p><strong>🚪 Apartament:</strong> ${addr.apartment || 'N/A'}</p>
+                                <p><strong>📶 Etaj:</strong> ${addr.floor || 'N/A'}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    detailsHTML += `<p>${client.address || 'Adresa nu este disponibilă'}</p>`;
+                }
+                
+                detailsHTML += '</div>';
+                
+                // Adaugă istoricul lucrărilor dacă există
+                if (totalWorks > 0) {
+                    detailsHTML += `
+                        <div class="card" style="margin: 20px 0 0 0;">
+                            <h3>📋 Istoric Lucrări (ultimele 5)</h3>
+                            <table class="data-table" style="margin-top: 10px;">
+                                <thead>
+                                    <tr>
+                                        <th>🔧 Serviciu</th>
+                                        <th>💰 Preț</th>
+                                        <th>📊 Status</th>
+                                        <th>📅 Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    // Afișează ultimele 5 lucrări
+                    const recentWorks = worksSnapshot.docs
+                        .sort((a, b) => (b.data().createdAt || new Date()) - (a.data().createdAt || new Date()))
+                        .slice(0, 5);
+                    
+                    recentWorks.forEach(workDoc => {
+                        const work = workDoc.data();
+                        const workDate = work.createdAt ? work.createdAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                        const statusText = work.status === 'completed' ? '✅ Completată' : 
+                                         work.status === 'in_progress' ? '🔄 În progres' : '⏳ În așteptare';
+                        
+                        detailsHTML += `
+                            <tr>
+                                <td>${formatServiceType(work.workType)}</td>
+                                <td>${work.price ? work.price + ' lei' : 'N/A'}</td>
+                                <td>${statusText}</td>
+                                <td>${workDate}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    detailsHTML += '</tbody></table></div>';
+                }
+                
+                document.getElementById('clientDetailsContent').innerHTML = detailsHTML;
+                document.getElementById('clientDetailsModal').style.display = 'block';
+                
+            } catch (error) {
+                console.error('❌ Eroare la încărcarea detaliilor clientului:', error);
+                alert('Eroare la încărcarea detaliilor clientului');
+            }
+        }
         // 🔐 FUNCȚII DE ÎNREGISTRARE AUTOMATĂ
+        // ====================================================================
         const handleRegistration = async (name, email, password) => {
             try {
                 console.log('🔄 Începe înregistrarea pentru:', email);
@@ -822,7 +1214,362 @@
             }
         };
 
+        // ====================================================================
+        // 📱 FUNCȚII SMS ȘI NOTIFICĂRI
+        // ====================================================================
+
+        // Funcție principală pentru trimitere SMS
+        async function sendSMSNotification(phoneNumber, clientName, serviceName, expiryDate, servicePrice = null) {
+            try {
+                showLoading(true);
+                
+                let message = `Bună ziua ${clientName}! Serviciul ${serviceName} expiră pe ${expiryDate}.`;
+                if (servicePrice) {
+                    message += ` Preț: ${servicePrice} lei.`;
+                }
+                message += ` Contactați AdInstalGaz pentru reprogramare: 0755123456`;
+                
+                console.log('📱 Trimit SMS către:', phoneNumber);
+                console.log('📄 Mesaj:', message);
+                
+                // Pentru demo - simulăm trimiterea SMS
+                await simulateSMSSend(phoneNumber, message);
+                
+                // Salvăm notificarea în Firestore
+                await db.collection('notifications').add({
+                    clientName: clientName,
+                    phoneNumber: phoneNumber,
+                    message: message,
+                    serviceName: serviceName,
+                    servicePrice: servicePrice,
+                    expiryDate: expiryDate,
+                    sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    sentBy: currentUser.uid,
+                    status: 'sent'
+                });
+                
+                alert(`✅ SMS trimis cu succes către ${clientName} (${phoneNumber})`);
+                
+            } catch (error) {
+                console.error('❌ Eroare trimitere SMS:', error);
+                alert('Eroare la trimiterea SMS-ului: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Simulare trimitere SMS (pentru demo)
+        async function simulateSMSSend(phoneNumber, message) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    console.log('📱 SMS DEMO trimis către:', phoneNumber);
+                    resolve({ success: true, messageId: 'demo_' + Date.now() });
+                }, 1500);
+            });
+        }
+
+        // Verifică serviciile care expiră în următoarele zile
+        async function checkExpiringServices(daysAhead = 3) {
+            try {
+                console.log(`🔍 Verific servicii care expiră în următoarele ${daysAhead} zile...`);
+                
+                const today = new Date();
+                const checkDate = new Date();
+                checkDate.setDate(today.getDate() + daysAhead);
+                
+                const worksSnapshot = await db.collection('lucrari')
+                    .where('nextServiceDate', '<=', checkDate)
+                    .where('nextServiceDate', '>=', today)
+                    .where('status', '==', 'completed')
+                    .get();
+                
+                const expiringServices = [];
+                
+                for (const doc of worksSnapshot.docs) {
+                    const work = doc.data();
+                    
+                    const clientDoc = await db.collection('clients').doc(work.clientId).get();
+                    if (clientDoc.exists) {
+                        const client = clientDoc.data();
+                        
+                        expiringServices.push({
+                            workId: doc.id,
+                            clientId: work.clientId,
+                            clientName: client.name,
+                            clientPhone: client.phone,
+                            serviceName: formatServiceType(work.workType),
+                            servicePrice: work.price,
+                            expiryDate: work.nextServiceDate.toDate(),
+                            daysUntilExpiry: Math.ceil((work.nextServiceDate.toDate() - today) / (1000 * 60 * 60 * 24))
+                        });
+                    }
+                }
+                
+                console.log(`📋 Găsite ${expiringServices.length} servicii care expiră`);
+                return expiringServices;
+                
+            } catch (error) {
+                console.error('❌ Eroare verificare expirări:', error);
+                return [];
+            }
+        }
+
+        // Verificare automată la login admin
+        async function autoCheckExpirations() {
+            if (userRole === 'admin') {
+                try {
+                    const expiringServices = await checkExpiringServices(3);
+                    
+                    if (expiringServices.length > 0) {
+                        const message = `🔔 ATENȚIE: ${expiringServices.length} servicii expiră în următoarele 3 zile!\n\nVezi tab "Notificări" pentru detalii.`;
+                        
+                        setTimeout(() => {
+                            if (confirm(message + '\n\nVrei să trimiți SMS automat tuturor clienților?')) {
+                                sendBulkExpirationSMS(expiringServices);
+                            }
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('❌ Eroare verificare automată:', error);
+                }
+            }
+        }
+
+        // Trimitere SMS în masă pentru expirări
+        async function sendBulkExpirationSMS(expiringServices) {
+            try {
+                showLoading(true);
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const service of expiringServices) {
+                    try {
+                        const expiryDateStr = service.expiryDate.toLocaleDateString('ro-RO');
+                        await sendSMSNotification(
+                            service.clientPhone,
+                            service.clientName,
+                            service.serviceName,
+                            expiryDateStr,
+                            service.servicePrice
+                        );
+                        successCount++;
+                        
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                    } catch (error) {
+                        console.error(`❌ Eroare SMS pentru ${service.clientName}:`, error);
+                        errorCount++;
+                    }
+                }
+                
+                alert(`📱 SMS-uri trimise:\n✅ Succes: ${successCount}\n❌ Erori: ${errorCount}`);
+                
+            } catch (error) {
+                console.error('❌ Eroare trimitere în masă:', error);
+                alert('Eroare la trimiterea SMS-urilor în masă');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Încarcă tab-ul Notificări
+        async function loadNotifications() {
+            try {
+                const notificationsContainer = document.getElementById('notificationsContainer');
+                
+                const expiringServices = await checkExpiringServices(7);
+                
+                const notificationsSnapshot = await db.collection('notifications')
+                    .orderBy('sentAt', 'desc')
+                    .limit(50)
+                    .get();
+                
+                let html = `
+                    <div class="card">
+                        <h3>🔔 Servicii care Expiră (următoarele 7 zile)</h3>
+                        ${expiringServices.length === 0 ? 
+                            '<p>✅ Nu sunt servicii care expiră în perioada următoare</p>' :
+                            generateExpiringServicesTable(expiringServices)
+                        }
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="checkExpiringServices(3).then(loadNotifications)">
+                                🔄 Verifică Expirări
+                            </button>
+                            <button class="btn btn-warning" onclick="sendExpirationReminders()">
+                                📱 Trimite Toate SMS-urile
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📱 Istoric Notificări SMS</h3>
+                        ${generateNotificationsHistory(notificationsSnapshot)}
+                    </div>
+                `;
+                
+                notificationsContainer.innerHTML = html;
+                
+            } catch (error) {
+                console.error('❌ Eroare încărcare notificări:', error);
+            }
+        }
+
+        // Generează tabelul cu servicii care expiră
+        function generateExpiringServicesTable(expiringServices) {
+            let html = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>👤 Client</th>
+                            <th>📞 Telefon</th>
+                            <th>🔧 Serviciu</th>
+                            <th>💰 Preț</th>
+                            <th>📅 Data Expirării</th>
+                            <th>⏰ Zile Rămase</th>
+                            <th>📱 Acțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            expiringServices.forEach(service => {
+                const urgencyClass = service.daysUntilExpiry <= 1 ? 'expiring-urgent' : 
+                                   service.daysUntilExpiry <= 2 ? 'expiring-warning' : '';
+                
+                html += `
+                    <tr class="${urgencyClass}">
+                        <td>${service.clientName}</td>
+                        <td>${service.clientPhone}</td>
+                        <td>${service.serviceName}</td>
+                        <td>${service.servicePrice ? service.servicePrice + ' lei' : 'N/A'}</td>
+                        <td>${service.expiryDate.toLocaleDateString('ro-RO')}</td>
+                        <td>${service.daysUntilExpiry} zile</td>
+                        <td>
+                            <button class="btn btn-primary" onclick="sendSingleExpirationSMS('${service.clientPhone}', '${service.clientName}', '${service.serviceName}', '${service.expiryDate.toLocaleDateString('ro-RO')}', ${service.servicePrice})">
+                                📱 Trimite SMS
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            return html;
+        }
+
+        // Generează istoricul notificărilor
+        function generateNotificationsHistory(notificationsSnapshot) {
+            if (notificationsSnapshot.empty) {
+                return '<p>📭 Nu există notificări trimise încă</p>';
+            }
+            
+            let html = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>👤 Client</th>
+                            <th>📞 Telefon</th>
+                            <th>🔧 Serviciu</th>
+                            <th>💰 Preț</th>
+                            <th>📄 Mesaj</th>
+                            <th>📅 Data Trimiterii</th>
+                            <th>📊 Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            notificationsSnapshot.forEach(doc => {
+                const notification = doc.data();
+                const sentAt = notification.sentAt ? notification.sentAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                
+                html += `
+                    <tr>
+                        <td>${notification.clientName}</td>
+                        <td>${notification.phoneNumber}</td>
+                        <td>${notification.serviceName}</td>
+                        <td>${notification.servicePrice ? notification.servicePrice + ' lei' : 'N/A'}</td>
+                        <td>${notification.message.substring(0, 50)}...</td>
+                        <td>${sentAt}</td>
+                        <td>✅ Trimis</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            return html;
+        }
+
+        // Funcții helper pentru acțiuni SMS
+        async function sendSingleExpirationSMS(phoneNumber, clientName, serviceName, expiryDate, servicePrice = null) {
+            await sendSMSNotification(phoneNumber, clientName, serviceName, expiryDate, servicePrice);
+            loadNotifications();
+        }
+
+        async function sendExpirationReminders() {
+            const expiringServices = await checkExpiringServices(3);
+            if (expiringServices.length > 0) {
+                if (confirm(`Trimiti SMS către ${expiringServices.length} clienți cu servicii care expiră?`)) {
+                    await sendBulkExpirationSMS(expiringServices);
+                    loadNotifications();
+                }
+            } else {
+                alert('Nu există servicii care expiră în următoarele 3 zile');
+            }
+        }
+
+        // Modal pentru trimiterea SMS-ului personalizat
+        function showSMSModal(clientId, clientName, clientPhone) {
+            const message = prompt(
+                `Trimite SMS către ${clientName} (${clientPhone}):\n\nIntroduceți mesajul:`,
+                `Bună ziua ${clientName}! Mesaj de la AdInstalGaz. Pentru informații: 0755123456`
+            );
+            
+            if (message) {
+                sendCustomSMS(clientPhone, clientName, message);
+            }
+        }
+
+        // Trimitere SMS personalizat
+        async function sendCustomSMS(phoneNumber, clientName, customMessage) {
+            try {
+                showLoading(true);
+                
+                console.log('📱 Trimit SMS personalizat către:', phoneNumber);
+                
+                await simulateSMSSend(phoneNumber, customMessage);
+                
+                await db.collection('notifications').add({
+                    clientName: clientName,
+                    phoneNumber: phoneNumber,
+                    message: customMessage,
+                    serviceName: 'Mesaj personalizat',
+                    sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    sentBy: currentUser.uid,
+                    status: 'sent'
+                });
+                
+                alert(`✅ SMS personalizat trimis către ${clientName}`);
+                
+            } catch (error) {
+                console.error('❌ Eroare SMS personalizat:', error);
+                alert('Eroare la trimiterea SMS-ului');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // ====================================================================
         // 📦 FUNCȚII DE EXPORT (din artifact-ul anterior)
+        // ====================================================================
         const collectReportData = async (filters = {}) => {
             try {
                 console.log('📊 Colectez date pentru raport...');
@@ -935,13 +1682,14 @@
                     const clientsTableData = data.clients.map(client => [
                         client.name || 'N/A',
                         client.phone || 'N/A',
-                        client.address || 'N/A',
+                        getCityName(client),
+                        getShortAddress(client),
                         client.createdAt ? client.createdAt.toLocaleDateString('ro-RO') : 'N/A'
                     ]);
                     
                     doc.autoTable({
                         startY: yPos,
-                        head: [['Nume Client', 'Telefon', 'Adresă', 'Data Adăugării']],
+                        head: [['Nume Client', 'Telefon', 'Oraș', 'Adresă', 'Data Adăugării']],
                         body: clientsTableData,
                         theme: 'striped',
                         headStyles: { fillColor: [52, 73, 94] },
@@ -968,17 +1716,18 @@
                         
                         return [
                             client?.name || 'Client necunoscut',
-                            work.workType || 'N/A',
+                            formatServiceType(work.workType),
                             worker?.name || 'Neasignat',
                             work.status === 'completed' ? '✅ Completată' : 
                             work.status === 'in_progress' ? '🔄 În progres' : '⏳ În așteptare',
+                            work.price ? work.price + ' lei' : 'N/A',
                             work.createdAt ? work.createdAt.toLocaleDateString('ro-RO') : 'N/A'
                         ];
                     });
                     
                     doc.autoTable({
                         startY: yPos,
-                        head: [['Client', 'Tip Lucrare', 'Lucrător', 'Status', 'Data Creării']],
+                        head: [['Client', 'Tip Lucrare', 'Lucrător', 'Status', 'Preț', 'Data Creării']],
                         body: worksTableData,
                         theme: 'striped',
                         headStyles: { fillColor: [52, 73, 94] },
@@ -1030,31 +1779,42 @@
                 
                 if (reportType === 'complete' || reportType === 'clients') {
                     const clientsData = [
-                        ['Nume Client', 'Telefon', 'Email', 'Adresă', 'Data Adăugării', 'Nr. Lucrări']
+                        ['Nume Client', 'Telefon', 'Email', 'Oraș', 'Strada', 'Număr', 'Bloc', 'Apartament', 'Data Adăugării', 'Nr. Lucrări', 'Total Cheltuit']
                     ];
                     
                     data.clients.forEach(client => {
-                        const clientWorks = data.works.filter(w => w.clientId === client.id).length;
+                        const clientWorks = data.works.filter(w => w.clientId === client.id);
+                        const totalSpent = clientWorks
+                            .filter(w => w.status === 'completed' && w.price)
+                            .reduce((sum, w) => sum + (w.price || 0), 0);
+                        
+                        const addr = client.addressDetails || {};
+                        
                         clientsData.push([
                             client.name || 'N/A',
                             client.phone || 'N/A',
                             client.email || 'N/A',
-                            client.address || 'N/A',
+                            addr.city || getCityName(client),
+                            addr.street || 'N/A',
+                            addr.number || 'N/A',
+                            addr.block || '',
+                            addr.apartment || '',
                             client.createdAt ? client.createdAt.toLocaleDateString('ro-RO') : 'N/A',
-                            clientWorks
+                            clientWorks.length,
+                            totalSpent
                         ]);
                     });
                     
                     const clientsSheet = XLSX.utils.aoa_to_sheet(clientsData);
                     clientsSheet['!cols'] = [
-                        { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 30 }, { wch: 15 }, { wch: 12 }
+                        { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 20 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 15 }, { wch: 12 }, { wch: 15 }
                     ];
                     XLSX.utils.book_append_sheet(workbook, clientsSheet, 'Clienți');
                 }
                 
                 if (reportType === 'complete' || reportType === 'works') {
                     const worksData = [
-                        ['Client', 'Tip Lucrare', 'Lucrător Asignat', 'Status', 'Data Creării', 'Data Finalizării', 'Observații']
+                        ['Client', 'Tip Lucrare', 'Lucrător Asignat', 'Status', 'Preț (lei)', 'Data Creării', 'Data Finalizării', 'Observații']
                     ];
                     
                     data.works.forEach(work => {
@@ -1063,10 +1823,11 @@
                         
                         worksData.push([
                             client?.name || 'Client necunoscut',
-                            work.workType || 'N/A',
+                            formatServiceType(work.workType),
                             worker?.name || 'Neasignat',
                             work.status === 'completed' ? 'Completată' : 
                             work.status === 'in_progress' ? 'În progres' : 'În așteptare',
+                            work.price || 0,
                             work.createdAt ? work.createdAt.toLocaleDateString('ro-RO') : 'N/A',
                             work.completedAt ? work.completedAt.toLocaleDateString('ro-RO') : 'N/A',
                             work.notes || ''
@@ -1075,7 +1836,7 @@
                     
                     const worksSheet = XLSX.utils.aoa_to_sheet(worksData);
                     worksSheet['!cols'] = [
-                        { wch: 20 }, { wch: 15 }, { wch: 18 }, { wch: 12 }, { wch: 15 }, { wch: 15 }, { wch: 25 }
+                        { wch: 20 }, { wch: 25 }, { wch: 18 }, { wch: 12 }, { wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 25 }
                     ];
                     XLSX.utils.book_append_sheet(workbook, worksSheet, 'Lucrări');
                 }
@@ -1160,7 +1921,9 @@
             workerReport: (workerId) => generateReport({ workerId }, 'excel', 'works')
         };
 
+        // ====================================================================
         // 🎯 Authentication Functions
+        // ====================================================================
         async function handleLogin(event) {
             event.preventDefault();
             
@@ -1219,27 +1982,24 @@
             firebase.auth().signOut();
         }
 
+        // ====================================================================
         // 🎯 UI Functions
+        // ====================================================================
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'block' : 'none';
         }
 
         function showTab(tabName) {
-            // Hide all tab contents
             const tabContents = document.querySelectorAll('.tab-content');
             tabContents.forEach(tab => tab.style.display = 'none');
             
-            // Remove active class from all tabs
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => tab.classList.remove('active'));
             
-            // Show selected tab
             document.getElementById(tabName).style.display = 'block';
             
-            // Add active class to clicked tab
             event.target.classList.add('active');
             
-            // Load tab-specific data
             loadTabData(tabName);
         }
 
@@ -1249,7 +2009,7 @@
                     loadDashboard();
                     break;
                 case 'clienti':
-                    loadClients();
+                    loadClientsWithSMS();
                     break;
                 case 'lucratori':
                     loadWorkers();
@@ -1262,6 +2022,9 @@
                     break;
                 case 'asignari':
                     loadAssignments();
+                    break;
+                case 'notificari':
+                    loadNotifications();
                     break;
             }
         }
@@ -1276,6 +2039,7 @@
                     <button class="tab" onclick="showTab('clienti')">👥 Clienți</button>
                     <button class="tab" onclick="showTab('lucratori')">👨‍🔧 Lucrători</button>
                     <button class="tab" onclick="showTab('asignari')">📋 Asignări</button>
+                    <button class="tab" onclick="showTab('notificari')">🔔 Notificări</button>
                     <button class="tab" onclick="showTab('rapoarte')">📊 Rapoarte</button>
                 `;
             } else if (role === 'worker') {
@@ -1289,18 +2053,24 @@
             navigationTabs.innerHTML = tabsHTML;
         }
 
+        // ====================================================================
         // 🎯 Data Loading Functions
+        // ====================================================================
         async function loadDashboard() {
             try {
                 const statsGrid = document.getElementById('statsGrid');
                 
                 if (userRole === 'admin') {
-                    // Admin dashboard
                     const clientsSnapshot = await db.collection('clients').get();
                     const workersSnapshot = await db.collection('workers').get();
                     const worksSnapshot = await db.collection('lucrari').get();
                     
                     const completedWorks = worksSnapshot.docs.filter(doc => doc.data().status === 'completed').length;
+                    
+                    // Calculează totalul venituri din lucrările completate
+                    const totalRevenue = worksSnapshot.docs
+                        .filter(doc => doc.data().status === 'completed' && doc.data().price)
+                        .reduce((sum, doc) => sum + (doc.data().price || 0), 0);
                     
                     statsGrid.innerHTML = `
                         <div class="stat-card">
@@ -1319,15 +2089,23 @@
                             <div class="stat-number">${completedWorks}</div>
                             <div>✅ Completate</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${totalRevenue}</div>
+                            <div>💰 Venituri (lei)</div>
+                        </div>
                     `;
                 } else if (userRole === 'worker') {
-                    // Worker dashboard
                     const myWorksSnapshot = await db.collection('lucrari')
                         .where('assignedTo', '==', workerId)
                         .get();
                     
                     const myCompletedWorks = myWorksSnapshot.docs.filter(doc => doc.data().status === 'completed').length;
                     const myInProgressWorks = myWorksSnapshot.docs.filter(doc => doc.data().status === 'in_progress').length;
+                    
+                    // Calculează venitul lucrătorului din lucrările completate
+                    const myRevenue = myWorksSnapshot.docs
+                        .filter(doc => doc.data().status === 'completed' && doc.data().price)
+                        .reduce((sum, doc) => sum + (doc.data().price || 0), 0);
                     
                     statsGrid.innerHTML = `
                         <div class="stat-card">
@@ -1342,6 +2120,10 @@
                             <div class="stat-number">${myInProgressWorks}</div>
                             <div>🔄 În Progres</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${myRevenue}</div>
+                            <div>💰 Venituri (lei)</div>
+                        </div>
                     `;
                 }
                 
@@ -1350,7 +2132,31 @@
             }
         }
 
-        async function loadClients() {
+        // Funcție pentru afișarea adresei scurte în tabele
+        function getShortAddress(client) {
+            if (client.addressDetails) {
+                const addr = client.addressDetails;
+                let shortAddr = `${addr.street} ${addr.number}`;
+                if (addr.block) shortAddr += `, Bl.${addr.block}`;
+                if (addr.apartment) shortAddr += `, Ap.${addr.apartment}`;
+                return shortAddr;
+            }
+            return client.address || 'N/A';
+        }
+
+        // Funcție pentru afișarea orașului
+        function getCityName(client) {
+            if (client.addressDetails && client.addressDetails.city) {
+                return client.addressDetails.city;
+            }
+            // Încearcă să extragi orașul din adresa veche
+            const address = client.address || '';
+            const parts = address.split(',');
+            return parts[parts.length - 1]?.trim() || 'N/A';
+        }
+
+        // Funcție modificată pentru încărcarea clienților cu buton SMS
+        async function loadClientsWithSMS() {
             try {
                 const clientsTableBody = document.getElementById('clientsTableBody');
                 const clientsSnapshot = await db.collection('clients').orderBy('createdAt', 'desc').get();
@@ -1359,16 +2165,21 @@
                 clientsSnapshot.forEach(doc => {
                     const client = doc.data();
                     const createdAt = client.createdAt ? client.createdAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                    const shortAddress = getShortAddress(client);
+                    const cityName = getCityName(client);
                     
                     html += `
                         <tr>
-                            <td>${client.name || 'N/A'}</td>
+                            <td><strong>${client.name || 'N/A'}</strong></td>
                             <td>${client.phone || 'N/A'}</td>
                             <td>${client.email || 'N/A'}</td>
-                            <td>${client.address || 'N/A'}</td>
+                            <td><span style="background: #e3f2fd; padding: 4px 8px; border-radius: 12px; font-size: 12px;">${cityName}</span></td>
+                            <td title="${client.address || ''}">${shortAddress}</td>
                             <td>${createdAt}</td>
                             <td>
                                 <button class="btn btn-primary" onclick="assignWorkToClient('${doc.id}')">📋 Asignează</button>
+                                <button class="btn btn-success" onclick="showSMSModal('${doc.id}', '${client.name}', '${client.phone}')">📱 SMS</button>
+                                <button class="btn btn-info" onclick="showClientDetails('${doc.id}')">👁️ Detalii</button>
                                 <button class="btn btn-danger" onclick="deleteClient('${doc.id}')">🗑️ Șterge</button>
                             </td>
                         </tr>
@@ -1425,7 +2236,6 @@
                 for (const doc of worksSnapshot.docs) {
                     const work = doc.data();
                     
-                    // Get client info
                     const clientDoc = await db.collection('clients').doc(work.clientId).get();
                     const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
                     
@@ -1435,13 +2245,14 @@
                     html += `
                         <tr>
                             <td>${clientName}</td>
-                            <td>${work.workType || 'N/A'}</td>
+                            <td>${formatServiceType(work.workType)}</td>
+                            <td>${work.price ? work.price + ' lei' : 'N/A'}</td>
                             <td>${createdAt}</td>
                             <td>${statusText}</td>
                             <td>
                                 ${work.status === 'pending' ? 
                                     `<button class="btn btn-primary" onclick="startWork('${doc.id}')">🚀 Începe</button>` :
-                                    `<button class="btn btn-success" onclick="completeWork('${doc.id}')">✅ Finalizează</button>`
+                                    `<button class="btn btn-success" onclick="showCompleteWorkModal('${doc.id}')">✅ Finalizează</button>`
                                 }
                             </td>
                         </tr>
@@ -1467,18 +2278,19 @@
                 for (const doc of worksSnapshot.docs) {
                     const work = doc.data();
                     
-                    // Get client info
                     const clientDoc = await db.collection('clients').doc(work.clientId).get();
                     const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
                     
                     const completedAt = work.completedAt ? work.completedAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                    const nextServiceDate = work.nextServiceDate ? work.nextServiceDate.toDate().toLocaleDateString('ro-RO') : 'N/A';
                     
                     html += `
                         <tr>
                             <td>${clientName}</td>
-                            <td>${work.workType || 'N/A'}</td>
+                            <td>${formatServiceType(work.workType)}</td>
+                            <td>${work.price ? work.price + ' lei' : 'N/A'}</td>
                             <td>${completedAt}</td>
-                            <td>⭐⭐⭐⭐⭐</td>
+                            <td>${nextServiceDate}</td>
                             <td>📄 Vezi documente</td>
                         </tr>
                     `;
@@ -1491,7 +2303,50 @@
             }
         }
 
+        async function loadAssignments() {
+            try {
+                const assignmentsTableBody = document.getElementById('assignmentsTableBody');
+                const worksSnapshot = await db.collection('lucrari').orderBy('createdAt', 'desc').get();
+                
+                let html = '';
+                for (const doc of worksSnapshot.docs) {
+                    const work = doc.data();
+                    
+                    const clientDoc = await db.collection('clients').doc(work.clientId).get();
+                    const workerDoc = await db.collection('workers').doc(work.assignedTo).get();
+                    
+                    const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
+                    const workerName = workerDoc.exists ? workerDoc.data().name : 'Lucrător necunoscut';
+                    const createdAt = work.createdAt ? work.createdAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                    
+                    const statusText = work.status === 'completed' ? '✅ Completată' : 
+                                     work.status === 'in_progress' ? '🔄 În progres' : '⏳ În așteptare';
+                    
+                    html += `
+                        <tr>
+                            <td>${clientName}</td>
+                            <td>${workerName}</td>
+                            <td>${formatServiceType(work.workType)}</td>
+                            <td>${work.price ? work.price + ' lei' : 'N/A'}</td>
+                            <td>${createdAt}</td>
+                            <td>${statusText}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteAssignment('${doc.id}')">🗑️ Șterge</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                assignmentsTableBody.innerHTML = html;
+                
+            } catch (error) {
+                console.error('❌ Eroare la încărcarea asignărilor:', error);
+            }
+        }
+
+        // ====================================================================
         // 🎯 Modal Functions
+        // ====================================================================
         function showAddClientModal() {
             document.getElementById('addClientModal').style.display = 'block';
         }
@@ -1505,6 +2360,11 @@
             document.getElementById('assignWorkModal').style.display = 'block';
         }
 
+        function showCompleteWorkModal(workId) {
+            document.getElementById('completeWorkId').value = workId;
+            document.getElementById('completeWorkModal').style.display = 'block';
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
@@ -1514,7 +2374,6 @@
                 const clientSelect = document.getElementById('assignClient');
                 const workerSelect = document.getElementById('assignWorker');
                 
-                // Load clients
                 const clientsSnapshot = await db.collection('clients').get();
                 clientSelect.innerHTML = '<option value="">Selectează clientul</option>';
                 clientsSnapshot.forEach(doc => {
@@ -1522,7 +2381,6 @@
                     clientSelect.innerHTML += `<option value="${doc.id}">${client.name}</option>`;
                 });
                 
-                // Load workers
                 const workersSnapshot = await db.collection('workers').get();
                 workerSelect.innerHTML = '<option value="">Selectează lucrătorul</option>';
                 workersSnapshot.forEach(doc => {
@@ -1535,16 +2393,72 @@
             }
         }
 
+        // ====================================================================
         // 🎯 CRUD Functions
+        // ====================================================================
+        // Funcție pentru construirea adresei complete
+        function buildFullAddress(street, number, block, stair, apartment, floor, city) {
+            let address = `${street} ${number}`;
+            
+            if (block) address += `, Bl. ${block}`;
+            if (stair) address += `, Sc. ${stair}`;
+            if (apartment) address += `, Ap. ${apartment}`;
+            if (floor) address += `, Et. ${floor}`;
+            address += `, ${city}`;
+            
+            return address;
+        }
+
+        // Funcție pentru resetarea formularului client
+        function resetClientForm() {
+            document.getElementById('clientFirstName').value = '';
+            document.getElementById('clientLastName').value = '';
+            document.getElementById('clientPhone').value = '';
+            document.getElementById('clientEmail').value = '';
+            document.getElementById('clientStreet').value = '';
+            document.getElementById('clientNumber').value = '';
+            document.getElementById('clientBlock').value = '';
+            document.getElementById('clientStair').value = '';
+            document.getElementById('clientApartment').value = '';
+            document.getElementById('clientFloor').value = '';
+            document.getElementById('clientCity').value = '';
+        }
+
         async function addClient(event) {
             event.preventDefault();
             
             try {
+                const firstName = document.getElementById('clientFirstName').value;
+                const lastName = document.getElementById('clientLastName').value;
+                const phone = document.getElementById('clientPhone').value;
+                const email = document.getElementById('clientEmail').value;
+                const street = document.getElementById('clientStreet').value;
+                const number = document.getElementById('clientNumber').value;
+                const block = document.getElementById('clientBlock').value;
+                const stair = document.getElementById('clientStair').value;
+                const apartment = document.getElementById('clientApartment').value;
+                const floor = document.getElementById('clientFloor').value;
+                const city = document.getElementById('clientCity').value;
+                
+                const fullName = `${firstName} ${lastName}`;
+                const fullAddress = buildFullAddress(street, number, block, stair, apartment, floor, city);
+                
                 const clientData = {
-                    name: document.getElementById('clientName').value,
-                    phone: document.getElementById('clientPhone').value,
-                    email: document.getElementById('clientEmail').value,
-                    address: document.getElementById('clientAddress').value,
+                    name: fullName,
+                    firstName: firstName,
+                    lastName: lastName,
+                    phone: phone,
+                    email: email,
+                    address: fullAddress,
+                    addressDetails: {
+                        street: street,
+                        number: number,
+                        block: block || '',
+                        stair: stair || '',
+                        apartment: apartment || '',
+                        floor: floor || '',
+                        city: city
+                    },
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     createdBy: currentUser.uid
                 };
@@ -1553,13 +2467,8 @@
                 
                 alert('✅ Client adăugat cu succes!');
                 closeModal('addClientModal');
-                loadClients();
-                
-                // Reset form
-                document.getElementById('clientName').value = '';
-                document.getElementById('clientPhone').value = '';
-                document.getElementById('clientEmail').value = '';
-                document.getElementById('clientAddress').value = '';
+                loadClientsWithSMS();
+                resetClientForm();
                 
             } catch (error) {
                 console.error('❌ Eroare la adăugarea clientului:', error);
@@ -1586,7 +2495,6 @@
                 closeModal('addWorkerModal');
                 loadWorkers();
                 
-                // Reset form
                 document.getElementById('workerName').value = '';
                 document.getElementById('workerEmail').value = '';
                 document.getElementById('workerPhone').value = '';
@@ -1602,10 +2510,13 @@
             event.preventDefault();
             
             try {
+                const workPrice = document.getElementById('workPrice').value;
+                
                 const workData = {
                     clientId: document.getElementById('assignClient').value,
                     assignedTo: document.getElementById('assignWorker').value,
                     workType: document.getElementById('workType').value,
+                    price: workPrice ? parseInt(workPrice) : 0,
                     description: document.getElementById('workDescription').value,
                     priority: document.getElementById('workPriority').value,
                     status: 'pending',
@@ -1618,10 +2529,10 @@
                 alert('✅ Lucrare asignată cu succes!');
                 closeModal('assignWorkModal');
                 
-                // Reset form
                 document.getElementById('assignClient').value = '';
                 document.getElementById('assignWorker').value = '';
                 document.getElementById('workType').value = '';
+                document.getElementById('workPrice').value = '';
                 document.getElementById('workDescription').value = '';
                 document.getElementById('workPriority').value = 'normal';
                 
@@ -1647,140 +2558,105 @@
             }
         }
 
-        async function completeWork(workId) {
+        async function completeWorkWithDetails(event) {
+            event.preventDefault();
+            
             try {
+                const workId = document.getElementById('completeWorkId').value;
+                const nextServiceDate = new Date(document.getElementById('nextServiceDate').value);
+                const notes = document.getElementById('workNotes').value;
+                
                 await db.collection('lucrari').doc(workId).update({
                     status: 'completed',
-                    completedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    nextServiceDate: nextServiceDate,
+                    notes: notes
                 });
                 
-                alert('✅ Lucrarea a fost finalizată!');
+                alert('✅ Lucrarea a fost finalizată cu data următorului serviciu!');
+                closeModal('completeWorkModal');
                 loadMyWorks();
+                
+                document.getElementById('nextServiceDate').value = '';
+                document.getElementById('workNotes').value = '';
                 
             } catch (error) {
                 console.error('❌ Eroare la finalizarea lucrării:', error);
                 alert('Eroare la finalizarea lucrării: ' + error.message);
             }
         }
-// 🔄 FUNCȚII LIPSĂ - Adaugă acestea
-async function refreshClients() {
-    try {
-        console.log('🔄 Actualizez lista clienților...');
-        await loadClients();
-        alert('✅ Lista clienților actualizată!');
-    } catch (error) {
-        console.error('❌ Eroare la actualizarea clienților:', error);
-        alert('Eroare la actualizare: ' + error.message);
-    }
-}
 
-async function refreshWorkers() {
-    try {
-        console.log('🔄 Actualizez lista lucrătorilor...');
-        await loadWorkers();
-        alert('✅ Lista lucrătorilor actualizată!');
-    } catch (error) {
-        console.error('❌ Eroare la actualizarea lucrătorilor:', error);
-        alert('Eroare la actualizare: ' + error.message);
-    }
-}
-
-async function deleteClient(clientId) {
-    if (confirm('Ești sigur că vrei să ștergi acest client?')) {
-        try {
-            await db.collection('clients').doc(clientId).delete();
-            alert('✅ Client șters cu succes!');
-            loadClients();
-        } catch (error) {
-            console.error('❌ Eroare la ștergerea clientului:', error);
-            alert('Eroare la ștergere: ' + error.message);
+        // Funcții de refresh și ștergere
+        async function refreshClients() {
+            try {
+                console.log('🔄 Actualizez lista clienților...');
+                await loadClientsWithSMS();
+                alert('✅ Lista clienților actualizată!');
+            } catch (error) {
+                console.error('❌ Eroare la actualizarea clienților:', error);
+                alert('Eroare la actualizare: ' + error.message);
+            }
         }
-    }
-}
 
-async function deleteWorker(workerId) {
-    if (confirm('Ești sigur că vrei să ștergi acest lucrător?')) {
-        try {
-            await db.collection('workers').doc(workerId).delete();
-            alert('✅ Lucrător șters cu succes!');
-            loadWorkers();
-        } catch (error) {
-            console.error('❌ Eroare la ștergerea lucrătorului:', error);
-            alert('Eroare la ștergere: ' + error.message);
+        async function refreshWorkers() {
+            try {
+                console.log('🔄 Actualizez lista lucrătorilor...');
+                await loadWorkers();
+                alert('✅ Lista lucrătorilor actualizată!');
+            } catch (error) {
+                console.error('❌ Eroare la actualizarea lucrătorilor:', error);
+                alert('Eroare la actualizare: ' + error.message);
+            }
         }
-    }
-}
 
-async function assignWorkToClient(clientId) {
-    // Set the client in the modal and open it
-    await loadClientsAndWorkersForAssignment();
-    document.getElementById('assignClient').value = clientId;
-    showAssignWorkModal();
-}
-
-async function loadAssignments() {
-    try {
-        const assignmentsTableBody = document.getElementById('assignmentsTableBody');
-        const worksSnapshot = await db.collection('lucrari').orderBy('createdAt', 'desc').get();
-        
-        let html = '';
-        for (const doc of worksSnapshot.docs) {
-            const work = doc.data();
-            
-            // Get client and worker info
-            const clientDoc = await db.collection('clients').doc(work.clientId).get();
-            const workerDoc = await db.collection('workers').doc(work.assignedTo).get();
-            
-            const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
-            const workerName = workerDoc.exists ? workerDoc.data().name : 'Lucrător necunoscut';
-            const createdAt = work.createdAt ? work.createdAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
-            
-            const statusText = work.status === 'completed' ? '✅ Completată' : 
-                             work.status === 'in_progress' ? '🔄 În progres' : '⏳ În așteptare';
-            
-            html += `
-                <tr>
-                    <td>${clientName}</td>
-                    <td>${workerName}</td>
-                    <td>${work.workType || 'N/A'}</td>
-                    <td>${createdAt}</td>
-                    <td>${statusText}</td>
-                    <td>
-                        <button class="btn btn-danger" onclick="deleteAssignment('${doc.id}')">🗑️ Șterge</button>
-                    </td>
-                </tr>
-            `;
+        async function deleteClient(clientId) {
+            if (confirm('Ești sigur că vrei să ștergi acest client?')) {
+                try {
+                    await db.collection('clients').doc(clientId).delete();
+                    alert('✅ Client șters cu succes!');
+                    loadClientsWithSMS();
+                } catch (error) {
+                    console.error('❌ Eroare la ștergerea clientului:', error);
+                    alert('Eroare la ștergere: ' + error.message);
+                }
+            }
         }
-        
-        assignmentsTableBody.innerHTML = html;
-        
-    } catch (error) {
-        console.error('❌ Eroare la încărcarea asignărilor:', error);
-    }
-}
 
-async function deleteAssignment(assignmentId) {
-    if (confirm('Ești sigur că vrei să ștergi această asignare?')) {
-        try {
-            await db.collection('lucrari').doc(assignmentId).delete();
-            alert('✅ Asignare ștearsă cu succes!');
-            loadAssignments();
-        } catch (error) {
-            console.error('❌ Eroare la ștergerea asignării:', error);
-            alert('Eroare la ștergere: ' + error.message);
+        async function deleteWorker(workerId) {
+            if (confirm('Ești sigur că vrei să ștergi acest lucrător?')) {
+                try {
+                    await db.collection('workers').doc(workerId).delete();
+                    alert('✅ Lucrător șters cu succes!');
+                    loadWorkers();
+                } catch (error) {
+                    console.error('❌ Eroare la ștergerea lucrătorului:', error);
+                    alert('Eroare la ștergere: ' + error.message);
+                }
+            }
         }
-    }
-}
-async function refreshClients() {
-    try {
-        console.log('🔄 Actualizez lista clienților...');
-        await loadClients();
-        alert('✅ Lista clienților actualizată!');
-    } catch (error) {
-        console.error('❌ Eroare la actualizarea clienților:', error);
-        alert('Eroare la actualizare: ' + error.message);
-    }
-}        // 🎯 Export Functions
+
+        async function assignWorkToClient(clientId) {
+            await loadClientsAndWorkersForAssignment();
+            document.getElementById('assignClient').value = clientId;
+            showAssignWorkModal();
+        }
+
+        async function deleteAssignment(assignmentId) {
+            if (confirm('Ești sigur că vrei să ștergi această asignare?')) {
+                try {
+                    await db.collection('lucrari').doc(assignmentId).delete();
+                    alert('✅ Asignare ștearsă cu succes!');
+                    loadAssignments();
+                } catch (error) {
+                    console.error('❌ Eroare la ștergerea asignării:', error);
+                    alert('Eroare la ștergere: ' + error.message);
+                }
+            }
+        }
+
+        // ====================================================================
+        // 🎯 Export Functions
+        // ====================================================================
         const generateCustomReport = async (format) => {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
@@ -1800,14 +2676,15 @@ async function refreshClients() {
             }
         };
 
+        // ====================================================================
         // 🎯 Auth State Observer
+        // ====================================================================
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
                 console.log('👤 User authenticated:', user.email);
                 currentUser = user;
                 
                 try {
-                    // Get user data from Firestore
                     const userDoc = await db.collection('users').doc(user.uid).get();
                     
                     if (userDoc.exists) {
@@ -1817,18 +2694,19 @@ async function refreshClients() {
                         
                         console.log('🎭 User role:', userRole);
                         
-                        // Update UI
                         document.getElementById('authContainer').style.display = 'none';
                         document.getElementById('mainApp').style.display = 'block';
                         document.getElementById('userInfo').style.display = 'flex';
                         document.getElementById('userEmail').textContent = user.email;
                         document.getElementById('userRole').textContent = userRole === 'admin' ? '👑 Administrator' : '👨‍🔧 Lucrător';
                         
-                        // Create navigation based on role
                         createNavigationTabs(userRole);
-                        
-                        // Load initial dashboard
                         loadDashboard();
+                        
+                        // Verificare automată expirări pentru admin
+                        if (userRole === 'admin') {
+                            autoCheckExpirations();
+                        }
                         
                     } else {
                         console.error('❌ User document not found in Firestore');
@@ -1847,18 +2725,18 @@ async function refreshClients() {
                 userRole = null;
                 workerId = null;
                 
-                // Show auth forms
                 document.getElementById('authContainer').style.display = 'block';
                 document.getElementById('mainApp').style.display = 'none';
                 document.getElementById('userInfo').style.display = 'none';
             }
         });
 
+        // ====================================================================
         // 🎯 Initialize App
+        // ====================================================================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🔥 Firebase PWA Ready - Service Worker not needed!');
             
-            // Close modals when clicking outside
             window.onclick = function(event) {
                 const modals = document.querySelectorAll('.modal');
                 modals.forEach(modal => {
