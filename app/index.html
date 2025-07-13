@@ -1662,8 +1662,125 @@
                 alert('Eroare la finalizarea lucrării: ' + error.message);
             }
         }
+// 🔄 FUNCȚII LIPSĂ - Adaugă acestea
+async function refreshClients() {
+    try {
+        console.log('🔄 Actualizez lista clienților...');
+        await loadClients();
+        alert('✅ Lista clienților actualizată!');
+    } catch (error) {
+        console.error('❌ Eroare la actualizarea clienților:', error);
+        alert('Eroare la actualizare: ' + error.message);
+    }
+}
 
-        // 🎯 Export Functions
+async function refreshWorkers() {
+    try {
+        console.log('🔄 Actualizez lista lucrătorilor...');
+        await loadWorkers();
+        alert('✅ Lista lucrătorilor actualizată!');
+    } catch (error) {
+        console.error('❌ Eroare la actualizarea lucrătorilor:', error);
+        alert('Eroare la actualizare: ' + error.message);
+    }
+}
+
+async function deleteClient(clientId) {
+    if (confirm('Ești sigur că vrei să ștergi acest client?')) {
+        try {
+            await db.collection('clients').doc(clientId).delete();
+            alert('✅ Client șters cu succes!');
+            loadClients();
+        } catch (error) {
+            console.error('❌ Eroare la ștergerea clientului:', error);
+            alert('Eroare la ștergere: ' + error.message);
+        }
+    }
+}
+
+async function deleteWorker(workerId) {
+    if (confirm('Ești sigur că vrei să ștergi acest lucrător?')) {
+        try {
+            await db.collection('workers').doc(workerId).delete();
+            alert('✅ Lucrător șters cu succes!');
+            loadWorkers();
+        } catch (error) {
+            console.error('❌ Eroare la ștergerea lucrătorului:', error);
+            alert('Eroare la ștergere: ' + error.message);
+        }
+    }
+}
+
+async function assignWorkToClient(clientId) {
+    // Set the client in the modal and open it
+    await loadClientsAndWorkersForAssignment();
+    document.getElementById('assignClient').value = clientId;
+    showAssignWorkModal();
+}
+
+async function loadAssignments() {
+    try {
+        const assignmentsTableBody = document.getElementById('assignmentsTableBody');
+        const worksSnapshot = await db.collection('lucrari').orderBy('createdAt', 'desc').get();
+        
+        let html = '';
+        for (const doc of worksSnapshot.docs) {
+            const work = doc.data();
+            
+            // Get client and worker info
+            const clientDoc = await db.collection('clients').doc(work.clientId).get();
+            const workerDoc = await db.collection('workers').doc(work.assignedTo).get();
+            
+            const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
+            const workerName = workerDoc.exists ? workerDoc.data().name : 'Lucrător necunoscut';
+            const createdAt = work.createdAt ? work.createdAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+            
+            const statusText = work.status === 'completed' ? '✅ Completată' : 
+                             work.status === 'in_progress' ? '🔄 În progres' : '⏳ În așteptare';
+            
+            html += `
+                <tr>
+                    <td>${clientName}</td>
+                    <td>${workerName}</td>
+                    <td>${work.workType || 'N/A'}</td>
+                    <td>${createdAt}</td>
+                    <td>${statusText}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteAssignment('${doc.id}')">🗑️ Șterge</button>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        assignmentsTableBody.innerHTML = html;
+        
+    } catch (error) {
+        console.error('❌ Eroare la încărcarea asignărilor:', error);
+    }
+}
+
+async function deleteAssignment(assignmentId) {
+    if (confirm('Ești sigur că vrei să ștergi această asignare?')) {
+        try {
+            await db.collection('lucrari').doc(assignmentId).delete();
+            alert('✅ Asignare ștearsă cu succes!');
+            loadAssignments();
+        } catch (error) {
+            console.error('❌ Eroare la ștergerea asignării:', error);
+            alert('Eroare la ștergere: ' + error.message);
+        }
+    }
+}
+async function refreshClients() {
+    try {
+        console.log('🔄 Actualizez lista clienților...');
+        await loadClients();
+        alert('✅ Lista clienților actualizată!');
+    } catch (error) {
+        console.error('❌ Eroare la actualizarea clienților:', error);
+        alert('Eroare la actualizare: ' + error.message);
+    }
+}        // 🎯 Export Functions
         const generateCustomReport = async (format) => {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
