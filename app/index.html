@@ -287,6 +287,7 @@
             const [selectedClient, setSelectedClient] = useState(null);
             const [documentModal, setDocumentModal] = useState(false);
             const [selectedAssignment, setSelectedAssignment] = useState(null);
+            const [addClientModal, setAddClientModal] = useState(false);
 
             // Firebase listeners refs
             const unsubscribeRefs = useRef([]);
@@ -565,6 +566,21 @@
 
             const getWorkerAssignments = (workerId) => {
                 return assignments.filter(a => a.workerId === workerId);
+            };
+
+            // Add Client Function
+            const addClient = async (clientData) => {
+                try {
+                    await FirebaseUtils.create('clients', {
+                        ...clientData,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    setAddClientModal(false);
+                    alert('✅ Client adăugat cu succes!');
+                } catch (error) {
+                    alert('❌ Eroare la adăugarea clientului.');
+                    console.error('Add Client Error:', error);
+                }
             };
 
             // Show loading screen while checking authentication
@@ -946,7 +962,10 @@
                         <div className="bg-white rounded-lg shadow">
                             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                                 <h3 className="text-lg font-semibold text-gray-800">👥 Gestionare Clienți</h3>
-                                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                <button 
+                                    onClick={() => setAddClientModal(true)}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                >
                                     + Adaugă Client
                                 </button>
                             </div>
@@ -1662,6 +1681,135 @@
                                                 Închide
                                             </button>
                                         </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Add Client Modal */}
+                            {addClientModal && (
+                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                    <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <h3 className="text-lg font-semibold text-gray-800">👥 Adaugă Client Nou</h3>
+                                            <button 
+                                                onClick={() => setAddClientModal(false)}
+                                                className="text-gray-500 hover:text-gray-700 text-xl"
+                                            >
+                                                ×
+                                            </button>
+                                        </div>
+                                        
+                                        <form onSubmit={(e) => {
+                                            e.preventDefault();
+                                            const formData = new FormData(e.target);
+                                            
+                                            // Calculate expiry date (2 years from last service)
+                                            const lastServiceDate = new Date(formData.get('lastService'));
+                                            const expiryDate = new Date(lastServiceDate);
+                                            expiryDate.setFullYear(expiryDate.getFullYear() + 2);
+                                            
+                                            const clientData = {
+                                                name: formData.get('name'),
+                                                phone: formData.get('phone'),
+                                                email: formData.get('email'),
+                                                address: formData.get('address'),
+                                                lastService: formData.get('lastService'),
+                                                serviceType: formData.get('serviceType'),
+                                                expiresAt: expiryDate.toISOString().split('T')[0]
+                                            };
+                                            
+                                            addClient(clientData);
+                                        }} className="space-y-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">Nume complet *</label>
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    required
+                                                    placeholder="ex: Popescu Ion"
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">Telefon *</label>
+                                                <input
+                                                    type="tel"
+                                                    name="phone"
+                                                    required
+                                                    placeholder="ex: 0721234567"
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    placeholder="ex: client@email.com"
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">Adresa *</label>
+                                                <textarea
+                                                    name="address"
+                                                    required
+                                                    placeholder="ex: Str. Libertatii nr. 15, Bucuresti"
+                                                    rows={2}
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">Serviciu efectuat *</label>
+                                                <select
+                                                    name="serviceType"
+                                                    required
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                                                >
+                                                    {Object.entries(SERVICES).map(([key, service]) => (
+                                                        <option key={key} value={key}>
+                                                            {service.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">Data ultimului serviciu *</label>
+                                                <input
+                                                    type="date"
+                                                    name="lastService"
+                                                    required
+                                                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500"
+                                                />
+                                            </div>
+
+                                            <div className="bg-blue-50 p-3 rounded-lg">
+                                                <p className="text-sm text-blue-700">
+                                                    💡 Data expirării va fi calculată automat (2 ani de la ultimul serviciu)
+                                                </p>
+                                            </div>
+
+                                            <div className="flex gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setAddClientModal(false)}
+                                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                                                >
+                                                    Anulează
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                                >
+                                                    👥 Adaugă Client
+                                                </button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             )}
