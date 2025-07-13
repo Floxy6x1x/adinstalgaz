@@ -727,6 +727,7 @@
                         <div>
                             <label>📅 Perioada:</label>
                             <select id="reportPeriod" onchange="handleReportPeriodChange()">
+                                <option value="all">📅 Toate datele</option>
                                 <option value="today">📅 Astăzi</option>
                                 <option value="week">📅 Săptămâna aceasta</option>
                                 <option value="month">📅 Luna aceasta</option>
@@ -753,6 +754,10 @@
                             <button class="btn" onclick="generateReport()">📊 Generează Raport</button>
                             <button class="btn btn-success" onclick="exportReportPDF()">📄 Export PDF</button>
                             <button class="btn btn-warning" onclick="exportReportExcel()">📗 Export Excel</button>
+                        </div>
+                        <div>
+                            <button class="btn" onclick="debugReports()" style="background: #9b59b6;">🔍 Debug Info</button>
+                            <button class="btn" onclick="resetDemoData()" style="background: #e67e22;">🔄 Reset Date Demo</button>
                         </div>
                     </div>
 
@@ -1258,7 +1263,7 @@
                         type: 'rezidential',
                         status: 'complet',
                         notes: 'Client fidel de mulți ani',
-                        dateAdded: '2023-01-15'
+                        dateAdded: '2024-07-01'
                     },
                     {
                         id: 2,
@@ -1275,7 +1280,7 @@
                         type: 'comercial',
                         status: 'complet',
                         notes: 'Contract anual de întreținere',
-                        dateAdded: '2023-02-20'
+                        dateAdded: '2024-06-15'
                     },
                     {
                         id: 3,
@@ -1292,7 +1297,7 @@
                         type: 'rezidential',
                         status: 'complet',
                         notes: 'Client nou',
-                        dateAdded: '2024-01-10'
+                        dateAdded: '2024-07-10'
                     }
                 ];
                 
@@ -2649,12 +2654,18 @@ ${companyName}`;
             const reportType = document.getElementById('reportType').value;
             const reportPeriod = document.getElementById('reportPeriod').value;
             
-            console.log('Generating report:', reportType, reportPeriod); // Debug
+            console.log('=== GENERATING REPORT ===');
+            console.log('Report type:', reportType);
+            console.log('Report period:', reportPeriod);
+            console.log('Available data - Clients:', clients.length, 'Services:', services.length, 'Work:', work.length);
             
             let reportData = [];
             let reportTitle = '';
             
             const dateRange = getDateRange(reportPeriod);
+            if (!dateRange) {
+                return; // Eroare în getDateRange (pentru custom fără date)
+            }
             
             try {
                 switch(reportType) {
@@ -2682,9 +2693,31 @@ ${companyName}`;
                         reportData = generateRevenueReport(dateRange);
                         reportTitle = '💰 Analiza Venituri';
                         break;
+                    default:
+                        console.error('Unknown report type:', reportType);
+                        alert('❌ Tip de raport necunoscut!');
+                        return;
                 }
                 
-                console.log('Report data:', reportData); // Debug
+                console.log('Generated report data:', reportData);
+                console.log('Report data length:', reportData.length);
+                
+                if (reportData.length === 0) {
+                    console.warn('No data found for the selected period');
+                    const resultsDiv = document.getElementById('reportResults');
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-warning">
+                            <h4>⚠️ Nu au fost găsite date pentru perioada selectată</h4>
+                            <p><strong>Perioada:</strong> ${reportPeriod}</p>
+                            <p><strong>Tip raport:</strong> ${reportType}</p>
+                            <br>
+                            <button class="btn" onclick="debugReports()">🔍 Vezi informații debug</button>
+                            <button class="btn btn-warning" onclick="document.getElementById('reportPeriod').value='all'; generateReport();">📅 Încearcă "Toate datele"</button>
+                        </div>
+                    `;
+                    return;
+                }
+                
                 displayReport(reportTitle, reportData, reportType);
                 
             } catch (error) {
@@ -2697,45 +2730,76 @@ ${companyName}`;
             const today = new Date();
             let startDate, endDate;
             
+            console.log('Getting date range for period:', period); // Debug
+            
             switch(period) {
+                case 'all':
+                    // Pentru toate datele - de la 2020 până în 2030
+                    startDate = new Date(2020, 0, 1);
+                    endDate = new Date(2030, 11, 31);
+                    break;
                 case 'today':
                     startDate = new Date(today);
+                    startDate.setHours(0, 0, 0, 0);
                     endDate = new Date(today);
+                    endDate.setHours(23, 59, 59, 999);
                     break;
                 case 'week':
                     startDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    startDate.setHours(0, 0, 0, 0);
                     endDate = new Date(today);
+                    endDate.setHours(23, 59, 59, 999);
                     break;
                 case 'month':
                     startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-                    endDate = new Date(today);
+                    endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    endDate.setHours(23, 59, 59, 999);
                     break;
                 case 'quarter':
                     const quarter = Math.floor(today.getMonth() / 3);
                     startDate = new Date(today.getFullYear(), quarter * 3, 1);
-                    endDate = new Date(today);
+                    endDate = new Date(today.getFullYear(), quarter * 3 + 3, 0);
+                    endDate.setHours(23, 59, 59, 999);
                     break;
                 case 'year':
                     startDate = new Date(today.getFullYear(), 0, 1);
-                    endDate = new Date(today);
+                    endDate = new Date(today.getFullYear(), 11, 31);
+                    endDate.setHours(23, 59, 59, 999);
                     break;
                 case 'custom':
-                    startDate = new Date(document.getElementById('reportStartDate').value);
-                    endDate = new Date(document.getElementById('reportEndDate').value);
+                    const startVal = document.getElementById('reportStartDate').value;
+                    const endVal = document.getElementById('reportEndDate').value;
+                    if (!startVal || !endVal) {
+                        alert('❌ Selectați datele de început și sfârșit pentru perioada personalizată!');
+                        return null;
+                    }
+                    startDate = new Date(startVal);
+                    endDate = new Date(endVal);
+                    endDate.setHours(23, 59, 59, 999);
                     break;
                 default:
-                    startDate = new Date(0);
-                    endDate = new Date();
+                    // Pentru "toate datele"
+                    startDate = new Date(2020, 0, 1); // 1 ianuarie 2020
+                    endDate = new Date(today.getFullYear() + 1, 11, 31); // 31 decembrie anul viitor
             }
             
+            console.log('Date range:', startDate, 'to', endDate); // Debug
             return { startDate, endDate };
         }
 
         function generateClientsReport(dateRange) {
-            return clients.filter(client => {
+            console.log('Generating clients report with date range:', dateRange); // Debug
+            console.log('Available clients:', clients); // Debug
+            
+            const filtered = clients.filter(client => {
                 const clientDate = new Date(client.dateAdded);
+                console.log('Client date:', client.name, clientDate, 'in range:', clientDate >= dateRange.startDate && clientDate <= dateRange.endDate); // Debug
                 return clientDate >= dateRange.startDate && clientDate <= dateRange.endDate;
-            }).map(client => ({
+            });
+            
+            console.log('Filtered clients:', filtered); // Debug
+            
+            return filtered.map(client => ({
                 'Nume': client.name,
                 'Telefon': client.phone,
                 'Email': client.email || '-',
@@ -2747,10 +2811,18 @@ ${companyName}`;
         }
 
         function generateServicesReport(dateRange) {
-            return services.filter(service => {
+            console.log('Generating services report with date range:', dateRange); // Debug
+            console.log('Available services:', services); // Debug
+            
+            const filtered = services.filter(service => {
                 const serviceDate = new Date(service.startDate);
+                console.log('Service date:', service.type, serviceDate, 'in range:', serviceDate >= dateRange.startDate && serviceDate <= dateRange.endDate); // Debug
                 return serviceDate >= dateRange.startDate && serviceDate <= dateRange.endDate;
-            }).map(service => {
+            });
+            
+            console.log('Filtered services:', filtered); // Debug
+            
+            return filtered.map(service => {
                 const client = clients.find(c => c.id === service.clientId);
                 return {
                     'Client': client ? client.name : 'Necunoscut',
@@ -2765,10 +2837,18 @@ ${companyName}`;
         }
 
         function generateWorkReport(dateRange) {
-            return work.filter(workItem => {
+            console.log('Generating work report with date range:', dateRange); // Debug
+            console.log('Available work:', work); // Debug
+            
+            const filtered = work.filter(workItem => {
                 const workDate = new Date(workItem.scheduledDate);
+                console.log('Work date:', workItem.type, workDate, 'in range:', workDate >= dateRange.startDate && workDate <= dateRange.endDate); // Debug
                 return workDate >= dateRange.startDate && workDate <= dateRange.endDate;
-            }).map(workItem => {
+            });
+            
+            console.log('Filtered work:', filtered); // Debug
+            
+            return filtered.map(workItem => {
                 const client = clients.find(c => c.id === workItem.clientId);
                 return {
                     'Client': client ? client.name : 'Necunoscut',
@@ -2776,20 +2856,31 @@ ${companyName}`;
                     'Lucrător': getWorkerName(workItem.assignee),
                     'Data Programată': formatDate(workItem.scheduledDate),
                     'Status': getWorkStatusText(workItem.status),
-                    'Prioritate': workItem.priority,
-                    'Durata (ore)': workItem.duration
+                    'Prioritate': workItem.priority || 'normala',
+                    'Durata (ore)': workItem.duration || '0'
                 };
             });
         }
 
         function generateExpiringReport() {
+            console.log('Generating expiring services report'); // Debug
+            
             const today = new Date();
             const inThirtyDays = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
             
-            return services.filter(service => {
+            console.log('Date range for expiring:', today, 'to', inThirtyDays); // Debug
+            console.log('Available services:', services); // Debug
+            
+            const expiringServices = services.filter(service => {
                 const endDate = new Date(service.endDate);
-                return endDate >= today && endDate <= inThirtyDays;
-            }).map(service => {
+                const isExpiring = endDate >= today && endDate <= inThirtyDays;
+                console.log('Service expiring check:', service.type, endDate, 'is expiring:', isExpiring); // Debug
+                return isExpiring;
+            });
+            
+            console.log('Filtered expiring services:', expiringServices); // Debug
+            
+            return expiringServices.map(service => {
                 const client = clients.find(c => c.id === service.clientId);
                 const daysUntilExpiry = Math.ceil((new Date(service.endDate) - today) / (1000 * 60 * 60 * 24));
                 
@@ -2806,6 +2897,8 @@ ${companyName}`;
         }
 
         function generateStatisticsReport() {
+            console.log('Generating statistics report'); // Debug
+            
             const totalClients = clients.length;
             const activeServices = services.filter(s => getServiceStatus(s) === 'activ').length;
             const expiredServices = services.filter(s => getServiceStatus(s) === 'expirat').length;
@@ -2818,23 +2911,34 @@ ${companyName}`;
                 'Industrial': clients.filter(c => c.type === 'industrial').length
             };
 
+            console.log('Statistics calculated:', {totalClients, activeServices, clientsByType}); // Debug
+
             return [
-                { 'Statistică': 'Total Clienți', 'Valoare': totalClients },
-                { 'Statistică': 'Servicii Active', 'Valoare': activeServices },
-                { 'Statistică': 'Servicii Expirate', 'Valoare': expiredServices },
-                { 'Statistică': 'Lucrări Programate', 'Valoare': pendingWork },
-                { 'Statistică': 'Lucrări Finalizate', 'Valoare': completedWork },
-                { 'Statistică': 'Clienți Rezidențiali', 'Valoare': clientsByType.Rezidențial },
-                { 'Statistică': 'Clienți Comerciali', 'Valoare': clientsByType.Comercial },
-                { 'Statistică': 'Clienți Industriali', 'Valoare': clientsByType.Industrial }
+                { 'Categorie': '📊 GENERAL', 'Valoare': '---' },
+                { 'Categorie': 'Total Clienți', 'Valoare': totalClients },
+                { 'Categorie': 'Servicii Active', 'Valoare': activeServices },
+                { 'Categorie': 'Servicii Expirate', 'Valoare': expiredServices },
+                { 'Categorie': 'Lucrări Programate', 'Valoare': pendingWork },
+                { 'Categorie': 'Lucrări Finalizate', 'Valoare': completedWork },
+                { 'Categorie': '👥 TIPURI CLIENȚI', 'Valoare': '---' },
+                { 'Categorie': 'Clienți Rezidențiali', 'Valoare': clientsByType.Rezidențial },
+                { 'Categorie': 'Clienți Comerciali', 'Valoare': clientsByType.Comercial },
+                { 'Categorie': 'Clienți Industriali', 'Valoare': clientsByType.Industrial }
             ];
         }
 
         function generateRevenueReport(dateRange) {
+            console.log('Generating revenue report with date range:', dateRange); // Debug
+            console.log('Available services for revenue:', services); // Debug
+            
             const filteredServices = services.filter(service => {
                 const serviceDate = new Date(service.startDate);
-                return serviceDate >= dateRange.startDate && serviceDate <= dateRange.endDate && service.cost;
+                const hasRevenue = service.cost && service.cost > 0;
+                console.log('Service revenue check:', service.type, serviceDate, 'cost:', service.cost, 'in range:', serviceDate >= dateRange.startDate && serviceDate <= dateRange.endDate && hasRevenue); // Debug
+                return serviceDate >= dateRange.startDate && serviceDate <= dateRange.endDate && hasRevenue;
             });
+
+            console.log('Filtered services for revenue:', filteredServices); // Debug
 
             const totalRevenue = filteredServices.reduce((sum, service) => sum + (service.cost || 0), 0);
             
@@ -2844,8 +2948,10 @@ ${companyName}`;
                 revenueByType[type] = (revenueByType[type] || 0) + (service.cost || 0);
             });
 
+            console.log('Revenue by type:', revenueByType, 'total:', totalRevenue); // Debug
+
             const result = [
-                { 'Categorie': 'TOTAL VENITURI', 'Valoare (Lei)': totalRevenue.toFixed(2) },
+                { 'Categorie': '💰 TOTAL VENITURI', 'Valoare (Lei)': totalRevenue.toFixed(2) },
                 { 'Categorie': '---', 'Valoare (Lei)': '---' }
             ];
 
@@ -2853,40 +2959,70 @@ ${companyName}`;
                 result.push({ 'Categorie': type, 'Valoare (Lei)': revenue.toFixed(2) });
             });
 
+            if (result.length === 2) {
+                result.push({ 'Categorie': 'Nu există venituri în perioada selectată', 'Valoare (Lei)': '0.00' });
+            }
+
             return result;
         }
 
         function displayReport(title, data, type) {
             const resultsDiv = document.getElementById('reportResults');
             
+            console.log('Displaying report:', title, 'with', data.length, 'records'); // Debug
+            
             if (data.length === 0) {
                 resultsDiv.innerHTML = `
                     <div class="alert alert-warning">
-                        <strong>⚠️ Nu au fost găsite date pentru perioada selectată.</strong>
+                        <h4>⚠️ Nu au fost găsite date pentru perioada selectată</h4>
+                        <p><strong>Tip raport:</strong> ${title}</p>
+                        <button class="btn" onclick="debugReports()">🔍 Debug Info</button>
                     </div>
                 `;
                 return;
             }
             
+            // Verifică dacă data[0] există și are proprietăți
+            if (!data[0] || typeof data[0] !== 'object') {
+                console.error('Invalid data format:', data);
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>❌ Eroare în formatul datelor!</strong>
+                        <button class="btn" onclick="debugReports()">🔍 Debug Info</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Creează tabelul
             const table = document.createElement('table');
             table.className = 'table';
+            table.style.marginTop = '20px';
             
+            // Header
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
             Object.keys(data[0]).forEach(key => {
                 const th = document.createElement('th');
                 th.textContent = key;
+                th.style.backgroundColor = '#f8f9fa';
+                th.style.fontWeight = 'bold';
                 headerRow.appendChild(th);
             });
             thead.appendChild(headerRow);
             table.appendChild(thead);
             
+            // Body
             const tbody = document.createElement('tbody');
-            data.forEach(row => {
+            data.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                if (index % 2 === 0) {
+                    tr.style.backgroundColor = '#f8f9fa';
+                }
                 Object.values(row).forEach(value => {
                     const td = document.createElement('td');
-                    td.textContent = value;
+                    td.textContent = value || '-';
+                    td.style.padding = '8px 12px';
                     tr.appendChild(td);
                 });
                 tbody.appendChild(tr);
@@ -2899,18 +3035,73 @@ ${companyName}`;
                     <p><strong>📊 Total înregistrări:</strong> ${data.length}</p>
                     <p><strong>📅 Generat la:</strong> ${formatDateTime(new Date().toISOString())}</p>
                 </div>
-                <div style="overflow-x: auto; max-height: 500px;">
+                <div style="overflow-x: auto; max-height: 600px; border: 1px solid #ddd; border-radius: 4px;">
                     ${table.outerHTML}
                 </div>
             `;
+            
+            console.log('Report displayed successfully'); // Debug
+        }
+
+        function resetDemoData() {
+            if (confirm('🔄 Ești sigur că vrei să resetezi toate datele demo?\n\nAceasta va șterge toate datele existente și va reincărca datele demo inițiale.')) {
+                // Șterge datele existente
+                localStorage.removeItem('adinstalgaz_clients');
+                localStorage.removeItem('adinstalgaz_services');
+                localStorage.removeItem('adinstalgaz_work');
+                localStorage.removeItem('adinstalgaz_documents');
+                localStorage.removeItem('adinstalgaz_notifications');
+                
+                // Resetează variabilele
+                clients = [];
+                services = [];
+                work = [];
+                documents = [];
+                notifications = [];
+                
+                // Reincarcă datele demo
+                initializeDemoData();
+                
+                // Reîncarcă interfața
+                updateDashboard();
+                loadClients();
+                loadServices();
+                
+                alert('✅ Datele demo au fost resetate cu succes!');
+            }
+        }
+
+        function debugReports() {
+            const info = `🔍 DEBUG INFO RAPOARTE:\n\n` +
+                        `📊 Date disponibile:\n` +
+                        `• Clienți: ${clients.length}\n` +
+                        `• Servicii: ${services.length}\n` +
+                        `• Lucrări: ${work.length}\n` +
+                        `• Documente: ${documents.length}\n\n` +
+                        `📅 Ultimele date:\n` +
+                        `• Ultimul client: ${clients.length > 0 ? clients[clients.length-1].dateAdded : 'N/A'}\n` +
+                        `• Ultimul serviciu: ${services.length > 0 ? services[services.length-1].startDate : 'N/A'}\n` +
+                        `• Ultima lucrare: ${work.length > 0 ? work[work.length-1].scheduledDate : 'N/A'}\n\n` +
+                        `⚙️ Perioada selectată: ${document.getElementById('reportPeriod').value}\n` +
+                        `📋 Tip raport: ${document.getElementById('reportType').value}\n\n` +
+                        `💡 SOLUȚIE: Încearcă "Toate datele" din dropdown perioada.`;
+            
+            alert(info);
+            
+            // Afișează și în console pentru debugging avansat
+            console.log('=== DEBUG RAPOARTE ===');
+            console.log('Clients:', clients);
+            console.log('Services:', services);
+            console.log('Work:', work);
+            console.log('Documents:', documents);
         }
 
         function exportReportPDF() {
-            alert('📄 Export PDF implementat!\n\nRaportul va fi generat și descărcat în format PDF.');
+            alert('📄 Export PDF va fi implementat în versiunea finală!\n\nMomenttan, poți copia datele din tabel și le poți lipi în Word/Excel pentru a crea un PDF.');
         }
 
         function exportReportExcel() {
-            alert('📗 Export Excel implementat!\n\nRaportul va fi generat și descărcat în format Excel.');
+            alert('📗 Export Excel va fi implementat în versiunea finală!\n\nMomenttan, poți copia datele din tabel și le poți lipi direct în Excel.');
         }
 
         // Funcții utilitare
