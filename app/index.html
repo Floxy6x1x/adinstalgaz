@@ -495,6 +495,10 @@
             <h1>AdInstalGaz</h1>
             <p>Sistem de Management Instalații Gaze</p>
             <div class="county-badge">Județul Teleorman</div>
+            <div style="margin-top: 15px; font-size: 14px; color: #666;">
+                📞 <strong>0762 614 401</strong> | 📧 office@adinstalgaz.ro | 🌐 adinstalgaz.ro<br>
+                📍 Str. Mărășești, Nr.97, Roșiorii de Vede, Teleorman
+            </div>
         </div>
 
         <!-- Formular Autentificare -->
@@ -572,6 +576,7 @@
                 <button class="nav-tab" onclick="switchTab('works')">Lucrări</button>
                 <button class="nav-tab" onclick="switchTab('completed')">Finalizate</button>
                 <button id="notificationsTab" class="nav-tab hidden" onclick="switchTab('notifications')">Notificări</button>
+                <button class="nav-tab" onclick="showCompanyContactModal()">📞 Contact</button>
             </div>
 
             <div class="tab-content">
@@ -876,6 +881,44 @@
                 <button class="close" onclick="closeModal('documentsModal')">&times;</button>
             </div>
             <div id="documentsContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal Informații Contact Firmă -->
+    <div id="companyContactModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Informații de Contact AdInstalGaz</h3>
+                <button class="close" onclick="closeModal('companyContactModal')">&times;</button>
+            </div>
+            
+            <div style="text-align: center; padding: 20px 0;">
+                <h2 style="color: #2c3e50; margin-bottom: 20px;">AdInstalGaz</h2>
+                <p style="color: #666; margin-bottom: 30px;">Servicii profesionale instalații gaze - Județul Teleorman</p>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 15px;">📞 Contact Telefonic</h4>
+                    <p style="font-size: 18px; font-weight: bold; color: #3498db;">0762 614 401</p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 15px;">📧 Email-uri</h4>
+                    <p><strong>Office:</strong> office@adinstalgaz.ro</p>
+                    <p><strong>Programări:</strong> programari@adinstalgaz.ro</p>
+                    <p><strong>Manager:</strong> florin.gavrila@adinstalgaz.ro</p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 15px;">🌐 Website</h4>
+                    <p><a href="https://adinstalgaz.ro" target="_blank" style="color: #3498db; text-decoration: none;">adinstalgaz.ro</a></p>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <h4 style="color: #2c3e50; margin-bottom: 15px;">📍 Adresa</h4>
+                    <p><strong>Str. Mărășești, Nr.97</strong></p>
+                    <p><strong>Roșiorii de Vede, Teleorman</strong></p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1628,15 +1671,24 @@
         }
 
         // 📱 FUNCȚII SMS ȘI NOTIFICĂRI
-        const COMPANY_PHONE = "0247.123.456"; // Numărul firmei AdInstalGaz
+        const COMPANY_INFO = {
+            phone: "0762 614 401",
+            emails: {
+                office: "office@adinstalgaz.ro",
+                appointments: "programari@adinstalgaz.ro", 
+                manager: "florin.gavrila@adinstalgaz.ro"
+            },
+            website: "adinstalgaz.ro",
+            address: "Str. Mărășești, Nr.97, Roșiorii de Vede, Teleorman"
+        };
 
         function showSMSModal(phone, name, contractedService = '') {
             document.getElementById('smsRecipient').value = `${name} (${phone})`;
             
-            // Template mesaj automat
+            // Template mesaj automat cu datele reale
             const defaultMessage = contractedService ? 
-                `Buna ziua ${name}! Va contactam de la AdInstalGaz Teleorman pentru programarea lucrarii de ${contractedService}. Va rugam sa ne contactati la ${COMPANY_PHONE}. Multumim!` :
-                `Buna ziua ${name}! Va contactam de la AdInstalGaz Teleorman. Pentru informatii, ne puteti contacta la ${COMPANY_PHONE}. Multumim!`;
+                `Buna ziua ${name}! Va contactam de la AdInstalGaz pentru programarea lucrarii de ${contractedService}. Va rugam sa ne contactati la ${COMPANY_INFO.phone} sau ${COMPANY_INFO.emails.appointments}. Multumim!` :
+                `Buna ziua ${name}! Va contactam de la AdInstalGaz. Pentru informatii si programari: ${COMPANY_INFO.phone} sau ${COMPANY_INFO.emails.appointments}. Multumim!`;
             
             document.getElementById('smsMessage').value = defaultMessage;
             document.getElementById('smsCharCount').textContent = String(160 - defaultMessage.length);
@@ -1664,21 +1716,21 @@
             }
 
             try {
-                // Simulare trimitere SMS de pe numărul firmei
-                console.log(`SMS personalizat de la ${COMPANY_PHONE} către ${recipient}: ${message}`);
+                // Simulare trimitere SMS de pe numărul real al firmei
+                console.log(`SMS personalizat de la ${COMPANY_INFO.phone} către ${recipient}: ${message}`);
                 
                 // Salvează în istoric
                 await db.collection('smsHistory').add({
                     recipient: recipient,
                     message: message,
                     type: 'personalizat',
-                    sentFrom: COMPANY_PHONE,
+                    sentFrom: COMPANY_INFO.phone,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                     sentBy: currentUser.uid
                 });
 
                 closeModal('smsModal');
-                alert(`SMS trimis cu succes de pe numărul firmei ${COMPANY_PHONE}!`);
+                alert(`SMS trimis cu succes de pe numărul AdInstalGaz: ${COMPANY_INFO.phone}!`);
                 
                 if (document.getElementById('notificationsPane').classList.contains('active')) {
                     await loadNotifications();
@@ -1783,10 +1835,10 @@
                             const serviceType = work.nextServiceType || client.contractedService || 'serviciul pentru instalația de gaze';
                             const clientName = client.name || `${client.firstName || ''} ${client.lastName || ''}`.trim();
 
-                            const message = `Buna ziua ${clientName}! In data de ${serviceDate.toLocaleDateString()} va expira ${serviceType}. Va rugam sa ne contactati pentru programarea efectuarii lucrarii de ${serviceType} la ${COMPANY_PHONE}. AdInstalGaz - Teleorman`;
+                            const message = `Buna ziua ${clientName}! In data de ${serviceDate.toLocaleDateString()} va expira ${serviceType}. Va rugam sa ne contactati pentru programarea efectuarii lucrarii de ${serviceType} la ${COMPANY_INFO.phone} sau ${COMPANY_INFO.emails.appointments}. AdInstalGaz - Teleorman`;
 
-                            // Simulare trimitere SMS de pe numărul firmei
-                            console.log(`SMS expirare de la ${COMPANY_PHONE} către ${clientName} (${client.phone}): ${message}`);
+                            // Simulare trimitere SMS de pe numărul real al firmei
+                            console.log(`SMS expirare de la ${COMPANY_INFO.phone} către ${clientName} (${client.phone}): ${message}`);
                             
                             // Salvează în istoric
                             await db.collection('smsHistory').add({
@@ -1796,7 +1848,7 @@
                                 workId: work.id,
                                 daysUntilExpiration: daysUntil,
                                 serviceType: serviceType,
-                                sentFrom: COMPANY_PHONE,
+                                sentFrom: COMPANY_INFO.phone,
                                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                                 sentBy: currentUser.uid
                             });
@@ -1806,7 +1858,7 @@
                     }
                 }
 
-                alert(`Au fost trimise ${smsSent} SMS-uri de notificare expirare de pe numărul firmei ${COMPANY_PHONE}!`);
+                alert(`Au fost trimise ${smsSent} SMS-uri de notificare expirare de pe numărul AdInstalGaz: ${COMPANY_INFO.phone}!`);
                 await loadNotifications();
             } catch (error) {
                 console.error('Eroare la trimiterea SMS-urilor în masă:', error);
@@ -1840,12 +1892,12 @@
                 smsHistory.forEach(sms => {
                     const date = sms.timestamp ? new Date(sms.timestamp.seconds * 1000).toLocaleString() : 'Data necunoscută';
                     const typeClass = sms.type === 'expirare' ? 'status-warning' : 'status-pending';
-                    const sentFrom = sms.sentFrom || COMPANY_PHONE;
+                    const sentFrom = sms.sentFrom || COMPANY_INFO.phone;
                     
                     html += `
                         <tr>
                             <td>${date}</td>
-                            <td><strong>${sentFrom}</strong></td>
+                            <td><strong>${sentFrom}</strong><br><small>AdInstalGaz</small></td>
                             <td>${sms.recipient}</td>
                             <td><span class="status-badge ${typeClass}">${sms.type}</span></td>
                             <td>${sms.message.substring(0, 100)}${sms.message.length > 100 ? '...' : ''}</td>
@@ -1905,6 +1957,11 @@
             } catch (error) {
                 console.error('Eroare la încărcarea documentelor:', error);
             }
+        }
+
+        // 📞 MODAL CONTACT FIRMĂ
+        function showCompanyContactModal() {
+            document.getElementById('companyContactModal').style.display = 'block';
         }
 
         // Inițializare la încărcarea paginii
