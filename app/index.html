@@ -5,61 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdInstalGaz - Sistem Management</title>
     
-    <!-- 🔥 Firebase Dependencies v9+ -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, doc, getDoc, getDocs, updateDoc, deleteDoc, query, where, orderBy, limit, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js";
-
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyD9yoIQ__cK0zIPlvSRlu1h7O1MtmrfLXA",
-            authDomain: "adinstalgaz-pwa.firebaseapp.com",
-            projectId: "adinstalgaz-pwa",
-            storageBucket: "adinstalgaz-pwa.firebasestorage.app",
-            messagingSenderId: "623851795901",
-            appId: "1:623851795901:web:63072fdef30693f4698ed4"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const storage = getStorage(app);
-
-        // Make Firebase available globally
-        window.firebaseApp = app;
-        window.db = db;
-        window.auth = auth;
-        window.storage = storage;
-        window.firebase = {
-            firestore: {
-                FieldValue: {
-                    serverTimestamp: serverTimestamp
-                }
-            }
-        };
-        
-        // Import Firebase functions for global use
-        window.addDoc = addDoc;
-        window.collection = collection;
-        window.doc = doc;
-        window.getDoc = getDoc;
-        window.getDocs = getDocs;
-        window.updateDoc = updateDoc;
-        window.deleteDoc = deleteDoc;
-        window.query = query;
-        window.where = where;
-        window.orderBy = orderBy;
-        window.limit = limit;
-        window.serverTimestamp = serverTimestamp;
-        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.signOut = signOut;
-        window.onAuthStateChanged = onAuthStateChanged;
-        window.setDoc = setDoc;
-    </script>
+    <!-- 🔥 Firebase Dependencies COMPAT v9+ -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-compat.js"></script>
     
     <!-- 📦 Export Dependencies -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1109,6 +1056,22 @@
     </footer>
 
     <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9yoIQ__cK0zIPlvSRlu1h7O1MtmrfLXA",
+            authDomain: "adinstalgaz-pwa.firebaseapp.com",
+            projectId: "adinstalgaz-pwa",
+            storageBucket: "adinstalgaz-pwa.firebasestorage.app",
+            messagingSenderId: "623851795901",
+            appId: "1:623851795901:web:63072fdef30693f4698ed4"
+        };
+
+        // Initialize Firebase COMPAT
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
         // Global variables
         let currentUser = null;
         let userRole = null;
@@ -1194,18 +1157,18 @@
             try {
                 console.log('🔄 Începe înregistrarea pentru:', email);
                 
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
                 const userId = userCredential.user.uid;
                 
                 console.log('✅ Cont Auth creat:', userId);
                 
-                const workersQuery = query(collection(db, 'workers'), where('email', '==', email));
-                const workerSnapshot = await getDocs(workersQuery);
+                const workersQuery = db.collection('workers').where('email', '==', email);
+                const workerSnapshot = await workersQuery.get();
                 
                 let userData = {
                     name: name,
                     email: email,
-                    createdAt: serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
                 if (!workerSnapshot.empty) {
@@ -1215,9 +1178,9 @@
                     
                     console.log('👨‍🔧 Utilizator detectat ca LUCRĂTOR:', workerDoc.id);
                     
-                    await updateDoc(doc(db, 'workers', workerDoc.id), {
+                    await db.collection('workers').doc(workerDoc.id).update({
                         userId: userId,
-                        registeredAt: serverTimestamp()
+                        registeredAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
                 } else {
@@ -1225,7 +1188,7 @@
                     console.log('👤 Utilizator înregistrat ca ADMIN');
                 }
                 
-                await setDoc(doc(db, 'users', userId), userData);
+                await db.collection('users').doc(userId).set(userData);
                 
                 console.log('✅ Înregistrare completă cu rolul:', userData.role);
                 
@@ -1310,7 +1273,7 @@
             log: async function(action, type, details = '', targetId = '') {
                 try {
                     const logData = {
-                        timestamp: serverTimestamp(),
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                         userId: currentUser?.uid || 'anonymous',
                         userEmail: currentUser?.email || 'unknown',
                         userRole: userRole || 'unknown',
@@ -1322,7 +1285,7 @@
                         ip: await this.getIP()
                     };
                     
-                    await addDoc(collection(db, 'activity_logs'), logData);
+                    await db.collection('activity_logs').add(logData);
                     console.log('📝 Log înregistrat:', action);
                     
                 } catch (error) {
@@ -1383,35 +1346,35 @@
                     };
                     
                     // Backup clienți
-                    const clientsSnapshot = await getDocs(collection(db, 'clients'));
+                    const clientsSnapshot = await db.collection('clients').get();
                     backupData.data.clients = clientsSnapshot.docs.map(doc => ({
                         id: doc.id,
                         ...doc.data()
                     }));
                     
                     // Backup lucrători
-                    const workersSnapshot = await getDocs(collection(db, 'workers'));
+                    const workersSnapshot = await db.collection('workers').get();
                     backupData.data.workers = workersSnapshot.docs.map(doc => ({
                         id: doc.id,
                         ...doc.data()
                     }));
                     
                     // Backup utilizatori
-                    const usersSnapshot = await getDocs(collection(db, 'users'));
+                    const usersSnapshot = await db.collection('users').get();
                     backupData.data.users = usersSnapshot.docs.map(doc => ({
                         id: doc.id,
                         ...doc.data()
                     }));
                     
                     // Backup lucrări
-                    const worksSnapshot = await getDocs(collection(db, 'lucrari'));
+                    const worksSnapshot = await db.collection('lucrari').get();
                     backupData.data.works = worksSnapshot.docs.map(doc => ({
                         id: doc.id,
                         ...doc.data()
                     }));
                     
                     // Salvează backup-ul
-                    const backupRef = await addDoc(collection(db, 'backups'), backupData);
+                    const backupRef = await db.collection('backups').add(backupData);
                     
                     // Descarcă backup-ul local
                     const filename = `backup_adinstalgaz_${new Date().toISOString().split('T')[0]}.json`;
@@ -1457,38 +1420,38 @@
             try {
                 console.log('📊 Colectez date pentru raport...');
                 
-                let clientsQuery = collection(db, 'clients');
+                let clientsQuery = db.collection('clients');
                 
                 if (filters.startDate) {
-                    clientsQuery = query(clientsQuery, where('createdAt', '>=', filters.startDate));
+                    clientsQuery = clientsQuery.where('createdAt', '>=', filters.startDate);
                 }
                 if (filters.endDate) {
-                    clientsQuery = query(clientsQuery, where('createdAt', '<=', filters.endDate));
+                    clientsQuery = clientsQuery.where('createdAt', '<=', filters.endDate);
                 }
                 
-                const clientsSnapshot = await getDocs(clientsQuery);
+                const clientsSnapshot = await clientsQuery.get();
                 const clients = clientsSnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data(),
                     createdAt: doc.data().createdAt?.toDate ? doc.data().createdAt.toDate() : new Date()
                 }));
                 
-                let worksQuery = collection(db, 'lucrari');
+                let worksQuery = db.collection('lucrari');
                 
                 if (filters.startDate) {
-                    worksQuery = query(worksQuery, where('createdAt', '>=', filters.startDate));
+                    worksQuery = worksQuery.where('createdAt', '>=', filters.startDate);
                 }
                 if (filters.endDate) {
-                    worksQuery = query(worksQuery, where('createdAt', '<=', filters.endDate));
+                    worksQuery = worksQuery.where('createdAt', '<=', filters.endDate);
                 }
                 if (filters.status) {
-                    worksQuery = query(worksQuery, where('status', '==', filters.status));
+                    worksQuery = worksQuery.where('status', '==', filters.status);
                 }
                 if (filters.workerId) {
-                    worksQuery = query(worksQuery, where('assignedTo', '==', filters.workerId));
+                    worksQuery = worksQuery.where('assignedTo', '==', filters.workerId);
                 }
                 
-                const worksSnapshot = await getDocs(worksQuery);
+                const worksSnapshot = await worksQuery.get();
                 const works = worksSnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data(),
@@ -1496,7 +1459,7 @@
                     completedAt: doc.data().completedAt?.toDate ? doc.data().completedAt.toDate() : null
                 }));
                 
-                const workersSnapshot = await getDocs(collection(db, 'workers'));
+                const workersSnapshot = await db.collection('workers').get();
                 const workers = workersSnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
@@ -1815,7 +1778,7 @@
                     return;
                 }
                 
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 await logger.logSuccessfulLogin(email);
                 console.log('✅ Login successful');
                 
@@ -1903,7 +1866,7 @@
         async function logout() {
             try {
                 await logger.log(`User logout: ${currentUser?.email}`, 'auth', 'User signed out');
-                await signOut(auth);
+                await auth.signOut();
             } catch (error) {
                 console.error('❌ Logout error:', error);
             }
@@ -1994,9 +1957,9 @@
                 
                 if (userRole === 'admin') {
                     // Admin dashboard
-                    const clientsSnapshot = await getDocs(collection(db, 'clients'));
-                    const workersSnapshot = await getDocs(collection(db, 'workers'));
-                    const worksSnapshot = await getDocs(collection(db, 'lucrari'));
+                    const clientsSnapshot = await db.collection('clients').get();
+                    const workersSnapshot = await db.collection('workers').get();
+                    const worksSnapshot = await db.collection('lucrari').get();
                     
                     const completedWorks = worksSnapshot.docs.filter(doc => doc.data().status === 'completed').length;
                     
@@ -2020,11 +1983,8 @@
                     `;
                 } else if (userRole === 'worker') {
                     // Worker dashboard
-                    const myWorksQuery = query(
-                        collection(db, 'lucrari'),
-                        where('assignedTo', '==', workerId)
-                    );
-                    const myWorksSnapshot = await getDocs(myWorksQuery);
+                    const myWorksQuery = db.collection('lucrari').where('assignedTo', '==', workerId);
+                    const myWorksSnapshot = await myWorksQuery.get();
                     
                     const myCompletedWorks = myWorksSnapshot.docs.filter(doc => doc.data().status === 'completed').length;
                     const myInProgressWorks = myWorksSnapshot.docs.filter(doc => doc.data().status === 'in_progress').length;
@@ -2053,8 +2013,8 @@
         async function loadClients() {
             try {
                 const clientsTableBody = document.getElementById('clientsTableBody');
-                const clientsQuery = query(collection(db, 'clients'), orderBy('createdAt', 'desc'));
-                const clientsSnapshot = await getDocs(clientsQuery);
+                const clientsQuery = db.collection('clients').orderBy('createdAt', 'desc');
+                const clientsSnapshot = await clientsQuery.get();
                 
                 let html = '';
                 clientsSnapshot.forEach(docSnapshot => {
@@ -2116,7 +2076,7 @@
         async function loadWorkers() {
             try {
                 const workersTableBody = document.getElementById('workersTableBody');
-                const workersSnapshot = await getDocs(collection(db, 'workers'));
+                const workersSnapshot = await db.collection('workers').get();
                 
                 let html = '';
                 workersSnapshot.forEach(doc => {
@@ -2147,20 +2107,18 @@
         async function loadMyWorks() {
             try {
                 const myWorksTableBody = document.getElementById('myWorksTableBody');
-                const worksQuery = query(
-                    collection(db, 'lucrari'),
-                    where('assignedTo', '==', workerId),
-                    where('status', 'in', ['pending', 'in_progress'])
-                );
-                const worksSnapshot = await getDocs(worksQuery);
+                const worksQuery = db.collection('lucrari')
+                    .where('assignedTo', '==', workerId)
+                    .where('status', 'in', ['pending', 'in_progress']);
+                const worksSnapshot = await worksQuery.get();
                 
                 let html = '';
                 for (const docSnapshot of worksSnapshot.docs) {
                     const work = docSnapshot.data();
                     
                     // Get client info
-                    const clientDoc = await getDoc(doc(db, 'clients', work.clientId));
-                    const clientName = clientDoc.exists() ? clientDoc.data().name : 'Client necunoscut';
+                    const clientDoc = await db.collection('clients').doc(work.clientId).get();
+                    const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
                     
                     const createdAt = work.createdAt ? work.createdAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
                     const statusText = work.status === 'pending' ? '⏳ În așteptare' : '🔄 În progres';
@@ -2191,20 +2149,18 @@
         async function loadCompletedWorks() {
             try {
                 const completedWorksTableBody = document.getElementById('completedWorksTableBody');
-                const worksQuery = query(
-                    collection(db, 'lucrari'),
-                    where('assignedTo', '==', workerId),
-                    where('status', '==', 'completed')
-                );
-                const worksSnapshot = await getDocs(worksQuery);
+                const worksQuery = db.collection('lucrari')
+                    .where('assignedTo', '==', workerId)
+                    .where('status', '==', 'completed');
+                const worksSnapshot = await worksQuery.get();
                 
                 let html = '';
                 for (const docSnapshot of worksSnapshot.docs) {
                     const work = docSnapshot.data();
                     
                     // Get client info
-                    const clientDoc = await getDoc(doc(db, 'clients', work.clientId));
-                    const clientName = clientDoc.exists() ? clientDoc.data().name : 'Client necunoscut';
+                    const clientDoc = await db.collection('clients').doc(work.clientId).get();
+                    const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
                     
                     const completedAt = work.completedAt ? work.completedAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
                     
@@ -2287,7 +2243,7 @@
         async function populateClientsForSMS() {
             try {
                 const clientSelect = document.getElementById('smsClient');
-                const clientsSnapshot = await getDocs(collection(db, 'clients'));
+                const clientsSnapshot = await db.collection('clients').get();
                 
                 clientSelect.innerHTML = '<option value="">Selectează clientul</option>';
                 clientsSnapshot.forEach(docSnapshot => {
@@ -2380,7 +2336,7 @@
                 const workerSelect = document.getElementById('assignWorker');
                 
                 // Load clients
-                const clientsSnapshot = await getDocs(collection(db, 'clients'));
+                const clientsSnapshot = await db.collection('clients').get();
                 clientSelect.innerHTML = '<option value="">Selectează clientul</option>';
                 clientsSnapshot.forEach(docSnapshot => {
                     const client = docSnapshot.data();
@@ -2388,7 +2344,7 @@
                 });
                 
                 // Load workers
-                const workersSnapshot = await getDocs(collection(db, 'workers'));
+                const workersSnapshot = await db.collection('workers').get();
                 workerSelect.innerHTML = '<option value="">Selectează lucrătorul</option>';
                 workersSnapshot.forEach(docSnapshot => {
                     const worker = docSnapshot.data();
@@ -2446,11 +2402,8 @@
                 }
                 
                 // Verifică dacă telefonul există deja
-                const existingClientQuery = query(
-                    collection(db, 'clients'),
-                    where('phone', '==', phone)
-                );
-                const existingClientSnapshot = await getDocs(existingClientQuery);
+                const existingClientQuery = db.collection('clients').where('phone', '==', phone);
+                const existingClientSnapshot = await existingClientQuery.get();
                 
                 if (!existingClientSnapshot.empty) {
                     alert('❌ Există deja un client cu acest număr de telefon!');
@@ -2505,13 +2458,13 @@
                     address: address,
                     fullAddress: fullAddress,
                     services: selectedServices,
-                    createdAt: serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     createdBy: currentUser.uid,
-                    lastUpdated: serverTimestamp()
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
                 showLoading(true);
-                const clientRef = await addDoc(collection(db, 'clients'), clientData);
+                const clientRef = await db.collection('clients').add(clientData);
                 
                 // Programează SMS-urile de reminder pentru fiecare serviciu
                 for (const service of selectedServices) {
@@ -2565,10 +2518,10 @@
                             sent: false
                         }
                     ],
-                    createdAt: serverTimestamp()
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 
-                await addDoc(collection(db, 'reminders'), reminderData);
+                await db.collection('reminders').add(reminderData);
                 console.log(`✅ Reminder-uri programate pentru serviciul ${service.serviceName}`);
                 
             } catch (error) {
@@ -2597,7 +2550,7 @@
                 thisMonth.setDate(1);
                 thisMonth.setHours(0, 0, 0, 0);
                 
-                const smsSnapshot = await getDocs(collection(db, 'sms_logs'));
+                const smsSnapshot = await db.collection('sms_logs').get();
                 const smsData = smsSnapshot.docs.map(doc => ({
                     ...doc.data(),
                     sentAt: doc.data().sentAt?.toDate()
@@ -2611,11 +2564,7 @@
                     sms.sentAt && sms.sentAt >= thisMonth
                 ).length;
                 
-                const remindersQuery = query(
-                    collection(db, 'reminders'),
-                    where('reminders', 'array-contains', { sent: false })
-                );
-                const remindersSnapshot = await getDocs(remindersQuery);
+                const remindersSnapshot = await db.collection('reminders').get();
                 
                 document.getElementById('smsToday').textContent = smsToday;
                 document.getElementById('smsThisMonth').textContent = smsThisMonth;
@@ -2629,12 +2578,10 @@
         async function loadSMSHistory() {
             try {
                 const smsHistoryTableBody = document.getElementById('smsHistoryTableBody');
-                const smsQuery = query(
-                    collection(db, 'sms_logs'),
-                    orderBy('sentAt', 'desc'),
-                    limit(50)
-                );
-                const smsSnapshot = await getDocs(smsQuery);
+                const smsQuery = db.collection('sms_logs')
+                    .orderBy('sentAt', 'desc')
+                    .limit(50);
+                const smsSnapshot = await smsQuery.get();
                 
                 let html = '';
                 smsSnapshot.forEach(docSnapshot => {
@@ -2665,15 +2612,15 @@
         async function loadUpcomingReminders() {
             try {
                 const remindersTableBody = document.getElementById('remindersTableBody');
-                const remindersSnapshot = await getDocs(collection(db, 'reminders'));
+                const remindersSnapshot = await db.collection('reminders').get();
                 
                 let html = '';
                 for (const docSnapshot of remindersSnapshot.docs) {
                     const reminder = docSnapshot.data();
                     
                     // Obține datele clientului
-                    const clientDoc = await getDoc(doc(db, 'clients', reminder.clientId));
-                    const client = clientDoc.exists() ? clientDoc.data() : { name: 'Client necunoscut', surname: '' };
+                    const clientDoc = await db.collection('clients').doc(reminder.clientId).get();
+                    const client = clientDoc.exists ? clientDoc.data() : { name: 'Client necunoscut', surname: '' };
                     
                     const expiryDate = reminder.expiryDate ? reminder.expiryDate.toDate().toLocaleDateString('ro-RO') : 'N/A';
                     
@@ -2719,12 +2666,10 @@
                 today.setHours(0, 0, 0, 0);
                 
                 // Statistici conectări
-                const logsQuery = query(
-                    collection(db, 'activity_logs'),
-                    where('timestamp', '>=', today),
-                    where('type', '==', 'auth')
-                );
-                const logsSnapshot = await getDocs(logsQuery);
+                const logsQuery = db.collection('activity_logs')
+                    .where('timestamp', '>=', today)
+                    .where('type', '==', 'auth');
+                const logsSnapshot = await logsQuery.get();
                 
                 let totalLogins = 0;
                 let failedAttempts = 0;
@@ -2741,12 +2686,10 @@
                 });
                 
                 // Ultimul backup
-                const backupsQuery = query(
-                    collection(db, 'backups'),
-                    orderBy('timestamp', 'desc'),
-                    limit(1)
-                );
-                const backupsSnapshot = await getDocs(backupsQuery);
+                const backupsQuery = db.collection('backups')
+                    .orderBy('timestamp', 'desc')
+                    .limit(1);
+                const backupsSnapshot = await backupsQuery.get();
                 let lastBackup = 'Niciodată';
                 
                 if (!backupsSnapshot.empty) {
@@ -2769,22 +2712,18 @@
             try {
                 const logsTableBody = document.getElementById('logsTableBody');
                 
-                let logsQuery = query(
-                    collection(db, 'activity_logs'),
-                    orderBy('timestamp', 'desc'),
-                    limit(50)
-                );
+                let logsQuery = db.collection('activity_logs')
+                    .orderBy('timestamp', 'desc')
+                    .limit(50);
                 
                 if (filter !== 'all') {
-                    logsQuery = query(
-                        collection(db, 'activity_logs'),
-                        where('type', '==', filter),
-                        orderBy('timestamp', 'desc'),
-                        limit(50)
-                    );
+                    logsQuery = db.collection('activity_logs')
+                        .where('type', '==', filter)
+                        .orderBy('timestamp', 'desc')
+                        .limit(50);
                 }
                 
-                const logsSnapshot = await getDocs(logsQuery);
+                const logsSnapshot = await logsQuery.get();
                 
                 let html = '';
                 logsSnapshot.forEach(docSnapshot => {
@@ -2831,12 +2770,10 @@
             try {
                 showLoading(true);
                 
-                const logsQuery = query(
-                    collection(db, 'activity_logs'), 
-                    orderBy('timestamp', 'desc'), 
-                    limit(1000)
-                );
-                const logsSnapshot = await getDocs(logsQuery);
+                const logsQuery = db.collection('activity_logs')
+                    .orderBy('timestamp', 'desc')
+                    .limit(1000);
+                const logsSnapshot = await logsQuery.get();
                 
                 const logs = logsSnapshot.docs.map(docSnapshot => ({
                     id: docSnapshot.id,
@@ -2892,8 +2829,8 @@
 
         async function viewClientDetails(clientId) {
             try {
-                const clientDoc = await getDoc(doc(db, 'clients', clientId));
-                if (!clientDoc.exists()) {
+                const clientDoc = await db.collection('clients').doc(clientId).get();
+                if (!clientDoc.exists) {
                     alert('❌ Client nu există!');
                     return;
                 }
@@ -2919,8 +2856,8 @@
 
         async function sendSMSToClient(clientId) {
             try {
-                const clientDoc = await getDoc(doc(db, 'clients', clientId));
-                if (!clientDoc.exists()) {
+                const clientDoc = await db.collection('clients').doc(clientId).get();
+                if (!clientDoc.exists) {
                     alert('❌ Client nu există!');
                     return;
                 }
@@ -2942,8 +2879,8 @@
 
         async function manageClientServices(clientId) {
             try {
-                const clientDoc = await getDoc(doc(db, 'clients', clientId));
-                if (!clientDoc.exists()) {
+                const clientDoc = await db.collection('clients').doc(clientId).get();
+                if (!clientDoc.exists) {
                     alert('❌ Client nu există!');
                     return;
                 }
@@ -3007,14 +2944,14 @@
                     clientId: clientId,
                     phone: phone,
                     message: message,
-                    sentAt: serverTimestamp(),
+                    sentAt: firebase.firestore.FieldValue.serverTimestamp(),
                     sentBy: currentUser.uid,
                     type: 'manual',
                     success: success,
                     cost: success ? 0.08 : 0 // Cost estimativ în RON
                 };
                 
-                await addDoc(collection(db, 'sms_logs'), smsLog);
+                await db.collection('sms_logs').add(smsLog);
                 await logger.logSMSSent(phone, message, success);
                 
                 if (success) {
@@ -3050,7 +2987,7 @@
                 const today = new Date();
                 const sevenDaysFromNow = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
                 
-                const clientsSnapshot = await getDocs(collection(db, 'clients'));
+                const clientsSnapshot = await db.collection('clients').get();
                 let expiringCount = 0;
                 let expiringList = [];
                 
@@ -3082,16 +3019,16 @@
 
         async function sendReminderNow(reminderId, reminderType) {
             try {
-                const reminderDoc = await getDoc(doc(db, 'reminders', reminderId));
-                if (!reminderDoc.exists()) {
+                const reminderDoc = await db.collection('reminders').doc(reminderId).get();
+                if (!reminderDoc.exists) {
                     alert('❌ Reminder-ul nu există!');
                     return;
                 }
                 
                 const reminder = reminderDoc.data();
-                const clientDoc = await getDoc(doc(db, 'clients', reminder.clientId));
+                const clientDoc = await db.collection('clients').doc(reminder.clientId).get();
                 
-                if (!clientDoc.exists()) {
+                if (!clientDoc.exists) {
                     alert('❌ Clientul nu există!');
                     return;
                 }
@@ -3112,21 +3049,21 @@
                     clientName: `${client.name} ${client.surname}`,
                     phone: client.phone,
                     message: message,
-                    sentAt: serverTimestamp(),
+                    sentAt: firebase.firestore.FieldValue.serverTimestamp(),
                     sentBy: currentUser.uid,
                     type: 'reminder_' + reminderType,
                     success: true,
                     cost: 0.08
                 };
                 
-                await addDoc(collection(db, 'sms_logs'), smsLog);
+                await db.collection('sms_logs').add(smsLog);
                 
                 // Marchează reminder-ul ca trimis
                 const updatedReminders = reminder.reminders.map(r => 
                     r.type === reminderType ? {...r, sent: true, sentAt: new Date()} : r
                 );
                 
-                await updateDoc(doc(db, 'reminders', reminderId), {
+                await db.collection('reminders').doc(reminderId).update({
                     reminders: updatedReminders
                 });
                 
@@ -3151,11 +3088,11 @@
                     email: document.getElementById('workerEmail').value,
                     phone: document.getElementById('workerPhone').value,
                     zone: document.getElementById('workerZone').value,
-                    createdAt: serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     createdBy: currentUser.uid
                 };
                 
-                await addDoc(collection(db, 'workers'), workerData);
+                await db.collection('workers').add(workerData);
                 
                 alert('✅ Lucrător adăugat cu succes! Poate să se înregistreze cu emailul: ' + workerData.email);
                 closeModal('addWorkerModal');
@@ -3184,11 +3121,11 @@
                     description: document.getElementById('workDescription').value,
                     priority: document.getElementById('workPriority').value,
                     status: 'pending',
-                    createdAt: serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     createdBy: currentUser.uid
                 };
                 
-                await addDoc(collection(db, 'lucrari'), workData);
+                await db.collection('lucrari').add(workData);
                 
                 alert('✅ Lucrare asignată cu succes!');
                 closeModal('assignWorkModal');
@@ -3208,9 +3145,9 @@
 
         async function startWork(workId) {
             try {
-                await updateDoc(doc(db, 'lucrari', workId), {
+                await db.collection('lucrari').doc(workId).update({
                     status: 'in_progress',
-                    startedAt: serverTimestamp()
+                    startedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 alert('✅ Lucrarea a fost începută!');
@@ -3224,9 +3161,9 @@
 
         async function completeWork(workId) {
             try {
-                await updateDoc(doc(db, 'lucrari', workId), {
+                await db.collection('lucrari').doc(workId).update({
                     status: 'completed',
-                    completedAt: serverTimestamp()
+                    completedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
                 alert('✅ Lucrarea a fost finalizată!');
@@ -3266,22 +3203,19 @@
                     showLoading(true);
                     
                     // Obține datele clientului înainte de ștergere pentru log
-                    const clientDoc = await getDoc(doc(db, 'clients', clientId));
-                    const clientData = clientDoc.exists() ? clientDoc.data() : null;
+                    const clientDoc = await db.collection('clients').doc(clientId).get();
+                    const clientData = clientDoc.exists ? clientDoc.data() : null;
                     const clientName = clientData ? `${clientData.name} ${clientData.surname}` : 'Client necunoscut';
                     
                     // Șterge clientul
-                    await deleteDoc(doc(db, 'clients', clientId));
+                    await db.collection('clients').doc(clientId).delete();
                     
                     // Șterge reminder-urile asociate
-                    const remindersQuery = query(
-                        collection(db, 'reminders'),
-                        where('clientId', '==', clientId)
-                    );
-                    const remindersSnapshot = await getDocs(remindersQuery);
+                    const remindersQuery = db.collection('reminders').where('clientId', '==', clientId);
+                    const remindersSnapshot = await remindersQuery.get();
                     
                     for (const reminderDoc of remindersSnapshot.docs) {
-                        await deleteDoc(doc(db, 'reminders', reminderDoc.id));
+                        await db.collection('reminders').doc(reminderDoc.id).delete();
                     }
                     
                     // Log ștergerea
@@ -3303,7 +3237,7 @@
         async function deleteWorker(workerId) {
             if (confirm('Ești sigur că vrei să ștergi acest lucrător?')) {
                 try {
-                    await deleteDoc(doc(db, 'workers', workerId));
+                    await db.collection('workers').doc(workerId).delete();
                     alert('✅ Lucrător șters cu succes!');
                     loadWorkers();
                 } catch (error) {
@@ -3323,19 +3257,19 @@
         async function loadAssignments() {
             try {
                 const assignmentsTableBody = document.getElementById('assignmentsTableBody');
-                const worksQuery = query(collection(db, 'lucrari'), orderBy('createdAt', 'desc'));
-                const worksSnapshot = await getDocs(worksQuery);
+                const worksQuery = db.collection('lucrari').orderBy('createdAt', 'desc');
+                const worksSnapshot = await worksQuery.get();
                 
                 let html = '';
                 for (const docSnapshot of worksSnapshot.docs) {
                     const work = docSnapshot.data();
                     
                     // Get client and worker info
-                    const clientDoc = await getDoc(doc(db, 'clients', work.clientId));
-                    const workerDoc = await getDoc(doc(db, 'workers', work.assignedTo));
+                    const clientDoc = await db.collection('clients').doc(work.clientId).get();
+                    const workerDoc = await db.collection('workers').doc(work.assignedTo).get();
                     
-                    const clientName = clientDoc.exists() ? clientDoc.data().name : 'Client necunoscut';
-                    const workerName = workerDoc.exists() ? workerDoc.data().name : 'Lucrător necunoscut';
+                    const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
+                    const workerName = workerDoc.exists ? workerDoc.data().name : 'Lucrător necunoscut';
                     const createdAt = work.createdAt ? work.createdAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
                     
                     const statusText = work.status === 'completed' ? '✅ Completată' : 
@@ -3365,7 +3299,7 @@
         async function deleteAssignment(assignmentId) {
             if (confirm('Ești sigur că vrei să ștergi această asignare?')) {
                 try {
-                    await deleteDoc(doc(db, 'lucrari', assignmentId));
+                    await db.collection('lucrari').doc(assignmentId).delete();
                     alert('✅ Asignare ștearsă cu succes!');
                     loadAssignments();
                 } catch (error) {
@@ -3407,17 +3341,17 @@
         };
 
         // 🎯 Auth State Observer
-        onAuthStateChanged(auth, async (user) => {
+        auth.onAuthStateChanged(async (user) => {
             if (user) {
                 console.log('👤 User authenticated:', user.email);
                 currentUser = user;
                 
                 try {
                     // Get user data from Firestore
-                    const userDocRef = doc(db, 'users', user.uid);
-                    const userDoc = await getDoc(userDocRef);
+                    const userDocRef = db.collection('users').doc(user.uid);
+                    const userDoc = await userDocRef.get();
                     
-                    if (userDoc.exists()) {
+                    if (userDoc.exists) {
                         const userData = userDoc.data();
                         userRole = userData.role;
                         workerId = userData.workerId;
@@ -3440,7 +3374,7 @@
                     } else {
                         console.error('❌ User document not found in Firestore');
                         alert('Eroare: Datele utilizatorului nu au fost găsite');
-                        signOut(auth);
+                        auth.signOut();
                     }
                     
                 } catch (error) {
@@ -3463,7 +3397,7 @@
 
         // 🎯 Initialize App
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔥 Firebase PWA Ready - Service Worker not needed!');
+            console.log('🔥 Firebase PWA Ready - COMPAT Version!');
             
             // Inițializează sistemul de securitate
             console.log('🔒 Inițializează sistemul de securitate...');
