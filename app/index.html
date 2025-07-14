@@ -1,4 +1,374 @@
-<!DOCTYPE html>
+// 📱 FUNCȚII SMS ȘI NOTIFICĂRI
+        // ====================================================================
+
+        // Funcție principală pentru trimitere SMS
+        async function sendSMSNotification(phoneNumber, clientName, serviceName, expiryDate, servicePrice = null) {
+            try {
+                showLoading(true);
+                
+                let message = `Bună ziua ${clientName}! Serviciul ${serviceName} expiră pe ${expiryDate}.`;
+                if (servicePrice) {
+                    message += ` Preț: ${servicePrice} lei.`;
+                }
+                message += ` Contactați AdInstalGaz pentru reprogramare: 0755123456`;
+                
+                console.log('📱 Trimit SMS către:', phoneNumber);
+                console.log('📄 Mesaj:', message);
+                
+                // Pentru demo - simulăm trimiterea SMS
+                await simulateSMSSend(phoneNumber, message);
+                
+                // Salvăm notificarea în Firestore
+                await db.collection('notifications').add({
+                    clientName: clientName,
+                    phoneNumber: phoneNumber,
+                    message: message,
+                    serviceName: serviceName,
+                    servicePrice: servicePrice,
+                    expiryDate: expiryDate,
+                    sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    sentBy: currentUser.uid,
+                    status: 'sent'
+                });
+                
+                alert(`✅ SMS trimis cu succes către ${clientName} (${phoneNumber})`);
+                
+            } catch (error) {
+                console.error('❌ Eroare trimitere SMS:', error);
+                alert('Eroare la trimiterea SMS-ului: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Simulare trimitere SMS (pentru demo)
+        async function simulateSMSSend(phoneNumber, message) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    console.log('📱 SMS DEMO trimis către:', phoneNumber);
+                    resolve({ success: true, messageId: 'demo_' + Date.now() });
+                }, 1500);
+            });
+        }
+
+        // Verifică serviciile care expiră în următoarele zile
+        async function checkExpiringServices(daysAhead = 3) {
+            try {
+                console.log(`🔍 Verific servicii care expiră în următoarele ${daysAhead} zile...`);
+                
+                const today = new Date();
+                const checkDate = new Date();
+                checkDate.setDate(today.getDate() + daysAhead);
+                
+                const worksSnapshot = await db.collection('lucrari')
+                    .where('nextServiceDate', '<=', checkDate)
+                    .where('nextServiceDate', '>=', today)
+                    .where('status', '==', 'completed')
+                    .get();
+                
+                const expiringServices = [];
+                
+                for (const doc of worksSnapshot.docs) {
+                    const work = doc.data();
+                    
+                    const clientDoc = await db.collection('clients').doc(work.clientId).get();
+                    if (clientDoc.exists) {
+                        const client = clientDoc.data();
+                        
+                        expiringServices.push({
+                            workId: doc.id,
+                            clientId: work.clientId,
+                            clientName: client.name,
+                            clientPhone: client.phone,
+                            serviceName: formatServiceType(work.workType),
+                            servicePrice: work.price,
+                            expiryDate: work.nextServiceDate.toDate(),
+                            daysUntilExpiry: Math.ceil((work.nextServiceDate.toDate() - today) / (1000 * 60 * 60 * 24))
+                        });
+                    }
+                }
+                
+                console.log(`📋 Găsite ${expiringServices.length} servicii care expiră`);
+                return expiringServices;
+                
+            } catch (error) {
+                console.error('❌ Eroare verificare expirări:', error);
+                return [];
+            }
+        }
+
+        // Funcție pentru formatarea tipului de serviciu
+        function formatServiceType(serviceType) {
+            const serviceNames = {
+                'instalare_gaz': 'Instalare Gaz',
+                'reparatie_gaz': 'Reparație Gaz',
+                'verificare_gaz': 'Verificare Gaz',
+                'instalare_termica': 'Instalare Termică',
+                'reparatie_termica': 'Reparație Termică',
+                'mentenanta': 'Mentenanță'
+            };
+            return serviceNames[serviceType] || serviceType;
+        }
+
+        // Încarcă tab-ul Notificări
+        async function loadNotifications() {
+            try {
+                const notificationsContainer = document.getElementById('notificationsContainer');
+                
+                const expiringServices = await checkExpiringServices(7);
+                
+                const notificationsSnapshot = await db.collection('notifications')
+                    .orderBy('sentAt', 'desc')
+                    .limit(50)
+                    .get();
+                
+                let html = `
+                    <div class="card">
+                        <h3>🔔 Servicii care Expiră (următoarele 7 zile)</h3>
+                        ${expiringServices.length === 0 ? 
+                            '<p>✅ Nu sunt servicii care expiră în perioada următoare</p>' :
+                            generateExpiringServicesTable(expiringServices)
+                        }
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="checkExpiringServices(3).then(loadNotifications)">
+                                🔄 Verifică Expirări
+                            </button>
+                            <button class="btn btn-warning" onclick="sendExpirationReminders()">
+                                📱 Trimite Toate SMS-urile
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📱 Istoric Notificări SMS</h3>
+                        ${generateNotificationsHistory(notificationsSnapshot)}
+                    </div>
+                `;
+                
+                notificationsContainer.innerHTML = html;
+                
+            } catch (error) {
+                console.error('❌ Eroare încărcare notificări:', error);
+            }
+        }
+
+        // Generează tabelul cu servicii care expiră
+        function generateExpiringServicesTable(expiringServices) {
+            let html = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Telefon</th>
+                            <th>Serviciu</th>
+                            <th>Data Expirării</th>
+                            <th>Zile Rămase</th>
+                            <th>Acțiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            expiringServices.forEach(service => {
+                const urgencyClass = service.daysUntilExpiry <= 1 ? 'style="background-color: #ffebee;"' : 
+                                   service.daysUntilExpiry <= 2 ? 'style="background-color: #fff3e0;"' : '';
+                
+                html += `
+                    <tr ${urgencyClass}>
+                        <td><strong>${service.clientName}</strong></td>
+                        <td>${service.clientPhone}</td>
+                        <td>${service.serviceName}</td>
+                        <td>${service.expiryDate.toLocaleDateString('ro-RO')}</td>
+                        <td><strong>${service.daysUntilExpiry} zile</strong></td>
+                        <td>
+                            <button class="btn btn-primary" onclick="sendSingleExpirationSMS('${service.clientPhone}', '${service.clientName}', '${service.serviceName}', '${service.expiryDate.toLocaleDateString('ro-RO')}', ${service.servicePrice})">
+                                📱 Trimite SMS
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            return html;
+        }
+
+        // Generează istoricul notificărilor
+        function generateNotificationsHistory(notificationsSnapshot) {
+            if (notificationsSnapshot.empty) {
+                return '<p>📭 Nu există notificări trimise încă</p>';
+            }
+            
+            let html = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Telefon</th>
+                            <th>Serviciu</th>
+                            <th>Mesaj</th>
+                            <th>Data Trimiterii</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            notificationsSnapshot.forEach(doc => {
+                const notification = doc.data();
+                const sentAt = notification.sentAt ? notification.sentAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                
+                html += `
+                    <tr>
+                        <td><strong>${notification.clientName}</strong></td>
+                        <td>${notification.phoneNumber}</td>
+                        <td>${notification.serviceName}</td>
+                        <td>${notification.message.substring(0, 50)}...</td>
+                        <td>${sentAt}</td>
+                        <td>✅ Trimis</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            return html;
+        }
+
+        // Funcții helper pentru acțiuni SMS
+        async function sendSingleExpirationSMS(phoneNumber, clientName, serviceName, expiryDate, servicePrice = null) {
+            await sendSMSNotification(phoneNumber, clientName, serviceName, expiryDate, servicePrice);
+            loadNotifications();
+        }
+
+        async function sendExpirationReminders() {
+            const expiringServices = await checkExpiringServices(3);
+            if (expiringServices.length > 0) {
+                if (confirm(`Trimiti SMS către ${expiringServices.length} clienți cu servicii care expiră?`)) {
+                    await sendBulkExpirationSMS(expiringServices);
+                    loadNotifications();
+                }
+            } else {
+                alert('Nu există servicii care expiră în următoarele 3 zile');
+            }
+        }
+
+        // Trimitere SMS în masă pentru expirări
+        async function sendBulkExpirationSMS(expiringServices) {
+            try {
+                showLoading(true);
+                let successCount = 0;
+                let errorCount = 0;
+                
+                for (const service of expiringServices) {
+                    try {
+                        const expiryDateStr = service.expiryDate.toLocaleDateString('ro-RO');
+                        await sendSMSNotification(
+                            service.clientPhone,
+                            service.clientName,
+                            service.serviceName,
+                            expiryDateStr,
+                            service.servicePrice
+                        );
+                        successCount++;
+                        
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                    } catch (error) {
+                        console.error(`❌ Eroare SMS pentru ${service.clientName}:`, error);
+                        errorCount++;
+                    }
+                }
+                
+                alert(`📱 SMS-uri trimise:\n✅ Succes: ${successCount}\n❌ Erori: ${errorCount}`);
+                
+            } catch (error) {
+                console.error('❌ Eroare trimitere în masă:', error);
+                alert('Eroare la trimiterea SMS-urilor în masă');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 📄 FUNCȚII UPLOAD DOCUMENTE
+        // ====================================================================
+
+        // Upload fișiere pentru lucrări
+        async function uploadWorkFiles(workId, files) {
+            try {
+                const uploadPromises = [];
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const fileName = `lucrari/${workId}/${Date.now()}_${file.name}`;
+                    const storageRef = storage.ref().child(fileName);
+                    
+                    uploadPromises.push(
+                        storageRef.put(file).then(snapshot => {
+                            return snapshot.ref.getDownloadURL().then(downloadURL => {
+                                return {
+                                    name: file.name,
+                                    url: downloadURL,
+                                    type: file.type,
+                                    uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                };
+                            });
+                        })
+                    );
+                }
+                
+                const uploadedFiles = await Promise.all(uploadPromises);
+                
+                // Salvează referințele fișierelor în Firestore
+                await db.collection('lucrari').doc(workId).update({
+                    files: firebase.firestore.FieldValue.arrayUnion(...uploadedFiles)
+                });
+                
+                console.log('✅ Fișiere uploadate cu succes:', uploadedFiles);
+                return uploadedFiles;
+                
+            } catch (error) {
+                console.error('❌ Eroare upload fișiere:', error);
+                throw error;
+            }
+        }            <!-- Notificări Tab (Admin only) -->
+            <div id="notificari" class="tab-content" style="display: none;">
+                <h2>🔔 Notificări și Expirări Servicii</h2>
+                <div id="notificationsContainer">
+                    <!-- Notifications content will be loaded by JavaScript -->
+                    <!-- Complete Work Modal -->
+        <div id="completeWorkModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('completeWorkModal')">&times;</span>
+                <h2>✅ Finalizează Lucrarea</h2>
+                <form onsubmit="completeWorkWithDetails(event)">
+                    <input type="hidden" id="completeWorkId" />
+                    <div class="form-group">
+                        <label for="nextServiceDate">📅 Data următorului serviciu:</label>
+                        <input type="date" id="nextServiceDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="workNotes">📝 Observații:</label>
+                        <textarea id="workNotes" rows="3" placeholder="Detalii despre lucrarea executată..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="workFiles">📄 Upload Documente:</label>
+                        <input type="file" id="workFiles" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                        <small>Fotografii, documente PDF, etc.</small>
+                    </div>
+                    <button type="submit" class="btn btn-success">Finalizează cu Expirare</button>
+                </form>
+            </div>
+        </div>
+    </div>
+            </div><!DOCTYPE html>
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
@@ -1347,6 +1717,9 @@
                 case 'asignari':
                     loadAssignments();
                     break;
+                case 'notificari':
+                    loadNotifications();
+                    break;
             }
         }
 
@@ -1360,6 +1733,7 @@
                     <button class="tab" onclick="showTab('clienti')">👥 Clienți</button>
                     <button class="tab" onclick="showTab('lucratori')">👨‍🔧 Lucrători</button>
                     <button class="tab" onclick="showTab('asignari')">📋 Asignări</button>
+                    <button class="tab" onclick="showTab('notificari')">🔔 Notificări</button>
                     <button class="tab" onclick="showTab('rapoarte')">📊 Rapoarte</button>
                 `;
             } else if (role === 'worker') {
@@ -1454,6 +1828,7 @@
                             <td>${createdAt}</td>
                             <td>
                                 <button class="btn btn-primary" onclick="assignWorkToClient('${doc.id}')">📋 Asignează</button>
+                                <button class="btn btn-success" onclick="showSMSModal('${doc.id}', '${client.name}', '${client.phone}')">📱 SMS</button>
                                 <button class="btn btn-danger" onclick="deleteClient('${doc.id}')">🗑️ Șterge</button>
                             </td>
                         </tr>
@@ -1464,6 +1839,68 @@
                 
             } catch (error) {
                 console.error('❌ Eroare la încărcarea clienților:', error);
+            }
+        }
+
+        // Modal pentru trimiterea SMS-ului personalizat
+        function showSMSModal(clientId, clientName, clientPhone) {
+            const message = prompt(
+                `Trimite SMS către ${clientName} (${clientPhone}):\n\nIntroduceți mesajul:`,
+                `Bună ziua ${clientName}! Mesaj de la AdInstalGaz. Pentru informații: 0755123456`
+            );
+            
+            if (message) {
+                sendCustomSMS(clientPhone, clientName, message);
+            }
+        }
+
+        // Trimitere SMS personalizat
+        async function sendCustomSMS(phoneNumber, clientName, customMessage) {
+            try {
+                showLoading(true);
+                
+                console.log('📱 Trimit SMS personalizat către:', phoneNumber);
+                
+                await simulateSMSSend(phoneNumber, customMessage);
+                
+                await db.collection('notifications').add({
+                    clientName: clientName,
+                    phoneNumber: phoneNumber,
+                    message: customMessage,
+                    serviceName: 'Mesaj personalizat',
+                    sentAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    sentBy: currentUser.uid,
+                    status: 'sent'
+                });
+                
+                alert(`✅ SMS personalizat trimis către ${clientName}`);
+                
+            } catch (error) {
+                console.error('❌ Eroare SMS personalizat:', error);
+                alert('Eroare la trimiterea SMS-ului');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Verificare automată la login admin
+        async function autoCheckExpirations() {
+            if (userRole === 'admin') {
+                try {
+                    const expiringServices = await checkExpiringServices(3);
+                    
+                    if (expiringServices.length > 0) {
+                        const message = `🔔 ATENȚIE: ${expiringServices.length} servicii expiră în următoarele 3 zile!\n\nVezi tab "Notificări" pentru detalii.`;
+                        
+                        setTimeout(() => {
+                            if (confirm(message + '\n\nVrei să trimiți SMS automat tuturor clienților?')) {
+                                sendBulkExpirationSMS(expiringServices);
+                            }
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('❌ Eroare verificare automată:', error);
+                }
             }
         }
 
@@ -1557,6 +1994,9 @@
                     const clientName = clientDoc.exists ? clientDoc.data().name : 'Client necunoscut';
                     
                     const completedAt = work.completedAt ? work.completedAt.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                    const nextServiceDate = work.nextServiceDate ? work.nextServiceDate.toDate().toLocaleDateString('ro-RO') : 'N/A';
+                    
+                    const documentsCount = work.files ? work.files.length : 0;
                     
                     html += `
                         <tr>
@@ -1564,7 +2004,7 @@
                             <td>${work.workType || 'N/A'}</td>
                             <td>${completedAt}</td>
                             <td>⭐⭐⭐⭐⭐</td>
-                            <td>📄 Vezi documente</td>
+                            <td>📄 ${documentsCount} documente${documentsCount > 0 ? ' | <button class="btn btn-info" onclick="viewWorkDocuments(\'' + doc.id + '\')">Vezi</button>' : ''}</td>
                         </tr>
                     `;
                 }
@@ -1573,6 +2013,37 @@
                 
             } catch (error) {
                 console.error('❌ Eroare la încărcarea lucrărilor finalizate:', error);
+            }
+        }
+
+        // Funcție pentru vizualizarea documentelor unei lucrări
+        async function viewWorkDocuments(workId) {
+            try {
+                const workDoc = await db.collection('lucrari').doc(workId).get();
+                const work = workDoc.data();
+                
+                if (work.files && work.files.length > 0) {
+                    let filesHTML = '<h3>📄 Documente Lucrare</h3><ul>';
+                    work.files.forEach(file => {
+                        filesHTML += `<li><a href="${file.url}" target="_blank">${file.name}</a></li>`;
+                    });
+                    filesHTML += '</ul>';
+                    
+                    const popup = window.open('', '_blank', 'width=600,height=400');
+                    popup.document.write(`
+                        <html>
+                            <head><title>Documente Lucrare</title></head>
+                            <body style="font-family: Arial; padding: 20px;">
+                                ${filesHTML}
+                            </body>
+                        </html>
+                    `);
+                } else {
+                    alert('Nu există documente pentru această lucrare');
+                }
+            } catch (error) {
+                console.error('❌ Eroare la încărcarea documentelor:', error);
+                alert('Eroare la încărcarea documentelor');
             }
         }
 
@@ -1733,18 +2204,49 @@
         }
 
         async function completeWork(workId) {
+            document.getElementById('completeWorkId').value = workId;
+            document.getElementById('completeWorkModal').style.display = 'block';
+        }
+
+        async function completeWorkWithDetails(event) {
+            event.preventDefault();
+            
             try {
+                showLoading(true);
+                const workId = document.getElementById('completeWorkId').value;
+                const nextServiceDate = new Date(document.getElementById('nextServiceDate').value);
+                const notes = document.getElementById('workNotes').value;
+                const files = document.getElementById('workFiles').files;
+                
+                // Upload fișiere dacă există
+                let uploadedFiles = [];
+                if (files.length > 0) {
+                    uploadedFiles = await uploadWorkFiles(workId, files);
+                }
+                
+                // Actualizează lucrarea cu detaliile complete
                 await db.collection('lucrari').doc(workId).update({
                     status: 'completed',
-                    completedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    completedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    nextServiceDate: nextServiceDate,
+                    notes: notes,
+                    completedBy: currentUser.uid
                 });
                 
-                alert('✅ Lucrarea a fost finalizată!');
+                alert('✅ Lucrarea a fost finalizată cu data următorului serviciu!');
+                closeModal('completeWorkModal');
                 loadMyWorks();
+                
+                // Reset form
+                document.getElementById('nextServiceDate').value = '';
+                document.getElementById('workNotes').value = '';
+                document.getElementById('workFiles').value = '';
                 
             } catch (error) {
                 console.error('❌ Eroare la finalizarea lucrării:', error);
                 alert('Eroare la finalizarea lucrării: ' + error.message);
+            } finally {
+                showLoading(false);
             }
         }
 
@@ -1907,6 +2409,11 @@
                         
                         // Load initial dashboard
                         loadDashboard();
+                        
+                        // Verificare automată expirări pentru admin
+                        if (userRole === 'admin') {
+                            autoCheckExpirations();
+                        }
                         
                     } else {
                         console.error('❌ User document not found in Firestore');
