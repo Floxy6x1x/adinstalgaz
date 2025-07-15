@@ -665,19 +665,6 @@
             font-weight: bold;
         }
 
-        /* Form Styles with Special Options */
-        #tipServiciu option[value="Instalații Gaz + Centrală"] {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            font-weight: bold;
-        }
-
-        #tipServiciu option[value="Servicii de Urgență"] {
-            background: #ffebee;
-            color: #c62828;
-            font-weight: bold;
-        }
-
         /* Filters Section */
         .filters-section {
             background: #f8f9fa;
@@ -1087,7 +1074,36 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Login Section -->
+    <div id="loginSection" class="login-container" style="display: none;">
+        <div class="login-card">
+            <h2>🔧 AdInstalGaz</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">Sistem de Gestionare Servicii</p>
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required placeholder="email@adinstalgaz.ro">
+                </div>
+                <div class="form-group">
+                    <label>Parolă</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <span>🔐</span> Autentificare
+                </button>
+            </form>
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <p style="margin: 0; font-size: 14px; color: #666;">
+                    <strong>Conturi de test:</strong><br>
+                    Admin: florin.gavrila@adinstalgaz.ro / 123456<br>
+                    Lucrător: ion@adinstalgaz.ro / 123456
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="container">
         <!-- Header -->
         <div class="header">
             <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1096,13 +1112,16 @@
                         <span>🔧</span>
                         AdInstalGaz
                     </h1>
-                    <div class="subtitle">Sistem de Gestionare Servicii Gaz</div>
+                    <div class="subtitle">Sistem Complet de Gestionare Servicii Gaz</div>
                 </div>
                 <div style="text-align: right;">
                     <div style="color: white; opacity: 0.9;">
-                        <strong id="numeUtilizatorHeader">Administrator</strong><br>
-                        <small id="rolUtilizatorHeader">Administrator</small>
+                        <strong id="headerNumeUtilizator">-</strong><br>
+                        <small id="headerRolUtilizator">-</small>
                     </div>
+                    <button class="btn btn-secondary btn-sm" onclick="logout()" style="margin-top: 10px;">
+                        <span>🚪</span> Ieșire
+                    </button>
                 </div>
             </div>
             <div id="lastBackup" class="backup-status" style="margin-top: 15px;">
@@ -1183,23 +1202,20 @@
                     <h2><span>🕒</span> Activitate Recentă</h2>
                 </div>
                 <div id="activitateRecenta">
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Data</th>
-                                    <th>Tip</th>
-                                    <th>Detalii</th>
-                                    <th>Utilizator</th>
-                                </tr>
-                            </thead>
-                            <tbody id="listaActivitateRecenta">
-                                <tr>
-                                    <td colspan="4" class="text-center">Nu există activitate recentă</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <!-- Se va popula dinamic cu ultimele activități -->
+                </div>
+            </div>
+
+            <!-- Lucrări Urgente -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><span>⚡</span> Lucrări de Astăzi</h2>
+                    <button class="btn btn-primary btn-sm" onclick="showTab('lucrari')">
+                        Vezi Toate
+                    </button>
+                </div>
+                <div id="lucrariAstazi">
+                    <!-- Se va popula dinamic -->
                 </div>
             </div>
         </div>
@@ -1274,26 +1290,19 @@
                         <textarea id="observatiiClient" placeholder="Note adiționale despre client"></textarea>
                     </div>
                     <div class="settings-section">
-                        <h3>👤 Utilizator Curent</h3>
+                        <h3>👤 Gestionare Utilizatori</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>Nume Utilizator</label>
-                                <input type="text" id="numeUtilizator" value="Administrator" readonly style="background: #f8f9fa;">
+                                <label>Utilizator Curent</label>
+                                <input type="text" id="utilizatorCurentNume" readonly style="background: #f8f9fa;">
                             </div>
                             <div class="form-group">
                                 <label>Rol</label>
-                                <input type="text" id="rolUtilizator" value="Administrator" readonly style="background: #f8f9fa;">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" id="emailUtilizator" placeholder="admin@adinstalgaz.ro" readonly style="background: #f8f9fa;">
+                                <input type="text" id="utilizatorCurentRol" readonly style="background: #f8f9fa;">
                             </div>
                         </div>
-                        <button class="btn btn-secondary" onclick="schimbaParola()">
-                            <span>🔒</span> Schimbă Parola
-                        </button>
-                        <button class="btn btn-danger" onclick="delogare()">
-                            <span>🚪</span> Delogare
+                        <button class="btn btn-secondary" onclick="deschideGestionareUtilizatori()">
+                            <span>👥</span> Gestionează Utilizatori
                         </button>
                     </div>
 
@@ -1352,7 +1361,7 @@
                         </div>
                         <div class="form-group">
                             <label>Tip Serviciu*</label>
-                            <select id="tipServiciu" required onchange="actualizeazaPretServiciu()">
+                            <select id="tipServiciu" required>
                                 <option value="">Selectează tipul</option>
                                 <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
                                 <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
@@ -1373,11 +1382,8 @@
                             <input type="date" id="dataExpirareServiciu" required>
                         </div>
                         <div class="form-group">
-                            <label>Preț (se completează automat)</label>
+                            <label>Preț</label>
                             <input type="text" id="pretServiciu" placeholder="Ex: 150 Lei">
-                            <small id="notaPret" style="color: #dc3545; display: none;">
-                                ⚠️ Pentru urgențe, prețul se stabilește în funcție de complexitatea intervenției
-                            </small>
                         </div>
                         <div class="form-group">
                             <label>Observații</label>
@@ -1454,9 +1460,9 @@
                             <label>Lucrător</label>
                             <select id="lucratorLucrare">
                                 <option value="">Neatribuit</option>
-                                <option value="1">Florin Gavrilă</option>
-                                <option value="2">Ion Popescu</option>
-                                <option value="3">Vasile Georgescu</option>
+                                ${utilizatori.filter(u => u.rol === 'lucrator' || u.rol === 'lucrător' || u.rol === 'administrator' || u.rol === 'admin').map(u => 
+                                    `<option value="${u.id}">${u.nume}</option>`
+                                ).join('')}
                             </select>
                         </div>
                         <div class="form-group">
@@ -1837,12 +1843,7 @@
         let servicii = [];
         let lucrari = [];
         let utilizatori = [];
-        let utilizatorCurent = {
-            id: 1,
-            nume: 'Administrator',
-            email: 'admin@adinstalgaz.ro',
-            rol: 'administrator'
-        };
+        let utilizatorCurent = null;
         let setari = {
             numeCompanie: 'AdInstalGaz',
             telefonCompanie: '',
@@ -1911,6 +1912,7 @@
                                      '[]';
                 const utilizatoriStored = localStorage.getItem(getStorageKey('utilizatori')) || 
                                          localStorage.getItem('utilizatoriDB') || 
+                                         localStorage.getItem('adinstalgaz_utilizatori') ||
                                          '[]';
                 const setariStored = localStorage.getItem(getStorageKey('setari'));
 
@@ -1918,6 +1920,33 @@
                 servicii = JSON.parse(serviciiStored);
                 lucrari = JSON.parse(lucrariStored);
                 utilizatori = JSON.parse(utilizatoriStored);
+                
+                // Dacă nu există utilizatori, creează unul implicit
+                if (utilizatori.length === 0) {
+                    utilizatori = [
+                        {
+                            id: 1,
+                            nume: "Florin Gavrilă",
+                            email: "florin.gavrila@adinstalgaz.ro",
+                            parola: "123456",
+                            password: "123456",
+                            rol: "administrator",
+                            telefon: "0722123456",
+                            dataCreare: new Date().toISOString()
+                        },
+                        {
+                            id: 2,
+                            nume: "Ion Popescu",
+                            email: "ion@adinstalgaz.ro",
+                            parola: "123456",
+                            password: "123456",
+                            rol: "lucrator",
+                            telefon: "0733234567",
+                            dataCreare: new Date().toISOString()
+                        }
+                    ];
+                    salveazaInLocalStorage();
+                }
                 
                 if (setariStored) {
                     setari = { ...setari, ...JSON.parse(setariStored) };
@@ -1969,12 +1998,6 @@
 
         // Funcții pentru tab-uri
         function showTab(tabName) {
-            // Verifică permisiuni pentru anumite tab-uri
-            if ((tabName === 'setari' || tabName === 'backup') && utilizatorCurent.rol !== 'administrator') {
-                arataNotificare('Nu aveți acces la această secțiune!', 'error');
-                return;
-            }
-            
             // Ascunde toate tab-urile
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -2004,9 +2027,333 @@
                 afiseazaMonitorizare();
             } else if (tabName === 'backup') {
                 afiseazaIstoricBackup();
-            } else if (tabName === 'setari') {
-                incarcaSetariInFormular();
             }
+        }
+
+        // Funcții pentru Autentificare și Roluri
+        function login(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Verifică credențialele (compatibil cu ambele câmpuri: parola și password)
+            const utilizator = utilizatori.find(u => 
+                u.email === email && (u.parola === password || u.password === password)
+            );
+            
+            if (utilizator) {
+                utilizatorCurent = utilizator;
+                localStorage.setItem('adinstalgaz_current_user', JSON.stringify(utilizator));
+                
+                // Ascunde login și arată aplicația
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                // Actualizează interfața
+                actualizareInterfataUtilizator();
+                actualizeazaDashboard();
+                
+                arataNotificare(`Bine ai venit, ${utilizator.nume}!`, 'success');
+            } else {
+                arataNotificare('Email sau parolă incorectă!', 'error');
+            }
+        }
+        
+        function logout() {
+            if (confirm('Sigur doriți să ieșiți din aplicație?')) {
+                utilizatorCurent = null;
+                localStorage.removeItem('adinstalgaz_current_user');
+                
+                // Arată login și ascunde aplicația
+                document.getElementById('loginSection').style.display = 'flex';
+                document.getElementById('mainApp').style.display = 'none';
+                
+                // Resetează formularul de login
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+            }
+        }
+        
+        function verificaAutentificare() {
+            const userStored = localStorage.getItem('adinstalgaz_current_user');
+            if (userStored) {
+                utilizatorCurent = JSON.parse(userStored);
+                // Verifică dacă utilizatorul încă există în sistem
+                const utilizatorValid = utilizatori.find(u => u.id === utilizatorCurent.id);
+                if (utilizatorValid) {
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('mainApp').style.display = 'block';
+                    actualizareInterfataUtilizator();
+                    return true;
+                }
+            }
+            
+            // Nu e autentificat
+            document.getElementById('loginSection').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+            return false;
+        }
+        
+        function actualizareInterfataUtilizator() {
+            if (!utilizatorCurent) return;
+            
+            // Actualizează header
+            document.getElementById('headerNumeUtilizator').textContent = utilizatorCurent.nume;
+            document.getElementById('headerRolUtilizator').textContent = (utilizatorCurent.rol === 'administrator' || utilizatorCurent.rol === 'admin') ? 'Administrator' : 'Lucrător';
+            
+            // Actualizează setări
+            document.getElementById('utilizatorCurentNume').value = utilizatorCurent.nume;
+            document.getElementById('utilizatorCurentRol').value = (utilizatorCurent.rol === 'administrator' || utilizatorCurent.rol === 'admin') ? 'Administrator' : 'Lucrător';
+            
+            // Ascunde/Arată elemente bazat pe rol
+            const isAdmin = utilizatorCurent.rol === 'administrator' || utilizatorCurent.rol === 'admin';
+            
+            // Tab-uri vizibile pentru toți: Dashboard, Clienți, Servicii, Lucrări, Monitorizare
+            // Tab-uri doar pentru admin: Rapoarte, Backup, Setări
+            document.querySelectorAll('.nav-tab').forEach((tab, index) => {
+                const tabText = tab.textContent.trim();
+                if (tabText.includes('Rapoarte') || tabText.includes('Backup') || tabText.includes('Setări')) {
+                    tab.style.display = isAdmin ? 'flex' : 'none';
+                }
+            });
+            
+            // Butoane de ștergere doar pentru admin
+            if (!isAdmin) {
+                // Vom ascunde butoanele de ștergere când afișăm listele
+            }
+        }
+        
+        function verificaPermisiuni(actiune) {
+            if (!utilizatorCurent) return false;
+            
+            const isAdmin = utilizatorCurent.rol === 'administrator' || utilizatorCurent.rol === 'admin';
+            
+            switch(actiune) {
+                case 'sterge':
+                case 'backup':
+                case 'rapoarte':
+                case 'setari':
+                    return isAdmin;
+                case 'adauga':
+                case 'editeaza':
+                case 'vizualizeaza':
+                    return true; // Toți pot face acestea
+                default:
+                    return false;
+            }
+        }
+        
+        function deschideGestionareUtilizatori() {
+            if (!verificaPermisiuni('setari')) {
+                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
+                return;
+            }
+            
+            const modal = document.getElementById('modalEdit');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = 'Gestionare Utilizatori';
+            
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="adaugaUtilizatorNou()">
+                        <span>➕</span> Adaugă Utilizator
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nume</th>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>Telefon</th>
+                                <th>Acțiuni</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${utilizatori.map(u => `
+                                <tr>
+                                    <td><strong>${u.nume}</strong></td>
+                                    <td>${u.email}</td>
+                                    <td><span class="badge ${u.rol === 'administrator' || u.rol === 'admin' ? 'badge-danger' : 'badge-info'}">${u.rol === 'administrator' || u.rol === 'admin' ? 'Administrator' : 'Lucrător'}</span></td>
+                                    <td>${u.telefon || '-'}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="editeazaUtilizator(${u.id})">
+                                            ✏️ Editează
+                                        </button>
+                                        ${u.id !== utilizatorCurent.id ? `
+                                            <button class="btn btn-danger btn-sm" onclick="stergeUtilizator(${u.id})">
+                                                🗑️ Șterge
+                                            </button>
+                                        ` : ''}
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+        
+        function adaugaUtilizatorNou() {
+            const modal = document.getElementById('modalEdit');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = 'Adaugă Utilizator Nou';
+            modalBody.innerHTML = `
+                <form onsubmit="salveazaUtilizatorNou(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nume Complet*</label>
+                            <input type="text" id="numeUtilizatorNou" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email*</label>
+                            <input type="email" id="emailUtilizatorNou" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Parolă*</label>
+                            <input type="password" id="parolaUtilizatorNou" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telefon</label>
+                            <input type="tel" id="telefonUtilizatorNou">
+                        </div>
+                        <div class="form-group">
+                            <label>Rol*</label>
+                            <select id="rolUtilizatorNou" required>
+                                <option value="lucrator">Lucrător</option>
+                                <option value="administrator">Administrator</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span>💾</span> Salvează
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="deschideGestionareUtilizatori()">
+                            <span>↩️</span> Înapoi
+                        </button>
+                    </div>
+                </form>
+            `;
+        }
+        
+        function salveazaUtilizatorNou(event) {
+            event.preventDefault();
+            
+            const utilizatorNou = {
+                id: Date.now(),
+                nume: document.getElementById('numeUtilizatorNou').value,
+                email: document.getElementById('emailUtilizatorNou').value,
+                parola: document.getElementById('parolaUtilizatorNou').value,
+                telefon: document.getElementById('telefonUtilizatorNou').value,
+                rol: document.getElementById('rolUtilizatorNou').value,
+                dataCreare: new Date().toISOString()
+            };
+            
+            // Verifică dacă email-ul există deja
+            if (utilizatori.find(u => u.email === utilizatorNou.email)) {
+                arataNotificare('Există deja un utilizator cu acest email!', 'error');
+                return;
+            }
+            
+            utilizatori.push(utilizatorNou);
+            salveazaInLocalStorage();
+            arataNotificare('Utilizator adăugat cu succes!', 'success');
+            deschideGestionareUtilizatori();
+        }
+        
+        function editeazaUtilizator(id) {
+            const utilizator = utilizatori.find(u => u.id === id);
+            if (!utilizator) return;
+            
+            const modal = document.getElementById('modalEdit');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = 'Editare Utilizator';
+            modalBody.innerHTML = `
+                <form onsubmit="salveazaEditareUtilizator(event, ${id})">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nume Complet*</label>
+                            <input type="text" id="editNumeUtilizator" value="${utilizator.nume}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email*</label>
+                            <input type="email" id="editEmailUtilizator" value="${utilizator.email}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Parolă Nouă (lasă gol pentru a păstra)</label>
+                            <input type="password" id="editParolaUtilizator">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefon</label>
+                            <input type="tel" id="editTelefonUtilizator" value="${utilizator.telefon || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Rol*</label>
+                            <select id="editRolUtilizator" required ${utilizator.id === utilizatorCurent.id ? 'disabled' : ''}>
+                                <option value="lucrator" ${utilizator.rol === 'lucrator' || utilizator.rol === 'lucrător' ? 'selected' : ''}>Lucrător</option>
+                                <option value="administrator" ${utilizator.rol === 'administrator' || utilizator.rol === 'admin' ? 'selected' : ''}>Administrator</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span>💾</span> Salvează Modificări
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="deschideGestionareUtilizatori()">
+                            <span>↩️</span> Înapoi
+                        </button>
+                    </div>
+                </form>
+            `;
+        }
+        
+        function salveazaEditareUtilizator(event, id) {
+            event.preventDefault();
+            
+            const index = utilizatori.findIndex(u => u.id === id);
+            if (index === -1) return;
+            
+            const parolaNoua = document.getElementById('editParolaUtilizator').value;
+            
+            utilizatori[index] = {
+                ...utilizatori[index],
+                nume: document.getElementById('editNumeUtilizator').value,
+                email: document.getElementById('editEmailUtilizator').value,
+                parola: parolaNoua || utilizatori[index].parola,
+                telefon: document.getElementById('editTelefonUtilizator').value,
+                rol: document.getElementById('editRolUtilizator').value || utilizatori[index].rol
+            };
+            
+            // Dacă a fost editat utilizatorul curent, actualizează și sesiunea
+            if (id === utilizatorCurent.id) {
+                utilizatorCurent = utilizatori[index];
+                localStorage.setItem('adinstalgaz_current_user', JSON.stringify(utilizatorCurent));
+                actualizareInterfataUtilizator();
+            }
+            
+            salveazaInLocalStorage();
+            arataNotificare('Utilizator actualizat cu succes!', 'success');
+            deschideGestionareUtilizatori();
+        }
+        
+        function stergeUtilizator(id) {
+            if (!confirm('Sigur doriți să ștergeți acest utilizator?')) return;
+            
+            utilizatori = utilizatori.filter(u => u.id !== id);
+            salveazaInLocalStorage();
+            arataNotificare('Utilizator șters cu succes!', 'success');
+            deschideGestionareUtilizatori();
         }
 
         // Funcții pentru Dashboard
@@ -2051,11 +2398,121 @@
                 afiseazaExpirariUrgente();
             }
             
-            // Afișează activitatea recentă
+            // Afișează lucrările de astăzi
+            afiseazaLucrariAstazi();
+            
+            // Actualizează activitatea recentă
             afiseazaActivitateRecenta();
             
             // Actualizează status backup
             verificaStatusBackup();
+        }
+
+        function afiseazaLucrariAstazi() {
+            const container = document.getElementById('lucrariAstazi');
+            const astazi = new Date().toISOString().split('T')[0];
+            
+            const lucrariAstazi = lucrari.filter(l => 
+                l.dataProgramare === astazi && l.status !== 'finalizata'
+            );
+            
+            if (lucrariAstazi.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>Nu sunt lucrări programate pentru astăzi</p></div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Serviciu</th>
+                                <th>Lucrător</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${lucrariAstazi.map(l => {
+                                const client = clienti.find(c => c.id === l.clientId);
+                                return `
+                                    <tr>
+                                        <td><strong>${client ? client.nume : 'Client necunoscut'}</strong></td>
+                                        <td>${l.serviciu}</td>
+                                        <td>${getLucratorNume(l.lucratorId)}</td>
+                                        <td>${getStatusBadge(l.status)}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function afiseazaActivitateRecenta() {
+            const container = document.getElementById('activitateRecenta');
+            
+            // Colectează toate activitățile recente
+            const activitati = [];
+            
+            // Clienți recenți
+            clienti.slice(-3).reverse().forEach(c => {
+                if (c.dataCreare) {
+                    activitati.push({
+                        tip: 'client',
+                        descriere: `Client nou adăugat: ${c.nume}`,
+                        data: new Date(c.dataCreare),
+                        icon: '👤'
+                    });
+                }
+            });
+            
+            // Servicii recente
+            servicii.slice(-3).reverse().forEach(s => {
+                if (s.dataCreare) {
+                    const client = clienti.find(c => c.id === s.clientId);
+                    activitati.push({
+                        tip: 'serviciu',
+                        descriere: `Serviciu nou: ${s.tip} pentru ${client ? client.nume : 'Client necunoscut'}`,
+                        data: new Date(s.dataCreare),
+                        icon: '🔧'
+                    });
+                }
+            });
+            
+            // Lucrări recente
+            lucrari.slice(-3).reverse().forEach(l => {
+                if (l.dataCreare) {
+                    const client = clienti.find(c => c.id === l.clientId);
+                    activitati.push({
+                        tip: 'lucrare',
+                        descriere: `Lucrare programată: ${l.serviciu} pentru ${client ? client.nume : 'Client necunoscut'}`,
+                        data: new Date(l.dataCreare),
+                        icon: '📋'
+                    });
+                }
+            });
+            
+            // Sortează după dată
+            activitati.sort((a, b) => b.data - a.data);
+            
+            if (activitati.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>Nu există activitate recentă</p></div>';
+                return;
+            }
+            
+            container.innerHTML = activitati.slice(0, 10).map(a => `
+                <div style="padding: 10px; border-bottom: 1px solid #f0f0f0;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 20px;">${a.icon}</span>
+                        <div style="flex: 1;">
+                            <div>${a.descriere}</div>
+                            <small style="color: #666;">${a.data.toLocaleString('ro-RO')}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         function afiseazaExpirariUrgente() {
@@ -2109,37 +2566,31 @@
                 etaj: document.getElementById('etajClient').value,
                 apartament: document.getElementById('apartamentClient').value,
                 observatii: document.getElementById('observatiiClient').value,
-                dataCreare: new Date().toISOString(),
-                creatDe: utilizatorCurent.nume
+                dataCreare: new Date().toISOString()
             };
             
             clienti.push(client);
             
-            // Adaugă serviciu dacă e selectat
-            if (document.getElementById('adaugaServiciuDirect').checked) {
-                const tipServiciu = document.getElementById('tipServiciuDirect').value;
-                if (tipServiciu) {
-                    const serviciu = {
-                        id: Date.now() + 1,
-                        clientId: client.id,
-                        tip: tipServiciu,
-                        dataInceput: document.getElementById('dataInceputDirect').value,
-                        dataExpirare: document.getElementById('dataExpirareDirect').value,
-                        pret: document.getElementById('pretServiciuDirect').value,
-                        dataCreare: new Date().toISOString(),
-                        creatDe: utilizatorCurent.nume
-                    };
-                    servicii.push(serviciu);
-                    arataNotificare('Client și serviciu adăugate cu succes!', 'success');
-                } else {
-                    arataNotificare('Client adăugat! Serviciul nu a fost adăugat - tip serviciu lipsă.', 'warning');
-                }
+            // Adaugă serviciu dacă a fost selectat
+            const tipServiciu = document.getElementById('tipServiciuClient').value;
+            if (tipServiciu) {
+                const serviciu = {
+                    id: Date.now() + 1,
+                    clientId: client.id,
+                    tip: tipServiciu,
+                    dataInceput: document.getElementById('dataInceputServiciuClient').value,
+                    dataExpirare: document.getElementById('dataExpirareServiciuClient').value,
+                    pret: document.getElementById('pretServiciuClient').value,
+                    observatii: '',
+                    dataCreare: new Date().toISOString()
+                };
+                servicii.push(serviciu);
+                arataNotificare('Client și serviciu adăugate cu succes!', 'success');
             } else {
                 arataNotificare('Client adăugat cu succes!', 'success');
             }
             
             salveazaInLocalStorage();
-            adaugaActivitate('Client nou', `Adăugat: ${client.nume}`);
             resetFormClient();
             afiseazaClienti();
         }
@@ -2147,6 +2598,7 @@
         function afiseazaClienti() {
             const tbody = document.getElementById('listaClienti');
             const searchTerm = document.getElementById('cautaClient').value.toLowerCase();
+            const isAdmin = utilizatorCurent && (utilizatorCurent.rol === 'administrator' || utilizatorCurent.rol === 'admin');
             
             const clientiFiltrati = clienti.filter(client => 
                 client.nume.toLowerCase().includes(searchTerm) ||
@@ -2170,10 +2622,11 @@
                                 <button class="btn btn-primary btn-sm" onclick="editeazaClient(${client.id})">
                                     ✏️ Editează
                                 </button>
-                                ${utilizatorCurent.rol === 'administrator' ? `
-                                <button class="btn btn-danger btn-sm" onclick="stergeClient(${client.id})">
-                                    🗑️ Șterge
-                                </button>` : ''}
+                                ${isAdmin ? `
+                                    <button class="btn btn-danger btn-sm" onclick="stergeClient(${client.id})">
+                                        🗑️ Șterge
+                                    </button>
+                                ` : ''}
                             </div>
                         </td>
                     </tr>
@@ -2193,20 +2646,6 @@
             return adresa;
         }
 
-        function toggleServiciuDirect() {
-            const checkbox = document.getElementById('adaugaServiciuDirect');
-            const sectiune = document.getElementById('sectiuneServiciuDirect');
-            sectiune.style.display = checkbox.checked ? 'block' : 'none';
-            
-            if (checkbox.checked) {
-                // Setează data de azi și calculează expirarea la 2 ani
-                document.getElementById('dataInceputDirect').value = new Date().toISOString().split('T')[0];
-                const dataExpirare = new Date();
-                dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
-                document.getElementById('dataExpirareDirect').value = dataExpirare.toISOString().split('T')[0];
-            }
-        }
-
         function toggleBlocFields() {
             const tipLocuinta = document.getElementById('tipLocuinta').value;
             const blocFields = document.querySelectorAll('.bloc-fields');
@@ -2218,8 +2657,6 @@
 
         function resetFormClient() {
             document.getElementById('formClient').reset();
-            document.getElementById('adaugaServiciuDirect').checked = false;
-            document.getElementById('sectiuneServiciuDirect').style.display = 'none';
             toggleBlocFields();
         }
 
@@ -2305,16 +2742,9 @@
         }
 
         function stergeClient(id) {
-            if (!verificaPermisiuni('stergere')) {
-                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
-                return;
-            }
-            
             if (!confirm('Sigur doriți să ștergeți acest client? Toate serviciile și lucrările asociate vor fi șterse!')) {
                 return;
             }
-            
-            const client = clienti.find(c => c.id === id);
             
             // Șterge clientul
             clienti = clienti.filter(c => c.id !== id);
@@ -2327,7 +2757,6 @@
             
             salveazaInLocalStorage();
             arataNotificare('Client șters cu succes!', 'success');
-            adaugaActivitate('Ștergere', `Client șters: ${client ? client.nume : 'ID #' + id}`);
             afiseazaClienti();
         }
 
@@ -2336,46 +2765,6 @@
             const select = document.getElementById('clientServiciu');
             select.innerHTML = '<option value="">Selectează clientul</option>' +
                 clienti.map(c => `<option value="${c.id}">${c.nume} - ${c.telefon}</option>`).join('');
-        }
-
-        function actualizeazaPretServiciu() {
-            const tipServiciu = document.getElementById('tipServiciu').value;
-            const pretInput = document.getElementById('pretServiciu');
-            const notaPret = document.getElementById('notaPret');
-            
-            // Prețuri predefinite pentru servicii
-            const preturi = {
-                'Verificare Instalație Gaz': '150 Lei',
-                'Revizie Instalație Gaz': '250 Lei',
-                'Verificare Centrală': '150 Lei',
-                'Instalații Gaz + Centrală': '250 Lei',
-                'Servicii de Urgență': ''  // Preț variabil
-            };
-            
-            // Setează prețul automat dacă există
-            if (preturi[tipServiciu] !== undefined) {
-                pretInput.value = preturi[tipServiciu];
-                if (tipServiciu === 'Servicii de Urgență') {
-                    pretInput.placeholder = 'Introduceți prețul pentru urgență';
-                    if (notaPret) notaPret.style.display = 'block';
-                } else {
-                    if (notaPret) notaPret.style.display = 'none';
-                }
-            } else {
-                pretInput.value = '';
-                pretInput.placeholder = 'Ex: 150 Lei';
-                if (notaPret) notaPret.style.display = 'none';
-            }
-            
-            // Actualizează și data expirării automat (2 ani pentru majoritatea serviciilor)
-            if (tipServiciu && tipServiciu !== 'Servicii de Urgență') {
-                const dataInceput = document.getElementById('dataInceputServiciu').value;
-                if (dataInceput) {
-                    const dataExpirare = new Date(dataInceput);
-                    dataExpirare.setFullYear(dataExpirare.getFullYear() + 2); // Adaugă 2 ani
-                    document.getElementById('dataExpirareServiciu').value = dataExpirare.toISOString().split('T')[0];
-                }
-            }
         }
 
         function adaugaServiciu(event) {
@@ -2392,14 +2781,12 @@
                 dataExpirare: document.getElementById('dataExpirareServiciu').value,
                 pret: document.getElementById('pretServiciu').value,
                 observatii: document.getElementById('observatiiServiciu').value,
-                dataCreare: new Date().toISOString(),
-                creatDe: utilizatorCurent.nume
+                dataCreare: new Date().toISOString()
             };
             
             servicii.push(serviciu);
             salveazaInLocalStorage();
             arataNotificare('Serviciu adăugat cu succes!', 'success');
-            adaugaActivitate('Serviciu nou', `${serviciu.tip} pentru ${client ? client.nume : 'Client #' + clientId}`);
             resetFormServiciu();
             afiseazaServicii();
         }
@@ -2407,6 +2794,7 @@
         function afiseazaServicii() {
             const tbody = document.getElementById('listaServicii');
             const searchTerm = document.getElementById('cautaServiciu').value.toLowerCase();
+            const isAdmin = utilizatorCurent && utilizatorCurent.rol === 'administrator';
             
             const serviciiFiltrare = servicii.filter(serviciu => {
                 const client = clienti.find(c => c.id === serviciu.clientId);
@@ -2452,10 +2840,11 @@
                                 <button class="btn btn-primary btn-sm" onclick="editeazaServiciu(${serviciu.id})">
                                     ✏️ Editează
                                 </button>
-                                ${utilizatorCurent.rol === 'administrator' ? `
-                                <button class="btn btn-danger btn-sm" onclick="stergeServiciu(${serviciu.id})">
-                                    🗑️ Șterge
-                                </button>` : ''}
+                                ${isAdmin ? `
+                                    <button class="btn btn-danger btn-sm" onclick="stergeServiciu(${serviciu.id})">
+                                        🗑️ Șterge
+                                    </button>
+                                ` : ''}
                             </div>
                         </td>
                     </tr>
@@ -2585,9 +2974,9 @@
                             <label>Lucrător</label>
                             <select id="editLucratorLucrare">
                                 <option value="">Neatribuit</option>
-                                <option value="1" ${lucrare.lucratorId == 1 ? 'selected' : ''}>Florin Gavrilă</option>
-                                <option value="2" ${lucrare.lucratorId == 2 ? 'selected' : ''}>Ion Popescu</option>
-                                <option value="3" ${lucrare.lucratorId == 3 ? 'selected' : ''}>Vasile Georgescu</option>
+                                ${utilizatori.filter(u => u.rol === 'lucrator' || u.rol === 'lucrător' || u.rol === 'administrator' || u.rol === 'admin').map(u => 
+                                    `<option value="${u.id}" ${lucrare.lucratorId == u.id ? 'selected' : ''}>${u.nume}</option>`
+                                ).join('')}
                             </select>
                         </div>
                     </div>
@@ -2639,47 +3028,43 @@
         }
 
         function stergeServiciu(id) {
-            if (!verificaPermisiuni('stergere')) {
-                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
-                return;
-            }
-            
             if (!confirm('Sigur doriți să ștergeți acest serviciu?')) {
                 return;
             }
             
-            const serviciu = servicii.find(s => s.id === id);
             servicii = servicii.filter(s => s.id !== id);
             salveazaInLocalStorage();
             arataNotificare('Serviciu șters cu succes!', 'success');
-            adaugaActivitate('Ștergere', `Serviciu șters: ${serviciu ? serviciu.tip : 'ID #' + id}`);
             afiseazaServicii();
         }
 
         // Funcții pentru Lucrări
         function populeazaSelectClientiLucrari() {
-            const select = document.getElementById('clientLucrare');
-            select.innerHTML = '<option value="">Selectează clientul</option>' +
+            const selectClient = document.getElementById('clientLucrare');
+            selectClient.innerHTML = '<option value="">Selectează clientul</option>' +
                 clienti.map(c => `<option value="${c.id}">${c.nume} - ${c.telefon}</option>`).join('');
+            
+            // Populează și lucrătorii
+            const selectLucrator = document.getElementById('lucratorLucrare');
+            selectLucrator.innerHTML = '<option value="">Neatribuit</option>' +
+                utilizatori.filter(u => u.rol === 'lucrator' || u.rol === 'lucrător' || u.rol === 'administrator' || u.rol === 'admin')
+                    .map(u => `<option value="${u.id}">${u.nume}</option>`)
+                    .join('');
         }
 
         function adaugaLucrare(event) {
             event.preventDefault();
             
-            const clientId = parseInt(document.getElementById('clientLucrare').value);
-            const client = clienti.find(c => c.id === clientId);
-            
             const lucrare = {
                 id: Date.now(),
-                clientId: clientId,
+                clientId: parseInt(document.getElementById('clientLucrare').value),
                 serviciu: document.getElementById('serviciuLucrare').value,
                 dataProgramare: document.getElementById('dataProgramareLucrare').value,
                 pret: document.getElementById('pretLucrare').value,
                 lucratorId: document.getElementById('lucratorLucrare').value ? parseInt(document.getElementById('lucratorLucrare').value) : null,
                 status: document.getElementById('statusLucrare').value,
                 observatii: document.getElementById('observatiiLucrare').value,
-                dataCreare: new Date().toISOString(),
-                creatDe: utilizatorCurent.nume
+                dataCreare: new Date().toISOString()
             };
             
             if (lucrare.status === 'finalizata') {
@@ -2689,13 +3074,13 @@
             lucrari.push(lucrare);
             salveazaInLocalStorage();
             arataNotificare('Lucrare adăugată cu succes!', 'success');
-            adaugaActivitate('Lucrare nouă', `${lucrare.serviciu} pentru ${client ? client.nume : 'Client #' + clientId}`);
             resetFormLucrare();
             afiseazaLucrari();
         }
 
         function afiseazaLucrari() {
             const tbody = document.getElementById('listaLucrari');
+            const isAdmin = utilizatorCurent && utilizatorCurent.rol === 'administrator';
             
             tbody.innerHTML = lucrari.map(lucrare => {
                 const client = clienti.find(c => c.id === lucrare.clientId);
@@ -2731,10 +3116,11 @@
                                 <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
                                     ✏️ Editează
                                 </button>
-                                ${utilizatorCurent.rol === 'administrator' ? `
-                                <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
-                                    🗑️ Șterge
-                                </button>` : ''}
+                                ${isAdmin ? `
+                                    <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
+                                        🗑️ Șterge
+                                    </button>
+                                ` : ''}
                             </div>
                         </td>
                     </tr>
@@ -2742,20 +3128,67 @@
             }).join('');
         }
 
-        function getLucratorNume(lucratorId) {
-            switch (lucratorId) {
-                case '1':
-                case 1:
-                    return 'Florin Gavrilă';
-                case '2':
-                case 2:
-                    return 'Ion Popescu';
-                case '3':
-                case 3:
-                    return 'Vasile Georgescu';
-                default:
-                    return 'Neatribuit';
+        function stergeClient(id) {
+            if (!verificaPermisiuni('sterge')) {
+                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
+                return;
             }
+            
+            if (!confirm('Sigur doriți să ștergeți acest client? Toate serviciile și lucrările asociate vor fi șterse!')) {
+                return;
+            }
+            
+            // Șterge clientul
+            clienti = clienti.filter(c => c.id !== id);
+            
+            // Șterge serviciile asociate
+            servicii = servicii.filter(s => s.clientId !== id);
+            
+            // Șterge lucrările asociate
+            lucrari = lucrari.filter(l => l.clientId !== id);
+            
+            salveazaInLocalStorage();
+            arataNotificare('Client șters cu succes!', 'success');
+            afiseazaClienti();
+        }
+
+        function stergeServiciu(id) {
+            if (!verificaPermisiuni('sterge')) {
+                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
+                return;
+            }
+            
+            if (!confirm('Sigur doriți să ștergeți acest serviciu?')) {
+                return;
+            }
+            
+            servicii = servicii.filter(s => s.id !== id);
+            salveazaInLocalStorage();
+            arataNotificare('Serviciu șters cu succes!', 'success');
+            afiseazaServicii();
+        }
+
+        function stergeLucrare(id) {
+            if (!verificaPermisiuni('sterge')) {
+                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
+                return;
+            }
+            
+            if (!confirm('Sigur doriți să ștergeți această lucrare?')) {
+                return;
+            }
+            
+            lucrari = lucrari.filter(l => l.id !== id);
+            salveazaInLocalStorage();
+            arataNotificare('Lucrare ștersă cu succes!', 'success');
+            afiseazaLucrari();
+        }
+
+        function getLucratorNume(lucratorId) {
+            if (!lucratorId) return 'Neatribuit';
+            
+            const utilizator = utilizatori.find(u => u.id == lucratorId);
+            return utilizator ? utilizator.nume : 'Utilizator necunoscut';
         }
 
         function resetFormLucrare() {
@@ -2804,10 +3237,9 @@
                                 <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
                                     ✏️ Editează
                                 </button>
-                                ${utilizatorCurent.rol === 'administrator' ? `
                                 <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
                                     🗑️ Șterge
-                                </button>` : ''}
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -2820,20 +3252,13 @@
         }
 
         function stergeLucrare(id) {
-            if (!verificaPermisiuni('stergere')) {
-                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
-                return;
-            }
-            
             if (!confirm('Sigur doriți să ștergeți această lucrare?')) {
                 return;
             }
             
-            const lucrare = lucrari.find(l => l.id === id);
             lucrari = lucrari.filter(l => l.id !== id);
             salveazaInLocalStorage();
             arataNotificare('Lucrare ștersă cu succes!', 'success');
-            adaugaActivitate('Ștergere', `Lucrare ștersă: ${lucrare ? lucrare.serviciu : 'ID #' + id}`);
             afiseazaLucrari();
         }
 
@@ -3718,7 +4143,6 @@
             
             salveazaInLocalStorage();
             arataNotificare('Setări salvate cu succes!', 'success');
-            adaugaActivitate('Setări', 'Configurare actualizată');
         }
 
         function descarcaBackupDinIstoric(index) {
@@ -3771,7 +4195,6 @@
                 salveazaInLocalStorage();
                 incarcaSetariInFormular();
                 arataNotificare('Setări resetate la valorile implicite!', 'success');
-                adaugaActivitate('Setări', 'Resetare la valorile implicite');
             }
         }
 
@@ -3789,115 +4212,10 @@
             document.getElementById('retentieBackup').value = setari.retentieBackup;
             document.getElementById('formatBackup').value = setari.formatBackup;
             
-            // Informații utilizator
-            document.getElementById('numeUtilizator').value = utilizatorCurent.nume;
-            document.getElementById('rolUtilizator').value = utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Lucrător';
-            document.getElementById('emailUtilizator').value = utilizatorCurent.email || '';
-        }
-
-        // Funcții pentru activitate
-        let activitateRecenta = [];
-        
-        function adaugaActivitate(tip, detalii) {
-            const activitate = {
-                id: Date.now(),
-                data: new Date().toISOString(),
-                tip: tip,
-                detalii: detalii,
-                utilizator: utilizatorCurent.nume
-            };
-            
-            activitateRecenta.unshift(activitate);
-            
-            // Păstrează doar ultimele 50 de activități
-            if (activitateRecenta.length > 50) {
-                activitateRecenta = activitateRecenta.slice(0, 50);
-            }
-            
-            localStorage.setItem('adinstalgaz_activitate', JSON.stringify(activitateRecenta));
-            
-            // Actualizează afișarea dacă suntem pe dashboard
-            if (document.getElementById('dashboard').classList.contains('active')) {
-                afiseazaActivitateRecenta();
-            }
-        }
-        
-        function afiseazaActivitateRecenta() {
-            const tbody = document.getElementById('listaActivitateRecenta');
-            if (!tbody) return;
-            
-            const ultimeleActivitati = activitateRecenta.slice(0, 10);
-            
-            if (ultimeleActivitati.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center">Nu există activitate recentă</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = ultimeleActivitati.map(activitate => `
-                <tr>
-                    <td>${new Date(activitate.data).toLocaleString('ro-RO')}</td>
-                    <td><span class="badge badge-info">${activitate.tip}</span></td>
-                    <td>${activitate.detalii}</td>
-                    <td>${activitate.utilizator}</td>
-                </tr>
-            `).join('');
-        }
-
-        // Funcții pentru sistem de roluri
-        function verificaPermisiuni(actiune) {
-            const permisiuni = {
-                'administrator': ['toate'],
-                'lucrator': ['vizualizare', 'adaugare_client', 'adaugare_serviciu', 'editare_lucrari_proprii']
-            };
-            
-            if (utilizatorCurent.rol === 'administrator') {
-                return true;
-            }
-            
-            const permisiuniRol = permisiuni[utilizatorCurent.rol] || [];
-            return permisiuniRol.includes(actiune) || permisiuniRol.includes('toate');
-        }
-        
-        function actualizeazaInterfataPentruRol() {
-            // Ascunde tab-urile bazate pe rol
-            if (utilizatorCurent.rol === 'lucrator') {
-                // Ascunde setări și backup pentru lucrători
-                document.querySelectorAll('.nav-tab').forEach(tab => {
-                    const text = tab.textContent.trim();
-                    if (text.includes('Setări') || text.includes('Backup')) {
-                        tab.style.display = 'none';
-                    }
-                });
-                
-                // Ascunde butoanele de ștergere
-                document.querySelectorAll('.btn-danger').forEach(btn => {
-                    if (btn.textContent.includes('Șterge')) {
-                        btn.style.display = 'none';
-                    }
-                });
-            }
-            
-            // Actualizează header
-            document.getElementById('numeUtilizatorHeader').textContent = utilizatorCurent.nume;
-            document.getElementById('rolUtilizatorHeader').textContent = 
-                utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Lucrător';
-        }
-        
-        function schimbaParola() {
-            const parolaNoua = prompt('Introduceți parola nouă:');
-            if (parolaNoua && parolaNoua.length >= 6) {
-                // În realitate aici ar trebui să actualizăm în baza de date
-                arataNotificare('Parolă schimbată cu succes!', 'success');
-                adaugaActivitate('Securitate', 'Parolă schimbată');
-            } else if (parolaNoua) {
-                arataNotificare('Parola trebuie să aibă minim 6 caractere!', 'error');
-            }
-        }
-        
-        function delogare() {
-            if (confirm('Sigur doriți să vă delogați?')) {
-                localStorage.setItem('adinstalgaz_user_logat', 'false');
-                window.location.reload();
+            // Încarcă informații utilizator curent
+            if (utilizatorCurent) {
+                document.getElementById('utilizatorCurentNume').value = utilizatorCurent.nume;
+                document.getElementById('utilizatorCurentRol').value = utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Lucrător';
             }
         }
 
@@ -3924,69 +4242,33 @@
             // Încarcă datele din localStorage
             incarcaDinLocalStorage();
             
-            // Încarcă activitatea recentă
-            const activitateStored = localStorage.getItem('adinstalgaz_activitate');
-            if (activitateStored) {
-                activitateRecenta = JSON.parse(activitateStored);
-            }
-            
-            // Verifică utilizatorul curent
-            const utilizatorStored = localStorage.getItem('adinstalgaz_current_user');
-            if (utilizatorStored) {
-                utilizatorCurent = JSON.parse(utilizatorStored);
-            }
-            
-            // Actualizează interfața pentru rol
-            actualizeazaInterfataPentruRol();
-            
-            // Actualizează dashboard-ul
-            actualizeazaDashboard();
-            
-            // Încarcă setările în formular
-            incarcaSetariInFormular();
-            
-            // Event listener pentru actualizare automată dată expirare
-            const dataInceputInput = document.getElementById('dataInceputServiciu');
-            if (dataInceputInput) {
-                dataInceputInput.addEventListener('change', function() {
-                    const tipServiciu = document.getElementById('tipServiciu').value;
-                    if (tipServiciu && tipServiciu !== 'Servicii de Urgență') {
-                        actualizeazaPretServiciu();
-                    }
-                });
-            }
-            
-            // Event listener pentru actualizare dată expirare la serviciu direct
-            const dataInceputDirectInput = document.getElementById('dataInceputDirect');
-            if (dataInceputDirectInput) {
-                dataInceputDirectInput.addEventListener('change', function() {
-                    const dataExpirare = new Date(this.value);
-                    dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
-                    document.getElementById('dataExpirareDirect').value = dataExpirare.toISOString().split('T')[0];
-                });
-            }
-            
-            // Setează salvarea automată
-            if (setari.salvareAutomata) {
-                setInterval(() => {
-                    salveazaInLocalStorage();
-                }, setari.intervalSalvare * 60 * 1000);
-            }
-            
-            // Verifică backup automat (simulare - în realitate ar trebui un serviciu backend)
-            if (setari.backupAutomat) {
-                // Verifică la fiecare oră dacă e timpul pentru backup
-                setInterval(() => {
-                    const now = new Date();
-                    const [ora, minut] = setari.oraBackup.split(':');
-                    if (now.getHours() === parseInt(ora) && now.getMinutes() === parseInt(minut)) {
-                        backupManual();
-                    }
-                }, 60000); // Verifică la fiecare minut
+            // Verifică autentificarea
+            if (verificaAutentificare()) {
+                // Utilizator autentificat - actualizează interfața
+                actualizeazaDashboard();
+                incarcaSetariInFormular();
+                
+                // Setează salvarea automată
+                if (setari.salvareAutomata) {
+                    setInterval(() => {
+                        salveazaInLocalStorage();
+                    }, setari.intervalSalvare * 60 * 1000);
+                }
+                
+                // Verifică backup automat (simulare - în realitate ar trebui un serviciu backend)
+                if (setari.backupAutomat) {
+                    // Verifică la fiecare oră dacă e timpul pentru backup
+                    setInterval(() => {
+                        const now = new Date();
+                        const [ora, minut] = setari.oraBackup.split(':');
+                        if (now.getHours() === parseInt(ora) && now.getMinutes() === parseInt(minut)) {
+                            backupManual();
+                        }
+                    }, 60000); // Verifică la fiecare minut
+                }
             }
             
             console.log('Aplicație inițializată cu succes!');
-            adaugaActivitate('Sistem', 'Aplicație pornită');
         });
     </script>
 </body>
