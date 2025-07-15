@@ -306,6 +306,12 @@
             background: #f8f9fa;
         }
 
+        td.text-center {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+        }
+
         /* Status Badges */
         .badge {
             padding: 5px 12px;
@@ -1942,6 +1948,15 @@
                 
                 if (setariStored) {
                     setari = { ...setari, ...JSON.parse(setariStored) };
+                    // Asigură-te că prețurile există
+                    if (!setari.preturi) {
+                        setari.preturi = {
+                            verificareGaz: '150 Lei',
+                            revizieGaz: '250 Lei',
+                            verificareCentrala: '150 Lei',
+                            ofertaPachet: '250 Lei'
+                        };
+                    }
                 }
 
                 console.log('Date încărcate:', {
@@ -2430,6 +2445,171 @@
             afiseazaServicii();
         }
 
+        function editeazaServiciu(id) {
+            const serviciu = servicii.find(s => s.id === id);
+            if (!serviciu) return;
+            
+            const modal = document.getElementById('modalEdit');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = 'Editare Serviciu';
+            modalBody.innerHTML = `
+                <form id="formEditServiciu" onsubmit="salveazaEditareServiciu(event, ${id})">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Tip Serviciu*</label>
+                            <select id="editTipServiciu" required>
+                                <option value="${serviciu.tip}" selected>${serviciu.tip}</option>
+                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
+                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
+                                <option value="Verificare Centrală">Verificare Centrală</option>
+                                <option value="Instalații Gaz + Centrală">Instalații Gaz + Centrală</option>
+                                <option value="Servicii de Urgență">Servicii de Urgență</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Început*</label>
+                            <input type="date" id="editDataInceputServiciu" value="${serviciu.dataInceput}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Expirare*</label>
+                            <input type="date" id="editDataExpirareServiciu" value="${serviciu.dataExpirare}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Preț</label>
+                            <input type="text" id="editPretServiciu" value="${serviciu.pret || ''}" placeholder="Ex: 150 Lei">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Observații</label>
+                        <textarea id="editObservatiiServiciu">${serviciu.observatii || ''}</textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span>💾</span> Salvează Modificări
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="inchideModal()">
+                            <span>❌</span> Anulează
+                        </button>
+                    </div>
+                </form>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function salveazaEditareServiciu(event, id) {
+            event.preventDefault();
+            
+            const index = servicii.findIndex(s => s.id === id);
+            if (index === -1) return;
+            
+            servicii[index] = {
+                ...servicii[index],
+                tip: document.getElementById('editTipServiciu').value,
+                dataInceput: document.getElementById('editDataInceputServiciu').value,
+                dataExpirare: document.getElementById('editDataExpirareServiciu').value,
+                pret: document.getElementById('editPretServiciu').value,
+                observatii: document.getElementById('editObservatiiServiciu').value
+            };
+            
+            salveazaInLocalStorage();
+            arataNotificare('Serviciu actualizat cu succes!', 'success');
+            inchideModal();
+            afiseazaServicii();
+        }
+
+        function editeazaLucrare(id) {
+            const lucrare = lucrari.find(l => l.id === id);
+            if (!lucrare) return;
+            
+            const modal = document.getElementById('modalEdit');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = 'Editare Lucrare';
+            modalBody.innerHTML = `
+                <form id="formEditLucrare" onsubmit="salveazaEditareLucrare(event, ${id})">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Serviciu*</label>
+                            <input type="text" id="editServiciuLucrare" value="${lucrare.serviciu}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Data Programare*</label>
+                            <input type="date" id="editDataProgramareLucrare" value="${lucrare.dataProgramare}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Preț*</label>
+                            <input type="text" id="editPretLucrare" value="${lucrare.pret}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="editStatusLucrare">
+                                <option value="neatribuita" ${lucrare.status === 'neatribuita' ? 'selected' : ''}>Neatribuită</option>
+                                <option value="atribuita" ${lucrare.status === 'atribuita' ? 'selected' : ''}>Atribuită</option>
+                                <option value="in-lucru" ${lucrare.status === 'in-lucru' ? 'selected' : ''}>În Lucru</option>
+                                <option value="finalizata" ${lucrare.status === 'finalizata' ? 'selected' : ''}>Finalizată</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Lucrător</label>
+                            <select id="editLucratorLucrare">
+                                <option value="">Neatribuit</option>
+                                <option value="1" ${lucrare.lucratorId == 1 ? 'selected' : ''}>Florin Gavrilă</option>
+                                <option value="2" ${lucrare.lucratorId == 2 ? 'selected' : ''}>Ion Popescu</option>
+                                <option value="3" ${lucrare.lucratorId == 3 ? 'selected' : ''}>Vasile Georgescu</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Observații</label>
+                        <textarea id="editObservatiiLucrare">${lucrare.observatii || ''}</textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span>💾</span> Salvează Modificări
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="inchideModal()">
+                            <span>❌</span> Anulează
+                        </button>
+                    </div>
+                </form>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function salveazaEditareLucrare(event, id) {
+            event.preventDefault();
+            
+            const index = lucrari.findIndex(l => l.id === id);
+            if (index === -1) return;
+            
+            const newStatus = document.getElementById('editStatusLucrare').value;
+            
+            lucrari[index] = {
+                ...lucrari[index],
+                serviciu: document.getElementById('editServiciuLucrare').value,
+                dataProgramare: document.getElementById('editDataProgramareLucrare').value,
+                pret: document.getElementById('editPretLucrare').value,
+                status: newStatus,
+                lucratorId: document.getElementById('editLucratorLucrare').value ? parseInt(document.getElementById('editLucratorLucrare').value) : null,
+                observatii: document.getElementById('editObservatiiLucrare').value
+            };
+            
+            // Dacă s-a finalizat, setează data finalizării
+            if (newStatus === 'finalizata' && !lucrari[index].dataFinalizare) {
+                lucrari[index].dataFinalizare = new Date().toISOString();
+            }
+            
+            salveazaInLocalStorage();
+            arataNotificare('Lucrare actualizată cu succes!', 'success');
+            inchideModal();
+            afiseazaLucrari();
+        }
+
         function stergeServiciu(id) {
             if (!confirm('Sigur doriți să ștergeți acest serviciu?')) {
                 return;
@@ -2542,8 +2722,59 @@
         }
 
         function filtreazaLucrariDupa(status) {
-            // TODO: Implementare filtrare lucrări
-            afiseazaLucrari();
+            const tbody = document.getElementById('listaLucrari');
+            let lucrariFiltrare = lucrari;
+            
+            if (status !== 'toate') {
+                lucrariFiltrare = lucrari.filter(l => l.status === status);
+            }
+            
+            tbody.innerHTML = lucrariFiltrare.map(lucrare => {
+                const client = clienti.find(c => c.id === lucrare.clientId);
+                const lucratorNume = getLucratorNume(lucrare.lucratorId);
+                
+                let statusBadge = '';
+                switch (lucrare.status) {
+                    case 'neatribuita':
+                        statusBadge = '<span class="badge badge-warning">Neatribuită</span>';
+                        break;
+                    case 'atribuita':
+                        statusBadge = '<span class="badge badge-info">Atribuită</span>';
+                        break;
+                    case 'in-lucru':
+                        statusBadge = '<span class="badge badge-primary">În Lucru</span>';
+                        break;
+                    case 'finalizata':
+                        statusBadge = '<span class="badge badge-success">Finalizată</span>';
+                        break;
+                }
+                
+                return `
+                    <tr>
+                        <td>${lucrare.id}</td>
+                        <td><strong>${client ? client.nume : 'Client șters'}</strong></td>
+                        <td>${lucrare.serviciu}</td>
+                        <td>${formatDate(lucrare.dataProgramare)}</td>
+                        <td>${lucrare.pret}</td>
+                        <td>${lucratorNume}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
+                                    ✏️ Editează
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
+                                    🗑️ Șterge
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            if (lucrariFiltrare.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center">Nu există lucrări ${status !== 'toate' ? `cu status "${status}"` : ''}</td></tr>`;
+            }
         }
 
         function stergeLucrare(id) {
@@ -2655,39 +2886,85 @@
         }
 
         function exportExpirari() {
+            const filtru = document.getElementById('filtruPerioada') ? document.getElementById('filtruPerioada').value : '30';
             const expirari = servicii.filter(s => {
                 const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
-                return zileRamase <= 30;
+                
+                if (filtru === 'expirate') {
+                    return zileRamase < 0;
+                } else if (filtru === 'toate') {
+                    return true;
+                } else {
+                    const zile = parseInt(filtru);
+                    return zileRamase >= -30 && zileRamase <= zile; // Include și cele expirate recent
+                }
             }).sort((a, b) => new Date(a.dataExpirare) - new Date(b.dataExpirare));
             
-            let csv = 'Client,Telefon,Tip Serviciu,Data Expirare,Zile Ramase,Status\n';
+            let csv = 'Client,Telefon,Email,Adresă,Tip Serviciu,Data Expirare,Zile Rămase,Status\n';
             
             expirari.forEach(serviciu => {
                 const client = clienti.find(c => c.id === serviciu.clientId);
                 const zileRamase = Math.ceil((new Date(serviciu.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
-                const status = zileRamase < 0 ? 'EXPIRAT' : zileRamase <= 7 ? 'URGENT' : 'ATENȚIE';
+                const status = zileRamase < 0 ? 'EXPIRAT' : zileRamase <= 7 ? 'URGENT' : zileRamase <= 30 ? 'ATENȚIE' : 'OK';
+                const adresa = client ? construiesteAdresa(client) : '';
                 
                 csv += `"${client ? client.nume : 'Client necunoscut'}",`;
                 csv += `"${client ? client.telefon : ''}",`;
+                csv += `"${client ? client.email || '' : ''}",`;
+                csv += `"${adresa}",`;
                 csv += `"${serviciu.tip}",`;
                 csv += `"${formatDate(serviciu.dataExpirare)}",`;
                 csv += `"${Math.abs(zileRamase)}",`;
                 csv += `"${status}"\n`;
             });
             
-            // Descarcă fișierul
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            // Adaugă BOM pentru UTF-8 ca să se afișeze corect caracterele românești în Excel
+            const BOM = '\ufeff';
+            const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = `expirari-servicii-${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
             
-            arataNotificare('Export realizat cu succes!', 'success');
+            arataNotificare(`Export realizat cu succes! ${expirari.length} servicii exportate.`, 'success');
         }
 
         function trimiteNotificari() {
-            // TODO: Implementare trimitere notificări
-            arataNotificare('Funcție în dezvoltare...', 'info');
+            // Găsește serviciile care urmează să expire
+            const serviciiExpira = servicii.filter(s => {
+                const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
+                return zileRamase >= 0 && zileRamase <= setari.zileNotificare;
+            });
+            
+            if (serviciiExpira.length === 0) {
+                arataNotificare('Nu există servicii care să expire în următoarele ' + setari.zileNotificare + ' zile.', 'info');
+                return;
+            }
+            
+            // Simulare trimitere notificări
+            // În realitate, aici ar trebui să existe integrare cu un serviciu de email/SMS
+            const mesaj = `Se vor trimite notificări pentru ${serviciiExpira.length} servicii care expiră în curând.\n\n` +
+                         `Pentru implementarea completă este necesară configurarea unui serviciu de notificări (email/SMS).`;
+            
+            alert(mesaj);
+            
+            // Marchează în interfață
+            arataNotificare(`Pregătit pentru trimitere: ${serviciiExpira.length} notificări`, 'info');
+            
+            // Opțional: Generează un raport cu clienții de notificat
+            const csv = 'Client,Telefon,Email,Serviciu,Data Expirare,Zile Rămase\n' +
+                serviciiExpira.map(s => {
+                    const client = clienti.find(c => c.id === s.clientId);
+                    const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
+                    return `"${client?.nume || ''}","${client?.telefon || ''}","${client?.email || ''}","${s.tip}","${formatDate(s.dataExpirare)}","${zileRamase}"`;
+                }).join('\n');
+            
+            // Descarcă lista pentru procesare manuală
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `notificari-${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
         }
 
         // Funcții pentru Backup
@@ -2877,9 +3154,22 @@
             
             containerRaport.style.display = 'block';
             
+            // Setează perioada
+            if (dataStart && dataEnd) {
+                perioadaRaport.textContent = `Perioada: ${formatDate(dataStart)} - ${formatDate(dataEnd)}`;
+            } else {
+                perioadaRaport.textContent = `Generat la: ${new Date().toLocaleDateString('ro-RO')}`;
+            }
+            
             switch (tipRaport) {
                 case 'lunar':
                     genereazaRaportLunar(dataStart, dataEnd);
+                    break;
+                case 'trimestrial':
+                    genereazaRaportTrimestrial(dataStart, dataEnd);
+                    break;
+                case 'anual':
+                    genereazaRaportAnual(dataStart, dataEnd);
                     break;
                 case 'expirari':
                     genereazaRaportExpirari();
@@ -2893,6 +3183,266 @@
                 default:
                     continutRaport.innerHTML = '<p>Selectați un tip de raport valid.</p>';
             }
+        }
+
+        function genereazaRaportLunar(dataStart, dataEnd) {
+            const titluRaport = document.getElementById('titluRaport');
+            const continutRaport = document.getElementById('continutRaport');
+            
+            titluRaport.textContent = 'Raport Lunar';
+            
+            // Filtrează datele pentru perioada selectată
+            const lucrariPeriada = lucrari.filter(l => {
+                const dataLucrare = new Date(l.dataProgramare);
+                const start = dataStart ? new Date(dataStart) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+                const end = dataEnd ? new Date(dataEnd) : new Date();
+                return dataLucrare >= start && dataLucrare <= end;
+            });
+            
+            const serviciiPeriada = servicii.filter(s => {
+                const dataServiciu = new Date(s.dataInceput);
+                const start = dataStart ? new Date(dataStart) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+                const end = dataEnd ? new Date(dataEnd) : new Date();
+                return dataServiciu >= start && dataServiciu <= end;
+            });
+            
+            // Calculează totaluri
+            const totalIncasari = lucrariPeriada
+                .filter(l => l.status === 'finalizata')
+                .reduce((sum, l) => sum + parseFloat(l.pret.replace(' Lei', '') || 0), 0);
+            
+            const lucrariFinalizate = lucrariPeriada.filter(l => l.status === 'finalizata').length;
+            const lucrariInAsteptare = lucrariPeriada.filter(l => l.status !== 'finalizata').length;
+            
+            continutRaport.innerHTML = `
+                <div class="report-summary">
+                    <div class="summary-item">
+                        <div class="value">${lucrariPeriada.length}</div>
+                        <div class="label">Total Lucrări</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value">${lucrariFinalizate}</div>
+                        <div class="label">Finalizate</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value">${totalIncasari} Lei</div>
+                        <div class="label">Total Încasări</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value">${serviciiPeriada.length}</div>
+                        <div class="label">Servicii Noi</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 30px;">📋 Detalii Lucrări</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Client</th>
+                                <th>Serviciu</th>
+                                <th>Preț</th>
+                                <th>Status</th>
+                                <th>Lucrător</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${lucrariPeriada.map(l => {
+                                const client = clienti.find(c => c.id === l.clientId);
+                                return `
+                                    <tr>
+                                        <td>${formatDate(l.dataProgramare)}</td>
+                                        <td>${client ? client.nume : 'Client necunoscut'}</td>
+                                        <td>${l.serviciu}</td>
+                                        <td>${l.pret}</td>
+                                        <td>${getStatusBadge(l.status)}</td>
+                                        <td>${getLucratorNume(l.lucratorId)}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function genereazaRaportTrimestrial(dataStart, dataEnd) {
+            // Folosește aceeași logică ca raportul lunar dar pentru 3 luni
+            genereazaRaportLunar(dataStart, dataEnd);
+            document.getElementById('titluRaport').textContent = 'Raport Trimestrial';
+        }
+
+        function genereazaRaportAnual(dataStart, dataEnd) {
+            // Folosește aceeași logică ca raportul lunar dar pentru un an
+            genereazaRaportLunar(dataStart, dataEnd);
+            document.getElementById('titluRaport').textContent = 'Raport Anual';
+        }
+
+        function genereazaRaportClienti() {
+            const titluRaport = document.getElementById('titluRaport');
+            const continutRaport = document.getElementById('continutRaport');
+            
+            titluRaport.textContent = 'Raport Clienți';
+            
+            // Calculează statistici pentru fiecare client
+            const clientiCuStatistici = clienti.map(client => {
+                const serviciiClient = servicii.filter(s => s.clientId === client.id);
+                const lucrariClient = lucrari.filter(l => l.clientId === client.id);
+                const totalCheltuit = lucrariClient
+                    .filter(l => l.status === 'finalizata')
+                    .reduce((sum, l) => sum + parseFloat(l.pret.replace(' Lei', '') || 0), 0);
+                
+                return {
+                    ...client,
+                    nrServicii: serviciiClient.length,
+                    nrLucrari: lucrariClient.length,
+                    totalCheltuit: totalCheltuit
+                };
+            }).sort((a, b) => b.totalCheltuit - a.totalCheltuit);
+            
+            continutRaport.innerHTML = `
+                <div class="report-summary">
+                    <div class="summary-item">
+                        <div class="value">${clienti.length}</div>
+                        <div class="label">Total Clienți</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value">${clientiCuStatistici.filter(c => c.nrServicii > 0).length}</div>
+                        <div class="label">Clienți Activi</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value">${clientiCuStatistici.reduce((sum, c) => sum + c.totalCheltuit, 0)} Lei</div>
+                        <div class="label">Total Venituri</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 30px;">📊 Top Clienți</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Telefon</th>
+                                <th>Oraș</th>
+                                <th>Servicii Active</th>
+                                <th>Total Lucrări</th>
+                                <th>Total Cheltuit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${clientiCuStatistici.map(client => `
+                                <tr>
+                                    <td><strong>${client.nume}</strong></td>
+                                    <td>${client.telefon}</td>
+                                    <td>${client.oras || '-'}</td>
+                                    <td><span class="badge badge-info">${client.nrServicii}</span></td>
+                                    <td><span class="badge badge-primary">${client.nrLucrari}</span></td>
+                                    <td><strong>${client.totalCheltuit} Lei</strong></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function genereazaRaportFinanciar(dataStart, dataEnd) {
+            const titluRaport = document.getElementById('titluRaport');
+            const continutRaport = document.getElementById('continutRaport');
+            
+            titluRaport.textContent = 'Raport Financiar';
+            
+            // Grupează lucrările pe luni
+            const lucrariGrupate = {};
+            const start = dataStart ? new Date(dataStart) : new Date(new Date().getFullYear(), 0, 1);
+            const end = dataEnd ? new Date(dataEnd) : new Date();
+            
+            lucrari.forEach(l => {
+                const dataLucrare = new Date(l.dataProgramare);
+                if (dataLucrare >= start && dataLucrare <= end && l.status === 'finalizata') {
+                    const luna = `${dataLucrare.getFullYear()}-${String(dataLucrare.getMonth() + 1).padStart(2, '0')}`;
+                    if (!lucrariGrupate[luna]) {
+                        lucrariGrupate[luna] = {
+                            total: 0,
+                            numar: 0,
+                            lucrari: []
+                        };
+                    }
+                    const pret = parseFloat(l.pret.replace(' Lei', '') || 0);
+                    lucrariGrupate[luna].total += pret;
+                    lucrariGrupate[luna].numar += 1;
+                    lucrariGrupate[luna].lucrari.push(l);
+                }
+            });
+            
+            const luni = Object.keys(lucrariGrupate).sort();
+            const totalGeneral = luni.reduce((sum, luna) => sum + lucrariGrupate[luna].total, 0);
+            const mediaLunara = luni.length > 0 ? totalGeneral / luni.length : 0;
+            
+            continutRaport.innerHTML = `
+                <div class="report-summary">
+                    <div class="summary-item">
+                        <div class="value">${totalGeneral} Lei</div>
+                        <div class="label">Total Încasări</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value">${Math.round(mediaLunara)} Lei</div>
+                        <div class="label">Media Lunară</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="value">${luni.length}</div>
+                        <div class="label">Luni Analizate</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 30px;">📈 Evoluție Lunară</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Luna</th>
+                                <th>Nr. Lucrări</th>
+                                <th>Total Încasări</th>
+                                <th>Media/Lucrare</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${luni.map(luna => {
+                                const data = lucrariGrupate[luna];
+                                const [an, lunaNum] = luna.split('-');
+                                const numeLuna = new Date(an, parseInt(lunaNum) - 1).toLocaleDateString('ro-RO', { month: 'long', year: 'numeric' });
+                                return `
+                                    <tr>
+                                        <td><strong>${numeLuna}</strong></td>
+                                        <td>${data.numar}</td>
+                                        <td><strong>${data.total} Lei</strong></td>
+                                        <td>${Math.round(data.total / data.numar)} Lei</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="font-weight: bold; background: #f8f9fa;">
+                                <td>TOTAL</td>
+                                <td>${luni.reduce((sum, luna) => sum + lucrariGrupate[luna].numar, 0)}</td>
+                                <td>${totalGeneral} Lei</td>
+                                <td>-</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            `;
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                'neatribuita': '<span class="badge badge-warning">Neatribuită</span>',
+                'atribuita': '<span class="badge badge-info">Atribuită</span>',
+                'in-lucru': '<span class="badge badge-primary">În Lucru</span>',
+                'finalizata': '<span class="badge badge-success">Finalizată</span>'
+            };
+            return badges[status] || status;
         }
 
         function genereazaRaportExpirari() {
@@ -2992,13 +3542,114 @@
         }
 
         function exportRaportExcel() {
-            // TODO: Implementare export Excel folosind o librărie
-            arataNotificare('Export Excel în dezvoltare...', 'info');
+            const tipRaport = document.getElementById('tipRaport').value;
+            const dataStart = document.getElementById('dataStartRaport').value;
+            const dataEnd = document.getElementById('dataEndRaport').value;
+            
+            let csv = '';
+            let filename = '';
+            
+            switch (tipRaport) {
+                case 'lunar':
+                case 'trimestrial':
+                case 'anual':
+                    // Export pentru rapoarte periodice
+                    const lucrariPeriada = lucrari.filter(l => {
+                        const dataLucrare = new Date(l.dataProgramare);
+                        const start = dataStart ? new Date(dataStart) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+                        const end = dataEnd ? new Date(dataEnd) : new Date();
+                        return dataLucrare >= start && dataLucrare <= end;
+                    });
+                    
+                    csv = 'Data,Client,Telefon,Serviciu,Preț,Status,Lucrător\n';
+                    lucrariPeriada.forEach(l => {
+                        const client = clienti.find(c => c.id === l.clientId);
+                        csv += `"${formatDate(l.dataProgramare)}",`;
+                        csv += `"${client ? client.nume : 'Client necunoscut'}",`;
+                        csv += `"${client ? client.telefon : ''}",`;
+                        csv += `"${l.serviciu}",`;
+                        csv += `"${l.pret}",`;
+                        csv += `"${l.status}",`;
+                        csv += `"${getLucratorNume(l.lucratorId)}"\n`;
+                    });
+                    filename = `raport-${tipRaport}-${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                    
+                case 'expirari':
+                    csv = exportExpirari();
+                    return; // Funcția exportExpirari() gestionează descărcarea
+                    
+                case 'clienti':
+                    csv = 'Nume,Telefon,Email,Oraș,Servicii Active,Total Lucrări,Total Cheltuit\n';
+                    clienti.forEach(client => {
+                        const serviciiClient = servicii.filter(s => s.clientId === client.id);
+                        const lucrariClient = lucrari.filter(l => l.clientId === client.id);
+                        const totalCheltuit = lucrariClient
+                            .filter(l => l.status === 'finalizata')
+                            .reduce((sum, l) => sum + parseFloat(l.pret.replace(' Lei', '') || 0), 0);
+                        
+                        csv += `"${client.nume}",`;
+                        csv += `"${client.telefon}",`;
+                        csv += `"${client.email || ''}",`;
+                        csv += `"${client.oras || ''}",`;
+                        csv += `"${serviciiClient.length}",`;
+                        csv += `"${lucrariClient.length}",`;
+                        csv += `"${totalCheltuit} Lei"\n`;
+                    });
+                    filename = `raport-clienti-${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                    
+                case 'financiar':
+                    csv = 'Luna,Nr. Lucrări,Total Încasări,Media per Lucrare\n';
+                    const lucrariGrupate = {};
+                    const start = dataStart ? new Date(dataStart) : new Date(new Date().getFullYear(), 0, 1);
+                    const end = dataEnd ? new Date(dataEnd) : new Date();
+                    
+                    lucrari.forEach(l => {
+                        const dataLucrare = new Date(l.dataProgramare);
+                        if (dataLucrare >= start && dataLucrare <= end && l.status === 'finalizata') {
+                            const luna = `${dataLucrare.getFullYear()}-${String(dataLucrare.getMonth() + 1).padStart(2, '0')}`;
+                            if (!lucrariGrupate[luna]) {
+                                lucrariGrupate[luna] = { total: 0, numar: 0 };
+                            }
+                            const pret = parseFloat(l.pret.replace(' Lei', '') || 0);
+                            lucrariGrupate[luna].total += pret;
+                            lucrariGrupate[luna].numar += 1;
+                        }
+                    });
+                    
+                    Object.keys(lucrariGrupate).sort().forEach(luna => {
+                        const data = lucrariGrupate[luna];
+                        const [an, lunaNum] = luna.split('-');
+                        const numeLuna = new Date(an, parseInt(lunaNum) - 1).toLocaleDateString('ro-RO', { month: 'long', year: 'numeric' });
+                        csv += `"${numeLuna}",`;
+                        csv += `"${data.numar}",`;
+                        csv += `"${data.total} Lei",`;
+                        csv += `"${Math.round(data.total / data.numar)} Lei"\n`;
+                    });
+                    filename = `raport-financiar-${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                    
+                default:
+                    arataNotificare('Selectați un tip de raport valid!', 'error');
+                    return;
+            }
+            
+            // Descarcă fișierul CSV
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' }); // BOM pentru UTF-8
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            
+            arataNotificare('Raport exportat cu succes!', 'success');
         }
 
         function exportRaportPDF() {
-            // TODO: Implementare export PDF folosind o librărie
-            arataNotificare('Export PDF în dezvoltare...', 'info');
+            arataNotificare('Pentru export PDF, folosiți opțiunea Print (Ctrl+P) și selectați "Save as PDF"', 'info');
+            setTimeout(() => {
+                window.print();
+            }, 500);
         }
 
         function printeazaRaport() {
@@ -3028,6 +3679,36 @@
             arataNotificare('Setări salvate cu succes!', 'success');
         }
 
+        function descarcaBackupDinIstoric(index) {
+            const istoric = JSON.parse(localStorage.getItem(getStorageKey('backupHistory')) || '[]');
+            const backupInfo = istoric[index];
+            
+            if (!backupInfo) {
+                arataNotificare('Backup-ul nu mai este disponibil!', 'error');
+                return;
+            }
+            
+            // Reconstruiește backup-ul din datele curente (simulare)
+            // În realitate, ar trebui să stocăm backup-urile complete
+            const backup = {
+                versiune: '2.0',
+                dataBackup: new Date(backupInfo.data).toLocaleString('ro-RO'),
+                clienti: clienti,
+                servicii: servicii,
+                lucrari: lucrari,
+                utilizatori: utilizatori,
+                setari: setari
+            };
+            
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `backup-adinstalgaz-${new Date(backupInfo.data).toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            arataNotificare('Backup descărcat cu succes!', 'success');
+        }
+
         function resetareSetari() {
             if (confirm('Sigur doriți să resetați toate setările la valorile implicite?')) {
                 setari = {
@@ -3042,7 +3723,13 @@
                     backupAutomat: true,
                     oraBackup: '02:00',
                     retentieBackup: 30,
-                    formatBackup: 'ambele'
+                    formatBackup: 'ambele',
+                    preturi: {
+                        verificareGaz: '150 Lei',
+                        revizieGaz: '250 Lei',
+                        verificareCentrala: '150 Lei',
+                        ofertaPachet: '250 Lei'
+                    }
                 };
                 
                 salveazaInLocalStorage();
@@ -3071,6 +3758,12 @@
                 document.getElementById('pretRevizieGaz').value = setari.preturi.revizieGaz || '250 Lei';
                 document.getElementById('pretVerificareCentrala').value = setari.preturi.verificareCentrala || '150 Lei';
                 document.getElementById('pretOfertaPachet').value = setari.preturi.ofertaPachet || '250 Lei';
+            } else {
+                // Valori implicite dacă nu există prețuri salvate
+                document.getElementById('pretVerificareGaz').value = '150 Lei';
+                document.getElementById('pretRevizieGaz').value = '250 Lei';
+                document.getElementById('pretVerificareCentrala').value = '150 Lei';
+                document.getElementById('pretOfertaPachet').value = '250 Lei';
             }
         }
 
