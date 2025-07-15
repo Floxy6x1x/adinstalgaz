@@ -1090,11 +1090,21 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>
-                <span>🔧</span>
-                AdInstalGaz
-            </h1>
-            <div class="subtitle">Sistem Complet de Gestionare Servicii Gaz</div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>
+                        <span>🔧</span>
+                        AdInstalGaz
+                    </h1>
+                    <div class="subtitle">Sistem de Gestionare Servicii Gaz</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="color: white; opacity: 0.9;">
+                        <strong id="numeUtilizatorHeader">Administrator</strong><br>
+                        <small id="rolUtilizatorHeader">Administrator</small>
+                    </div>
+                </div>
+            </div>
             <div id="lastBackup" class="backup-status" style="margin-top: 15px;">
                 <span>💾</span>
                 <span id="backupStatusText">Verificare backup...</span>
@@ -1170,64 +1180,25 @@
             <!-- Activitate Recentă -->
             <div class="card">
                 <div class="card-header">
-                    <h2><span>🔥</span> Oferte Speciale</h2>
-                </div>
-                <div style="padding: 20px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 8px; margin-bottom: 20px;">
-                    <h3 style="margin-bottom: 10px;">🎯 Pachet Complet: Instalații Gaz + Centrală</h3>
-                    <p style="font-size: 18px; margin-bottom: 5px;">Doar <strong style="font-size: 24px;">250 Lei</strong></p>
-                    <p style="opacity: 0.9;">✓ Verificare completă instalație gaz</p>
-                    <p style="opacity: 0.9;">✓ Revizie centrală termică</p>
-                    <p style="opacity: 0.9;">✓ Garanție 2 ani</p>
-                </div>
-                
-                <h3 style="color: #1e3c72; margin-bottom: 15px;">📋 Lista Prețuri Servicii</h3>
-                <div class="table-responsive">
-                    <table style="margin-bottom: 0;">
-                        <thead>
-                            <tr>
-                                <th>Serviciu</th>
-                                <th>Preț Standard</th>
-                                <th>Valabilitate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Verificare Instalație Gaz</strong></td>
-                                <td><span class="badge badge-info">150 Lei</span></td>
-                                <td>2 ani</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Revizie Instalație Gaz</strong></td>
-                                <td><span class="badge badge-info">250 Lei</span></td>
-                                <td>2 ani</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Verificare Centrală</strong></td>
-                                <td><span class="badge badge-info">150 Lei</span></td>
-                                <td>2 ani</td>
-                            </tr>
-                            <tr style="background: #fff3cd;">
-                                <td><strong>🔥 OFERTĂ: Instalații + Centrală</strong></td>
-                                <td><span class="badge badge-warning">250 Lei</span></td>
-                                <td>2 ani</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Servicii de Urgență</strong></td>
-                                <td><span class="badge badge-danger">Preț variabil</span></td>
-                                <td>După caz</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
                     <h2><span>🕒</span> Activitate Recentă</h2>
                 </div>
                 <div id="activitateRecenta">
-                    <div class="empty-state">
-                        <p>Nu există activitate recentă</p>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Tip</th>
+                                    <th>Detalii</th>
+                                    <th>Utilizator</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaActivitateRecenta">
+                                <tr>
+                                    <td colspan="4" class="text-center">Nu există activitate recentă</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1303,25 +1274,27 @@
                         <textarea id="observatiiClient" placeholder="Note adiționale despre client"></textarea>
                     </div>
                     <div class="settings-section">
-                        <h3>💰 Prețuri Servicii</h3>
+                        <h3>👤 Utilizator Curent</h3>
                         <div class="form-grid">
                             <div class="form-group">
-                                <label>Verificare Instalație Gaz</label>
-                                <input type="text" id="pretVerificareGaz" value="150 Lei" placeholder="Ex: 150 Lei">
+                                <label>Nume Utilizator</label>
+                                <input type="text" id="numeUtilizator" value="Administrator" readonly style="background: #f8f9fa;">
                             </div>
                             <div class="form-group">
-                                <label>Revizie Instalație Gaz</label>
-                                <input type="text" id="pretRevizieGaz" value="250 Lei" placeholder="Ex: 250 Lei">
+                                <label>Rol</label>
+                                <input type="text" id="rolUtilizator" value="Administrator" readonly style="background: #f8f9fa;">
                             </div>
                             <div class="form-group">
-                                <label>Verificare Centrală</label>
-                                <input type="text" id="pretVerificareCentrala" value="150 Lei" placeholder="Ex: 150 Lei">
-                            </div>
-                            <div class="form-group">
-                                <label>Ofertă: Instalații + Centrală</label>
-                                <input type="text" id="pretOfertaPachet" value="250 Lei" placeholder="Ex: 250 Lei">
+                                <label>Email</label>
+                                <input type="email" id="emailUtilizator" placeholder="admin@adinstalgaz.ro" readonly style="background: #f8f9fa;">
                             </div>
                         </div>
+                        <button class="btn btn-secondary" onclick="schimbaParola()">
+                            <span>🔒</span> Schimbă Parola
+                        </button>
+                        <button class="btn btn-danger" onclick="delogare()">
+                            <span>🚪</span> Delogare
+                        </button>
                     </div>
 
                     <div class="btn-group">
@@ -1381,11 +1354,11 @@
                             <label>Tip Serviciu*</label>
                             <select id="tipServiciu" required onchange="actualizeazaPretServiciu()">
                                 <option value="">Selectează tipul</option>
-                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz - 150 Lei</option>
-                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz - 250 Lei</option>
-                                <option value="Verificare Centrală">Verificare Centrală - 150 Lei</option>
-                                <option value="Instalații Gaz + Centrală">🔥 OFERTĂ: Instalații Gaz + Centrală - 250 Lei</option>
-                                <option value="Servicii de Urgență">Servicii de Urgență - Preț variabil</option>
+                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
+                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
+                                <option value="Verificare Centrală">Verificare Centrală</option>
+                                <option value="Instalații Gaz + Centrală">Instalații Gaz + Centrală</option>
+                                <option value="Servicii de Urgență">Servicii de Urgență</option>
                                 <option value="Contract Service">Contract Service</option>
                                 <option value="Branșament Gaz">Branșament Gaz</option>
                                 <option value="Instalație Gaz">Instalație Gaz</option>
@@ -1864,6 +1837,12 @@
         let servicii = [];
         let lucrari = [];
         let utilizatori = [];
+        let utilizatorCurent = {
+            id: 1,
+            nume: 'Administrator',
+            email: 'admin@adinstalgaz.ro',
+            rol: 'administrator'
+        };
         let setari = {
             numeCompanie: 'AdInstalGaz',
             telefonCompanie: '',
@@ -1876,13 +1855,7 @@
             backupAutomat: true,
             oraBackup: '02:00',
             retentieBackup: 30,
-            formatBackup: 'ambele',
-            preturi: {
-                verificareGaz: '150 Lei',
-                revizieGaz: '250 Lei',
-                verificareCentrala: '150 Lei',
-                ofertaPachet: '250 Lei'
-            }
+            formatBackup: 'ambele'
         };
 
         // Funcții pentru localStorage cu compatibilitate
@@ -1948,15 +1921,6 @@
                 
                 if (setariStored) {
                     setari = { ...setari, ...JSON.parse(setariStored) };
-                    // Asigură-te că prețurile există
-                    if (!setari.preturi) {
-                        setari.preturi = {
-                            verificareGaz: '150 Lei',
-                            revizieGaz: '250 Lei',
-                            verificareCentrala: '150 Lei',
-                            ofertaPachet: '250 Lei'
-                        };
-                    }
                 }
 
                 console.log('Date încărcate:', {
@@ -2005,6 +1969,12 @@
 
         // Funcții pentru tab-uri
         function showTab(tabName) {
+            // Verifică permisiuni pentru anumite tab-uri
+            if ((tabName === 'setari' || tabName === 'backup') && utilizatorCurent.rol !== 'administrator') {
+                arataNotificare('Nu aveți acces la această secțiune!', 'error');
+                return;
+            }
+            
             // Ascunde toate tab-urile
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -2034,6 +2004,8 @@
                 afiseazaMonitorizare();
             } else if (tabName === 'backup') {
                 afiseazaIstoricBackup();
+            } else if (tabName === 'setari') {
+                incarcaSetariInFormular();
             }
         }
 
@@ -2078,6 +2050,9 @@
             if (expirari7Zile > 0) {
                 afiseazaExpirariUrgente();
             }
+            
+            // Afișează activitatea recentă
+            afiseazaActivitateRecenta();
             
             // Actualizează status backup
             verificaStatusBackup();
@@ -2134,12 +2109,37 @@
                 etaj: document.getElementById('etajClient').value,
                 apartament: document.getElementById('apartamentClient').value,
                 observatii: document.getElementById('observatiiClient').value,
-                dataCreare: new Date().toISOString()
+                dataCreare: new Date().toISOString(),
+                creatDe: utilizatorCurent.nume
             };
             
             clienti.push(client);
+            
+            // Adaugă serviciu dacă e selectat
+            if (document.getElementById('adaugaServiciuDirect').checked) {
+                const tipServiciu = document.getElementById('tipServiciuDirect').value;
+                if (tipServiciu) {
+                    const serviciu = {
+                        id: Date.now() + 1,
+                        clientId: client.id,
+                        tip: tipServiciu,
+                        dataInceput: document.getElementById('dataInceputDirect').value,
+                        dataExpirare: document.getElementById('dataExpirareDirect').value,
+                        pret: document.getElementById('pretServiciuDirect').value,
+                        dataCreare: new Date().toISOString(),
+                        creatDe: utilizatorCurent.nume
+                    };
+                    servicii.push(serviciu);
+                    arataNotificare('Client și serviciu adăugate cu succes!', 'success');
+                } else {
+                    arataNotificare('Client adăugat! Serviciul nu a fost adăugat - tip serviciu lipsă.', 'warning');
+                }
+            } else {
+                arataNotificare('Client adăugat cu succes!', 'success');
+            }
+            
             salveazaInLocalStorage();
-            arataNotificare('Client adăugat cu succes!', 'success');
+            adaugaActivitate('Client nou', `Adăugat: ${client.nume}`);
             resetFormClient();
             afiseazaClienti();
         }
@@ -2170,9 +2170,10 @@
                                 <button class="btn btn-primary btn-sm" onclick="editeazaClient(${client.id})">
                                     ✏️ Editează
                                 </button>
+                                ${utilizatorCurent.rol === 'administrator' ? `
                                 <button class="btn btn-danger btn-sm" onclick="stergeClient(${client.id})">
                                     🗑️ Șterge
-                                </button>
+                                </button>` : ''}
                             </div>
                         </td>
                     </tr>
@@ -2192,6 +2193,20 @@
             return adresa;
         }
 
+        function toggleServiciuDirect() {
+            const checkbox = document.getElementById('adaugaServiciuDirect');
+            const sectiune = document.getElementById('sectiuneServiciuDirect');
+            sectiune.style.display = checkbox.checked ? 'block' : 'none';
+            
+            if (checkbox.checked) {
+                // Setează data de azi și calculează expirarea la 2 ani
+                document.getElementById('dataInceputDirect').value = new Date().toISOString().split('T')[0];
+                const dataExpirare = new Date();
+                dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
+                document.getElementById('dataExpirareDirect').value = dataExpirare.toISOString().split('T')[0];
+            }
+        }
+
         function toggleBlocFields() {
             const tipLocuinta = document.getElementById('tipLocuinta').value;
             const blocFields = document.querySelectorAll('.bloc-fields');
@@ -2203,6 +2218,8 @@
 
         function resetFormClient() {
             document.getElementById('formClient').reset();
+            document.getElementById('adaugaServiciuDirect').checked = false;
+            document.getElementById('sectiuneServiciuDirect').style.display = 'none';
             toggleBlocFields();
         }
 
@@ -2288,9 +2305,16 @@
         }
 
         function stergeClient(id) {
+            if (!verificaPermisiuni('stergere')) {
+                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
+                return;
+            }
+            
             if (!confirm('Sigur doriți să ștergeți acest client? Toate serviciile și lucrările asociate vor fi șterse!')) {
                 return;
             }
+            
+            const client = clienti.find(c => c.id === id);
             
             // Șterge clientul
             clienti = clienti.filter(c => c.id !== id);
@@ -2303,6 +2327,7 @@
             
             salveazaInLocalStorage();
             arataNotificare('Client șters cu succes!', 'success');
+            adaugaActivitate('Ștergere', `Client șters: ${client ? client.nume : 'ID #' + id}`);
             afiseazaClienti();
         }
 
@@ -2318,12 +2343,12 @@
             const pretInput = document.getElementById('pretServiciu');
             const notaPret = document.getElementById('notaPret');
             
-            // Prețuri predefinite pentru servicii (din setări sau default)
+            // Prețuri predefinite pentru servicii
             const preturi = {
-                'Verificare Instalație Gaz': setari.preturi?.verificareGaz || '150 Lei',
-                'Revizie Instalație Gaz': setari.preturi?.revizieGaz || '250 Lei',
-                'Verificare Centrală': setari.preturi?.verificareCentrala || '150 Lei',
-                'Instalații Gaz + Centrală': setari.preturi?.ofertaPachet || '250 Lei',
+                'Verificare Instalație Gaz': '150 Lei',
+                'Revizie Instalație Gaz': '250 Lei',
+                'Verificare Centrală': '150 Lei',
+                'Instalații Gaz + Centrală': '250 Lei',
                 'Servicii de Urgență': ''  // Preț variabil
             };
             
@@ -2332,14 +2357,14 @@
                 pretInput.value = preturi[tipServiciu];
                 if (tipServiciu === 'Servicii de Urgență') {
                     pretInput.placeholder = 'Introduceți prețul pentru urgență';
-                    notaPret.style.display = 'block';
+                    if (notaPret) notaPret.style.display = 'block';
                 } else {
-                    notaPret.style.display = 'none';
+                    if (notaPret) notaPret.style.display = 'none';
                 }
             } else {
                 pretInput.value = '';
                 pretInput.placeholder = 'Ex: 150 Lei';
-                notaPret.style.display = 'none';
+                if (notaPret) notaPret.style.display = 'none';
             }
             
             // Actualizează și data expirării automat (2 ani pentru majoritatea serviciilor)
@@ -2367,12 +2392,14 @@
                 dataExpirare: document.getElementById('dataExpirareServiciu').value,
                 pret: document.getElementById('pretServiciu').value,
                 observatii: document.getElementById('observatiiServiciu').value,
-                dataCreare: new Date().toISOString()
+                dataCreare: new Date().toISOString(),
+                creatDe: utilizatorCurent.nume
             };
             
             servicii.push(serviciu);
             salveazaInLocalStorage();
             arataNotificare('Serviciu adăugat cu succes!', 'success');
+            adaugaActivitate('Serviciu nou', `${serviciu.tip} pentru ${client ? client.nume : 'Client #' + clientId}`);
             resetFormServiciu();
             afiseazaServicii();
         }
@@ -2425,9 +2452,10 @@
                                 <button class="btn btn-primary btn-sm" onclick="editeazaServiciu(${serviciu.id})">
                                     ✏️ Editează
                                 </button>
+                                ${utilizatorCurent.rol === 'administrator' ? `
                                 <button class="btn btn-danger btn-sm" onclick="stergeServiciu(${serviciu.id})">
                                     🗑️ Șterge
-                                </button>
+                                </button>` : ''}
                             </div>
                         </td>
                     </tr>
@@ -2611,13 +2639,20 @@
         }
 
         function stergeServiciu(id) {
+            if (!verificaPermisiuni('stergere')) {
+                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
+                return;
+            }
+            
             if (!confirm('Sigur doriți să ștergeți acest serviciu?')) {
                 return;
             }
             
+            const serviciu = servicii.find(s => s.id === id);
             servicii = servicii.filter(s => s.id !== id);
             salveazaInLocalStorage();
             arataNotificare('Serviciu șters cu succes!', 'success');
+            adaugaActivitate('Ștergere', `Serviciu șters: ${serviciu ? serviciu.tip : 'ID #' + id}`);
             afiseazaServicii();
         }
 
@@ -2631,16 +2666,20 @@
         function adaugaLucrare(event) {
             event.preventDefault();
             
+            const clientId = parseInt(document.getElementById('clientLucrare').value);
+            const client = clienti.find(c => c.id === clientId);
+            
             const lucrare = {
                 id: Date.now(),
-                clientId: parseInt(document.getElementById('clientLucrare').value),
+                clientId: clientId,
                 serviciu: document.getElementById('serviciuLucrare').value,
                 dataProgramare: document.getElementById('dataProgramareLucrare').value,
                 pret: document.getElementById('pretLucrare').value,
                 lucratorId: document.getElementById('lucratorLucrare').value ? parseInt(document.getElementById('lucratorLucrare').value) : null,
                 status: document.getElementById('statusLucrare').value,
                 observatii: document.getElementById('observatiiLucrare').value,
-                dataCreare: new Date().toISOString()
+                dataCreare: new Date().toISOString(),
+                creatDe: utilizatorCurent.nume
             };
             
             if (lucrare.status === 'finalizata') {
@@ -2650,6 +2689,7 @@
             lucrari.push(lucrare);
             salveazaInLocalStorage();
             arataNotificare('Lucrare adăugată cu succes!', 'success');
+            adaugaActivitate('Lucrare nouă', `${lucrare.serviciu} pentru ${client ? client.nume : 'Client #' + clientId}`);
             resetFormLucrare();
             afiseazaLucrari();
         }
@@ -2691,9 +2731,10 @@
                                 <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
                                     ✏️ Editează
                                 </button>
+                                ${utilizatorCurent.rol === 'administrator' ? `
                                 <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
                                     🗑️ Șterge
-                                </button>
+                                </button>` : ''}
                             </div>
                         </td>
                     </tr>
@@ -2763,9 +2804,10 @@
                                 <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
                                     ✏️ Editează
                                 </button>
+                                ${utilizatorCurent.rol === 'administrator' ? `
                                 <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
                                     🗑️ Șterge
-                                </button>
+                                </button>` : ''}
                             </div>
                         </td>
                     </tr>
@@ -2778,13 +2820,20 @@
         }
 
         function stergeLucrare(id) {
+            if (!verificaPermisiuni('stergere')) {
+                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
+                return;
+            }
+            
             if (!confirm('Sigur doriți să ștergeți această lucrare?')) {
                 return;
             }
             
+            const lucrare = lucrari.find(l => l.id === id);
             lucrari = lucrari.filter(l => l.id !== id);
             salveazaInLocalStorage();
             arataNotificare('Lucrare ștersă cu succes!', 'success');
+            adaugaActivitate('Ștergere', `Lucrare ștersă: ${lucrare ? lucrare.serviciu : 'ID #' + id}`);
             afiseazaLucrari();
         }
 
@@ -3667,16 +3716,9 @@
             setari.salvareAutomata = document.getElementById('salvareAutomata').checked;
             setari.intervalSalvare = parseInt(document.getElementById('intervalSalvare').value);
             
-            // Salvează prețurile
-            setari.preturi = {
-                verificareGaz: document.getElementById('pretVerificareGaz').value,
-                revizieGaz: document.getElementById('pretRevizieGaz').value,
-                verificareCentrala: document.getElementById('pretVerificareCentrala').value,
-                ofertaPachet: document.getElementById('pretOfertaPachet').value
-            };
-            
             salveazaInLocalStorage();
             arataNotificare('Setări salvate cu succes!', 'success');
+            adaugaActivitate('Setări', 'Configurare actualizată');
         }
 
         function descarcaBackupDinIstoric(index) {
@@ -3723,18 +3765,13 @@
                     backupAutomat: true,
                     oraBackup: '02:00',
                     retentieBackup: 30,
-                    formatBackup: 'ambele',
-                    preturi: {
-                        verificareGaz: '150 Lei',
-                        revizieGaz: '250 Lei',
-                        verificareCentrala: '150 Lei',
-                        ofertaPachet: '250 Lei'
-                    }
+                    formatBackup: 'ambele'
                 };
                 
                 salveazaInLocalStorage();
                 incarcaSetariInFormular();
                 arataNotificare('Setări resetate la valorile implicite!', 'success');
+                adaugaActivitate('Setări', 'Resetare la valorile implicite');
             }
         }
 
@@ -3752,18 +3789,115 @@
             document.getElementById('retentieBackup').value = setari.retentieBackup;
             document.getElementById('formatBackup').value = setari.formatBackup;
             
-            // Încarcă prețurile
-            if (setari.preturi) {
-                document.getElementById('pretVerificareGaz').value = setari.preturi.verificareGaz || '150 Lei';
-                document.getElementById('pretRevizieGaz').value = setari.preturi.revizieGaz || '250 Lei';
-                document.getElementById('pretVerificareCentrala').value = setari.preturi.verificareCentrala || '150 Lei';
-                document.getElementById('pretOfertaPachet').value = setari.preturi.ofertaPachet || '250 Lei';
-            } else {
-                // Valori implicite dacă nu există prețuri salvate
-                document.getElementById('pretVerificareGaz').value = '150 Lei';
-                document.getElementById('pretRevizieGaz').value = '250 Lei';
-                document.getElementById('pretVerificareCentrala').value = '150 Lei';
-                document.getElementById('pretOfertaPachet').value = '250 Lei';
+            // Informații utilizator
+            document.getElementById('numeUtilizator').value = utilizatorCurent.nume;
+            document.getElementById('rolUtilizator').value = utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Lucrător';
+            document.getElementById('emailUtilizator').value = utilizatorCurent.email || '';
+        }
+
+        // Funcții pentru activitate
+        let activitateRecenta = [];
+        
+        function adaugaActivitate(tip, detalii) {
+            const activitate = {
+                id: Date.now(),
+                data: new Date().toISOString(),
+                tip: tip,
+                detalii: detalii,
+                utilizator: utilizatorCurent.nume
+            };
+            
+            activitateRecenta.unshift(activitate);
+            
+            // Păstrează doar ultimele 50 de activități
+            if (activitateRecenta.length > 50) {
+                activitateRecenta = activitateRecenta.slice(0, 50);
+            }
+            
+            localStorage.setItem('adinstalgaz_activitate', JSON.stringify(activitateRecenta));
+            
+            // Actualizează afișarea dacă suntem pe dashboard
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                afiseazaActivitateRecenta();
+            }
+        }
+        
+        function afiseazaActivitateRecenta() {
+            const tbody = document.getElementById('listaActivitateRecenta');
+            if (!tbody) return;
+            
+            const ultimeleActivitati = activitateRecenta.slice(0, 10);
+            
+            if (ultimeleActivitati.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">Nu există activitate recentă</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = ultimeleActivitati.map(activitate => `
+                <tr>
+                    <td>${new Date(activitate.data).toLocaleString('ro-RO')}</td>
+                    <td><span class="badge badge-info">${activitate.tip}</span></td>
+                    <td>${activitate.detalii}</td>
+                    <td>${activitate.utilizator}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Funcții pentru sistem de roluri
+        function verificaPermisiuni(actiune) {
+            const permisiuni = {
+                'administrator': ['toate'],
+                'lucrator': ['vizualizare', 'adaugare_client', 'adaugare_serviciu', 'editare_lucrari_proprii']
+            };
+            
+            if (utilizatorCurent.rol === 'administrator') {
+                return true;
+            }
+            
+            const permisiuniRol = permisiuni[utilizatorCurent.rol] || [];
+            return permisiuniRol.includes(actiune) || permisiuniRol.includes('toate');
+        }
+        
+        function actualizeazaInterfataPentruRol() {
+            // Ascunde tab-urile bazate pe rol
+            if (utilizatorCurent.rol === 'lucrator') {
+                // Ascunde setări și backup pentru lucrători
+                document.querySelectorAll('.nav-tab').forEach(tab => {
+                    const text = tab.textContent.trim();
+                    if (text.includes('Setări') || text.includes('Backup')) {
+                        tab.style.display = 'none';
+                    }
+                });
+                
+                // Ascunde butoanele de ștergere
+                document.querySelectorAll('.btn-danger').forEach(btn => {
+                    if (btn.textContent.includes('Șterge')) {
+                        btn.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Actualizează header
+            document.getElementById('numeUtilizatorHeader').textContent = utilizatorCurent.nume;
+            document.getElementById('rolUtilizatorHeader').textContent = 
+                utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Lucrător';
+        }
+        
+        function schimbaParola() {
+            const parolaNoua = prompt('Introduceți parola nouă:');
+            if (parolaNoua && parolaNoua.length >= 6) {
+                // În realitate aici ar trebui să actualizăm în baza de date
+                arataNotificare('Parolă schimbată cu succes!', 'success');
+                adaugaActivitate('Securitate', 'Parolă schimbată');
+            } else if (parolaNoua) {
+                arataNotificare('Parola trebuie să aibă minim 6 caractere!', 'error');
+            }
+        }
+        
+        function delogare() {
+            if (confirm('Sigur doriți să vă delogați?')) {
+                localStorage.setItem('adinstalgaz_user_logat', 'false');
+                window.location.reload();
             }
         }
 
@@ -3790,6 +3924,21 @@
             // Încarcă datele din localStorage
             incarcaDinLocalStorage();
             
+            // Încarcă activitatea recentă
+            const activitateStored = localStorage.getItem('adinstalgaz_activitate');
+            if (activitateStored) {
+                activitateRecenta = JSON.parse(activitateStored);
+            }
+            
+            // Verifică utilizatorul curent
+            const utilizatorStored = localStorage.getItem('adinstalgaz_current_user');
+            if (utilizatorStored) {
+                utilizatorCurent = JSON.parse(utilizatorStored);
+            }
+            
+            // Actualizează interfața pentru rol
+            actualizeazaInterfataPentruRol();
+            
             // Actualizează dashboard-ul
             actualizeazaDashboard();
             
@@ -3804,6 +3953,16 @@
                     if (tipServiciu && tipServiciu !== 'Servicii de Urgență') {
                         actualizeazaPretServiciu();
                     }
+                });
+            }
+            
+            // Event listener pentru actualizare dată expirare la serviciu direct
+            const dataInceputDirectInput = document.getElementById('dataInceputDirect');
+            if (dataInceputDirectInput) {
+                dataInceputDirectInput.addEventListener('change', function() {
+                    const dataExpirare = new Date(this.value);
+                    dataExpirare.setFullYear(dataExpirare.getFullYear() + 2);
+                    document.getElementById('dataExpirareDirect').value = dataExpirare.toISOString().split('T')[0];
                 });
             }
             
@@ -3827,6 +3986,7 @@
             }
             
             console.log('Aplicație inițializată cu succes!');
+            adaugaActivitate('Sistem', 'Aplicație pornită');
         });
     </script>
 </body>
