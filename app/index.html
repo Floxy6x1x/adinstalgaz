@@ -4,6 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdInstalGaz - Gestionare Clienți și Servicii</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1e3c72">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -1079,6 +1092,13 @@
         <div class="login-card">
             <h2>🔧 AdInstalGaz</h2>
             <p style="text-align: center; color: #666; margin-bottom: 30px;">Sistem de Gestionare Servicii</p>
+            
+            <button onclick="loginWithGoogle()" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">
+                <span>🔐</span> Autentificare cu Google
+            </button>
+            
+            <div style="text-align: center; color: #999; margin: 20px 0;">SAU</div>
+            
             <form onsubmit="login(event)">
                 <div class="form-group">
                     <label>Email</label>
@@ -1089,16 +1109,9 @@
                     <input type="password" id="loginPassword" required placeholder="••••••••">
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <span>🔐</span> Autentificare
+                    <span>🔐</span> Autentificare Clasică
                 </button>
             </form>
-            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-                <p style="margin: 0; font-size: 14px; color: #666;">
-                    <strong>Conturi de test:</strong><br>
-                    Admin: florin.gavrila@adinstalgaz.ro / 123456<br>
-                    Lucrător: ion@adinstalgaz.ro / 123456
-                </p>
-            </div>
         </div>
     </div>
 
@@ -1146,6 +1159,9 @@
             </button>
             <button class="nav-tab" onclick="showTab('monitorizare')">
                 <span>⚠️</span> Monitorizare
+            </button>
+            <button class="nav-tab" onclick="showTab('documente')">
+                <span>📄</span> Documente
             </button>
             <button class="nav-tab" onclick="showTab('rapoarte')">
                 <span>📈</span> Rapoarte
@@ -1304,6 +1320,9 @@
                         <button class="btn btn-secondary" onclick="deschideGestionareUtilizatori()">
                             <span>👥</span> Gestionează Utilizatori
                         </button>
+                        <button class="btn btn-danger" onclick="logout()">
+                            <span>🚪</span> Delogare
+                        </button>
                     </div>
 
                     <div class="btn-group">
@@ -1446,7 +1465,17 @@
                         </div>
                         <div class="form-group">
                             <label>Serviciu*</label>
-                            <input type="text" id="serviciuLucrare" required placeholder="Ex: Verificare Instalație">
+                            <select id="serviciuLucrare" required>
+                                <option value="">Selectează serviciul</option>
+                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
+                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
+                                <option value="Verificare Centrală">Verificare Centrală</option>
+                                <option value="Instalații Gaz + Centrală">Instalații Gaz + Centrală</option>
+                                <option value="Servicii de Urgență">Servicii de Urgență</option>
+                                <option value="Contract Service">Contract Service</option>
+                                <option value="Branșament Gaz">Branșament Gaz</option>
+                                <option value="Instalație Gaz">Instalație Gaz</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Data Programare*</label>
@@ -1454,7 +1483,17 @@
                         </div>
                         <div class="form-group">
                             <label>Preț*</label>
-                            <input type="text" id="pretLucrare" required placeholder="Ex: 150 Lei">
+                            <select id="pretLucrare" required>
+                                <option value="">Selectează prețul</option>
+                                <option value="150 Lei">150 Lei - Verificări standard</option>
+                                <option value="200 Lei">200 Lei</option>
+                                <option value="250 Lei">250 Lei - Revizii complete</option>
+                                <option value="300 Lei">300 Lei</option>
+                                <option value="350 Lei">350 Lei</option>
+                                <option value="400 Lei">400 Lei</option>
+                                <option value="500 Lei">500 Lei</option>
+                                <option value="Alt preț">Alt preț (specificați în observații)</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label>Lucrător</label>
@@ -1589,6 +1628,58 @@
                         <div class="stat-number" id="stat3Luni">0</div>
                         <div class="stat-label">planificare</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documente Tab -->
+        <div id="documente" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2><span>📤</span> Încarcă Document</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Client*</label>
+                        <select id="clientDocument" required>
+                            <option value="">Selectează clientul</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tip Document*</label>
+                        <select id="tipDocument" required>
+                            <option value="">Selectează tipul</option>
+                            <option value="contract">Contract</option>
+                            <option value="verificare">Proces Verbal Verificare</option>
+                            <option value="certificat">Certificat Conformitate</option>
+                            <option value="factura">Factură</option>
+                            <option value="poza">Poză Lucrare</option>
+                            <option value="altele">Altele</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Selectează fișier*</label>
+                        <input type="file" id="fisierDocument" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Descriere</label>
+                        <input type="text" id="descriereDocument" placeholder="Descriere scurtă">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="uploadDocument()">
+                    <span>📤</span> Încarcă Document
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2><span>📁</span> Documente Salvate</h2>
+                    <div class="search-box">
+                        <input type="text" id="cautaDocument" placeholder="Caută document..." onkeyup="filtreazaDocumente()">
+                    </div>
+                </div>
+                <div id="listaDocumente" class="monitoring-list">
+                    <!-- Se va popula dinamic -->
                 </div>
             </div>
         </div>
@@ -1838,6 +1929,22 @@
     <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="incarcaBackupFile(event)">
 
     <script>
+        // Configurare Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKkB7YFHSPo_h6WvjgvPx7hp2vvzKG0OM",
+            authDomain: "adinstalgaz-8dce8.firebaseapp.com",
+            projectId: "adinstalgaz-8dce8",
+            storageBucket: "adinstalgaz-8dce8.appspot.com",
+            messagingSenderId: "623851795901",
+            appId: "1:623851795901:web:jhd7..." // Completați cu ID-ul complet
+        };
+        
+        // Inițializare Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        
         // Variabile globale pentru date
         let clienti = [];
         let servicii = [];
@@ -2025,12 +2132,110 @@
                 populeazaSelectClientiLucrari();
             } else if (tabName === 'monitorizare') {
                 afiseazaMonitorizare();
+            } else if (tabName === 'documente') {
+                afiseazaDocumente();
+                // Populează select clienți pentru documente
+                const select = document.getElementById('clientDocument');
+                select.innerHTML = '<option value="">Selectează clientul</option>' +
+                    clienti.map(c => `<option value="${c.id}">${c.nume} - ${c.telefon}</option>`).join('');
             } else if (tabName === 'backup') {
                 afiseazaIstoricBackup();
             }
         }
 
         // Funcții pentru Autentificare și Roluri
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then(result => {
+                    const user = result.user;
+                    // Verifică dacă utilizatorul există în Firestore
+                    db.collection('utilizatori').doc(user.uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                utilizatorCurent = doc.data();
+                                localStorage.setItem('adinstalgaz_current_user', JSON.stringify(utilizatorCurent));
+                                initializeApp();
+                            } else {
+                                // Creează utilizator nou
+                                const newUser = {
+                                    id: user.uid,
+                                    nume: user.displayName,
+                                    email: user.email,
+                                    rol: 'lucrator',
+                                    telefon: '',
+                                    dataCreare: new Date().toISOString()
+                                };
+                                db.collection('utilizatori').doc(user.uid).set(newUser);
+                                utilizatorCurent = newUser;
+                                localStorage.setItem('adinstalgaz_current_user', JSON.stringify(newUser));
+                                initializeApp();
+                            }
+                        });
+                })
+                .catch(error => {
+                    arataNotificare('Eroare la autentificare: ' + error.message, 'error');
+                });
+        }
+        
+        function initializeApp() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            actualizareInterfataUtilizator();
+            actualizeazaDashboard();
+            incarcaDateDinFirebase();
+            arataNotificare(`Bine ai venit, ${utilizatorCurent.nume}!`, 'success');
+        }
+        
+        function incarcaDateDinFirebase() {
+            // Sincronizare clienți
+            db.collection('clienti').onSnapshot(snapshot => {
+                clienti = [];
+                snapshot.forEach(doc => {
+                    clienti.push({ id: doc.id, ...doc.data() });
+                });
+                salveazaInLocalStorage();
+                if (document.getElementById('clienti').classList.contains('active')) {
+                    afiseazaClienti();
+                }
+            });
+            
+            // Sincronizare servicii
+            db.collection('servicii').onSnapshot(snapshot => {
+                servicii = [];
+                snapshot.forEach(doc => {
+                    servicii.push({ id: doc.id, ...doc.data() });
+                });
+                salveazaInLocalStorage();
+                if (document.getElementById('servicii').classList.contains('active')) {
+                    afiseazaServicii();
+                }
+            });
+            
+            // Sincronizare lucrări
+            db.collection('lucrari').onSnapshot(snapshot => {
+                lucrari = [];
+                snapshot.forEach(doc => {
+                    lucrari.push({ id: doc.id, ...doc.data() });
+                });
+                salveazaInLocalStorage();
+                if (document.getElementById('lucrari').classList.contains('active')) {
+                    afiseazaLucrari();
+                }
+            });
+        }
+        
+        function salveazaInFirebase(colectie, document) {
+            const docCopy = { ...document };
+            delete docCopy.id;
+            
+            if (document.id) {
+                db.collection(colectie).doc(document.id.toString()).set(docCopy);
+            } else {
+                db.collection(colectie).add(docCopy);
+            }
+        }
+        
         function login(event) {
             event.preventDefault();
             
@@ -2062,16 +2267,20 @@
         
         function logout() {
             if (confirm('Sigur doriți să ieșiți din aplicație?')) {
-                utilizatorCurent = null;
-                localStorage.removeItem('adinstalgaz_current_user');
-                
-                // Arată login și ascunde aplicația
-                document.getElementById('loginSection').style.display = 'flex';
-                document.getElementById('mainApp').style.display = 'none';
-                
-                // Resetează formularul de login
-                document.getElementById('loginEmail').value = '';
-                document.getElementById('loginPassword').value = '';
+                auth.signOut().then(() => {
+                    utilizatorCurent = null;
+                    localStorage.removeItem('adinstalgaz_current_user');
+                    
+                    // Arată login și ascunde aplicația
+                    document.getElementById('loginSection').style.display = 'flex';
+                    document.getElementById('mainApp').style.display = 'none';
+                    
+                    // Resetează formularul de login
+                    document.getElementById('loginEmail').value = '';
+                    document.getElementById('loginPassword').value = '';
+                }).catch(error => {
+                    arataNotificare('Eroare la delogare: ' + error.message, 'error');
+                });
             }
         }
         
@@ -2356,6 +2565,116 @@
             deschideGestionareUtilizatori();
         }
 
+        // Funcții pentru Documente
+        function uploadDocument() {
+            const clientId = document.getElementById('clientDocument').value;
+            const tipDocument = document.getElementById('tipDocument').value;
+            const fileInput = document.getElementById('fisierDocument');
+            const file = fileInput.files[0];
+            const descriere = document.getElementById('descriereDocument').value;
+            
+            if (!clientId || !tipDocument || !file) {
+                arataNotificare('Completați toate câmpurile obligatorii!', 'error');
+                return;
+            }
+            
+            // Upload în Firebase Storage
+            const timestamp = Date.now();
+            const fileName = `${clientId}/${tipDocument}_${timestamp}_${file.name}`;
+            const storageRef = storage.ref(fileName);
+            
+            arataNotificare('Se încarcă documentul...', 'info');
+            
+            storageRef.put(file).then(snapshot => {
+                return snapshot.ref.getDownloadURL();
+            }).then(downloadURL => {
+                // Salvează referința în Firestore
+                const documentData = {
+                    clientId: parseInt(clientId),
+                    tip: tipDocument,
+                    nume: file.name,
+                    url: downloadURL,
+                    descriere: descriere,
+                    uploadatDe: utilizatorCurent.id,
+                    dataUpload: new Date().toISOString()
+                };
+                
+                return db.collection('documente').add(documentData);
+            }).then(() => {
+                arataNotificare('Document încărcat cu succes!', 'success');
+                document.getElementById('fisierDocument').value = '';
+                document.getElementById('descriereDocument').value = '';
+                afiseazaDocumente();
+            }).catch(error => {
+                arataNotificare('Eroare la încărcare: ' + error.message, 'error');
+            });
+        }
+        
+        function afiseazaDocumente() {
+            const lista = document.getElementById('listaDocumente');
+            const searchTerm = document.getElementById('cautaDocument')?.value.toLowerCase() || '';
+            
+            db.collection('documente').orderBy('dataUpload', 'desc').get()
+                .then(snapshot => {
+                    let html = '';
+                    if (snapshot.empty) {
+                        html = '<div class="empty-state"><p>Nu există documente încărcate</p></div>';
+                    } else {
+                        snapshot.forEach(doc => {
+                            const data = doc.data();
+                            const client = clienti.find(c => c.id === data.clientId);
+                            
+                            if (searchTerm && !data.nume.toLowerCase().includes(searchTerm) && 
+                                !data.descriere.toLowerCase().includes(searchTerm) &&
+                                (!client || !client.nume.toLowerCase().includes(searchTerm))) {
+                                return;
+                            }
+                            
+                            html += `
+                                <div class="monitoring-item">
+                                    <div>
+                                        <strong>${client ? client.nume : 'Client necunoscut'}</strong><br>
+                                        <small>${data.tip} - ${data.nume}</small><br>
+                                        <small>${data.descriere || 'Fără descriere'}</small><br>
+                                        <small>Încărcat: ${new Date(data.dataUpload).toLocaleString('ro-RO')}</small>
+                                    </div>
+                                    <div class="btn-group">
+                                        <a href="${data.url}" target="_blank" class="btn btn-primary btn-sm">
+                                            <span>👁️</span> Vezi
+                                        </a>
+                                        ${verificaPermisiuni('sterge') ? `
+                                            <button class="btn btn-danger btn-sm" onclick="stergeDocument('${doc.id}', '${data.nume}')">
+                                                <span>🗑️</span> Șterge
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    lista.innerHTML = html;
+                });
+        }
+        
+        function stergeDocument(docId, fileName) {
+            if (!confirm(`Sigur doriți să ștergeți documentul "${fileName}"?`)) {
+                return;
+            }
+            
+            db.collection('documente').doc(docId).delete()
+                .then(() => {
+                    arataNotificare('Document șters cu succes!', 'success');
+                    afiseazaDocumente();
+                })
+                .catch(error => {
+                    arataNotificare('Eroare la ștergere: ' + error.message, 'error');
+                });
+        }
+        
+        function filtreazaDocumente() {
+            afiseazaDocumente();
+        }
+
         // Funcții pentru Dashboard
         function actualizeazaDashboard() {
             // Calculează statistici
@@ -2569,7 +2888,8 @@
                 dataCreare: new Date().toISOString()
             };
             
-            clienti.push(client);
+            // Salvează în Firebase
+            salveazaInFirebase('clienti', client);
             
             // Adaugă serviciu dacă a fost selectat
             const tipServiciu = document.getElementById('tipServiciuClient').value;
@@ -2584,15 +2904,13 @@
                     observatii: '',
                     dataCreare: new Date().toISOString()
                 };
-                servicii.push(serviciu);
+                salveazaInFirebase('servicii', serviciu);
                 arataNotificare('Client și serviciu adăugate cu succes!', 'success');
             } else {
                 arataNotificare('Client adăugat cu succes!', 'success');
             }
             
-            salveazaInLocalStorage();
             resetFormClient();
-            afiseazaClienti();
         }
 
         function afiseazaClienti() {
@@ -2784,11 +3102,10 @@
                 dataCreare: new Date().toISOString()
             };
             
-            servicii.push(serviciu);
-            salveazaInLocalStorage();
+            // Salvează în Firebase
+            salveazaInFirebase('servicii', serviciu);
             arataNotificare('Serviciu adăugat cu succes!', 'success');
             resetFormServiciu();
-            afiseazaServicii();
         }
 
         function afiseazaServicii() {
@@ -3064,6 +3381,49 @@
                 lucratorId: document.getElementById('lucratorLucrare').value ? parseInt(document.getElementById('lucratorLucrare').value) : null,
                 status: document.getElementById('statusLucrare').value,
                 observatii: document.getElementById('observatiiLucrare').value,
+                dataCreare: new Date().toISOString(),
+                creatDe: utilizatorCurent.id // Cine a creat lucrarea
+            };
+            
+            if (lucrare.status === 'finalizata') {
+                lucrare.dataFinalizare = new Date().toISOString();
+                // Creează automat serviciu când se finalizează
+                creeazaServiciuDinLucrare(lucrare);
+            }
+            
+            // Salvează în Firebase
+            salveazaInFirebase('lucrari', lucrare);
+            arataNotificare('Lucrare adăugată cu succes!', 'success');
+            resetFormLucrare();
+        }
+        
+        function creeazaServiciuDinLucrare(lucrare) {
+            const serviciu = {
+                id: Date.now() + 1,
+                clientId: lucrare.clientId,
+                tip: lucrare.serviciu,
+                dataInceput: new Date().toISOString().split('T')[0],
+                dataExpirare: new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString().split('T')[0],
+                pret: lucrare.pret,
+                observatii: `Creat automat din lucrarea #${lucrare.id}`,
+                dataCreare: new Date().toISOString()
+            };
+            
+            servicii.push(serviciu);
+            salveazaInFirebase('servicii', serviciu);
+            arataNotificare('Serviciu creat automat pentru 2 ani!', 'info');
+        }
+            event.preventDefault();
+            
+            const lucrare = {
+                id: Date.now(),
+                clientId: parseInt(document.getElementById('clientLucrare').value),
+                serviciu: document.getElementById('serviciuLucrare').value,
+                dataProgramare: document.getElementById('dataProgramareLucrare').value,
+                pret: document.getElementById('pretLucrare').value,
+                lucratorId: document.getElementById('lucratorLucrare').value ? parseInt(document.getElementById('lucratorLucrare').value) : null,
+                status: document.getElementById('statusLucrare').value,
+                observatii: document.getElementById('observatiiLucrare').value,
                 dataCreare: new Date().toISOString()
             };
             
@@ -3138,18 +3498,27 @@
                 return;
             }
             
+            // Șterge din Firebase
+            const batch = db.batch();
+            
             // Șterge clientul
-            clienti = clienti.filter(c => c.id !== id);
+            batch.delete(db.collection('clienti').doc(id.toString()));
             
             // Șterge serviciile asociate
-            servicii = servicii.filter(s => s.clientId !== id);
+            servicii.filter(s => s.clientId === id).forEach(s => {
+                batch.delete(db.collection('servicii').doc(s.id.toString()));
+            });
             
             // Șterge lucrările asociate
-            lucrari = lucrari.filter(l => l.clientId !== id);
+            lucrari.filter(l => l.clientId === id).forEach(l => {
+                batch.delete(db.collection('lucrari').doc(l.id.toString()));
+            });
             
-            salveazaInLocalStorage();
-            arataNotificare('Client șters cu succes!', 'success');
-            afiseazaClienti();
+            batch.commit().then(() => {
+                arataNotificare('Client șters cu succes!', 'success');
+            }).catch(error => {
+                arataNotificare('Eroare la ștergere: ' + error.message, 'error');
+            });
         }
 
         function stergeServiciu(id) {
@@ -3162,10 +3531,13 @@
                 return;
             }
             
-            servicii = servicii.filter(s => s.id !== id);
-            salveazaInLocalStorage();
-            arataNotificare('Serviciu șters cu succes!', 'success');
-            afiseazaServicii();
+            db.collection('servicii').doc(id.toString()).delete()
+                .then(() => {
+                    arataNotificare('Serviciu șters cu succes!', 'success');
+                })
+                .catch(error => {
+                    arataNotificare('Eroare la ștergere: ' + error.message, 'error');
+                });
         }
 
         function stergeLucrare(id) {
@@ -3178,10 +3550,13 @@
                 return;
             }
             
-            lucrari = lucrari.filter(l => l.id !== id);
-            salveazaInLocalStorage();
-            arataNotificare('Lucrare ștersă cu succes!', 'success');
-            afiseazaLucrari();
+            db.collection('lucrari').doc(id.toString()).delete()
+                .then(() => {
+                    arataNotificare('Lucrare ștersă cu succes!', 'success');
+                })
+                .catch(error => {
+                    arataNotificare('Eroare la ștergere: ' + error.message, 'error');
+                });
         }
 
         function getLucratorNume(lucratorId) {
@@ -3453,30 +3828,18 @@
                 setari: setari
             };
             
-            // Salvează în localStorage
-            localStorage.setItem(getStorageKey('lastBackup'), JSON.stringify(backup));
-            
-            // Adaugă la istoric
-            const istoric = JSON.parse(localStorage.getItem(getStorageKey('backupHistory')) || '[]');
-            istoric.unshift({
-                data: new Date().toISOString(),
-                tip: 'Manual',
-                dimensiune: JSON.stringify(backup).length,
-                numarClienti: clienti.length,
-                numarServicii: servicii.length,
-                numarLucrari: lucrari.length
+            // Salvează în Firebase
+            db.collection('backups').add({
+                ...backup,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                creatDe: utilizatorCurent.id
+            }).then(() => {
+                arataNotificare('Backup realizat cu succes în Firebase!', 'success');
+                afiseazaIstoricBackup();
+                verificaStatusBackup();
+            }).catch(error => {
+                arataNotificare('Eroare la backup: ' + error.message, 'error');
             });
-            
-            // Păstrează doar ultimele 10 backup-uri în istoric
-            if (istoric.length > 10) {
-                istoric.pop();
-            }
-            
-            localStorage.setItem(getStorageKey('backupHistory'), JSON.stringify(istoric));
-            
-            arataNotificare('Backup realizat cu succes!', 'success');
-            afiseazaIstoricBackup();
-            verificaStatusBackup();
         }
 
         function descarcaBackup() {
@@ -4239,36 +4602,46 @@
 
         // Inițializare aplicație
         document.addEventListener('DOMContentLoaded', function() {
-            // Încarcă datele din localStorage
-            incarcaDinLocalStorage();
-            
-            // Verifică autentificarea
-            if (verificaAutentificare()) {
-                // Utilizator autentificat - actualizează interfața
-                actualizeazaDashboard();
-                incarcaSetariInFormular();
-                
-                // Setează salvarea automată
-                if (setari.salvareAutomata) {
-                    setInterval(() => {
-                        salveazaInLocalStorage();
-                    }, setari.intervalSalvare * 60 * 1000);
-                }
-                
-                // Verifică backup automat (simulare - în realitate ar trebui un serviciu backend)
-                if (setari.backupAutomat) {
-                    // Verifică la fiecare oră dacă e timpul pentru backup
-                    setInterval(() => {
-                        const now = new Date();
-                        const [ora, minut] = setari.oraBackup.split(':');
-                        if (now.getHours() === parseInt(ora) && now.getMinutes() === parseInt(minut)) {
-                            backupManual();
-                        }
-                    }, 60000); // Verifică la fiecare minut
-                }
+            // Înregistrare Service Worker pentru PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => console.log('Service Worker înregistrat'))
+                    .catch(error => console.log('Service Worker eroare:', error));
             }
             
-            console.log('Aplicație inițializată cu succes!');
+            // PWA Install prompt
+            let deferredPrompt;
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                // Arată buton de instalare după 5 secunde
+                setTimeout(() => {
+                    if (deferredPrompt) {
+                        arataNotificare('💡 Instalați aplicația pentru acces rapid!', 'info');
+                    }
+                }, 5000);
+            });
+            
+            // Verifică starea autentificării Firebase
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // Utilizator autentificat cu Firebase
+                    db.collection('utilizatori').doc(user.uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                utilizatorCurent = { id: user.uid, ...doc.data() };
+                                initializeApp();
+                            }
+                        });
+                } else {
+                    // Încearcă autentificare locală
+                    incarcaDinLocalStorage();
+                    if (!verificaAutentificare()) {
+                        document.getElementById('loginSection').style.display = 'flex';
+                        document.getElementById('mainApp').style.display = 'none';
+                    }
+                }
+            });
         });
     </script>
 </body>
