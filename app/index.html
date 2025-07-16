@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdInstalGaz - Sistem Profesional</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -115,6 +117,10 @@
 
         .btn-danger {
             background: #dc3545;
+        }
+
+        .btn-info {
+            background: #17a2b8;
         }
 
         .btn-small {
@@ -301,7 +307,7 @@
             padding: 30px;
             border-radius: 15px;
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -357,51 +363,114 @@
             color: #0c5460;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            .nav-tabs ul {
-                justify-content: center;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Loading Spinner */
-        .loading {
-            display: none;
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 30px;
             text-align: center;
+            margin: 20px 0;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+
+        .uploaded-files {
+            margin-top: 20px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .file-item img {
+            max-width: 50px;
+            max-height: 50px;
+            border-radius: 5px;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .service-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
             padding: 20px;
+            background: white;
+            transition: border-color 0.3s;
         }
 
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+        .service-card:hover {
+            border-color: #667eea;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .service-card h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .service-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        /* Assignment Cards */
+        .assignment-card {
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: white;
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .assignment-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+
+        .status-programata {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-in-progress {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-finalizata {
+            background: #d4edda;
+            color: #155724;
         }
 
         /* Status Badges */
@@ -454,70 +523,74 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Backup Controls */
-        .backup-section {
-            border: 2px solid #e1e5e9;
-            border-radius: 10px;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .nav-tabs ul {
+                justify-content: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            text-align: center;
             padding: 20px;
-            margin-bottom: 20px;
         }
 
-        .backup-section h3 {
-            margin-bottom: 15px;
-            color: #333;
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
         }
 
-        .backup-controls {
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Custom Checkbox */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: auto;
+        }
+
+        /* Export Buttons */
+        .export-buttons {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-        }
-
-        .backup-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        /* Work Assignment */
-        .assignment-card {
-            border: 1px solid #e1e5e9;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            background: white;
-        }
-
-        .assignment-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .assignment-status {
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-weight: 600;
-        }
-
-        .status-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-in-progress {
-            background: #d1ecf1;
-            color: #0c5460;
-        }
-
-        .status-completed {
-            background: #d4edda;
-            color: #155724;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -591,6 +664,9 @@
                 <li onclick="showSection('lucrari')" id="navLucrari">
                     <i class="fas fa-tasks"></i> Lucrări
                 </li>
+                <li onclick="showSection('servicii')" id="navServicii">
+                    <i class="fas fa-cogs"></i> Servicii
+                </li>
                 <li onclick="showSection('rapoarte')" id="navRapoarte">
                     <i class="fas fa-chart-bar"></i> Rapoarte
                 </li>
@@ -630,8 +706,8 @@
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="content-section active">
-                    <h3><i class="fas fa-exclamation-triangle"></i> Contracte Expirate Recent</h3>
-                    <div id="contracteExpirate"></div>
+                    <h3><i class="fas fa-exclamation-triangle"></i> Servicii în Expirare</h3>
+                    <div id="serviciiExpirare"></div>
                 </div>
                 <div class="content-section active">
                     <h3><i class="fas fa-clock"></i> Lucrări Urgente</h3>
@@ -659,10 +735,11 @@
                     <thead>
                         <tr>
                             <th>Nume</th>
-                            <th>CNP</th>
                             <th>Telefon</th>
                             <th>Adresă</th>
-                            <th>Contract</th>
+                            <th>Serviciu</th>
+                            <th>Data Start</th>
+                            <th>Data Expirare</th>
                             <th>Status</th>
                             <th>Acțiuni</th>
                         </tr>
@@ -690,6 +767,58 @@
 
             <div id="lucrariContent">
                 <!-- Lucrările vor fi afișate aici -->
+            </div>
+        </div>
+
+        <!-- Servicii Section -->
+        <div id="serviciiSection" class="content-section">
+            <h2><i class="fas fa-cogs"></i> Servicii Disponibile</h2>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <h4><i class="fas fa-check-circle"></i> Verificare Instalație Gaz</h4>
+                    <div class="service-price">150 €</div>
+                    <p>Verificare completă a instalației de gaz pentru siguranță și conformitate.</p>
+                    <button class="btn btn-small btn-success" onclick="addServiceToClient('Verificare Instalație Gaz', 150)">
+                        <i class="fas fa-plus"></i> Adaugă la Client
+                    </button>
+                </div>
+
+                <div class="service-card">
+                    <h4><i class="fas fa-tools"></i> Revizie Instalație Gaz</h4>
+                    <div class="service-price">250 €</div>
+                    <p>Revizie detaliată și mentenanță preventivă a instalației de gaz.</p>
+                    <button class="btn btn-small btn-success" onclick="addServiceToClient('Revizie Instalație Gaz', 250)">
+                        <i class="fas fa-plus"></i> Adaugă la Client
+                    </button>
+                </div>
+
+                <div class="service-card">
+                    <h4><i class="fas fa-thermometer-half"></i> Verificare Centrală</h4>
+                    <div class="service-price">150 €</div>
+                    <p>Verificare și testare funcționalitate centrală termică pe gaz.</p>
+                    <button class="btn btn-small btn-success" onclick="addServiceToClient('Verificare Centrală', 150)">
+                        <i class="fas fa-plus"></i> Adaugă la Client
+                    </button>
+                </div>
+
+                <div class="service-card" style="border: 2px solid #ff6b35;">
+                    <h4><i class="fas fa-fire"></i> 🔥 OFERTĂ: Instalații Gaz + Centrală</h4>
+                    <div class="service-price" style="color: #ff6b35;">250 €</div>
+                    <p>Pachet complet: instalare și configurare sistem gaz cu centrală.</p>
+                    <button class="btn btn-small" style="background: #ff6b35;" onclick="addServiceToClient('Instalații Gaz + Centrală', 250)">
+                        <i class="fas fa-star"></i> Adaugă Oferta
+                    </button>
+                </div>
+
+                <div class="service-card" style="border: 2px solid #dc3545;">
+                    <h4><i class="fas fa-exclamation-triangle"></i> Servicii de Urgență</h4>
+                    <div class="service-price" style="color: #dc3545;">La cerere</div>
+                    <p>Intervenții de urgență 24/7 pentru probleme critice de gaz.</p>
+                    <button class="btn btn-small btn-danger" onclick="addServiceToClient('Servicii de Urgență', 0)">
+                        <i class="fas fa-phone"></i> Solicită Urgență
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -731,9 +860,20 @@
                 </div>
             </div>
 
-            <button class="btn btn-success" onclick="genereazaRaport()">
-                <i class="fas fa-chart-line"></i> Generează Raport
-            </button>
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-success" onclick="genereazaRaport()">
+                    <i class="fas fa-chart-line"></i> Generează Raport
+                </button>
+            </div>
+
+            <div class="export-buttons" id="exportButtons" style="display: none;">
+                <button class="btn btn-small btn-info" onclick="exportRaportExcel()">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </button>
+                <button class="btn btn-small btn-danger" onclick="exportRaportPDF()">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </button>
+            </div>
 
             <div id="raportContent" style="margin-top: 30px;"></div>
         </div>
@@ -742,9 +882,9 @@
         <div id="backupSection" class="content-section">
             <h2><i class="fas fa-cloud"></i> Backup și Sincronizare</h2>
             
-            <div class="backup-section">
+            <div style="border: 2px solid #e1e5e9; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
                 <h3><i class="fas fa-cloud-upload-alt"></i> Backup Automat</h3>
-                <div class="backup-controls">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
                     <button class="btn btn-small btn-success" onclick="backupAutomat()">
                         <i class="fas fa-play"></i> Activează Backup Automat
                     </button>
@@ -755,16 +895,16 @@
                         <i class="fas fa-cloud-download-alt"></i> Restaurează Backup
                     </button>
                 </div>
-                <div class="backup-info">
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 14px; color: #666;">
                     <strong>Status:</strong> <span id="backupStatus">Inactiv</span><br>
                     <strong>Ultimul backup:</strong> <span id="ultimulBackup">Niciodată</span><br>
                     <strong>Mărime bază de date:</strong> <span id="marimeBaza">Calculează...</span>
                 </div>
             </div>
 
-            <div class="backup-section">
+            <div style="border: 2px solid #e1e5e9; border-radius: 10px; padding: 20px; margin-bottom: 20px;">
                 <h3><i class="fas fa-sync"></i> Sincronizare Permanentă</h3>
-                <div class="backup-controls">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
                     <button class="btn btn-small btn-success" onclick="activateSyncPermanent()">
                         <i class="fas fa-sync"></i> Activează Sincronizare
                     </button>
@@ -772,7 +912,7 @@
                         <i class="fas fa-stop"></i> Dezactivează
                     </button>
                 </div>
-                <div class="backup-info">
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 14px; color: #666;">
                     <strong>Status Sincronizare:</strong> <span id="syncStatus">Oprit</span><br>
                     <strong>Ultima sincronizare:</strong> <span id="ultimaSync">-</span><br>
                     <strong>Firebase Status:</strong> <span id="firebaseConnStatus">Conectat</span>
@@ -785,10 +925,6 @@
             <h2><i class="fas fa-cog"></i> Setări Sistem</h2>
             
             <div class="form-grid">
-                <div class="form-group">
-                    <label>Preț serviciu lunar (€):</label>
-                    <input type="number" id="pretServiciu" value="15" step="0.01">
-                </div>
                 <div class="form-group">
                     <label>Notificări email:</label>
                     <select id="notificariEmail">
@@ -811,6 +947,10 @@
                         <option value="en">English</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Durata servicii (ani):</label>
+                    <input type="number" id="durataServicii" value="2" min="1" max="5">
+                </div>
             </div>
 
             <button class="btn btn-success" onclick="salveazaSetari()">
@@ -830,15 +970,11 @@
             <form id="clientForm">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Nume Complet:</label>
+                        <label>Nume Complet: *</label>
                         <input type="text" id="numeClient" required>
                     </div>
                     <div class="form-group">
-                        <label>CNP:</label>
-                        <input type="text" id="cnpClient" pattern="[0-9]{13}" maxlength="13" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Telefon:</label>
+                        <label>Telefon: *</label>
                         <input type="tel" id="telefonClient" required>
                     </div>
                     <div class="form-group">
@@ -846,63 +982,33 @@
                         <input type="email" id="emailClient">
                     </div>
                     <div class="form-group">
-                        <label>Județ:</label>
+                        <label>Județ: *</label>
                         <select id="judetClient" required>
-                            <option value="">Selectează județul</option>
-                            <option value="Alba">Alba</option>
-                            <option value="Arad">Arad</option>
-                            <option value="Argeș">Argeș</option>
-                            <option value="Bacău">Bacău</option>
-                            <option value="Bihor">Bihor</option>
-                            <option value="Bistrița-Năsăud">Bistrița-Năsăud</option>
-                            <option value="Botoșani">Botoșani</option>
-                            <option value="Brașov">Brașov</option>
-                            <option value="Brăila">Brăila</option>
-                            <option value="București">București</option>
-                            <option value="Buzău">Buzău</option>
-                            <option value="Caraș-Severin">Caraș-Severin</option>
-                            <option value="Călărași">Călărași</option>
-                            <option value="Cluj">Cluj</option>
-                            <option value="Constanța">Constanța</option>
-                            <option value="Covasna">Covasna</option>
-                            <option value="Dâmbovița">Dâmbovița</option>
-                            <option value="Dolj">Dolj</option>
-                            <option value="Galați">Galați</option>
-                            <option value="Giurgiu">Giurgiu</option>
-                            <option value="Gorj">Gorj</option>
-                            <option value="Harghita">Harghita</option>
-                            <option value="Hunedoara">Hunedoara</option>
-                            <option value="Ialomița">Ialomița</option>
-                            <option value="Iași">Iași</option>
-                            <option value="Ilfov">Ilfov</option>
-                            <option value="Maramureș">Maramureș</option>
-                            <option value="Mehedinți">Mehedinți</option>
-                            <option value="Mureș">Mureș</option>
-                            <option value="Neamț">Neamț</option>
-                            <option value="Olt">Olt</option>
-                            <option value="Prahova">Prahova</option>
-                            <option value="Satu Mare">Satu Mare</option>
-                            <option value="Sălaj">Sălaj</option>
-                            <option value="Sibiu">Sibiu</option>
-                            <option value="Suceava">Suceava</option>
                             <option value="Teleorman">Teleorman</option>
-                            <option value="Timiș">Timiș</option>
-                            <option value="Tulcea">Tulcea</option>
-                            <option value="Vaslui">Vaslui</option>
-                            <option value="Vâlcea">Vâlcea</option>
-                            <option value="Vrancea">Vrancea</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Oraș:</label>
-                        <input type="text" id="orasClient" required>
+                        <label>Oraș: *</label>
+                        <select id="orasClient" required>
+                            <option value="">Selectează orașul</option>
+                            <option value="Alexandria">Alexandria</option>
+                            <option value="Rosiori de Vede">Rosiori de Vede</option>
+                            <option value="Turnu Magurele">Turnu Magurele</option>
+                            <option value="Videle">Videle</option>
+                            <option value="Zimnicea">Zimnicea</option>
+                            <option value="alta">Altă localitate</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="orasPersonalizatGroup" style="display: none;">
+                        <label>Specificați localitatea:</label>
+                        <input type="text" id="orasPersonalizat" placeholder="Introduceți numele localității">
                     </div>
                     <div class="form-group">
-                        <label>Strada:</label>
+                        <label>Strada: *</label>
                         <input type="text" id="stradaClient" required>
                     </div>
                     <div class="form-group">
-                        <label>Numărul:</label>
+                        <label>Numărul: *</label>
                         <input type="text" id="numarClient" required>
                     </div>
                     <div class="form-group">
@@ -922,9 +1028,30 @@
                         <input type="text" id="apartamentClient">
                     </div>
                     <div class="form-group">
-                        <label>Data începerii contractului:</label>
-                        <input type="date" id="dataContract" required>
+                        <label>Tip Serviciu: *</label>
+                        <select id="tipServiciu" required>
+                            <option value="">Selectează serviciul</option>
+                            <option value="Verificare Instalație Gaz">Verificare Instalație Gaz - 150€</option>
+                            <option value="Revizie Instalație Gaz">Revizie Instalație Gaz - 250€</option>
+                            <option value="Verificare Centrală">Verificare Centrală - 150€</option>
+                            <option value="Instalații Gaz + Centrală">🔥 OFERTĂ: Instalații Gaz + Centrală - 250€</option>
+                            <option value="Servicii de Urgență">Servicii de Urgență - La cerere</option>
+                        </select>
                     </div>
+                    <div class="form-group">
+                        <label>Data începerii serviciului: *</label>
+                        <input type="date" id="dataStartServiciu" required>
+                    </div>
+                </div>
+
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="includeCNP">
+                    <label for="includeCNP">Adaugă CNP (opțional)</label>
+                </div>
+
+                <div class="form-group" id="cnpGroup" style="display: none; margin-top: 20px;">
+                    <label>CNP:</label>
+                    <input type="text" id="cnpClient" pattern="[0-9]{13}" maxlength="13">
                 </div>
                 
                 <div style="margin-top: 20px; text-align: right;">
@@ -948,24 +1075,26 @@
             <form id="lucrareForm">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Client:</label>
+                        <label>Client: *</label>
                         <select id="clientLucrare" required>
                             <option value="">Selectează clientul</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Tip Lucrare:</label>
+                        <label>Tip Lucrare: *</label>
                         <select id="tipLucrare" required>
                             <option value="">Selectează tipul</option>
-                            <option value="Instalare">Instalare Inițială</option>
+                            <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
+                            <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
+                            <option value="Verificare Centrală">Verificare Centrală</option>
+                            <option value="Instalații Gaz + Centrală">Instalații Gaz + Centrală</option>
+                            <option value="Servicii de Urgență">Servicii de Urgență</option>
                             <option value="Mentenanță">Mentenanță</option>
                             <option value="Reparații">Reparații</option>
-                            <option value="Verificare">Verificare Anuală</option>
-                            <option value="Dezinstalare">Dezinstalare</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Lucrator Asignat:</label>
+                        <label>Asignează Lucrator: *</label>
                         <select id="lucratorAsignat" required>
                             <option value="">Selectează lucrătorul</option>
                             <option value="Ion Popescu">Ion Popescu</option>
@@ -975,15 +1104,15 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Data Programată:</label>
+                        <label>Data Programată: *</label>
                         <input type="date" id="dataProgramata" required>
                     </div>
                     <div class="form-group">
-                        <label>Ora Programată:</label>
+                        <label>Ora Programată: *</label>
                         <input type="time" id="oraProgramata" required>
                     </div>
                     <div class="form-group">
-                        <label>Prioritate:</label>
+                        <label>Prioritate: *</label>
                         <select id="prioritateLucrare" required>
                             <option value="Normală">Normală</option>
                             <option value="Urgentă">Urgentă</option>
@@ -993,8 +1122,25 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Descriere Lucrare:</label>
+                    <label>Descriere Lucrare: *</label>
                     <textarea id="descriereLucrare" rows="4" required></textarea>
+                </div>
+
+                <!-- File Upload Section -->
+                <div class="form-group">
+                    <label>Documente Atașate:</label>
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+                        <p>Drag & Drop fișiere aici sau</p>
+                        <input type="file" id="fileInput" multiple accept="image/*,.pdf,.doc,.docx" style="display: none;">
+                        <button type="button" class="btn btn-small btn-info" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-upload"></i> Selectează Fișiere
+                        </button>
+                        <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                            Formate acceptate: JPG, PNG, PDF, DOC, DOCX
+                        </p>
+                    </div>
+                    <div id="uploadedFiles" class="uploaded-files"></div>
                 </div>
                 
                 <div style="margin-top: 20px; text-align: right;">
@@ -1012,6 +1158,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -1027,11 +1174,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        const storage = getStorage(app);
         
         // Make Firebase available globally
         window.firebaseApp = app;
         window.firebaseDb = db;
         window.firebaseAuth = auth;
+        window.firebaseStorage = storage;
         
         // Firebase functions
         window.firebaseFunctions = {
@@ -1043,7 +1192,10 @@
             collection,
             onSnapshot,
             signInWithEmailAndPassword,
-            onAuthStateChanged
+            onAuthStateChanged,
+            ref,
+            uploadBytes,
+            getDownloadURL
         };
 
         console.log("Firebase initialized successfully");
@@ -1057,6 +1209,16 @@
         let userRole = '';
         let syncActive = false;
         let backupTimer = null;
+        let currentRaportData = null;
+
+        // Services pricing
+        const servicePrices = {
+            'Verificare Instalație Gaz': 150,
+            'Revizie Instalație Gaz': 250,
+            'Verificare Centrală': 150,
+            'Instalații Gaz + Centrală': 250,
+            'Servicii de Urgență': 0
+        };
 
         // Firebase Status Management
         function updateFirebaseStatus(status) {
@@ -1168,58 +1330,76 @@
             document.getElementById(modalId).classList.add('active');
             if (modalId === 'lucrareModal') {
                 populateClientSelect();
+                setupFileUpload();
             }
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
             document.getElementById(modalId.replace('Modal', 'Form')).reset();
+            
+            // Reset custom fields
+            if (modalId === 'clientModal') {
+                document.getElementById('cnpGroup').style.display = 'none';
+                document.getElementById('orasPersonalizatGroup').style.display = 'none';
+                document.getElementById('includeCNP').checked = false;
+            }
         }
 
         // Dashboard Functions
         function loadDashboardData() {
             updateStats();
-            loadRecentExpired();
+            loadServiciiExpirare();
             loadUrgentTasks();
         }
 
         function updateStats() {
             const totalClienti = clientiData.length;
+            const now = new Date();
+            
             const contracteActive = clientiData.filter(client => {
-                const expireDate = new Date(client.dataContract);
-                expireDate.setFullYear(expireDate.getFullYear() + 1);
-                return expireDate > new Date();
+                const expireDate = new Date(client.dataExpirare);
+                return expireDate > now;
             }).length;
             
             const lucrariPendinte = lucrariData.filter(lucrare => 
                 lucrare.status === 'Programată' || lucrare.status === 'În progres'
             ).length;
             
-            const venitLunar = contracteActive * 15; // 15€ per contract
+            // Calculate monthly revenue based on active contracts
+            const venitLunar = clientiData.reduce((total, client) => {
+                const expireDate = new Date(client.dataExpirare);
+                if (expireDate > now) {
+                    const pret = servicePrices[client.tipServiciu] || 0;
+                    return total + (pret / 24); // Spread over 24 months
+                }
+                return total;
+            }, 0);
 
             document.getElementById('totalClienti').textContent = totalClienti;
             document.getElementById('contracteActive').textContent = contracteActive;
             document.getElementById('lucrariPendinte').textContent = lucrariPendinte;
-            document.getElementById('venitLunar').textContent = venitLunar;
+            document.getElementById('venitLunar').textContent = Math.round(venitLunar);
         }
 
-        function loadRecentExpired() {
+        function loadServiciiExpirare() {
             const today = new Date();
-            const expiredContracts = clientiData.filter(client => {
-                const expireDate = new Date(client.dataContract);
-                expireDate.setFullYear(expireDate.getFullYear() + 1);
-                const daysUntilExpire = Math.ceil((expireDate - today) / (1000 * 60 * 60 * 24));
-                return daysUntilExpire <= 30 && daysUntilExpire >= 0;
+            const in30Days = new Date(today.getTime() + (30 * 24 * 60 * 60 * 1000));
+            
+            const serviciiExpirare = clientiData.filter(client => {
+                const expireDate = new Date(client.dataExpirare);
+                return expireDate >= today && expireDate <= in30Days;
             });
 
-            const container = document.getElementById('contracteExpirate');
-            if (expiredContracts.length === 0) {
-                container.innerHTML = '<p>Nu există contracte care expiră în următoarele 30 de zile.</p>';
+            const container = document.getElementById('serviciiExpirare');
+            if (serviciiExpirare.length === 0) {
+                container.innerHTML = '<p>Nu există servicii care expiră în următoarele 30 de zile.</p>';
             } else {
-                container.innerHTML = expiredContracts.map(client => `
+                container.innerHTML = serviciiExpirare.map(client => `
                     <div style="padding: 10px; border-left: 4px solid #ffc107; margin-bottom: 10px; background: #fff3cd;">
                         <strong>${client.nume}</strong><br>
-                        Expiră: ${new Date(client.dataContract).toLocaleDateString()}
+                        Serviciu: ${client.tipServiciu}<br>
+                        Expiră: ${new Date(client.dataExpirare).toLocaleDateString()}
                     </div>
                 `).join('');
             }
@@ -1238,7 +1418,8 @@
                     <div style="padding: 10px; border-left: 4px solid #dc3545; margin-bottom: 10px; background: #f8d7da;">
                         <strong>${lucrare.tipLucrare}</strong><br>
                         Client: ${getClientName(lucrare.clientId)}<br>
-                        Prioritate: ${lucrare.prioritate}
+                        Prioritate: ${lucrare.prioritate}<br>
+                        Data: ${lucrare.dataProgramata}
                     </div>
                 `).join('');
             }
@@ -1250,17 +1431,17 @@
             tableBody.innerHTML = '';
             
             clientiData.forEach((client, index) => {
-                const expireDate = new Date(client.dataContract);
-                expireDate.setFullYear(expireDate.getFullYear() + 1);
+                const expireDate = new Date(client.dataExpirare);
                 const isExpired = expireDate < new Date();
                 
                 const row = tableBody.insertRow();
                 row.innerHTML = `
                     <td>${client.nume}</td>
-                    <td>${client.cnp}</td>
                     <td>${client.telefon}</td>
                     <td>${client.adresa}</td>
-                    <td>${client.dataContract}</td>
+                    <td>${client.tipServiciu}</td>
+                    <td>${client.dataStartServiciu}</td>
+                    <td>${client.dataExpirare}</td>
                     <td><span class="status-badge ${isExpired ? 'status-expirat' : 'status-activ'}">${isExpired ? 'Expirat' : 'Activ'}</span></td>
                     <td>
                         <button class="btn btn-small btn-warning" onclick="editClient(${index})">
@@ -1274,27 +1455,53 @@
             });
         }
 
+        // Client Form Event Listeners
+        document.getElementById('includeCNP').addEventListener('change', function() {
+            const cnpGroup = document.getElementById('cnpGroup');
+            cnpGroup.style.display = this.checked ? 'block' : 'none';
+        });
+
+        document.getElementById('orasClient').addEventListener('change', function() {
+            const orasPersonalizatGroup = document.getElementById('orasPersonalizatGroup');
+            orasPersonalizatGroup.style.display = this.value === 'alta' ? 'block' : 'none';
+        });
+
         // Client Form Handler
         document.getElementById('clientForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const orasValue = document.getElementById('orasClient').value === 'alta' 
+                ? document.getElementById('orasPersonalizat').value 
+                : document.getElementById('orasClient').value;
+
+            const dataStart = new Date(document.getElementById('dataStartServiciu').value);
+            const durataServicii = parseInt(localStorage.getItem('durataServicii')) || 2;
+            const dataExpirare = new Date(dataStart);
+            dataExpirare.setFullYear(dataExpirare.getFullYear() + durataServicii);
+            
             const clientData = {
                 nume: document.getElementById('numeClient').value,
-                cnp: document.getElementById('cnpClient').value,
                 telefon: document.getElementById('telefonClient').value,
                 email: document.getElementById('emailClient').value,
                 judet: document.getElementById('judetClient').value,
-                oras: document.getElementById('orasClient').value,
+                oras: orasValue,
                 strada: document.getElementById('stradaClient').value,
                 numar: document.getElementById('numarClient').value,
                 bloc: document.getElementById('blocClient').value,
                 scara: document.getElementById('scaraClient').value,
                 etaj: document.getElementById('etajClient').value,
                 apartament: document.getElementById('apartamentClient').value,
-                dataContract: document.getElementById('dataContract').value,
+                tipServiciu: document.getElementById('tipServiciu').value,
+                dataStartServiciu: document.getElementById('dataStartServiciu').value,
+                dataExpirare: dataExpirare.toISOString().split('T')[0],
                 adresa: buildAddress(),
                 id: Date.now()
             };
+
+            // Add CNP if checkbox is checked
+            if (document.getElementById('includeCNP').checked) {
+                clientData.cnp = document.getElementById('cnpClient').value;
+            }
             
             clientiData.push(clientData);
             saveToLocalStorage();
@@ -1307,6 +1514,10 @@
         });
 
         function buildAddress() {
+            const orasValue = document.getElementById('orasClient').value === 'alta' 
+                ? document.getElementById('orasPersonalizat').value 
+                : document.getElementById('orasClient').value;
+
             const parts = [
                 document.getElementById('stradaClient').value,
                 document.getElementById('numarClient').value,
@@ -1314,7 +1525,7 @@
                 document.getElementById('scaraClient').value && `sc. ${document.getElementById('scaraClient').value}`,
                 document.getElementById('etajClient').value && `et. ${document.getElementById('etajClient').value}`,
                 document.getElementById('apartamentClient').value && `ap. ${document.getElementById('apartamentClient').value}`,
-                document.getElementById('orasClient').value,
+                orasValue,
                 document.getElementById('judetClient').value
             ].filter(Boolean);
             
@@ -1323,12 +1534,26 @@
 
         function editClient(index) {
             const client = clientiData[index];
-            // Populate form with client data
+            
             document.getElementById('numeClient').value = client.nume;
-            document.getElementById('cnpClient').value = client.cnp;
             document.getElementById('telefonClient').value = client.telefon;
             document.getElementById('emailClient').value = client.email || '';
-            document.getElementById('dataContract').value = client.dataContract;
+            document.getElementById('judetClient').value = client.judet;
+            document.getElementById('orasClient').value = client.oras;
+            document.getElementById('stradaClient').value = client.strada;
+            document.getElementById('numarClient').value = client.numar;
+            document.getElementById('blocClient').value = client.bloc || '';
+            document.getElementById('scaraClient').value = client.scara || '';
+            document.getElementById('etajClient').value = client.etaj || '';
+            document.getElementById('apartamentClient').value = client.apartament || '';
+            document.getElementById('tipServiciu').value = client.tipServiciu;
+            document.getElementById('dataStartServiciu').value = client.dataStartServiciu;
+            
+            if (client.cnp) {
+                document.getElementById('includeCNP').checked = true;
+                document.getElementById('cnpGroup').style.display = 'block';
+                document.getElementById('cnpClient').value = client.cnp;
+            }
             
             document.getElementById('clientModalTitle').textContent = 'Editează Client';
             openModal('clientModal');
@@ -1342,6 +1567,13 @@
                 updateStats();
                 showAlert('Client șters cu succes!', 'success');
             }
+        }
+
+        // Service Functions
+        function addServiceToClient(serviceName, price) {
+            // Pre-fill service in client modal
+            document.getElementById('tipServiciu').value = serviceName;
+            openModal('clientModal');
         }
 
         // Work Assignment Functions
@@ -1363,9 +1595,25 @@
                     </div>
                     <p><strong>Client:</strong> ${getClientName(lucrare.clientId)}</p>
                     <p><strong>Data:</strong> ${lucrare.dataProgramata} ${lucrare.oraProgramata}</p>
-                    <p><strong>Lucrător:</strong> ${lucrare.lucratorAsignat}</p>
+                    <p><strong>Lucrător Asignat:</strong> ${lucrare.lucratorAsignat}</p>
                     <p><strong>Prioritate:</strong> ${lucrare.prioritate}</p>
                     <p><strong>Descriere:</strong> ${lucrare.descriere}</p>
+                    ${lucrare.documente && lucrare.documente.length > 0 ? `
+                        <div style="margin-top: 10px;">
+                            <strong>Documente:</strong>
+                            <div style="display: flex; gap: 10px; margin-top: 5px;">
+                                ${lucrare.documente.map(doc => `
+                                    <div class="file-item" style="min-width: 120px;">
+                                        ${doc.type.startsWith('image/') ? 
+                                            `<img src="${doc.url}" alt="${doc.name}" style="max-width: 50px; max-height: 50px;">` : 
+                                            `<i class="fas fa-file" style="font-size: 30px; color: #666;"></i>`
+                                        }
+                                        <small>${doc.name}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
                     <div style="margin-top: 15px;">
                         ${userRole === 'admin' ? `
                             <button class="btn btn-small btn-warning" onclick="editLucrare(${index})">
@@ -1375,9 +1623,14 @@
                                 <i class="fas fa-trash"></i> Șterge
                             </button>
                         ` : ''}
-                        <button class="btn btn-small btn-success" onclick="updateLucrareStatus(${index}, 'Finalizată')">
-                            <i class="fas fa-check"></i> Marchează Finalizată
-                        </button>
+                        ${lucrare.status !== 'Finalizată' ? `
+                            <button class="btn btn-small btn-info" onclick="updateLucrareStatus(${index}, 'În progres')">
+                                <i class="fas fa-play"></i> Începe
+                            </button>
+                            <button class="btn btn-small btn-success" onclick="updateLucrareStatus(${index}, 'Finalizată')">
+                                <i class="fas fa-check"></i> Finalizează
+                            </button>
+                        ` : ''}
                     </div>
                 </div>
             `).join('');
@@ -1400,9 +1653,77 @@
             return client ? client.nume : 'Client necunoscut';
         }
 
+        // File Upload Functions
+        function setupFileUpload() {
+            const fileUploadArea = document.getElementById('fileUploadArea');
+            const fileInput = document.getElementById('fileInput');
+            const uploadedFiles = document.getElementById('uploadedFiles');
+
+            // Drag and drop events
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            function handleFiles(files) {
+                Array.from(files).forEach(file => {
+                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                        showAlert('Fișierul este prea mare! Limita: 5MB', 'warning');
+                        return;
+                    }
+
+                    const fileReader = new FileReader();
+                    fileReader.onload = (e) => {
+                        const fileItem = document.createElement('div');
+                        fileItem.className = 'file-item';
+                        fileItem.innerHTML = `
+                            ${file.type.startsWith('image/') ? 
+                                `<img src="${e.target.result}" alt="${file.name}">` : 
+                                `<i class="fas fa-file" style="font-size: 30px; color: #666;"></i>`
+                            }
+                            <div>
+                                <strong>${file.name}</strong><br>
+                                <small>${(file.size / 1024).toFixed(1)} KB</small>
+                            </div>
+                            <button type="button" class="btn btn-small btn-danger" onclick="this.parentElement.remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                        fileItem.dataset.fileData = e.target.result;
+                        fileItem.dataset.fileName = file.name;
+                        fileItem.dataset.fileType = file.type;
+                        uploadedFiles.appendChild(fileItem);
+                    };
+                    fileReader.readAsDataURL(file);
+                });
+            }
+        }
+
         // Lucrare Form Handler
         document.getElementById('lucrareForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // Collect uploaded files
+            const fileItems = document.querySelectorAll('#uploadedFiles .file-item');
+            const documente = Array.from(fileItems).map(item => ({
+                name: item.dataset.fileName,
+                type: item.dataset.fileType,
+                url: item.dataset.fileData
+            }));
             
             const lucrareData = {
                 clientId: document.getElementById('clientLucrare').value,
@@ -1412,6 +1733,7 @@
                 oraProgramata: document.getElementById('oraProgramata').value,
                 prioritate: document.getElementById('prioritateLucrare').value,
                 descriere: document.getElementById('descriereLucrare').value,
+                documente: documente,
                 status: 'Programată',
                 dataCreare: new Date().toISOString(),
                 id: Date.now()
@@ -1428,9 +1750,11 @@
         });
 
         function updateLucrareStatus(index, newStatus) {
-            lucrariData[index].status = newStatus;
+            const globalIndex = lucrariData.findIndex(l => l.id === (userRole === 'admin' ? lucrariData[index].id : lucrariData.filter(l => l.lucratorAsignat === currentUser.name)[index].id));
+            
+            lucrariData[globalIndex].status = newStatus;
             if (newStatus === 'Finalizată') {
-                lucrariData[index].dataFinalizare = new Date().toISOString();
+                lucrariData[globalIndex].dataFinalizare = new Date().toISOString();
             }
             saveToLocalStorage();
             loadLucrariContent();
@@ -1440,7 +1764,7 @@
 
         function editLucrare(index) {
             const lucrare = lucrariData[index];
-            // Populate form with lucrare data
+            
             populateClientSelect();
             document.getElementById('clientLucrare').value = lucrare.clientId;
             document.getElementById('tipLucrare').value = lucrare.tipLucrare;
@@ -1500,6 +1824,7 @@
             }
             
             generateReportContent(tipRaport, startDate, endDate);
+            document.getElementById('exportButtons').style.display = 'flex';
         }
 
         function generateReportContent(tipRaport, startDate, endDate) {
@@ -1522,13 +1847,18 @@
             }
             
             container.innerHTML = content;
+            currentRaportData = { tipRaport, startDate, endDate };
         }
 
         function generateClientiReport(startDate, endDate) {
             const filteredClients = clientiData.filter(client => {
-                const clientDate = new Date(client.dataContract);
+                const clientDate = new Date(client.dataStartServiciu);
                 return clientDate >= startDate && clientDate <= endDate;
             });
+            
+            const venitGenerat = filteredClients.reduce((total, client) => {
+                return total + (servicePrices[client.tipServiciu] || 0);
+            }, 0);
             
             return `
                 <div class="content-section active">
@@ -1541,7 +1871,7 @@
                         </div>
                         <div class="stat-card">
                             <i class="fas fa-euro-sign"></i>
-                            <h3>${filteredClients.length * 15}</h3>
+                            <h3>${venitGenerat}</h3>
                             <p>Venit generat (€)</p>
                         </div>
                     </div>
@@ -1550,7 +1880,10 @@
                             <thead>
                                 <tr>
                                     <th>Nume</th>
-                                    <th>Data Contract</th>
+                                    <th>Serviciu</th>
+                                    <th>Preț</th>
+                                    <th>Data Start</th>
+                                    <th>Data Expirare</th>
                                     <th>Județ</th>
                                     <th>Oraș</th>
                                 </tr>
@@ -1559,7 +1892,10 @@
                                 ${filteredClients.map(client => `
                                     <tr>
                                         <td>${client.nume}</td>
-                                        <td>${client.dataContract}</td>
+                                        <td>${client.tipServiciu}</td>
+                                        <td>${servicePrices[client.tipServiciu] || 0}€</td>
+                                        <td>${client.dataStartServiciu}</td>
+                                        <td>${client.dataExpirare}</td>
                                         <td>${client.judet}</td>
                                         <td>${client.oras}</td>
                                     </tr>
@@ -1572,9 +1908,27 @@
         }
 
         function generateVenituriReport(startDate, endDate) {
-            const totalClients = clientiData.length;
-            const venitTotal = totalClients * 15;
-            const venitLunar = venitTotal / 12;
+            const filteredClients = clientiData.filter(client => {
+                const clientDate = new Date(client.dataStartServiciu);
+                return clientDate >= startDate && clientDate <= endDate;
+            });
+            
+            const venitTotal = filteredClients.reduce((total, client) => {
+                return total + (servicePrices[client.tipServiciu] || 0);
+            }, 0);
+            
+            const venitLunar = venitTotal / Math.max(1, Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24 * 30)));
+            const clientiActivi = clientiData.filter(client => new Date(client.dataExpirare) > new Date()).length;
+            
+            // Group by service type
+            const serviciiStats = {};
+            filteredClients.forEach(client => {
+                if (!serviciiStats[client.tipServiciu]) {
+                    serviciiStats[client.tipServiciu] = { count: 0, venit: 0 };
+                }
+                serviciiStats[client.tipServiciu].count++;
+                serviciiStats[client.tipServiciu].venit += servicePrices[client.tipServiciu] || 0;
+            });
             
             return `
                 <div class="content-section active">
@@ -1583,7 +1937,7 @@
                         <div class="stat-card">
                             <i class="fas fa-euro-sign"></i>
                             <h3>${venitTotal}</h3>
-                            <p>Venit Total Anual (€)</p>
+                            <p>Venit Total (€)</p>
                         </div>
                         <div class="stat-card">
                             <i class="fas fa-calendar-month"></i>
@@ -1592,14 +1946,37 @@
                         </div>
                         <div class="stat-card">
                             <i class="fas fa-users"></i>
-                            <h3>${totalClients}</h3>
+                            <h3>${clientiActivi}</h3>
                             <p>Contracte Active</p>
                         </div>
                         <div class="stat-card">
                             <i class="fas fa-chart-line"></i>
-                            <h3>${((totalClients / 1000) * 100).toFixed(1)}%</h3>
-                            <p>Rata Creșterii</p>
+                            <h3>${filteredClients.length}</h3>
+                            <p>Clienți Noi</p>
                         </div>
+                    </div>
+                    <h4>Detaliu pe Servicii:</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tip Serviciu</th>
+                                    <th>Număr Clienți</th>
+                                    <th>Venit Total</th>
+                                    <th>Preț Unitar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.entries(serviciiStats).map(([serviciu, stats]) => `
+                                    <tr>
+                                        <td>${serviciu}</td>
+                                        <td>${stats.count}</td>
+                                        <td>${stats.venit}€</td>
+                                        <td>${servicePrices[serviciu] || 0}€</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             `;
@@ -1612,8 +1989,9 @@
             });
             
             const finalizate = filteredLucrari.filter(l => l.status === 'Finalizată').length;
-            const pendinte = filteredLucrari.filter(l => l.status === 'Programată').length;
+            const programate = filteredLucrari.filter(l => l.status === 'Programată').length;
             const inProgres = filteredLucrari.filter(l => l.status === 'În progres').length;
+            const urgente = filteredLucrari.filter(l => l.prioritate === 'Urgentă' || l.prioritate === 'Foarte Urgentă').length;
             
             return `
                 <div class="content-section active">
@@ -1631,13 +2009,13 @@
                         </div>
                         <div class="stat-card">
                             <i class="fas fa-clock"></i>
-                            <h3>${pendinte}</h3>
+                            <h3>${programate}</h3>
                             <p>Programate</p>
                         </div>
                         <div class="stat-card">
-                            <i class="fas fa-spinner"></i>
-                            <h3>${inProgres}</h3>
-                            <p>În Progres</p>
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>${urgente}</h3>
+                            <p>Urgente</p>
                         </div>
                     </div>
                     <div class="table-container">
@@ -1674,18 +2052,23 @@
             const lucratori = {};
             
             lucrariData.forEach(lucrare => {
-                if (!lucratori[lucrare.lucratorAsignat]) {
-                    lucratori[lucrare.lucratorAsignat] = {
-                        total: 0,
-                        finalizate: 0,
-                        pendinte: 0
-                    };
-                }
-                lucratori[lucrare.lucratorAsignat].total++;
-                if (lucrare.status === 'Finalizată') {
-                    lucratori[lucrare.lucratorAsignat].finalizate++;
-                } else {
-                    lucratori[lucrare.lucratorAsignat].pendinte++;
+                const lucrareDate = new Date(lucrare.dataProgramata);
+                if (lucrareDate >= startDate && lucrareDate <= endDate) {
+                    if (!lucratori[lucrare.lucratorAsignat]) {
+                        lucratori[lucrare.lucratorAsignat] = {
+                            total: 0,
+                            finalizate: 0,
+                            urgente: 0,
+                            medieZile: 0
+                        };
+                    }
+                    lucratori[lucrare.lucratorAsignat].total++;
+                    if (lucrare.status === 'Finalizată') {
+                        lucratori[lucrare.lucratorAsignat].finalizate++;
+                    }
+                    if (lucrare.prioritate === 'Urgentă' || lucrare.prioritate === 'Foarte Urgentă') {
+                        lucratori[lucrare.lucratorAsignat].urgente++;
+                    }
                 }
             });
             
@@ -1699,25 +2082,190 @@
                                     <th>Lucrător</th>
                                     <th>Total Lucrări</th>
                                     <th>Finalizate</th>
-                                    <th>Pendinte</th>
+                                    <th>Urgente</th>
                                     <th>Rata Finalizare</th>
+                                    <th>Performance</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${Object.entries(lucratori).map(([nume, stats]) => `
-                                    <tr>
-                                        <td>${nume}</td>
-                                        <td>${stats.total}</td>
-                                        <td>${stats.finalizate}</td>
-                                        <td>${stats.pendinte}</td>
-                                        <td>${stats.total > 0 ? ((stats.finalizate / stats.total) * 100).toFixed(1) : 0}%</td>
-                                    </tr>
-                                `).join('')}
+                                ${Object.entries(lucratori).map(([nume, stats]) => {
+                                    const rataFinalizare = stats.total > 0 ? ((stats.finalizate / stats.total) * 100).toFixed(1) : 0;
+                                    const performance = rataFinalizare >= 80 ? 'Excelentă' : rataFinalizare >= 60 ? 'Bună' : 'Necesită îmbunătățire';
+                                    return `
+                                        <tr>
+                                            <td>${nume}</td>
+                                            <td>${stats.total}</td>
+                                            <td>${stats.finalizate}</td>
+                                            <td>${stats.urgente}</td>
+                                            <td>${rataFinalizare}%</td>
+                                            <td><span class="status-badge ${rataFinalizare >= 80 ? 'status-activ' : rataFinalizare >= 60 ? 'status-suspendat' : 'status-expirat'}">${performance}</span></td>
+                                        </tr>
+                                    `;
+                                }).join('')}
                             </tbody>
                         </table>
                     </div>
                 </div>
             `;
+        }
+
+        // Export Functions
+        function exportRaportExcel() {
+            if (!currentRaportData) {
+                showAlert('Generați mai întâi un raport!', 'warning');
+                return;
+            }
+
+            const { tipRaport, startDate, endDate } = currentRaportData;
+            let data = [];
+            let filename = '';
+
+            switch (tipRaport) {
+                case 'clienti':
+                    const filteredClients = clientiData.filter(client => {
+                        const clientDate = new Date(client.dataStartServiciu);
+                        return clientDate >= startDate && clientDate <= endDate;
+                    });
+                    data = filteredClients.map(client => ({
+                        'Nume': client.nume,
+                        'Telefon': client.telefon,
+                        'Email': client.email || '',
+                        'Serviciu': client.tipServiciu,
+                        'Preț': servicePrices[client.tipServiciu] || 0,
+                        'Data Start': client.dataStartServiciu,
+                        'Data Expirare': client.dataExpirare,
+                        'Județ': client.judet,
+                        'Oraș': client.oras,
+                        'Adresă': client.adresa
+                    }));
+                    filename = `raport_clienti_${startDate.toISOString().split('T')[0]}_${endDate.toISOString().split('T')[0]}.xlsx`;
+                    break;
+
+                case 'lucrari':
+                    const filteredLucrari = lucrariData.filter(lucrare => {
+                        const lucrareDate = new Date(lucrare.dataProgramata);
+                        return lucrareDate >= startDate && lucrareDate <= endDate;
+                    });
+                    data = filteredLucrari.map(lucrare => ({
+                        'Tip Lucrare': lucrare.tipLucrare,
+                        'Client': getClientName(lucrare.clientId),
+                        'Lucrător': lucrare.lucratorAsignat,
+                        'Data Programată': lucrare.dataProgramata,
+                        'Ora': lucrare.oraProgramata,
+                        'Status': lucrare.status,
+                        'Prioritate': lucrare.prioritate,
+                        'Descriere': lucrare.descriere
+                    }));
+                    filename = `raport_lucrari_${startDate.toISOString().split('T')[0]}_${endDate.toISOString().split('T')[0]}.xlsx`;
+                    break;
+
+                default:
+                    showAlert('Tipul de raport nu poate fi exportat!', 'warning');
+                    return;
+            }
+
+            // Create workbook and worksheet
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(data);
+            
+            // Add worksheet to workbook
+            XLSX.utils.book_append_sheet(wb, ws, 'Raport');
+            
+            // Save file
+            XLSX.writeFile(wb, filename);
+            showAlert('Raport exportat în Excel cu succes!', 'success');
+        }
+
+        function exportRaportPDF() {
+            if (!currentRaportData) {
+                showAlert('Generați mai întâi un raport!', 'warning');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.text('AdInstalGaz - Raport', 20, 30);
+            
+            doc.setFontSize(12);
+            doc.text(`Tip: ${currentRaportData.tipRaport}`, 20, 50);
+            doc.text(`Perioada: ${currentRaportData.startDate.toLocaleDateString()} - ${currentRaportData.endDate.toLocaleDateString()}`, 20, 65);
+            doc.text(`Generat: ${new Date().toLocaleDateString()}`, 20, 80);
+            
+            // Add content from the report
+            const reportContent = document.getElementById('raportContent').innerText;
+            const lines = reportContent.split('\n').filter(line => line.trim() !== '');
+            
+            let yPosition = 100;
+            lines.forEach((line, index) => {
+                if (yPosition > 270) { // New page if needed
+                    doc.addPage();
+                    yPosition = 30;
+                }
+                
+                if (line.includes('Total') || line.includes('Raport')) {
+                    doc.setFontSize(14);
+                    doc.setFont(undefined, 'bold');
+                } else {
+                    doc.setFontSize(10);
+                    doc.setFont(undefined, 'normal');
+                }
+                
+                // Split long lines
+                const splitLine = doc.splitTextToSize(line, 170);
+                doc.text(splitLine, 20, yPosition);
+                yPosition += splitLine.length * 5;
+            });
+            
+            const filename = `raport_${currentRaportData.tipRaport}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(filename);
+            showAlert('Raport exportat în PDF cu succes!', 'success');
+        }
+
+        function exportData(type) {
+            let data, filename;
+            
+            if (type === 'clienti') {
+                data = clientiData.map(client => ({
+                    'Nume': client.nume,
+                    'Telefon': client.telefon,
+                    'Email': client.email || '',
+                    'CNP': client.cnp || '',
+                    'Serviciu': client.tipServiciu,
+                    'Data Start': client.dataStartServiciu,
+                    'Data Expirare': client.dataExpirare,
+                    'Județ': client.judet,
+                    'Oraș': client.oras,
+                    'Adresă': client.adresa
+                }));
+                filename = `clienti_${new Date().toISOString().split('T')[0]}.xlsx`;
+            } else if (type === 'lucrari') {
+                data = lucrariData.map(lucrare => ({
+                    'Tip Lucrare': lucrare.tipLucrare,
+                    'Client': getClientName(lucrare.clientId),
+                    'Lucrător': lucrare.lucratorAsignat,
+                    'Data': lucrare.dataProgramata,
+                    'Ora': lucrare.oraProgramata,
+                    'Status': lucrare.status,
+                    'Prioritate': lucrare.prioritate,
+                    'Descriere': lucrare.descriere
+                }));
+                filename = `lucrari_${new Date().toISOString().split('T')[0]}.xlsx`;
+            }
+            
+            if (data.length === 0) {
+                showAlert('Nu există date pentru export!', 'warning');
+                return;
+            }
+            
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(data);
+            XLSX.utils.book_append_sheet(wb, ws, 'Date');
+            XLSX.writeFile(wb, filename);
+            
+            showAlert(`Export ${type} realizat cu succes!`, 'success');
         }
 
         // Backup Functions
@@ -1747,10 +2295,7 @@
             }
             
             try {
-                // Backup clienți
                 await syncAllToFirebase('clienti', clientiData);
-                
-                // Backup lucrări
                 await syncAllToFirebase('lucrari', lucrariData);
                 
                 const now = new Date();
@@ -1801,7 +2346,6 @@
             if (!window.firebaseDb || !syncActive) return;
             
             try {
-                // Listen for changes in clienți collection
                 const { onSnapshot, collection } = window.firebaseFunctions;
                 
                 onSnapshot(collection(window.firebaseDb, 'clienti'), (snapshot) => {
@@ -1820,7 +2364,6 @@
                     document.getElementById('ultimaSync').textContent = new Date().toLocaleTimeString();
                 });
                 
-                // Listen for changes in lucrări collection
                 onSnapshot(collection(window.firebaseDb, 'lucrari'), (snapshot) => {
                     const firebaseLucrari = [];
                     snapshot.forEach((doc) => {
@@ -1861,13 +2404,11 @@
             try {
                 const { addDoc, collection, getDocs, deleteDoc, doc } = window.firebaseFunctions;
                 
-                // Clear existing data
                 const existingDocs = await getDocs(collection(window.firebaseDb, collectionName));
                 for (const docSnapshot of existingDocs.docs) {
                     await deleteDoc(doc(window.firebaseDb, collectionName, docSnapshot.id));
                 }
                 
-                // Add new data
                 for (const item of dataArray) {
                     await addDoc(collection(window.firebaseDb, collectionName), item);
                 }
@@ -1884,14 +2425,12 @@
             try {
                 const { getDocs, collection } = window.firebaseFunctions;
                 
-                // Load clienți
                 const clientiSnapshot = await getDocs(collection(window.firebaseDb, 'clienti'));
                 const firebaseClients = [];
                 clientiSnapshot.forEach((doc) => {
                     firebaseClients.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // Load lucrări
                 const lucrariSnapshot = await getDocs(collection(window.firebaseDb, 'lucrari'));
                 const firebaseLucrari = [];
                 lucrariSnapshot.forEach((doc) => {
@@ -1918,79 +2457,27 @@
             }
         }
 
-        // Export Functions
-        function exportData(type) {
-            let data, filename;
-            
-            if (type === 'clienti') {
-                data = clientiData;
-                filename = `clienti_${new Date().toISOString().split('T')[0]}.csv`;
-            } else if (type === 'lucrari') {
-                data = lucrariData;
-                filename = `lucrari_${new Date().toISOString().split('T')[0]}.csv`;
-            }
-            
-            if (data.length === 0) {
-                showAlert('Nu există date pentru export!', 'warning');
-                return;
-            }
-            
-            const csv = convertToCSV(data);
-            downloadCSV(csv, filename);
-            showAlert(`Export ${type} realizat cu succes!`, 'success');
-        }
-
-        function convertToCSV(data) {
-            if (data.length === 0) return '';
-            
-            const headers = Object.keys(data[0]);
-            const csvHeaders = headers.join(',');
-            
-            const csvRows = data.map(row => {
-                return headers.map(header => {
-                    const value = row[header] || '';
-                    return `"${value.toString().replace(/"/g, '""')}"`;
-                }).join(',');
-            });
-            
-            return [csvHeaders, ...csvRows].join('\n');
-        }
-
-        function downloadCSV(csv, filename) {
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            
-            if (link.download !== undefined) {
-                const url = URL.createObjectURL(blob);
-                link.setAttribute('href', url);
-                link.setAttribute('download', filename);
-                link.style.visibility = 'hidden';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            }
-        }
-
         // Settings Functions
         function salveazaSetari() {
             const settings = {
-                pretServiciu: document.getElementById('pretServiciu').value,
                 notificariEmail: document.getElementById('notificariEmail').value,
                 backupAutomatic: document.getElementById('backupAutomatic').value,
-                limba: document.getElementById('limba').value
+                limba: document.getElementById('limba').value,
+                durataServicii: document.getElementById('durataServicii').value
             };
             
             localStorage.setItem('appSettings', JSON.stringify(settings));
+            localStorage.setItem('durataServicii', settings.durataServicii);
             showAlert('Setările au fost salvate cu succes!', 'success');
         }
 
         function loadSettings() {
             const settings = JSON.parse(localStorage.getItem('appSettings')) || {};
             
-            if (settings.pretServiciu) document.getElementById('pretServiciu').value = settings.pretServiciu;
             if (settings.notificariEmail) document.getElementById('notificariEmail').value = settings.notificariEmail;
             if (settings.backupAutomatic) document.getElementById('backupAutomatic').value = settings.backupAutomatic;
             if (settings.limba) document.getElementById('limba').value = settings.limba;
+            if (settings.durataServicii) document.getElementById('durataServicii').value = settings.durataServicii;
         }
 
         // Storage Functions
@@ -2001,7 +2488,6 @@
 
         // Initialize App
         function initializeApp() {
-            // Check for logged in user
             const savedUser = localStorage.getItem('currentUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
@@ -2018,7 +2504,6 @@
                 loadSettings();
                 updateBackupStatus();
                 
-                // Initialize Firebase sync if available
                 setTimeout(() => {
                     if (window.firebaseDb) {
                         updateFirebaseStatus('connected');
