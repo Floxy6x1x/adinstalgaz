@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AdInstalGaz - Sistem Management</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>emailjs.init("WLo1YE_LtC7iyQrCx");</script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; }
         
         .login-screen { display: flex; min-height: 100vh; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .login-card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%; max-width: 400px; }
@@ -35,9 +33,6 @@
         .btn-secondary:hover { background: #7f8c8d; }
         .btn-login { width: 100%; padding: 14px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 500; cursor: pointer; }
         .btn-login:hover { background: #5a6fd8; }
-        
-        .timer { text-align: center; margin-top: 15px; color: #666; font-size: 14px; }
-        .timer.urgent { color: #e74c3c; font-weight: bold; }
         
         .app-container { display: none; padding: 20px; max-width: 1400px; margin: 0 auto; }
         .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -99,6 +94,8 @@
         .search-box input { padding: 10px; border: 2px solid #e1e5e9; border-radius: 8px; width: 300px; font-size: 14px; }
         .search-box input:focus { outline: none; border-color: #667eea; }
         
+        .credentials-box { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 13px; color: #666; border-left: 4px solid #17a2b8; }
+        
         @media (max-width: 768px) {
             .app-container { padding: 10px; }
             .header { flex-direction: column; gap: 15px; text-align: center; }
@@ -117,26 +114,23 @@
             <div class="login-title">AdInstalGaz</div>
             <div class="login-subtitle">Sistem Management Profesional</div>
             
-            <div id="loginStep">
-                <form onsubmit="sendCode(event)">
-                    <div class="form-group">
-                        <label>Email Autorizat</label>
-                        <input type="email" id="loginEmail" required placeholder="florin.iordache@adinstalgaz.ro">
-                    </div>
-                    <button type="submit" class="btn-login">Trimite Cod Verificare</button>
-                </form>
-            </div>
+            <form onsubmit="login(event)">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required placeholder="florin.iordache@adinstalgaz.ro">
+                </div>
+                <div class="form-group">
+                    <label>Parolă</label>
+                    <input type="password" id="loginPassword" required placeholder="Introduceți parola">
+                </div>
+                <button type="submit" class="btn-login">Conectare</button>
+            </form>
             
-            <div id="verifyStep" style="display: none;">
-                <form onsubmit="verifyCode(event)">
-                    <div class="form-group">
-                        <label>Cod Verificare (6 cifre)</label>
-                        <input type="text" id="codeInput" required maxlength="6" placeholder="000000" style="text-align: center; font-size: 24px; letter-spacing: 8px;">
-                    </div>
-                    <button type="submit" class="btn-login">Verifică Cod</button>
-                    <div class="timer" id="timer">Cod expiră în: <span id="timeLeft">5:00</span></div>
-                </form>
-                <button onclick="backToEmail()" class="btn-login" style="background: #95a5a6; margin-top: 10px;">Înapoi</button>
+            <div class="credentials-box">
+                <strong>📧 Conturi de testare:</strong><br>
+                <code>florin.iordache@adinstalgaz.ro</code> → <code>AdInstalGaz2025!</code><br>
+                <code>admin@adinstalgaz.ro</code> → <code>Admin123!</code><br>
+                <code>lucrator@adinstalgaz.ro</code> → <code>Lucrator123!</code>
             </div>
         </div>
     </div>
@@ -481,8 +475,6 @@
         let services = JSON.parse(localStorage.getItem('adinstalgaz_services') || '[]');
         let works = JSON.parse(localStorage.getItem('adinstalgaz_works') || '[]');
         let currentUser = JSON.parse(localStorage.getItem('adinstalgaz_current_user') || 'null');
-        let verificationCode = null;
-        let codeTimer = null;
 
         // Date pentru județe și orașe
         const counties = {
@@ -494,8 +486,9 @@
 
         // Utilizatori autorizați
         const authorizedUsers = [
-            { email: 'florin.iordache@adinstalgaz.ro', name: 'Florin Iordache', role: 'Administrator' },
-            { email: 'admin@adinstalgaz.ro', name: 'Administrator', role: 'Administrator' }
+            { email: 'florin.iordache@adinstalgaz.ro', password: 'AdInstalGaz2025!', name: 'Florin Iordache', role: 'Administrator' },
+            { email: 'admin@adinstalgaz.ro', password: 'Admin123!', name: 'Administrator', role: 'Administrator' },
+            { email: 'lucrator@adinstalgaz.ro', password: 'Lucrator123!', name: 'Lucrător', role: 'Lucrător' }
         ];
 
         // Funcții de bază
@@ -521,92 +514,27 @@
         }
 
         // Funcții de autentificare
-        async function sendCode(event) {
+        function login(event) {
             event.preventDefault();
             const email = document.getElementById('loginEmail').value.trim();
-            const user = authorizedUsers.find(u => u.email === email);
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = authorizedUsers.find(u => u.email === email && u.password === password);
             
             if (!user) {
-                showNotification('Email neautorizat! Contactați administratorul.', 'error');
+                showNotification('Email sau parolă incorectă!', 'error');
                 return;
             }
-
-            verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
             
-            try {
-                await emailjs.send('service_dtzcww7', 'template_2eeo9lr', {
-                    to_email: email,
-                    to_name: user.name,
-                    verification_code: verificationCode,
-                    company_name: 'AdInstalGaz'
-                });
-                
-                document.getElementById('loginStep').style.display = 'none';
-                document.getElementById('verifyStep').style.display = 'block';
-                startCodeTimer();
-                showNotification('Cod trimis pe email!', 'success');
-            } catch (error) {
-                console.error('Eroare EmailJS:', error);
-                alert(`COD DE TESTARE: ${verificationCode}`);
-                document.getElementById('loginStep').style.display = 'none';
-                document.getElementById('verifyStep').style.display = 'block';
-                startCodeTimer();
-                showNotification('Cod generat pentru testare!', 'info');
-            }
-        }
-
-        function verifyCode(event) {
-            event.preventDefault();
-            const inputCode = document.getElementById('codeInput').value;
+            currentUser = user;
+            localStorage.setItem('adinstalgaz_current_user', JSON.stringify(user));
             
-            if (inputCode === verificationCode) {
-                const email = document.getElementById('loginEmail').value;
-                const user = authorizedUsers.find(u => u.email === email);
-                currentUser = user;
-                localStorage.setItem('adinstalgaz_current_user', JSON.stringify(user));
-                
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                
-                updateUserInfo();
-                showSection('dashboard');
-                showNotification(`Bine ai venit, ${user.name}!`, 'success');
-                
-                if (codeTimer) clearInterval(codeTimer);
-            } else {
-                showNotification('Cod incorect!', 'error');
-            }
-        }
-
-        function startCodeTimer() {
-            let timeLeft = 300; // 5 minute
-            const display = document.getElementById('timeLeft');
-            const timer = document.getElementById('timer');
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
             
-            codeTimer = setInterval(() => {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                display.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                
-                if (timeLeft <= 60) {
-                    timer.classList.add('urgent');
-                }
-                
-                if (timeLeft <= 0) {
-                    clearInterval(codeTimer);
-                    verificationCode = null;
-                    backToEmail();
-                    showNotification('Codul a expirat!', 'error');
-                }
-                timeLeft--;
-            }, 1000);
-        }
-
-        function backToEmail() {
-            document.getElementById('loginStep').style.display = 'block';
-            document.getElementById('verifyStep').style.display = 'none';
-            document.getElementById('codeInput').value = '';
-            if (codeTimer) clearInterval(codeTimer);
+            updateUserInfo();
+            showSection('dashboard');
+            showNotification(`Bine ai venit, ${user.name}!`, 'success');
         }
 
         function logout() {
@@ -616,8 +544,7 @@
                 document.getElementById('loginScreen').style.display = 'flex';
                 document.getElementById('mainApp').style.display = 'none';
                 document.getElementById('loginEmail').value = '';
-                document.getElementById('codeInput').value = '';
-                backToEmail();
+                document.getElementById('loginPassword').value = '';
             }
         }
 
@@ -651,8 +578,6 @@
                     displayWorks();
                     updateClientSelects();
                     break;
-                case 'rapoarte':
-                    break;
             }
         }
 
@@ -669,7 +594,6 @@
             
             document.getElementById('expirariUrgente').textContent = urgentExpiries;
             
-            // Afișează alerte pentru expirări
             const alertsDiv = document.getElementById('alerteExpirari');
             if (urgentExpiries > 0) {
                 alertsDiv.innerHTML = `
@@ -790,7 +714,7 @@
         }
 
         function deleteClient(id) {
-            if (confirm('Sigur doriți să ștergeți acest client? Toate serviciile și lucrările asociate vor fi șterse!')) {
+            if (confirm('Sigur doriți să ștergeți acest client?')) {
                 clients = clients.filter(c => c.id !== id);
                 services = services.filter(s => s.clientId !== id);
                 works = works.filter(w => w.clientId !== id);
@@ -829,19 +753,16 @@
             const years = parseInt(selectedOption.getAttribute('data-years'));
             const servicePrice = selectedOption.getAttribute('data-price');
             
-            // Calculează data expirare
             if (years > 0) {
                 const start = new Date(startDate);
                 start.setFullYear(start.getFullYear() + years);
                 expiryDate.value = start.toISOString().split('T')[0];
             } else {
-                // Pentru servicii de urgență, setează 1 an
                 const start = new Date(startDate);
                 start.setFullYear(start.getFullYear() + 1);
                 expiryDate.value = start.toISOString().split('T')[0];
             }
             
-            // Setează prețul
             if (servicePrice !== '0') {
                 price.value = servicePrice;
             } else {
@@ -1150,7 +1071,7 @@
                 XLSX.utils.book_append_sheet(wb, ws, 'Raport');
                 XLSX.writeFile(wb, `${filename}-${new Date().toISOString().split('T')[0]}.xlsx`);
             } else {
-                let csv = '\ufeff'; // BOM pentru UTF-8
+                let csv = '\ufeff';
                 csv += Object.keys(data[0]).join(',') + '\n';
                 data.forEach(row => {
                     csv += Object.values(row).map(val => `"${val}"`).join(',') + '\n';
@@ -1195,7 +1116,6 @@
                 }
             });
             
-            // Descarcă fișierul cu notificările SMS
             const blob = new Blob([smsText], { type: 'text/plain;charset=utf-8;' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
