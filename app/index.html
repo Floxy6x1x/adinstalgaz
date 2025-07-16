@@ -20,8 +20,11 @@
     <!-- EmailJS -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        emailjs.init("WLo1YE_LtC7iyQrCx"); // Înlocuiește cu public key de la EmailJS
+        emailjs.init("WLo1YE_LtC7iyQrCx");
     </script>
+    
+    <!-- SheetJS pentru export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
         /* Reset și variabile globale */
@@ -317,6 +320,11 @@
             color: white;
         }
 
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: var(--font-xs);
+        }
+
         .btn-group {
             display: flex;
             gap: 10px;
@@ -513,91 +521,6 @@
             font-weight: 600;
         }
 
-        /* Calendar minimalist */
-        .calendar-container {
-            background: var(--bg-card);
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-light);
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-        }
-
-        .calendar-day-header {
-            text-align: center;
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: var(--font-xs);
-            padding: 0.5rem;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-light);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            font-size: var(--font-sm);
-        }
-
-        .calendar-day:hover {
-            background: var(--border-light);
-        }
-
-        .calendar-day.today {
-            background: var(--bg-primary);
-            color: var(--text-white);
-        }
-
-        .calendar-day.has-event {
-            border: 2px solid var(--accent);
-        }
-
-        .calendar-day.selected {
-            background: var(--accent);
-            color: white;
-        }
-
-        .calendar-day.empty {
-            cursor: default;
-            opacity: 0.3;
-        }
-
-        .calendar-day-number {
-            font-weight: 500;
-        }
-
-        .calendar-day-events {
-            position: absolute;
-            bottom: 2px;
-            display: flex;
-            gap: 2px;
-        }
-
-        .event-dot {
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-            background: var(--accent);
-        }
-
         /* Notification minimalist */
         .notification {
             position: fixed;
@@ -655,113 +578,16 @@
             border: 1px solid #ffcc80;
         }
 
-        /* File Upload */
-        .file-upload {
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .file-upload:hover {
-            border-color: #1e3c72;
-            background: #f8f9fa;
-        }
-
-        .file-upload input[type="file"] {
-            display: none;
-        }
-
-        /* Monitoring */
-        .monitoring-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .monitoring-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.3s ease;
-        }
-
-        .monitoring-item:hover {
-            background: #f8f9fa;
-        }
-
-        .monitoring-item.expiring-soon {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-        }
-
-        .monitoring-item.expired {
-            background: #f8d7da;
-            border-left: 4px solid #dc3545;
-        }
-
-        .days-left {
-            font-weight: bold;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-
-        .days-left.danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .days-left.warning {
-            background: #ffc107;
-            color: #333;
-        }
-
-        .days-left.success {
-            background: #28a745;
-            color: white;
-        }
-
-        /* Backup Status */
-        .backup-status {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px;
+        .alert-success {
             background: #e8f5e9;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
         }
 
-        .backup-status.warning {
-            background: #fff3cd;
-        }
-
-        /* Settings Panel */
-        .settings-panel {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 12px;
-        }
-
-        .settings-section {
-            margin-bottom: 30px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .settings-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .settings-section h3 {
-            color: #1e3c72;
-            margin-bottom: 20px;
+        .alert-danger {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
         }
 
         /* Responsive */
@@ -822,18 +648,11 @@
         .mt-2 { margin-top: 1rem; }
         .mt-3 { margin-top: 1.5rem; }
         .ml-2 { margin-left: 0.5rem; }
-
-        /* Hide spinner from selects */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
-        }
     </style>
 </head>
 <body>
     <!-- Login Section cu 2FA -->
-    <div id="loginSection" class="login-container" style="display: none;">
+    <div id="loginSection" class="login-container">
         <div class="login-card">
             <div style="text-align: center; margin-bottom: 30px;">
                 <h2 style="margin: 0;">AdInstalGaz</h2>
@@ -903,9 +722,6 @@
                     </button>
                 </div>
             </div>
-            <div id="lastBackup" class="backup-status" style="margin-top: 15px;">
-                <span id="backupStatusText">Verificare backup...</span>
-            </div>
         </div>
 
         <!-- Navigation -->
@@ -914,11 +730,8 @@
             <button class="nav-tab" onclick="showTab('clienti')">Clienți</button>
             <button class="nav-tab" onclick="showTab('servicii')">Servicii</button>
             <button class="nav-tab" onclick="showTab('lucrari')">Lucrări</button>
-            <button class="nav-tab" onclick="showTab('calendar')">Calendar</button>
             <button class="nav-tab" onclick="showTab('monitorizare')">Monitorizare</button>
-            <button class="nav-tab" onclick="showTab('documente')">Documente</button>
             <button class="nav-tab" onclick="showTab('rapoarte')">Rapoarte</button>
-            <button class="nav-tab" onclick="showTab('backup')">Backup</button>
             <button class="nav-tab" onclick="showTab('setari')">Setări</button>
         </div>
 
@@ -954,7 +767,7 @@
                     <h2>Servicii Care Expiră Curând</h2>
                     <button class="btn btn-warning" onclick="exportExpirari()">Export Excel</button>
                 </div>
-                <div id="listaExpirariUrgente" class="monitoring-list"></div>
+                <div id="listaExpirariUrgente"></div>
             </div>
 
             <div class="card">
@@ -962,14 +775,6 @@
                     <h2>Activitate Recentă</h2>
                 </div>
                 <div id="activitateRecenta"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2>Lucrări de Astăzi</h2>
-                    <button class="btn btn-primary btn-sm" onclick="showTab('lucrari')">Vezi Toate</button>
-                </div>
-                <div id="lucrariAstazi"></div>
             </div>
         </div>
 
@@ -1006,36 +811,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Strada*</label>
-                            <input type="text" id="stradaClient" required placeholder="Ex: Str. Libertății">
-                        </div>
-                        <div class="form-group">
-                            <label>Număr*</label>
-                            <input type="text" id="numarClient" required placeholder="Ex: 25">
-                        </div>
-                        <div class="form-group">
-                            <label>Tip Locuință*</label>
-                            <select id="tipLocuinta" required onchange="toggleBlocFields()">
-                                <option value="">Selectează tipul</option>
-                                <option value="casa">Casă</option>
-                                <option value="bloc">Bloc</option>
-                            </select>
-                        </div>
-                        <div class="form-group bloc-fields" style="display: none;">
-                            <label>Bloc</label>
-                            <input type="text" id="blocClient" placeholder="Ex: A3">
-                        </div>
-                        <div class="form-group bloc-fields" style="display: none;">
-                            <label>Scara</label>
-                            <input type="text" id="scaraClient" placeholder="Ex: B">
-                        </div>
-                        <div class="form-group bloc-fields" style="display: none;">
-                            <label>Etaj</label>
-                            <input type="text" id="etajClient" placeholder="Ex: 4">
-                        </div>
-                        <div class="form-group bloc-fields" style="display: none;">
-                            <label>Apartament</label>
-                            <input type="text" id="apartamentClient" placeholder="Ex: 15">
+                            <label>Adresă*</label>
+                            <input type="text" id="adresaClient" required placeholder="Ex: Str. Libertății Nr. 25">
                         </div>
                     </div>
                     <div class="form-group">
@@ -1091,26 +868,26 @@
                         </div>
                         <div class="form-group">
                             <label>Tip Serviciu*</label>
-                            <select id="tipServiciu" required>
+                            <select id="tipServiciu" required onchange="calculeazaDataExpirareAutomata()">
                                 <option value="">Selectează tipul</option>
-                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
-                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
-                                <option value="Verificare Centrală">Verificare Centrală</option>
-                                <option value="Instalații Gaz + Centrală">Instalații Gaz + Centrală</option>
-                                <option value="Servicii de Urgență">Servicii de Urgență</option>
+                                <option value="Verificare Instalație Gaz" data-ani="2" data-pret="150">Verificare Instalație Gaz</option>
+                                <option value="Revizie Instalație Gaz" data-ani="1" data-pret="250">Revizie Instalație Gaz</option>
+                                <option value="Verificare Centrală" data-ani="2" data-pret="150">Verificare Centrală</option>
+                                <option value="Instalații Gaz + Centrală" data-ani="2" data-pret="250">Instalații Gaz + Centrală</option>
+                                <option value="Servicii de Urgență" data-ani="0" data-pret="0">Servicii de Urgență</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Data Început*</label>
-                            <input type="date" id="dataInceputServiciu" required>
+                            <input type="date" id="dataInceputServiciu" required onchange="calculeazaDataExpirareAutomata()">
                         </div>
                         <div class="form-group">
                             <label>Data Expirare*</label>
                             <input type="date" id="dataExpirareServiciu" required>
                         </div>
                         <div class="form-group">
-                            <label>Preț</label>
-                            <input type="text" id="pretServiciu" placeholder="Ex: 150 Lei">
+                            <label>Preț*</label>
+                            <input type="number" id="pretServiciu" required placeholder="Ex: 150" min="0">
                         </div>
                         <div class="form-group">
                             <label>Observații</label>
@@ -1140,6 +917,7 @@
                                 <th>Tip Serviciu</th>
                                 <th>Data Început</th>
                                 <th>Data Expirare</th>
+                                <th>Preț</th>
                                 <th>Status</th>
                                 <th>Zile Rămase</th>
                                 <th>Acțiuni</th>
@@ -1161,87 +939,41 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Client*</label>
-                            <select id="clientLucrare" required onchange="actualizeazaAdresaClient()">
+                            <select id="clientLucrare" required>
                                 <option value="">Selectează clientul</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Adresă client</label>
-                            <input type="text" id="adresaClientLucrare" readonly style="background: #f8f9fa;">
-                        </div>
-                        <div class="form-group">
                             <label>Serviciu*</label>
-                            <select id="serviciuLucrare" required onchange="actualizeazaPret()">
+                            <select id="serviciuLucrare" required>
                                 <option value="">Selectează serviciul</option>
-                                <option value="Verificare Instalație Gaz" data-pret="150">Verificare Instalație Gaz - 150 Lei</option>
-                                <option value="Revizie Instalație Gaz" data-pret="250">Revizie Instalație Gaz - 250 Lei</option>
-                                <option value="Verificare Centrală" data-pret="150">Verificare Centrală - 150 Lei</option>
-                                <option value="Instalații Gaz + Centrală" data-pret="250">Instalații Gaz + Centrală - 250 Lei</option>
-                                <option value="Servicii de Urgență" data-pret="">Servicii de Urgență - Preț variabil</option>
+                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
+                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
+                                <option value="Verificare Centrală">Verificare Centrală</option>
+                                <option value="Instalații Gaz + Centrală">Instalații Gaz + Centrală</option>
+                                <option value="Servicii de Urgență">Servicii de Urgență</option>
                             </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Preț*</label>
-                            <input type="text" id="pretLucrare" required placeholder="Se completează automat">
                         </div>
                         <div class="form-group">
                             <label>Data Programare*</label>
-                            <input type="date" id="dataProgramareLucrare" required min="${new Date().toISOString().split('T')[0]}">
+                            <input type="date" id="dataProgramareLucrare" required>
                         </div>
                         <div class="form-group">
-                            <label>Oră programare</label>
-                            <select id="oraProgramare">
-                                <option value="">Selectează ora</option>
-                                <option value="08:00">08:00</option>
-                                <option value="09:00">09:00</option>
-                                <option value="10:00">10:00</option>
-                                <option value="11:00">11:00</option>
-                                <option value="12:00">12:00</option>
-                                <option value="13:00">13:00</option>
-                                <option value="14:00">14:00</option>
-                                <option value="15:00">15:00</option>
-                                <option value="16:00">16:00</option>
-                                <option value="17:00">17:00</option>
-                                <option value="18:00">18:00</option>
-                            </select>
+                            <label>Preț*</label>
+                            <input type="number" id="pretLucrare" required placeholder="Ex: 150" min="0">
                         </div>
                         <div class="form-group">
-                            <label>Lucrător*</label>
-                            <select id="lucratorLucrare" required>
-                                <option value="">Selectează lucrător</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Prioritate</label>
-                            <select id="prioritateLucrare">
-                                <option value="normala">Normală</option>
-                                <option value="urgenta">Urgentă</option>
-                                <option value="mica">Mică</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Status inițial</label>
+                            <label>Status</label>
                             <select id="statusLucrare">
-                                <option value="atribuita">Atribuită</option>
-                                <option value="neatribuita">Neatribuită</option>
+                                <option value="programata">Programată</option>
+                                <option value="in-curs">În Curs</option>
+                                <option value="finalizata">Finalizată</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Timp estimat</label>
-                            <select id="timpEstimat">
-                                <option value="">Selectează durata</option>
-                                <option value="30min">30 minute</option>
-                                <option value="1h">1 oră</option>
-                                <option value="2h">2 ore</option>
-                                <option value="3h">3 ore</option>
-                                <option value="4h">4 ore</option>
-                                <option value="1zi">1 zi</option>
-                            </select>
+                            <label>Observații</label>
+                            <textarea id="observatiiLucrare" placeholder="Detalii despre lucrare"></textarea>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Observații</label>
-                        <textarea id="observatiiLucrare" rows="3" placeholder="Detalii despre lucrare, cerințe speciale, etc."></textarea>
                     </div>
                     <div class="btn-group">
                         <button type="submit" class="btn btn-primary">Salvează Lucrare</button>
@@ -1254,10 +986,10 @@
                 <div class="card-header">
                     <h2>Lista Lucrări</h2>
                     <div class="btn-group">
-                        <button class="btn btn-secondary" onclick="filtreazaLucrariDupa('toate')">Toate</button>
-                        <button class="btn btn-warning" onclick="filtreazaLucrariDupa('neatribuita')">Neatribuite</button>
-                        <button class="btn btn-info" onclick="filtreazaLucrariDupa('atribuita')">Atribuite</button>
-                        <button class="btn btn-success" onclick="filtreazaLucrariDupa('finalizata')">Finalizate</button>
+                        <button class="btn btn-secondary" onclick="filtreazaLucrari('toate')">Toate</button>
+                        <button class="btn btn-info" onclick="filtreazaLucrari('programata')">Programate</button>
+                        <button class="btn btn-warning" onclick="filtreazaLucrari('in-curs')">În Curs</button>
+                        <button class="btn btn-success" onclick="filtreazaLucrari('finalizata')">Finalizate</button>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -1269,7 +1001,6 @@
                                 <th>Serviciu</th>
                                 <th>Data Programare</th>
                                 <th>Preț</th>
-                                <th>Lucrător</th>
                                 <th>Status</th>
                                 <th>Acțiuni</th>
                             </tr>
@@ -1280,154 +1011,18 @@
             </div>
         </div>
 
-        <!-- Calendar Tab -->
-        <div id="calendar" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Calendar Programări</h2>
-                    <div class="btn-group">
-                        <button class="btn btn-secondary" onclick="schimbaLunaCalendar(-1)">Luna anterioară</button>
-                        <button class="btn btn-primary" onclick="aziCalendar()">Azi</button>
-                        <button class="btn btn-secondary" onclick="schimbaLunaCalendar(1)">Luna următoare</button>
-                    </div>
-                </div>
-                
-                <div class="calendar-container">
-                    <div class="calendar-header">
-                        <h3 id="lunaCurenta"></h3>
-                        <div class="text-small text-muted">Click pe o zi pentru a vedea detalii</div>
-                    </div>
-                    
-                    <div class="calendar-grid">
-                        <div class="calendar-day-header">Lun</div>
-                        <div class="calendar-day-header">Mar</div>
-                        <div class="calendar-day-header">Mie</div>
-                        <div class="calendar-day-header">Joi</div>
-                        <div class="calendar-day-header">Vin</div>
-                        <div class="calendar-day-header">Sâm</div>
-                        <div class="calendar-day-header">Dum</div>
-                    </div>
-                    <div id="calendarDays" class="calendar-grid"></div>
-                </div>
-            </div>
-            
-            <div class="card mt-3" id="detaliiZi" style="display: none;">
-                <div class="card-header">
-                    <h3 id="titluDetaliiZi">Lucrări programate</h3>
-                </div>
-                <div id="listaLucrariZi"></div>
-            </div>
-        </div>
-
         <!-- Monitorizare Tab -->
         <div id="monitorizare" class="tab-content">
             <div class="card">
                 <div class="card-header">
                     <h2>Monitorizare Servicii</h2>
                     <div class="btn-group">
-                        <button class="btn btn-warning" onclick="exportExpirari()">Export Expirări</button>
-                        <button class="btn btn-primary" onclick="trimiteNotificari()">Trimite SMS (3 zile înainte)</button>
+                        <button class="btn btn-warning" onclick="exportExpirari()">Export Excel</button>
+                        <button class="btn btn-primary" onclick="trimiteNotificari()">Trimite SMS</button>
                     </div>
                 </div>
                 
-                <div class="filters-section">
-                    <div class="filters-grid">
-                        <div class="form-group">
-                            <label>Filtrează după perioada</label>
-                            <select id="filtruPerioada" onchange="filtreazaMonitorizare()">
-                                <option value="toate">Toate</option>
-                                <option value="expirate">Expirate</option>
-                                <option value="7">Expiră în 7 zile</option>
-                                <option value="30">Expiră în 30 zile</option>
-                                <option value="60">Expiră în 60 zile</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Tip serviciu</label>
-                            <select id="filtruTipServiciu" onchange="filtreazaMonitorizare()">
-                                <option value="toate">Toate</option>
-                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
-                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
-                                <option value="Verificare Centrală">Verificare Centrală</option>
-                                <option value="Instalații Gaz + Centrală">Instalații Gaz + Centrală</option>
-                                <option value="Servicii de Urgență">Servicii de Urgență</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="listaMonitorizare" class="monitoring-list"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2>Statistici Expirări</h2>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card danger">
-                        <div class="stat-label">Expirate</div>
-                        <div class="stat-number" id="statExpirate">0</div>
-                        <div class="stat-label">necesită reînnoire urgentă</div>
-                    </div>
-                    <div class="stat-card warning">
-                        <div class="stat-label">Expiră Luna Aceasta</div>
-                        <div class="stat-number" id="statLunaAceasta">0</div>
-                        <div class="stat-label">de contactat</div>
-                    </div>
-                    <div class="stat-card info">
-                        <div class="stat-label">Expiră în 3 Luni</div>
-                        <div class="stat-number" id="stat3Luni">0</div>
-                        <div class="stat-label">planificare</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Documente Tab -->
-        <div id="documente" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Încarcă Document</h2>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Client*</label>
-                        <select id="clientDocument" required>
-                            <option value="">Selectează clientul</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Tip Document*</label>
-                        <select id="tipDocument" required>
-                            <option value="">Selectează tipul</option>
-                            <option value="contract">Contract</option>
-                            <option value="verificare">Proces Verbal Verificare</option>
-                            <option value="certificat">Certificat Conformitate</option>
-                            <option value="factura">Factură</option>
-                            <option value="poza">Poză Lucrare</option>
-                            <option value="altele">Altele</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Selectează fișier*</label>
-                        <input type="file" id="fisierDocument" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Descriere</label>
-                        <input type="text" id="descriereDocument" placeholder="Descriere scurtă">
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="uploadDocument()">Încarcă Document</button>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <h2>Documente Salvate</h2>
-                    <div class="search-box">
-                        <input type="text" id="cautaDocument" placeholder="Caută document..." onkeyup="filtreazaDocumente()">
-                    </div>
-                </div>
-                <div id="listaDocumente" class="monitoring-list"></div>
+                <div id="listaMonitorizare"></div>
             </div>
         </div>
 
@@ -1446,148 +1041,50 @@
                             <option value="anual">Raport Anual</option>
                             <option value="expirari">Raport Expirări</option>
                             <option value="clienti">Raport Clienți</option>
-                            <option value="financiar">Raport Financiar</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Perioada De La</label>
+                        <label>Data Început</label>
                         <input type="date" id="dataStartRaport">
                     </div>
                     <div class="form-group">
-                        <label>Perioada Până La</label>
+                        <label>Data Sfârșit</label>
                         <input type="date" id="dataEndRaport">
                     </div>
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-primary" onclick="genereazaRaport()">Generează Raport</button>
                     <button class="btn btn-success" onclick="exportRaportExcel()">Export Excel</button>
-                    <button class="btn btn-danger" onclick="exportRaportPDF()">Export PDF</button>
-                    <button class="btn btn-secondary" onclick="printeazaRaport()">Printează</button>
                 </div>
             </div>
 
             <div id="containerRaport" class="card" style="display: none;">
-                <div class="report-header">
+                <div class="card-header">
                     <h2 id="titluRaport">Raport</h2>
-                    <div class="date-range" id="perioadaRaport"></div>
                 </div>
                 <div id="continutRaport"></div>
-            </div>
-        </div>
-
-        <!-- Backup Tab -->
-        <div id="backup" class="tab-content">
-            <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
-                <div class="backup-info">
-                    <div>
-                        <h2 style="margin-bottom: 10px; color: white;">Sistem de Backup</h2>
-                        <p style="opacity: 0.9;">Backup automat activat - se salvează zilnic la ora 2:00 AM</p>
-                        <p style="opacity: 0.8;" id="ultimulBackupInfo">Verificare status backup...</p>
-                    </div>
-                </div>
-                <div class="backup-actions">
-                    <button class="btn btn-primary" onclick="backupManual()" style="background: white; color: #667eea;">
-                        Backup Manual Acum
-                    </button>
-                    <button class="btn btn-success" onclick="descarcaBackup()" style="background: white; color: #28a745;">
-                        Descarcă Backup
-                    </button>
-                    <button class="btn btn-warning" onclick="restaureazaBackup()" style="background: white; color: #ffc107;">
-                        Restaurează din Backup
-                    </button>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2>Istoric Backup-uri</h2>
-                </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data & Ora</th>
-                                <th>Tip</th>
-                                <th>Creat de</th>
-                                <th>Clienți</th>
-                                <th>Servicii</th>
-                                <th>Lucrări</th>
-                                <th>Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody id="istoricBackup"></tbody>
-                    </table>
-                </div>
             </div>
         </div>
 
         <!-- Setări Tab -->
         <div id="setari" class="tab-content">
             <div class="card">
-                <div class="settings-panel">
-                    <div class="settings-section">
-                        <h3>Setări Generale</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Nume Companie</label>
-                                <input type="text" id="numeCompanie" value="AdInstalGaz" placeholder="Numele companiei">
-                            </div>
-                            <div class="form-group">
-                                <label>Telefon Contact</label>
-                                <input type="tel" id="telefonCompanie" placeholder="0762614401">
-                            </div>
-                            <div class="form-group">
-                                <label>Email Contact</label>
-                                <input type="email" id="emailCompanie" placeholder="office@adinstalgaz.ro">
-                            </div>
-                            <div class="form-group">
-                                <label>Adresă</label>
-                                <textarea id="adresaCompanie" placeholder="Adresa completă a companiei"></textarea>
-                            </div>
-                        </div>
+                <div class="card-header">
+                    <h2>Setări Generale</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Utilizator Conectat</label>
+                        <input type="text" id="utilizatorConectat" readonly>
                     </div>
-
-                    <div class="settings-section">
-                        <h3>Notificări</h3>
-                        <div class="form-group">
-                            <label style="display: flex; align-items: center; gap: 10px;">
-                                <input type="checkbox" id="notificariExpirari" checked>
-                                Notifică la expirarea serviciilor
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label>Notifică cu X zile înainte</label>
-                            <select id="zileNotificare">
-                                <option value="3">3 zile</option>
-                                <option value="7" selected>7 zile</option>
-                                <option value="14">14 zile</option>
-                                <option value="30">30 zile</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label>Rol</label>
+                        <input type="text" id="rolUtilizator" readonly>
                     </div>
-
-                    <div class="settings-section">
-                        <h3>Cont Utilizator</h3>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>Utilizator conectat</label>
-                                <input type="text" value="" id="utilizatorConectat" readonly style="background: #f8f9fa;">
-                            </div>
-                            <div class="form-group">
-                                <label>Rol</label>
-                                <input type="text" value="" id="rolUtilizator" readonly style="background: #f8f9fa;">
-                            </div>
-                        </div>
-                        <div class="btn-group">
-                            <button class="btn btn-danger" onclick="logout()">Delogare</button>
-                            <button class="btn btn-secondary" onclick="deschideGestionareUtilizatori()">Gestionează Utilizatori</button>
-                        </div>
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="btn btn-primary" onclick="salveazaSetari()">Salvează Setări</button>
-                        <button class="btn btn-secondary" onclick="resetareSetari()">Resetare la Default</button>
-                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-danger" onclick="logout()">Delogare</button>
+                    <button class="btn btn-primary" onclick="salveazaSetari()">Salvează Setări</button>
                 </div>
             </div>
         </div>
@@ -1609,120 +1106,18 @@
     <!-- Notificări -->
     <div id="notification" class="notification"></div>
 
-    <!-- Input ascuns pentru upload fișiere -->
-    <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="incarcaBackupFile(event)">
-
     <script>
-        // Configurare Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyD9yoIQ__cK0zIPlvSRlu1h7O1MtmrfLXA",
-            authDomain: "adinstalgaz-pwa.firebaseapp.com",
-            projectId: "adinstalgaz-pwa",
-            storageBucket: "adinstalgaz-pwa.firebasestorage.app",
-            messagingSenderId: "623851795901",
-            appId: "1:623851795901:web:63072fdef30693f4698ed4" // Completați cu ID-ul complet
-        };
+        // Date simulate - în producție ar trebui să fie dintr-o bază de date
+        let clienti = JSON.parse(localStorage.getItem('adinstalgaz_clienti') || '[]');
+        let servicii = JSON.parse(localStorage.getItem('adinstalgaz_servicii') || '[]');
+        let lucrari = JSON.parse(localStorage.getItem('adinstalgaz_lucrari') || '[]');
+        let utilizatori = JSON.parse(localStorage.getItem('adinstalgaz_utilizatori') || '[{"id":1,"nume":"Administrator","email":"admin@adinstalgaz.ro","rol":"administrator"}]');
+        let utilizatorCurent = JSON.parse(localStorage.getItem('adinstalgaz_user') || 'null');
         
-        // Inițializare Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
-        
-        // Variabile globale
-        let clienti = [];
-        let servicii = [];
-        let lucrari = [];
-        let utilizatori = [];
-        let utilizatorCurent = null;
-        let setari = {
-            numeCompanie: 'AdInstalGaz',
-            telefonCompanie: '0762614401',
-            emailCompanie: 'office@adinstalgaz.ro',
-            adresaCompanie: '',
-            notificariExpirari: true,
-            zileNotificare: 7,
-            salvareAutomata: true,
-            intervalSalvare: 5,
-            backupAutomat: true,
-            oraBackup: '02:00',
-            retentieBackup: 30,
-            formatBackup: 'ambele'
-        };
-
         // Variabile pentru 2FA
         let codTrimis = null;
         let emailCurent = null;
         let timerInterval = null;
-
-        // Variabile pentru calendar
-        let lunaCurenta = new Date();
-        let ziSelectata = null;
-
-        // Funcții pentru localStorage
-        function getStorageKey(key) {
-            const keyMap = {
-                'clienti': 'adinstalgaz_clienti',
-                'servicii': 'adinstalgaz_servicii',
-                'lucrari': 'adinstalgaz_lucrari',
-                'utilizatori': 'adinstalgaz_utilizatori',
-                'setari': 'adinstalgaz_setari',
-                'backupHistory': 'adinstalgaz_backup_history',
-                'lastBackup': 'adinstalgaz_last_backup'
-            };
-            return keyMap[key] || key;
-        }
-
-        function salveazaInLocalStorage() {
-            try {
-                localStorage.setItem(getStorageKey('clienti'), JSON.stringify(clienti));
-                localStorage.setItem(getStorageKey('servicii'), JSON.stringify(servicii));
-                localStorage.setItem(getStorageKey('lucrari'), JSON.stringify(lucrari));
-                localStorage.setItem(getStorageKey('utilizatori'), JSON.stringify(utilizatori));
-                localStorage.setItem(getStorageKey('setari'), JSON.stringify(setari));
-                return true;
-            } catch (e) {
-                console.error('Eroare la salvare:', e);
-                arataNotificare('Eroare la salvare!', 'error');
-                return false;
-            }
-        }
-
-        function incarcaDinLocalStorage() {
-            try {
-                const clientiStored = localStorage.getItem(getStorageKey('clienti')) || '[]';
-                const serviciiStored = localStorage.getItem(getStorageKey('servicii')) || '[]';
-                const lucrariStored = localStorage.getItem(getStorageKey('lucrari')) || '[]';
-                const utilizatoriStored = localStorage.getItem(getStorageKey('utilizatori')) || '[]';
-                const setariStored = localStorage.getItem(getStorageKey('setari'));
-
-                clienti = JSON.parse(clientiStored);
-                servicii = JSON.parse(serviciiStored);
-                lucrari = JSON.parse(lucrariStored);
-                utilizatori = JSON.parse(utilizatoriStored);
-                
-                if (utilizatori.length === 0) {
-                    utilizatori = [
-                        {
-                            id: 1,
-                            nume: "Administrator",
-                            email: "admin@adinstalgaz.ro",
-                            rol: "administrator",
-                            telefon: "0762614401",
-                            dataCreare: new Date().toISOString()
-                        }
-                    ];
-                    salveazaInLocalStorage();
-                }
-                
-                if (setariStored) {
-                    setari = { ...setari, ...JSON.parse(setariStored) };
-                }
-            } catch (e) {
-                console.error('Eroare la încărcare:', e);
-                arataNotificare('Eroare la încărcarea datelor!', 'error');
-            }
-        }
 
         // Funcții pentru notificări
         function arataNotificare(mesaj, tip = 'info') {
@@ -1752,15 +1147,16 @@
             codTrimis = Math.floor(100000 + Math.random() * 900000).toString();
             emailCurent = email;
             
-            // Salvează codul în Firestore
             try {
-                await db.collection('authCodes').add({
-                    email: email,
-                    code: codTrimis,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-                    used: false
-                });
+                // Trimite email cu EmailJS
+                const templateParams = {
+                    to_email: email,
+                    to_name: utilizator.nume,
+                    verification_code: codTrimis,
+                    company_name: 'AdInstalGaz'
+                };
+                
+                await emailjs.send('service_dtzcww7', 'template_2eeo9lr', templateParams);
                 
                 // Afișează pasul 2
                 document.getElementById('emailStep').style.display = 'none';
@@ -1772,18 +1168,24 @@
                 
                 arataNotificare('Cod trimis pe email! Verificați inbox-ul.', 'success');
                 
-                // TEMPORAR pentru testare - afișează codul
-                setTimeout(() => {
-                    alert(`COD DE TEST: ${codTrimis}`);
-                }, 1000);
-                
             } catch (error) {
-                console.error('Eroare trimitere cod:', error);
-                arataNotificare('Eroare la trimiterea codului!', 'error');
+                console.error('Eroare trimitere email:', error);
+                arataNotificare('Eroare la trimiterea codului pe email!', 'error');
+                
+                // TEMPORAR pentru testare - afișează codul
+                alert(`COD DE TEST: ${codTrimis}`);
+                
+                // Afișează pasul 2
+                document.getElementById('emailStep').style.display = 'none';
+                document.getElementById('codeStep').style.display = 'block';
+                document.getElementById('emailAfisare').textContent = email;
+                
+                // Pornește timer
+                startTimer(300);
             }
         }
 
-        async function verificaCod(event) {
+        function verificaCod(event) {
             event.preventDefault();
             
             const codIntrodus = document.getElementById('codVerificare').value;
@@ -1802,7 +1204,7 @@
             
             // Autentificare reușită
             utilizatorCurent = utilizator;
-            localStorage.setItem('adinstalgaz_current_user', JSON.stringify(utilizator));
+            localStorage.setItem('adinstalgaz_user', JSON.stringify(utilizator));
             
             // Oprește timer
             if (timerInterval) {
@@ -1851,7 +1253,7 @@
         function logout() {
             if (confirm('Sigur doriți să ieșiți din aplicație?')) {
                 utilizatorCurent = null;
-                localStorage.removeItem('adinstalgaz_current_user');
+                localStorage.removeItem('adinstalgaz_user');
                 
                 // Resetează 2FA
                 resetLogin();
@@ -1866,66 +1268,32 @@
         function initializeApp() {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            actualizareInterfataUtilizator();
-            actualizeazaDashboard();
-            incarcaDateDinFirebase();
-            verificaSMSuriDeTrimis();
-            arataNotificare(`Bine ai venit, ${utilizatorCurent.nume}!`, 'success');
-        }
-
-        // Funcție pentru actualizare interfață utilizator
-        function actualizareInterfataUtilizator() {
-            if (!utilizatorCurent) return;
             
+            // Actualizează interfața
             document.getElementById('headerNumeUtilizator').textContent = utilizatorCurent.nume;
-            document.getElementById('headerRolUtilizator').textContent = utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Lucrător';
+            document.getElementById('headerRolUtilizator').textContent = utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Utilizator';
             document.getElementById('utilizatorConectat').value = utilizatorCurent.nume;
-            document.getElementById('rolUtilizator').value = utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Lucrător';
+            document.getElementById('rolUtilizator').value = utilizatorCurent.rol;
             
-            const isAdmin = utilizatorCurent.rol === 'administrator' || utilizatorCurent.rol === 'admin';
+            actualizeazaDashboard();
+            populeazaSelectClienti();
             
-            // Ascunde tab-uri pentru non-admin
-            document.querySelectorAll('.nav-tab').forEach((tab, index) => {
-                const tabText = tab.textContent.trim();
-                if (tabText.includes('Rapoarte') || tabText.includes('Backup') || tabText.includes('Setări')) {
-                    tab.style.display = isAdmin ? 'flex' : 'none';
-                }
-            });
-        }
-
-        // Funcție pentru verificare permisiuni
-        function verificaPermisiuni(actiune) {
-            if (!utilizatorCurent) return false;
-            
-            const isAdmin = utilizatorCurent.rol === 'administrator' || utilizatorCurent.rol === 'admin';
-            
-            switch(actiune) {
-                case 'sterge':
-                case 'backup':
-                case 'rapoarte':
-                case 'setari':
-                    return isAdmin;
-                case 'adauga':
-                case 'editeaza':
-                case 'vizualizeaza':
-                    return true;
-                default:
-                    return false;
-            }
+            arataNotificare(`Bine ai venit, ${utilizatorCurent.nume}!`, 'success');
         }
 
         // Funcție pentru verificare autentificare
         function verificaAutentificare() {
-            const userStored = localStorage.getItem('adinstalgaz_current_user');
-            if (userStored) {
-                utilizatorCurent = JSON.parse(userStored);
-                const utilizatorValid = utilizatori.find(u => u.id === utilizatorCurent.id);
-                if (utilizatorValid) {
-                    document.getElementById('loginSection').style.display = 'none';
-                    document.getElementById('mainApp').style.display = 'block';
-                    actualizareInterfataUtilizator();
-                    return true;
-                }
+            if (utilizatorCurent) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                // Actualizează interfața
+                document.getElementById('headerNumeUtilizator').textContent = utilizatorCurent.nume;
+                document.getElementById('headerRolUtilizator').textContent = utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Utilizator';
+                document.getElementById('utilizatorConectat').value = utilizatorCurent.nume;
+                document.getElementById('rolUtilizator').value = utilizatorCurent.rol;
+                
+                return true;
             }
             
             document.getElementById('loginSection').style.display = 'flex';
@@ -1933,73 +1301,12 @@
             return false;
         }
 
-        // Încărcare date din Firebase
-        function incarcaDateDinFirebase() {
-            // Sincronizare Clienți
-            db.collection('clienti').onSnapshot(snapshot => {
-                clienti = [];
-                snapshot.forEach(doc => {
-                    clienti.push({ id: doc.id, ...doc.data() });
-                });
-                salveazaInLocalStorage();
-                actualizareDropdownClienti();
-                
-                if (document.getElementById('clienti').classList.contains('active')) {
-                    afiseazaClienti();
-                }
-            });
-            
-            // Sincronizare Servicii
-            db.collection('servicii').onSnapshot(snapshot => {
-                servicii = [];
-                snapshot.forEach(doc => {
-                    servicii.push({ id: doc.id, ...doc.data() });
-                });
-                salveazaInLocalStorage();
-                actualizareStatisticiMonitorizare();
-                actualizeazaDashboard();
-                
-                if (document.getElementById('servicii').classList.contains('active')) {
-                    afiseazaServicii();
-                }
-            });
-            
-            // Sincronizare Lucrări
-            db.collection('lucrari').onSnapshot(snapshot => {
-                lucrari = [];
-                snapshot.forEach(doc => {
-                    lucrari.push({ id: doc.id, ...doc.data() });
-                });
-                salveazaInLocalStorage();
-                actualizeazaDashboard();
-                
-                if (document.getElementById('lucrari').classList.contains('active')) {
-                    afiseazaLucrari();
-                }
-            });
-            
-            // Sincronizare Utilizatori (doar pentru admin)
-            if (utilizatorCurent && utilizatorCurent.rol === 'administrator') {
-                db.collection('utilizatori').onSnapshot(snapshot => {
-                    utilizatori = [];
-                    snapshot.forEach(doc => {
-                        utilizatori.push({ id: doc.id, ...doc.data() });
-                    });
-                    salveazaInLocalStorage();
-                    actualizareDropdownLucratori();
-                });
-            }
-        }
-
-        function salveazaInFirebase(colectie, document) {
-            const docCopy = { ...document };
-            delete docCopy.id;
-            
-            if (document.id) {
-                db.collection(colectie).doc(document.id.toString()).set(docCopy);
-            } else {
-                db.collection(colectie).add(docCopy);
-            }
+        // Funcții pentru salvare
+        function salveazaInLocalStorage() {
+            localStorage.setItem('adinstalgaz_clienti', JSON.stringify(clienti));
+            localStorage.setItem('adinstalgaz_servicii', JSON.stringify(servicii));
+            localStorage.setItem('adinstalgaz_lucrari', JSON.stringify(lucrari));
+            localStorage.setItem('adinstalgaz_utilizatori', JSON.stringify(utilizatori));
         }
 
         // Funcții pentru tabs
@@ -2025,18 +1332,11 @@
                 populeazaSelectClienti();
             } else if (tabName === 'lucrari') {
                 afiseazaLucrari();
-                populeazaSelectClientiLucrari();
-            } else if (tabName === 'calendar') {
-                afiseazaCalendar();
+                populeazaSelectClienti();
             } else if (tabName === 'monitorizare') {
                 afiseazaMonitorizare();
-            } else if (tabName === 'documente') {
-                afiseazaDocumente();
-                actualizareDropdownClienti();
-            } else if (tabName === 'backup') {
-                afiseazaIstoricBackup();
-            } else if (tabName === 'setari') {
-                incarcaSetariInFormular();
+            } else if (tabName === 'rapoarte') {
+                // Rapoarte
             }
         }
 
@@ -2056,10 +1356,10 @@
             
             const lucrariFinalizateLunaAceasta = lucrari.filter(l => {
                 if (l.status !== 'finalizata') return false;
-                const dataFinalizare = new Date(l.dataFinalizare || l.dataCreare);
+                const dataCreare = new Date(l.dataCreare);
                 const now = new Date();
-                return dataFinalizare.getMonth() === now.getMonth() && 
-                       dataFinalizare.getFullYear() === now.getFullYear();
+                return dataCreare.getMonth() === now.getMonth() && 
+                       dataCreare.getFullYear() === now.getFullYear();
             }).length;
             
             document.getElementById('totalClienti').textContent = totalClienti;
@@ -2067,26 +1367,14 @@
             document.getElementById('expirari7Zile').textContent = expirari7Zile;
             document.getElementById('lucrariFinalizate').textContent = lucrariFinalizateLunaAceasta;
             
-            const expirariCard = document.getElementById('expirariCard');
-            if (expirari7Zile > 0) {
-                expirariCard.style.borderColor = 'var(--danger)';
-            }
-            
-            if (expirari7Zile > 0) {
-                afiseazaExpirariUrgente();
-            }
-            
-            afiseazaLucrariAstazi();
-            afiseazaActivitateRecenta();
-            verificaStatusBackup();
+            // Verifică SMS-uri de trimis
             verificaSMSuriDeTrimis();
+            
+            // Activitate recentă
+            afiseazaActivitateRecenta();
         }
 
         function verificaSMSuriDeTrimis() {
-            const azi = new Date();
-            const peste3Zile = new Date();
-            peste3Zile.setDate(azi.getDate() + 3);
-            
             const serviciiExpira3Zile = servicii.filter(s => {
                 const dataExpirare = new Date(s.dataExpirare);
                 const diferenta = Math.ceil((dataExpirare - new Date()) / (1000 * 60 * 60 * 24));
@@ -2110,104 +1398,27 @@
             }
         }
 
-        function afiseazaExpirariUrgente() {
-            const container = document.getElementById('expirariUrgente');
-            const lista = document.getElementById('listaExpirariUrgente');
-            
-            const expirariUrgente = servicii.filter(s => {
-                const dataExpirare = new Date(s.dataExpirare);
-                const diferenta = Math.ceil((dataExpirare - new Date()) / (1000 * 60 * 60 * 24));
-                return diferenta >= 0 && diferenta <= 7;
-            }).sort((a, b) => new Date(a.dataExpirare) - new Date(b.dataExpirare));
-            
-            if (expirariUrgente.length > 0) {
-                container.style.display = 'block';
-                lista.innerHTML = expirariUrgente.map(s => {
-                    const client = clienti.find(c => c.id === s.clientId);
-                    const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
-                    
-                    return `
-                        <div class="monitoring-item expiring-soon">
-                            <div>
-                                <strong>${client ? client.nume : 'Client necunoscut'}</strong><br>
-                                <small>${s.tip} - Expiră: ${formatDate(s.dataExpirare)}</small>
-                            </div>
-                            <div class="days-left ${zileRamase <= 3 ? 'danger' : 'warning'}">
-                                ${zileRamase} zile
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                container.style.display = 'none';
-            }
-        }
-
-        function afiseazaLucrariAstazi() {
-            const container = document.getElementById('lucrariAstazi');
-            const astazi = new Date().toISOString().split('T')[0];
-            
-            const lucrariAstazi = lucrari.filter(l => 
-                l.dataProgramare === astazi && l.status !== 'finalizata'
-            );
-            
-            if (lucrariAstazi.length === 0) {
-                container.innerHTML = '<div class="empty-state"><p>Nu sunt lucrări programate pentru astăzi</p></div>';
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Client</th>
-                                <th>Serviciu</th>
-                                <th>Lucrător</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${lucrariAstazi.map(l => {
-                                const client = clienti.find(c => c.id === l.clientId);
-                                return `
-                                    <tr>
-                                        <td><strong>${client ? client.nume : 'Client necunoscut'}</strong></td>
-                                        <td>${l.serviciu}</td>
-                                        <td>${getLucratorNume(l.lucratorId)}</td>
-                                        <td>${getStatusBadge(l.status)}</td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
-
         function afiseazaActivitateRecenta() {
             const container = document.getElementById('activitateRecenta');
             const activitati = [];
             
-            clienti.slice(-3).reverse().forEach(c => {
-                if (c.dataCreare) {
-                    activitati.push({
-                        tip: 'client',
-                        descriere: `Client nou adăugat: ${c.nume}`,
-                        data: new Date(c.dataCreare)
-                    });
-                }
+            // Ultimii 5 clienți
+            clienti.slice(-5).reverse().forEach(c => {
+                activitati.push({
+                    tip: 'client',
+                    descriere: `Client nou: ${c.nume}`,
+                    data: new Date(c.dataCreare || Date.now())
+                });
             });
             
-            servicii.slice(-3).reverse().forEach(s => {
-                if (s.dataCreare) {
-                    const client = clienti.find(c => c.id === s.clientId);
-                    activitati.push({
-                        tip: 'serviciu',
-                        descriere: `Serviciu nou: ${s.tip} pentru ${client ? client.nume : 'Client necunoscut'}`,
-                        data: new Date(s.dataCreare)
-                    });
-                }
+            // Ultimele 5 servicii
+            servicii.slice(-5).reverse().forEach(s => {
+                const client = clienti.find(c => c.id === s.clientId);
+                activitati.push({
+                    tip: 'serviciu',
+                    descriere: `Serviciu nou: ${s.tip} pentru ${client ? client.nume : 'Client necunoscut'}`,
+                    data: new Date(s.dataCreare || Date.now())
+                });
             });
             
             activitati.sort((a, b) => b.data - a.data);
@@ -2219,12 +1430,8 @@
             
             container.innerHTML = activitati.slice(0, 10).map(a => `
                 <div style="padding: 10px; border-bottom: 1px solid #f0f0f0;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div style="flex: 1;">
-                            <div>${a.descriere}</div>
-                            <small style="color: #666;">${a.data.toLocaleString('ro-RO')}</small>
-                        </div>
-                    </div>
+                    <div>${a.descriere}</div>
+                    <small style="color: #666;">${a.data.toLocaleString('ro-RO')}</small>
                 </div>
             `).join('');
         }
@@ -2239,26 +1446,26 @@
                 telefon: document.getElementById('telefonClient').value,
                 email: document.getElementById('emailClient').value,
                 oras: document.getElementById('orasClient').value,
-                strada: document.getElementById('stradaClient').value,
-                numar: document.getElementById('numarClient').value,
-                tipLocuinta: document.getElementById('tipLocuinta').value,
-                bloc: document.getElementById('blocClient').value,
-                scara: document.getElementById('scaraClient').value,
-                etaj: document.getElementById('etajClient').value,
-                apartament: document.getElementById('apartamentClient').value,
+                adresa: document.getElementById('adresaClient').value,
                 observatii: document.getElementById('observatiiClient').value,
                 dataCreare: new Date().toISOString()
             };
             
-            salveazaInFirebase('clienti', client);
+            clienti.push(client);
+            salveazaInLocalStorage();
             arataNotificare('Client adăugat cu succes!', 'success');
             resetFormClient();
+            afiseazaClienti();
+            populeazaSelectClienti();
+        }
+
+        function resetFormClient() {
+            document.getElementById('formClient').reset();
         }
 
         function afiseazaClienti() {
             const tbody = document.getElementById('listaClienti');
             const searchTerm = document.getElementById('cautaClient').value.toLowerCase();
-            const isAdmin = utilizatorCurent && utilizatorCurent.rol === 'administrator';
             
             const clientiFiltrati = clienti.filter(client => 
                 client.nume.toLowerCase().includes(searchTerm) ||
@@ -2267,7 +1474,6 @@
             
             tbody.innerHTML = clientiFiltrati.map(client => {
                 const nrServicii = servicii.filter(s => s.clientId === client.id).length;
-                const adresa = construiesteAdresa(client);
                 
                 return `
                     <tr>
@@ -2275,166 +1481,73 @@
                         <td><strong>${client.nume}</strong></td>
                         <td>${client.telefon}</td>
                         <td>${client.email || '-'}</td>
-                        <td>${adresa}</td>
+                        <td>${client.adresa}, ${client.oras}</td>
                         <td><span class="badge badge-info">${nrServicii} servicii</span></td>
                         <td>
-                            <div class="btn-group">
-                                <button class="btn btn-primary btn-sm" onclick="editeazaClient(${client.id})">
-                                    Editează
-                                </button>
-                                ${isAdmin ? `
-                                    <button class="btn btn-danger btn-sm" onclick="stergeClient(${client.id})">
-                                        Șterge
-                                    </button>
-                                ` : ''}
-                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="editeazaClient(${client.id})">
+                                Editează
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="stergeClient(${client.id})">
+                                Șterge
+                            </button>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
 
-        function construiesteAdresa(client) {
-            let adresa = `${client.strada} nr. ${client.numar}`;
-            if (client.tipLocuinta === 'bloc') {
-                if (client.bloc) adresa += `, Bl. ${client.bloc}`;
-                if (client.scara) adresa += `, Sc. ${client.scara}`;
-                if (client.etaj) adresa += `, Et. ${client.etaj}`;
-                if (client.apartament) adresa += `, Ap. ${client.apartament}`;
-            }
-            adresa += `, ${client.oras}`;
-            return adresa;
-        }
-
-        function toggleBlocFields() {
-            const tipLocuinta = document.getElementById('tipLocuinta').value;
-            const blocFields = document.querySelectorAll('.bloc-fields');
-            
-            blocFields.forEach(field => {
-                field.style.display = tipLocuinta === 'bloc' ? 'block' : 'none';
-            });
-        }
-
-        function resetFormClient() {
-            document.getElementById('formClient').reset();
-            toggleBlocFields();
-        }
-
         function filtreazaClienti() {
             afiseazaClienti();
         }
 
-        function editeazaClient(id) {
-            const client = clienti.find(c => c.id === id);
-            if (!client) return;
-            
-            const modal = document.getElementById('modalEdit');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            modalTitle.textContent = 'Editare Client';
-            modalBody.innerHTML = `
-                <form id="formEditClient" onsubmit="salveazaEditareClient(event, ${id})">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Nume Complet*</label>
-                            <input type="text" id="editNumeClient" value="${client.nume}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Telefon*</label>
-                            <input type="tel" id="editTelefonClient" value="${client.telefon}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="editEmailClient" value="${client.email || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label>Oraș*</label>
-                            <select id="editOrasClient" required>
-                                <option value="">Selectează orașul</option>
-                                <option value="Alexandria" ${client.oras === 'Alexandria' ? 'selected' : ''}>Alexandria</option>
-                                <option value="Roșiorii de Vede" ${client.oras === 'Roșiorii de Vede' ? 'selected' : ''}>Roșiorii de Vede</option>
-                                <option value="Turnu Măgurele" ${client.oras === 'Turnu Măgurele' ? 'selected' : ''}>Turnu Măgurele</option>
-                                <option value="Zimnicea" ${client.oras === 'Zimnicea' ? 'selected' : ''}>Zimnicea</option>
-                                <option value="Videle" ${client.oras === 'Videle' ? 'selected' : ''}>Videle</option>
-                                <option value="Altul" ${client.oras === 'Altul' ? 'selected' : ''}>Altul</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Observații</label>
-                        <textarea id="editObservatiiClient">${client.observatii || ''}</textarea>
-                    </div>
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">
-                            Salvează Modificări
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="inchideModal()">
-                            Anulează
-                        </button>
-                    </div>
-                </form>
-            `;
-            
-            modal.style.display = 'block';
-        }
-
-        function salveazaEditareClient(event, id) {
-            event.preventDefault();
-            
-            const index = clienti.findIndex(c => c.id === id);
-            if (index === -1) return;
-            
-            clienti[index] = {
-                ...clienti[index],
-                nume: document.getElementById('editNumeClient').value,
-                telefon: document.getElementById('editTelefonClient').value,
-                email: document.getElementById('editEmailClient').value,
-                oras: document.getElementById('editOrasClient').value,
-                observatii: document.getElementById('editObservatiiClient').value
-            };
-            
-            salveazaInLocalStorage();
-            salveazaInFirebase('clienti', clienti[index]);
-            arataNotificare('Client actualizat cu succes!', 'success');
-            inchideModal();
-            afiseazaClienti();
-        }
-
         function stergeClient(id) {
-            if (!verificaPermisiuni('sterge')) {
-                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
-                return;
-            }
-            
-            if (!confirm('Sigur doriți să ștergeți acest client? Toate serviciile și lucrările asociate vor fi șterse!')) {
-                return;
-            }
-            
-            const batch = db.batch();
-            
-            batch.delete(db.collection('clienti').doc(id.toString()));
-            
-            servicii.filter(s => s.clientId === id).forEach(s => {
-                batch.delete(db.collection('servicii').doc(s.id.toString()));
-            });
-            
-            lucrari.filter(l => l.clientId === id).forEach(l => {
-                batch.delete(db.collection('lucrari').doc(l.id.toString()));
-            });
-            
-            batch.commit().then(() => {
+            if (confirm('Sigur doriți să ștergeți acest client?')) {
+                clienti = clienti.filter(c => c.id !== id);
+                servicii = servicii.filter(s => s.clientId !== id);
+                lucrari = lucrari.filter(l => l.clientId !== id);
+                salveazaInLocalStorage();
                 arataNotificare('Client șters cu succes!', 'success');
-            }).catch(error => {
-                arataNotificare('Eroare la ștergere: ' + error.message, 'error');
-            });
+                afiseazaClienti();
+                populeazaSelectClienti();
+            }
         }
 
         // Funcții pentru Servicii
         function populeazaSelectClienti() {
-            const select = document.getElementById('clientServiciu');
-            select.innerHTML = '<option value="">Selectează clientul</option>' +
-                clienti.map(c => `<option value="${c.id}">${c.nume} - ${c.telefon}</option>`).join('');
+            const selects = ['clientServiciu', 'clientLucrare'];
+            
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Selectează clientul</option>' +
+                        clienti.map(c => `<option value="${c.id}">${c.nume} - ${c.telefon}</option>`).join('');
+                }
+            });
+        }
+
+        function calculeazaDataExpirareAutomata() {
+            const tipServiciu = document.getElementById('tipServiciu');
+            const dataInceput = document.getElementById('dataInceputServiciu').value;
+            const dataExpirare = document.getElementById('dataExpirareServiciu');
+            const pretServiciu = document.getElementById('pretServiciu');
+            
+            if (!tipServiciu.value || !dataInceput) return;
+            
+            const selectedOption = tipServiciu.options[tipServiciu.selectedIndex];
+            const ani = parseInt(selectedOption.getAttribute('data-ani') || '0');
+            const pret = selectedOption.getAttribute('data-pret') || '0';
+            
+            // Calculează data expirare
+            if (ani > 0) {
+                const dataStart = new Date(dataInceput);
+                dataStart.setFullYear(dataStart.getFullYear() + ani);
+                dataExpirare.value = dataStart.toISOString().split('T')[0];
+            }
+            
+            // Setează prețul
+            if (pret !== '0') {
+                pretServiciu.value = pret;
+            }
         }
 
         function adaugaServiciu(event) {
@@ -2446,20 +1559,25 @@
                 tip: document.getElementById('tipServiciu').value,
                 dataInceput: document.getElementById('dataInceputServiciu').value,
                 dataExpirare: document.getElementById('dataExpirareServiciu').value,
-                pret: document.getElementById('pretServiciu').value,
+                pret: parseFloat(document.getElementById('pretServiciu').value),
                 observatii: document.getElementById('observatiiServiciu').value,
                 dataCreare: new Date().toISOString()
             };
             
-            salveazaInFirebase('servicii', serviciu);
+            servicii.push(serviciu);
+            salveazaInLocalStorage();
             arataNotificare('Serviciu adăugat cu succes!', 'success');
             resetFormServiciu();
+            afiseazaServicii();
+        }
+
+        function resetFormServiciu() {
+            document.getElementById('formServiciu').reset();
         }
 
         function afiseazaServicii() {
             const tbody = document.getElementById('listaServicii');
             const searchTerm = document.getElementById('cautaServiciu').value.toLowerCase();
-            const isAdmin = utilizatorCurent && utilizatorCurent.rol === 'administrator';
             
             const serviciiFiltrare = servicii.filter(serviciu => {
                 const client = clienti.find(c => c.id === serviciu.clientId);
@@ -2498,215 +1616,66 @@
                         <td>${serviciu.tip}</td>
                         <td>${formatDate(serviciu.dataInceput)}</td>
                         <td>${formatDate(serviciu.dataExpirare)}</td>
+                        <td>${serviciu.pret} Lei</td>
                         <td>${statusBadge}</td>
                         <td>${zileBadge}</td>
                         <td>
-                            <div class="btn-group">
-                                <button class="btn btn-primary btn-sm" onclick="editeazaServiciu(${serviciu.id})">
-                                    Editează
-                                </button>
-                                ${isAdmin ? `
-                                    <button class="btn btn-danger btn-sm" onclick="stergeServiciu(${serviciu.id})">
-                                        Șterge
-                                    </button>
-                                ` : ''}
-                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="editeazaServiciu(${serviciu.id})">
+                                Editează
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="stergeServiciu(${serviciu.id})">
+                                Șterge
+                            </button>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
 
-        function resetFormServiciu() {
-            document.getElementById('formServiciu').reset();
-        }
-
         function filtreazaServicii() {
             afiseazaServicii();
         }
 
-        function editeazaServiciu(id) {
-            const serviciu = servicii.find(s => s.id === id);
-            if (!serviciu) return;
-            
-            const modal = document.getElementById('modalEdit');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            modalTitle.textContent = 'Editare Serviciu';
-            modalBody.innerHTML = `
-                <form id="formEditServiciu" onsubmit="salveazaEditareServiciu(event, ${id})">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Tip Serviciu*</label>
-                            <select id="editTipServiciu" required>
-                                <option value="${serviciu.tip}" selected>${serviciu.tip}</option>
-                                <option value="Verificare Instalație Gaz">Verificare Instalație Gaz</option>
-                                <option value="Revizie Instalație Gaz">Revizie Instalație Gaz</option>
-                                <option value="Verificare Centrală">Verificare Centrală</option>
-                                <option value="Instalații Gaz + Centrală">Instalații Gaz + Centrală</option>
-                                <option value="Servicii de Urgență">Servicii de Urgență</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Data Început*</label>
-                            <input type="date" id="editDataInceputServiciu" value="${serviciu.dataInceput}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Data Expirare*</label>
-                            <input type="date" id="editDataExpirareServiciu" value="${serviciu.dataExpirare}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Preț</label>
-                            <input type="text" id="editPretServiciu" value="${serviciu.pret || ''}" placeholder="Ex: 150 Lei">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Observații</label>
-                        <textarea id="editObservatiiServiciu">${serviciu.observatii || ''}</textarea>
-                    </div>
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">
-                            Salvează Modificări
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="inchideModal()">
-                            Anulează
-                        </button>
-                    </div>
-                </form>
-            `;
-            
-            modal.style.display = 'block';
-        }
-
-        function salveazaEditareServiciu(event, id) {
-            event.preventDefault();
-            
-            const index = servicii.findIndex(s => s.id === id);
-            if (index === -1) return;
-            
-            servicii[index] = {
-                ...servicii[index],
-                tip: document.getElementById('editTipServiciu').value,
-                dataInceput: document.getElementById('editDataInceputServiciu').value,
-                dataExpirare: document.getElementById('editDataExpirareServiciu').value,
-                pret: document.getElementById('editPretServiciu').value,
-                observatii: document.getElementById('editObservatiiServiciu').value
-            };
-            
-            salveazaInLocalStorage();
-            salveazaInFirebase('servicii', servicii[index]);
-            arataNotificare('Serviciu actualizat cu succes!', 'success');
-            inchideModal();
-            afiseazaServicii();
-        }
-
         function stergeServiciu(id) {
-            if (!verificaPermisiuni('sterge')) {
-                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
-                return;
+            if (confirm('Sigur doriți să ștergeți acest serviciu?')) {
+                servicii = servicii.filter(s => s.id !== id);
+                salveazaInLocalStorage();
+                arataNotificare('Serviciu șters cu succes!', 'success');
+                afiseazaServicii();
             }
-            
-            if (!confirm('Sigur doriți să ștergeți acest serviciu?')) {
-                return;
-            }
-            
-            db.collection('servicii').doc(id.toString()).delete()
-                .then(() => {
-                    arataNotificare('Serviciu șters cu succes!', 'success');
-                })
-                .catch(error => {
-                    arataNotificare('Eroare la ștergere: ' + error.message, 'error');
-                });
         }
 
         // Funcții pentru Lucrări
-        function populeazaSelectClientiLucrari() {
-            actualizareDropdownClienti();
-            actualizareDropdownLucratori();
-        }
-
-        function actualizeazaAdresaClient() {
-            const clientId = document.getElementById('clientLucrare').value;
-            const adresaInput = document.getElementById('adresaClientLucrare');
-            
-            if (clientId) {
-                const client = clienti.find(c => c.id == clientId);
-                if (client) {
-                    adresaInput.value = construiesteAdresa(client);
-                }
-            } else {
-                adresaInput.value = '';
-            }
-        }
-
-        function actualizeazaPret() {
-            const select = document.getElementById('serviciuLucrare');
-            const pretInput = document.getElementById('pretLucrare');
-            const selectedOption = select.options[select.selectedIndex];
-            
-            if (selectedOption && selectedOption.dataset.pret) {
-                pretInput.value = selectedOption.dataset.pret + ' Lei';
-                pretInput.readOnly = true;
-            } else {
-                pretInput.value = '';
-                pretInput.readOnly = false;
-                pretInput.placeholder = 'Introduceți prețul manual';
-            }
-        }
-
         function adaugaLucrare(event) {
             event.preventDefault();
             
-            const clientId = parseInt(document.getElementById('clientLucrare').value);
-            const lucratorId = parseInt(document.getElementById('lucratorLucrare').value);
-            
             const lucrare = {
                 id: Date.now(),
-                clientId: clientId,
+                clientId: parseInt(document.getElementById('clientLucrare').value),
                 serviciu: document.getElementById('serviciuLucrare').value,
                 dataProgramare: document.getElementById('dataProgramareLucrare').value,
-                oraProgramare: document.getElementById('oraProgramare').value || '',
-                pret: document.getElementById('pretLucrare').value,
-                lucratorId: lucratorId || null,
-                status: lucratorId ? 'atribuita' : 'neatribuita',
-                prioritate: document.getElementById('prioritateLucrare').value,
-                timpEstimat: document.getElementById('timpEstimat').value || '',
+                pret: parseFloat(document.getElementById('pretLucrare').value),
+                status: document.getElementById('statusLucrare').value,
                 observatii: document.getElementById('observatiiLucrare').value,
-                dataCreare: new Date().toISOString(),
-                creatDe: utilizatorCurent.id
+                dataCreare: new Date().toISOString()
             };
             
-            salveazaInFirebase('lucrari', lucrare);
-            
-            if (lucratorId) {
-                notificaLucrator(lucratorId, lucrare);
-            }
-            
+            lucrari.push(lucrare);
+            salveazaInLocalStorage();
             arataNotificare('Lucrare adăugată cu succes!', 'success');
             resetFormLucrare();
+            afiseazaLucrari();
         }
 
-        async function notificaLucrator(lucratorId, lucrare) {
-            const notificare = {
-                tip: 'lucrare_noua',
-                lucratorId: lucratorId,
-                lucrareId: lucrare.id,
-                mesaj: `Aveți o lucrare nouă: ${lucrare.serviciu}`,
-                citita: false,
-                dataCreare: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            
-            await db.collection('notificari').add(notificare);
+        function resetFormLucrare() {
+            document.getElementById('formLucrare').reset();
         }
 
         function afiseazaLucrari() {
             const tbody = document.getElementById('listaLucrari');
-            const isAdmin = utilizatorCurent && utilizatorCurent.rol === 'administrator';
             
             tbody.innerHTML = lucrari.map(lucrare => {
                 const client = clienti.find(c => c.id === lucrare.clientId);
-                const lucratorNume = getLucratorNume(lucrare.lucratorId);
                 
                 return `
                     <tr>
@@ -2714,49 +1683,31 @@
                         <td><strong>${client ? client.nume : 'Client șters'}</strong></td>
                         <td>${lucrare.serviciu}</td>
                         <td>${formatDate(lucrare.dataProgramare)}</td>
-                        <td>${lucrare.pret}</td>
-                        <td>${lucratorNume}</td>
+                        <td>${lucrare.pret} Lei</td>
                         <td>${getStatusBadge(lucrare.status)}</td>
                         <td>
-                            <div class="btn-group">
-                                <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
-                                    Editează
-                                </button>
-                                ${isAdmin ? `
-                                    <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
-                                        Șterge
-                                    </button>
-                                ` : ''}
-                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
+                                Editează
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
+                                Șterge
+                            </button>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
 
-        function getLucratorNume(lucratorId) {
-            if (!lucratorId) return 'Neatribuit';
-            const utilizator = utilizatori.find(u => u.id == lucratorId);
-            return utilizator ? utilizator.nume : 'Utilizator necunoscut';
-        }
-
         function getStatusBadge(status) {
             const badges = {
-                'neatribuita': '<span class="badge badge-warning">Neatribuită</span>',
-                'atribuita': '<span class="badge badge-info">Atribuită</span>',
-                'in-lucru': '<span class="badge badge-primary">În Lucru</span>',
+                'programata': '<span class="badge badge-info">Programată</span>',
+                'in-curs': '<span class="badge badge-warning">În Curs</span>',
                 'finalizata': '<span class="badge badge-success">Finalizată</span>'
             };
             return badges[status] || status;
         }
 
-        function resetFormLucrare() {
-            document.getElementById('formLucrare').reset();
-            document.getElementById('adresaClientLucrare').value = '';
-            document.getElementById('pretLucrare').readOnly = false;
-        }
-
-        function filtreazaLucrariDupa(status) {
+        function filtreazaLucrari(status) {
             const tbody = document.getElementById('listaLucrari');
             let lucrariFiltrare = lucrari;
             
@@ -2766,7 +1717,6 @@
             
             tbody.innerHTML = lucrariFiltrare.map(lucrare => {
                 const client = clienti.find(c => c.id === lucrare.clientId);
-                const lucratorNume = getLucratorNume(lucrare.lucratorId);
                 
                 return `
                     <tr>
@@ -2774,325 +1724,37 @@
                         <td><strong>${client ? client.nume : 'Client șters'}</strong></td>
                         <td>${lucrare.serviciu}</td>
                         <td>${formatDate(lucrare.dataProgramare)}</td>
-                        <td>${lucrare.pret}</td>
-                        <td>${lucratorNume}</td>
+                        <td>${lucrare.pret} Lei</td>
                         <td>${getStatusBadge(lucrare.status)}</td>
                         <td>
-                            <div class="btn-group">
-                                <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
-                                    Editează
-                                </button>
-                                <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
-                                    Șterge
-                                </button>
-                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${lucrare.id})">
+                                Editează
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="stergeLucrare(${lucrare.id})">
+                                Șterge
+                            </button>
                         </td>
                     </tr>
                 `;
             }).join('');
-            
-            if (lucrariFiltrare.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center">Nu există lucrări ${status !== 'toate' ? `cu status "${status}"` : ''}</td></tr>`;
-            }
-        }
-
-        function editeazaLucrare(id) {
-            const lucrare = lucrari.find(l => l.id === id);
-            if (!lucrare) return;
-            
-            const modal = document.getElementById('modalEdit');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            modalTitle.textContent = 'Editare Lucrare';
-            modalBody.innerHTML = `
-                <form id="formEditLucrare" onsubmit="salveazaEditareLucrare(event, ${id})">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Serviciu*</label>
-                            <input type="text" id="editServiciuLucrare" value="${lucrare.serviciu}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Data Programare*</label>
-                            <input type="date" id="editDataProgramareLucrare" value="${lucrare.dataProgramare}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Preț*</label>
-                            <input type="text" id="editPretLucrare" value="${lucrare.pret}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Status</label>
-                            <select id="editStatusLucrare">
-                                <option value="neatribuita" ${lucrare.status === 'neatribuita' ? 'selected' : ''}>Neatribuită</option>
-                                <option value="atribuita" ${lucrare.status === 'atribuita' ? 'selected' : ''}>Atribuită</option>
-                                <option value="in-lucru" ${lucrare.status === 'in-lucru' ? 'selected' : ''}>În Lucru</option>
-                                <option value="finalizata" ${lucrare.status === 'finalizata' ? 'selected' : ''}>Finalizată</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Lucrător</label>
-                            <select id="editLucratorLucrare">
-                                <option value="">Neatribuit</option>
-                                ${utilizatori.filter(u => u.rol === 'lucrator' || u.rol === 'lucrător' || u.rol === 'administrator').map(u => 
-                                    `<option value="${u.id}" ${lucrare.lucratorId == u.id ? 'selected' : ''}>${u.nume}</option>`
-                                ).join('')}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Observații</label>
-                        <textarea id="editObservatiiLucrare">${lucrare.observatii || ''}</textarea>
-                    </div>
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">
-                            Salvează Modificări
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="inchideModal()">
-                            Anulează
-                        </button>
-                    </div>
-                </form>
-            `;
-            
-            modal.style.display = 'block';
-        }
-
-        function salveazaEditareLucrare(event, id) {
-            event.preventDefault();
-            
-            const index = lucrari.findIndex(l => l.id === id);
-            if (index === -1) return;
-            
-            const oldStatus = lucrari[index].status;
-            const newStatus = document.getElementById('editStatusLucrare').value;
-            
-            lucrari[index] = {
-                ...lucrari[index],
-                serviciu: document.getElementById('editServiciuLucrare').value,
-                dataProgramare: document.getElementById('editDataProgramareLucrare').value,
-                pret: document.getElementById('editPretLucrare').value,
-                status: newStatus,
-                lucratorId: document.getElementById('editLucratorLucrare').value ? parseInt(document.getElementById('editLucratorLucrare').value) : null,
-                observatii: document.getElementById('editObservatiiLucrare').value
-            };
-            
-            // Dacă s-a finalizat acum, creează serviciu automat
-            if (oldStatus !== 'finalizata' && newStatus === 'finalizata') {
-                lucrari[index].dataFinalizare = new Date().toISOString();
-                
-                const serviciuNou = {
-                    id: Date.now() + 1,
-                    clientId: lucrari[index].clientId,
-                    tip: lucrari[index].serviciu,
-                    dataInceput: new Date().toISOString().split('T')[0],
-                    dataExpirare: new Date(new Date().setFullYear(new Date().getFullYear() + 2)).toISOString().split('T')[0],
-                    pret: lucrari[index].pret,
-                    observatii: `Creat automat din lucrarea #${lucrari[index].id}`,
-                    dataCreare: new Date().toISOString()
-                };
-                
-                servicii.push(serviciuNou);
-                salveazaInFirebase('servicii', serviciuNou);
-                
-                arataNotificare('Lucrare finalizată! Serviciu creat automat cu valabilitate 2 ani.', 'success');
-            }
-            
-            salveazaInLocalStorage();
-            salveazaInFirebase('lucrari', lucrari[index]);
-            
-            inchideModal();
-            afiseazaLucrari();
         }
 
         function stergeLucrare(id) {
-            if (!verificaPermisiuni('sterge')) {
-                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
-                return;
+            if (confirm('Sigur doriți să ștergeți această lucrare?')) {
+                lucrari = lucrari.filter(l => l.id !== id);
+                salveazaInLocalStorage();
+                arataNotificare('Lucrare ștearsă cu succes!', 'success');
+                afiseazaLucrari();
             }
-            
-            if (!confirm('Sigur doriți să ștergeți această lucrare?')) {
-                return;
-            }
-            
-            db.collection('lucrari').doc(id.toString()).delete()
-                .then(() => {
-                    arataNotificare('Lucrare ștersă cu succes!', 'success');
-                })
-                .catch(error => {
-                    arataNotificare('Eroare la ștergere: ' + error.message, 'error');
-                });
-        }
-
-        // Funcții pentru Calendar
-        function afiseazaCalendar() {
-            const anul = lunaCurenta.getFullYear();
-            const luna = lunaCurenta.getMonth();
-            
-            const numeLuni = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 
-                             'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
-            document.getElementById('lunaCurenta').textContent = `${numeLuni[luna]} ${anul}`;
-            
-            const primaZi = new Date(anul, luna, 1);
-            const ultimaZi = new Date(anul, luna + 1, 0);
-            
-            let startDay = primaZi.getDay() - 1;
-            if (startDay === -1) startDay = 6;
-            
-            const zileInLuna = ultimaZi.getDate();
-            
-            let html = '';
-            
-            for (let i = 0; i < startDay; i++) {
-                html += '<div class="calendar-day empty"></div>';
-            }
-            
-            const azi = new Date();
-            for (let zi = 1; zi <= zileInLuna; zi++) {
-                const data = new Date(anul, luna, zi);
-                const dataString = data.toISOString().split('T')[0];
-                
-                const lucrariZi = getLucrariPentruData(dataString);
-                const areLucrari = lucrariZi.length > 0;
-                
-                const esteAzi = data.toDateString() === azi.toDateString();
-                
-                let clasa = 'calendar-day';
-                if (esteAzi) clasa += ' today';
-                if (areLucrari) clasa += ' has-event';
-                if (ziSelectata && data.toDateString() === ziSelectata.toDateString()) clasa += ' selected';
-                
-                html += `
-                    <div class="${clasa}" onclick="selecteazaZi(${anul}, ${luna}, ${zi})">
-                        <div class="calendar-day-number">${zi}</div>
-                        ${areLucrari ? `
-                            <div class="calendar-day-events">
-                                ${lucrariZi.slice(0, 3).map(() => '<div class="event-dot"></div>').join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            }
-            
-            document.getElementById('calendarDays').innerHTML = html;
-        }
-
-        function getLucrariPentruData(data) {
-            return lucrari.filter(l => l.dataProgramare === data);
-        }
-
-        function selecteazaZi(anul, luna, zi) {
-            ziSelectata = new Date(anul, luna, zi);
-            const dataString = ziSelectata.toISOString().split('T')[0];
-            
-            afiseazaCalendar();
-            
-            const lucrariZi = getLucrariPentruData(dataString);
-            const containerDetalii = document.getElementById('detaliiZi');
-            const listaLucrari = document.getElementById('listaLucrariZi');
-            
-            if (lucrariZi.length > 0) {
-                containerDetalii.style.display = 'block';
-                document.getElementById('titluDetaliiZi').textContent = 
-                    `Lucrări programate - ${zi} ${lunaCurenta.toLocaleDateString('ro-RO', { month: 'long' })} ${anul}`;
-                
-                listaLucrari.innerHTML = `
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Oră</th>
-                                    <th>Client</th>
-                                    <th>Serviciu</th>
-                                    <th>Lucrător</th>
-                                    <th>Status</th>
-                                    <th>Acțiuni</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${lucrariZi.map(l => {
-                                    const client = clienti.find(c => c.id === l.clientId);
-                                    const lucrator = getLucratorNume(l.lucratorId);
-                                    
-                                    return `
-                                        <tr>
-                                            <td>${l.oraProgramare || 'Neprogramată'}</td>
-                                            <td><strong>${client ? client.nume : 'Client necunoscut'}</strong></td>
-                                            <td>${l.serviciu}</td>
-                                            <td>${lucrator}</td>
-                                            <td>${getStatusBadge(l.status)}</td>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm" onclick="editeazaLucrare(${l.id})">
-                                                    Editează
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            } else {
-                containerDetalii.style.display = 'block';
-                document.getElementById('titluDetaliiZi').textContent = 
-                    `${zi} ${lunaCurenta.toLocaleDateString('ro-RO', { month: 'long' })} ${anul}`;
-                listaLucrari.innerHTML = `
-                    <div class="text-center text-muted" style="padding: 2rem;">
-                        <p>Nu sunt lucrări programate în această zi.</p>
-                        <button class="btn btn-primary mt-2" onclick="adaugaLucrareInData('${dataString}')">
-                            Adaugă lucrare
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        function schimbaLunaCalendar(directie) {
-            lunaCurenta.setMonth(lunaCurenta.getMonth() + directie);
-            afiseazaCalendar();
-        }
-
-        function aziCalendar() {
-            lunaCurenta = new Date();
-            const azi = new Date();
-            selecteazaZi(azi.getFullYear(), azi.getMonth(), azi.getDate());
-        }
-
-        function adaugaLucrareInData(data) {
-            document.getElementById('dataProgramareLucrare').value = data;
-            showTab('lucrari');
-            document.getElementById('formLucrare').scrollIntoView({ behavior: 'smooth' });
         }
 
         // Funcții pentru Monitorizare
         function afiseazaMonitorizare() {
-            const lista = document.getElementById('listaMonitorizare');
-            const filtruPerioada = document.getElementById('filtruPerioada').value;
-            const filtruTip = document.getElementById('filtruTipServiciu').value;
+            const container = document.getElementById('listaMonitorizare');
             
-            let serviciiFiltrare = [...servicii];
+            const serviciiSortate = servicii.sort((a, b) => new Date(a.dataExpirare) - new Date(b.dataExpirare));
             
-            if (filtruPerioada !== 'toate') {
-                serviciiFiltrare = serviciiFiltrare.filter(s => {
-                    const dataExpirare = new Date(s.dataExpirare);
-                    const zileRamase = Math.ceil((dataExpirare - new Date()) / (1000 * 60 * 60 * 24));
-                    
-                    if (filtruPerioada === 'expirate') {
-                        return zileRamase < 0;
-                    } else {
-                        const zile = parseInt(filtruPerioada);
-                        return zileRamase >= 0 && zileRamase <= zile;
-                    }
-                });
-            }
-            
-            if (filtruTip !== 'toate') {
-                serviciiFiltrare = serviciiFiltrare.filter(s => s.tip === filtruTip);
-            }
-            
-            serviciiFiltrare.sort((a, b) => new Date(a.dataExpirare) - new Date(b.dataExpirare));
-            
-            lista.innerHTML = serviciiFiltrare.map(serviciu => {
+            container.innerHTML = serviciiSortate.map(serviciu => {
                 const client = clienti.find(c => c.id === serviciu.clientId);
                 const dataExpirare = new Date(serviciu.dataExpirare);
                 const zileRamase = Math.ceil((dataExpirare - new Date()) / (1000 * 60 * 60 * 24));
@@ -3101,111 +1763,36 @@
                 let badge = '';
                 
                 if (zileRamase < 0) {
-                    clasa = 'expired';
-                    badge = `<span class="days-left danger">${Math.abs(zileRamase)} zile depășite</span>`;
+                    clasa = 'alert-danger';
+                    badge = `<span class="badge badge-danger">${Math.abs(zileRamase)} zile depășite</span>`;
                 } else if (zileRamase <= 7) {
-                    clasa = 'expiring-soon';
-                    badge = `<span class="days-left danger">${zileRamase} zile</span>`;
+                    clasa = 'alert-warning';
+                    badge = `<span class="badge badge-warning">${zileRamase} zile</span>`;
                 } else if (zileRamase <= 30) {
-                    clasa = '';
-                    badge = `<span class="days-left warning">${zileRamase} zile</span>`;
+                    clasa = 'alert-info';
+                    badge = `<span class="badge badge-info">${zileRamase} zile</span>`;
                 } else {
-                    clasa = '';
-                    badge = `<span class="days-left success">${zileRamase} zile</span>`;
+                    clasa = 'alert-success';
+                    badge = `<span class="badge badge-success">${zileRamase} zile</span>`;
                 }
                 
                 return `
-                    <div class="monitoring-item ${clasa}">
-                        <div>
-                            <strong>${client ? client.nume : 'Client necunoscut'}</strong><br>
-                            <small>${serviciu.tip}</small><br>
-                            <small>Expiră: ${formatDate(serviciu.dataExpirare)}</small>
+                    <div class="alert ${clasa}" style="margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${client ? client.nume : 'Client necunoscut'}</strong><br>
+                                <small>${serviciu.tip}</small><br>
+                                <small>Expiră: ${formatDate(serviciu.dataExpirare)}</small>
+                            </div>
+                            ${badge}
                         </div>
-                        ${badge}
                     </div>
                 `;
             }).join('');
-            
-            actualizareStatisticiMonitorizare();
-        }
-
-        function actualizareStatisticiMonitorizare() {
-            const expirate = servicii.filter(s => {
-                const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
-                return zileRamase < 0;
-            }).length;
-            
-            const lunaAceasta = servicii.filter(s => {
-                const dataExpirare = new Date(s.dataExpirare);
-                const now = new Date();
-                return dataExpirare.getMonth() === now.getMonth() && 
-                       dataExpirare.getFullYear() === now.getFullYear() &&
-                       dataExpirare > now;
-            }).length;
-            
-            const urmatoarele3Luni = servicii.filter(s => {
-                const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
-                return zileRamase > 0 && zileRamase <= 90;
-            }).length;
-            
-            document.getElementById('statExpirate').textContent = expirate;
-            document.getElementById('statLunaAceasta').textContent = lunaAceasta;
-            document.getElementById('stat3Luni').textContent = urmatoarele3Luni;
-        }
-
-        function filtreazaMonitorizare() {
-            afiseazaMonitorizare();
-        }
-
-        function exportExpirari() {
-            const filtru = document.getElementById('filtruPerioada') ? document.getElementById('filtruPerioada').value : '30';
-            const expirari = servicii.filter(s => {
-                const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
-                
-                if (filtru === 'expirate') {
-                    return zileRamase < 0;
-                } else if (filtru === 'toate') {
-                    return true;
-                } else {
-                    const zile = parseInt(filtru);
-                    return zileRamase >= -30 && zileRamase <= zile;
-                }
-            }).sort((a, b) => new Date(a.dataExpirare) - new Date(b.dataExpirare));
-            
-            let csv = 'Client,Telefon,Email,Adresă,Tip Serviciu,Data Expirare,Zile Rămase,Status\n';
-            
-            expirari.forEach(serviciu => {
-                const client = clienti.find(c => c.id === serviciu.clientId);
-                const zileRamase = Math.ceil((new Date(serviciu.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
-                const status = zileRamase < 0 ? 'EXPIRAT' : zileRamase <= 7 ? 'URGENT' : zileRamase <= 30 ? 'ATENȚIE' : 'OK';
-                const adresa = client ? construiesteAdresa(client) : '';
-                
-                csv += `"${client ? client.nume : 'Client necunoscut'}",`;
-                csv += `"${client ? client.telefon : ''}",`;
-                csv += `"${client ? client.email || '' : ''}",`;
-                csv += `"${adresa}",`;
-                csv += `"${serviciu.tip}",`;
-                csv += `"${formatDate(serviciu.dataExpirare)}",`;
-                csv += `"${Math.abs(zileRamase)}",`;
-                csv += `"${status}"\n`;
-            });
-            
-            const BOM = '\ufeff';
-            const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `expirari-servicii-${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-            
-            arataNotificare(`Export realizat cu succes! ${expirari.length} servicii exportate.`, 'success');
         }
 
         // Funcții pentru SMS
         function trimiteNotificari() {
-            const azi = new Date();
-            const peste3Zile = new Date();
-            peste3Zile.setDate(azi.getDate() + 3);
-            
             const serviciiExpira = servicii.filter(s => {
                 const dataExpirare = new Date(s.dataExpirare);
                 const diferenta = Math.ceil((dataExpirare - new Date()) / (1000 * 60 * 60 * 24));
@@ -3226,43 +1813,37 @@
             let htmlContent = `
                 <div class="alert alert-info mb-3">
                     <strong>Servicii care expiră în 3 zile: ${serviciiExpira.length}</strong><br>
-                    <small>SMS-urile vor fi trimise de la: 0762 614 401</small>
+                    <small>SMS-urile vor fi trimise manual prin telefon</small>
                 </div>
                 
                 <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
-                    <table class="table">
+                    <table>
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="selectAll" onchange="selectAllSMS()" checked></th>
                                 <th>Client</th>
                                 <th>Telefon</th>
                                 <th>Serviciu</th>
                                 <th>Expiră la</th>
+                                <th>Mesaj SMS</th>
                             </tr>
                         </thead>
                         <tbody>
             `;
             
-            serviciiExpira.forEach((s, index) => {
+            serviciiExpira.forEach(s => {
                 const client = clienti.find(c => c.id === s.clientId);
                 if (!client) return;
                 
                 const dataExpirare = new Date(s.dataExpirare).toLocaleDateString('ro-RO');
-                const mesaj = generareMesajSMS(client, s);
+                const mesaj = `Buna ziua! Dl/Dna ${client.nume}, va reamintim ca serviciul de ${s.tip} contractat expira la data de ${dataExpirare}. Va rugam sa ne contactati pentru reinnoire la 0762614401. Multumim! AdInstalGaz`;
                 
                 htmlContent += `
                     <tr>
-                        <td>
-                            <input type="checkbox" class="sms-checkbox" 
-                                   data-index="${index}" 
-                                   data-telefon="${client.telefon}"
-                                   data-mesaj="${mesaj.replace(/"/g, '&quot;')}"
-                                   checked>
-                        </td>
                         <td><strong>${client.nume}</strong></td>
                         <td>${client.telefon}</td>
                         <td>${s.tip}</td>
                         <td>${dataExpirare}</td>
+                        <td style="font-size: 12px; max-width: 200px;">${mesaj}</td>
                     </tr>
                 `;
             });
@@ -3272,32 +1853,20 @@
                     </table>
                 </div>
                 
-                <div class="form-group">
-                    <label>Previzualizare mesaj SMS:</label>
-                    <textarea id="previzualizareSMS" class="form-control" rows="4" readonly style="font-size: 12px;">
-${generareMesajSMS(
-    clienti.find(c => c.id === serviciiExpira[0].clientId), 
-    serviciiExpira[0]
-)}
-                    </textarea>
-                    <small class="text-muted">Caractere: <span id="charCount">0</span>/160</small>
-                </div>
-                
                 <div class="alert alert-warning">
                     <strong>Instrucțiuni pentru trimitere SMS:</strong>
                     <ol style="margin-bottom: 0; padding-left: 20px;">
-                        <li>Click pe "Generează Lista SMS"</li>
-                        <li>Se va descărca un fișier cu toate detaliile</li>
-                        <li>Folosiți telefonul sau platforma SMS pentru trimitere</li>
-                        <li>După trimitere, confirmați în aplicație</li>
+                        <li>Copiați mesajul pentru fiecare client</li>
+                        <li>Trimiteți SMS-ul manual de pe telefon</li>
+                        <li>Confirmați trimiterea în aplicație</li>
                     </ol>
                 </div>
                 
                 <div class="btn-group" style="width: 100%;">
-                    <button class="btn btn-primary" onclick="genereazaListaSMS()">
+                    <button class="btn btn-success" onclick="genereazaListaSMS()">
                         Generează Lista SMS
                     </button>
-                    <button class="btn btn-success" onclick="deschideWhatsApp()">
+                    <button class="btn btn-primary" onclick="deschideWhatsApp()">
                         Deschide WhatsApp
                     </button>
                     <button class="btn btn-warning" onclick="marcheazaSMSTrimise()">
@@ -3311,97 +1880,70 @@ ${generareMesajSMS(
             
             modalBody.innerHTML = htmlContent;
             modal.style.display = 'block';
-            
-            actualizareCharCount();
-        }
-
-        function generareMesajSMS(client, serviciu) {
-            const dataExpirare = new Date(serviciu.dataExpirare).toLocaleDateString('ro-RO');
-            return `Bună ziua! Dl/Dna ${client.nume}, vă reamintim că serviciul de ${serviciu.tip} contractat expiră la data de ${dataExpirare}. Vă rugăm să ne contactați pentru reînnoire la 0762614401. Mulțumim! AdInstalGaz`;
-        }
-
-        function selectAllSMS() {
-            const selectAll = document.getElementById('selectAll');
-            const checkboxes = document.querySelectorAll('.sms-checkbox');
-            
-            checkboxes.forEach(cb => {
-                cb.checked = selectAll.checked;
-            });
-        }
-
-        function actualizareCharCount() {
-            const mesaj = document.getElementById('previzualizareSMS').value;
-            document.getElementById('charCount').textContent = mesaj.length;
         }
 
         function genereazaListaSMS() {
-            const checkboxes = document.querySelectorAll('.sms-checkbox:checked');
+            const serviciiExpira = servicii.filter(s => {
+                const dataExpirare = new Date(s.dataExpirare);
+                const diferenta = Math.ceil((dataExpirare - new Date()) / (1000 * 60 * 60 * 24));
+                return diferenta === 3;
+            });
             
-            if (checkboxes.length === 0) {
-                arataNotificare('Selectați cel puțin un client!', 'warning');
-                return;
-            }
-            
-            let csvContent = 'Nume Client,Telefon,Mesaj SMS\n';
             let txtContent = 'LISTĂ SMS NOTIFICARE EXPIRARE SERVICII\n';
             txtContent += `Data: ${new Date().toLocaleDateString('ro-RO')}\n`;
-            txtContent += `Total SMS-uri: ${checkboxes.length}\n`;
+            txtContent += `Total SMS-uri: ${serviciiExpira.length}\n`;
             txtContent += '=====================================\n\n';
             
-            checkboxes.forEach((cb, index) => {
-                const telefon = cb.dataset.telefon;
-                const mesaj = cb.dataset.mesaj;
-                const nume = cb.closest('tr').querySelector('td:nth-child(2)').textContent;
+            serviciiExpira.forEach((s, index) => {
+                const client = clienti.find(c => c.id === s.clientId);
+                if (!client) return;
                 
-                csvContent += `"${nume}","${telefon}","${mesaj}"\n`;
+                const dataExpirare = new Date(s.dataExpirare).toLocaleDateString('ro-RO');
+                const mesaj = `Buna ziua! Dl/Dna ${client.nume}, va reamintim ca serviciul de ${s.tip} contractat expira la data de ${dataExpirare}. Va rugam sa ne contactati pentru reinnoire la 0762614401. Multumim! AdInstalGaz`;
                 
-                txtContent += `${index + 1}. ${nume}\n`;
-                txtContent += `Tel: ${telefon}\n`;
+                txtContent += `${index + 1}. ${client.nume}\n`;
+                txtContent += `Tel: ${client.telefon}\n`;
+                txtContent += `Serviciu: ${s.tip}\n`;
+                txtContent += `Expiră: ${dataExpirare}\n`;
                 txtContent += `Mesaj: ${mesaj}\n`;
                 txtContent += '---\n\n';
             });
             
-            const blobCSV = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const linkCSV = document.createElement('a');
-            linkCSV.href = URL.createObjectURL(blobCSV);
-            linkCSV.download = `sms-notificari-${new Date().toISOString().split('T')[0]}.csv`;
-            linkCSV.click();
+            const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sms-notificari-${new Date().toISOString().split('T')[0]}.txt`;
+            link.click();
             
-            setTimeout(() => {
-                const blobTXT = new Blob([txtContent], { type: 'text/plain;charset=utf-8;' });
-                const linkTXT = document.createElement('a');
-                linkTXT.href = URL.createObjectURL(blobTXT);
-                linkTXT.download = `sms-notificari-${new Date().toISOString().split('T')[0]}.txt`;
-                linkTXT.click();
-            }, 500);
-            
-            arataNotificare(`Liste generate cu ${checkboxes.length} SMS-uri!`, 'success');
+            arataNotificare(`Lista generată cu ${serviciiExpira.length} SMS-uri!`, 'success');
         }
 
         function deschideWhatsApp() {
-            const checkboxes = document.querySelectorAll('.sms-checkbox:checked');
+            const serviciiExpira = servicii.filter(s => {
+                const dataExpirare = new Date(s.dataExpirare);
+                const diferenta = Math.ceil((dataExpirare - new Date()) / (1000 * 60 * 60 * 24));
+                return diferenta === 3;
+            });
             
-            if (checkboxes.length === 0) {
-                arataNotificare('Selectați cel puțin un client!', 'warning');
+            if (serviciiExpira.length === 0) {
+                arataNotificare('Nu există servicii care expiră în 3 zile!', 'warning');
                 return;
             }
             
-            if (checkboxes.length > 5) {
-                if (!confirm('Atenție! Veți deschide ' + checkboxes.length + ' tab-uri WhatsApp. Continuați doar cu primele 5?')) {
-                    return;
-                }
-            }
-            
-            const maxTabs = Math.min(checkboxes.length, 5);
+            const maxTabs = Math.min(serviciiExpira.length, 5);
             
             for (let i = 0; i < maxTabs; i++) {
-                const cb = checkboxes[i];
-                let telefon = cb.dataset.telefon;
-                const mesaj = cb.dataset.mesaj;
+                const s = serviciiExpira[i];
+                const client = clienti.find(c => c.id === s.clientId);
+                if (!client) continue;
                 
+                let telefon = client.telefon;
                 if (telefon.startsWith('0')) {
                     telefon = '40' + telefon.substring(1);
                 }
+                
+                const dataExpirare = new Date(s.dataExpirare).toLocaleDateString('ro-RO');
+                const mesaj = `Buna ziua! Dl/Dna ${client.nume}, va reamintim ca serviciul de ${s.tip} contractat expira la data de ${dataExpirare}. Va rugam sa ne contactati pentru reinnoire la 0762614401. Multumim! AdInstalGaz`;
                 
                 const whatsappURL = `https://wa.me/${telefon}?text=${encodeURIComponent(mesaj)}`;
                 
@@ -3410,165 +1952,71 @@ ${generareMesajSMS(
                 }, i * 1000);
             }
             
-            if (checkboxes.length > 5) {
-                arataNotificare(`Primele 5 din ${checkboxes.length} SMS-uri deschise în WhatsApp`, 'info');
+            if (serviciiExpira.length > 5) {
+                arataNotificare(`Primele 5 din ${serviciiExpira.length} SMS-uri deschise în WhatsApp`, 'info');
             }
         }
 
-        async function marcheazaSMSTrimise() {
-            const checkboxes = document.querySelectorAll('.sms-checkbox:checked');
-            
-            if (checkboxes.length === 0) {
-                arataNotificare('Selectați clienții cărora le-ați trimis SMS!', 'warning');
-                return;
-            }
-            
-            if (!confirm(`Confirmați trimiterea a ${checkboxes.length} SMS-uri?`)) {
-                return;
-            }
-            
-            try {
-                const batch = db.batch();
-                
-                checkboxes.forEach(cb => {
-                    const tr = cb.closest('tr');
-                    const numeClient = tr.querySelector('td:nth-child(2)').textContent;
-                    const telefon = cb.dataset.telefon;
-                    const mesaj = cb.dataset.mesaj;
-                    
-                    const notificareRef = db.collection('notificari_sms').doc();
-                    batch.set(notificareRef, {
-                        tip: 'expirare_3_zile',
-                        clientNume: numeClient,
-                        telefon: telefon,
-                        mesaj: mesaj,
-                        trimisaDe: utilizatorCurent.nume,
-                        dataTrimitere: firebase.firestore.FieldValue.serverTimestamp(),
-                        metodaTrimitere: 'manual'
-                    });
-                });
-                
-                await batch.commit();
-                
-                arataNotificare(`${checkboxes.length} SMS-uri marcate ca trimise!`, 'success');
-                inchideModal();
-                
-                if (document.getElementById('monitorizare').classList.contains('active')) {
-                    afiseazaMonitorizare();
-                }
-                
-            } catch (error) {
-                console.error('Eroare salvare notificări:', error);
-                arataNotificare('Eroare la salvarea notificărilor!', 'error');
-            }
-        }
-
-        // Funcții pentru Documente
-        function uploadDocument() {
-            const clientId = document.getElementById('clientDocument').value;
-            const tipDocument = document.getElementById('tipDocument').value;
-            const fileInput = document.getElementById('fisierDocument');
-            const file = fileInput.files[0];
-            const descriere = document.getElementById('descriereDocument').value;
-            
-            if (!clientId || !tipDocument || !file) {
-                arataNotificare('Completați toate câmpurile obligatorii!', 'error');
-                return;
-            }
-            
-            const timestamp = Date.now();
-            const fileName = `${clientId}/${tipDocument}_${timestamp}_${file.name}`;
-            const storageRef = storage.ref(fileName);
-            
-            arataNotificare('Se încarcă documentul...', 'info');
-            
-            storageRef.put(file).then(snapshot => {
-                return snapshot.ref.getDownloadURL();
-            }).then(downloadURL => {
-                const documentData = {
-                    clientId: parseInt(clientId),
-                    tip: tipDocument,
-                    nume: file.name,
-                    url: downloadURL,
-                    descriere: descriere,
-                    uploadatDe: utilizatorCurent.id,
-                    dataUpload: new Date().toISOString()
-                };
-                
-                return db.collection('documente').add(documentData);
-            }).then(() => {
-                arataNotificare('Document încărcat cu succes!', 'success');
-                document.getElementById('fisierDocument').value = '';
-                document.getElementById('descriereDocument').value = '';
-                afiseazaDocumente();
-            }).catch(error => {
-                arataNotificare('Eroare la încărcare: ' + error.message, 'error');
+        function marcheazaSMSTrimise() {
+            const serviciiExpira = servicii.filter(s => {
+                const dataExpirare = new Date(s.dataExpirare);
+                const diferenta = Math.ceil((dataExpirare - new Date()) / (1000 * 60 * 60 * 24));
+                return diferenta === 3;
             });
-        }
-
-        function afiseazaDocumente() {
-            const lista = document.getElementById('listaDocumente');
-            const searchTerm = document.getElementById('cautaDocument')?.value.toLowerCase() || '';
             
-            db.collection('documente').orderBy('dataUpload', 'desc').get()
-                .then(snapshot => {
-                    let html = '';
-                    if (snapshot.empty) {
-                        html = '<div class="empty-state"><p>Nu există documente încărcate</p></div>';
-                    } else {
-                        snapshot.forEach(doc => {
-                            const data = doc.data();
-                            const client = clienti.find(c => c.id === data.clientId);
-                            
-                            if (searchTerm && !data.nume.toLowerCase().includes(searchTerm) && 
-                                !data.descriere.toLowerCase().includes(searchTerm) &&
-                                (!client || !client.nume.toLowerCase().includes(searchTerm))) {
-                                return;
-                            }
-                            
-                            html += `
-                                <div class="monitoring-item">
-                                    <div>
-                                        <strong>${client ? client.nume : 'Client necunoscut'}</strong><br>
-                                        <small>${data.tip} - ${data.nume}</small><br>
-                                        <small>${data.descriere || 'Fără descriere'}</small><br>
-                                        <small>Încărcat: ${new Date(data.dataUpload).toLocaleString('ro-RO')}</small>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a href="${data.url}" target="_blank" class="btn btn-primary btn-sm">
-                                            Vezi
-                                        </a>
-                                        ${verificaPermisiuni('sterge') ? `
-                                            <button class="btn btn-danger btn-sm" onclick="stergeDocument('${doc.id}', '${data.nume}')">
-                                                Șterge
-                                            </button>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    }
-                    lista.innerHTML = html;
-                });
-        }
-
-        function stergeDocument(docId, fileName) {
-            if (!confirm(`Sigur doriți să ștergeți documentul "${fileName}"?`)) {
+            if (!confirm(`Confirmați trimiterea a ${serviciiExpira.length} SMS-uri?`)) {
                 return;
             }
             
-            db.collection('documente').doc(docId).delete()
-                .then(() => {
-                    arataNotificare('Document șters cu succes!', 'success');
-                    afiseazaDocumente();
-                })
-                .catch(error => {
-                    arataNotificare('Eroare la ștergere: ' + error.message, 'error');
-                });
+            // Salvează în localStorage că SMS-urile au fost trimise
+            const smsHistory = JSON.parse(localStorage.getItem('adinstalgaz_sms_history') || '[]');
+            const today = new Date().toISOString().split('T')[0];
+            
+            smsHistory.push({
+                data: today,
+                numarSMS: serviciiExpira.length,
+                utilizator: utilizatorCurent.nume
+            });
+            
+            localStorage.setItem('adinstalgaz_sms_history', JSON.stringify(smsHistory));
+            
+            arataNotificare(`${serviciiExpira.length} SMS-uri marcate ca trimise!`, 'success');
+            inchideModal();
         }
 
-        function filtreazaDocumente() {
-            afiseazaDocumente();
+        // Funcții pentru Export Excel
+        function exportExpirari() {
+            const expirari = servicii.filter(s => {
+                const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
+                return zileRamase >= -30 && zileRamase <= 30;
+            }).sort((a, b) => new Date(a.dataExpirare) - new Date(b.dataExpirare));
+            
+            const datePentruExport = expirari.map(s => {
+                const client = clienti.find(c => c.id === s.clientId);
+                const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
+                const status = zileRamase < 0 ? 'EXPIRAT' : zileRamase <= 7 ? 'URGENT' : zileRamase <= 30 ? 'ATENȚIE' : 'OK';
+                
+                return {
+                    'Client': client ? client.nume : 'Client necunoscut',
+                    'Telefon': client ? client.telefon : '',
+                    'Email': client ? client.email || '' : '',
+                    'Adresa': client ? client.adresa : '',
+                    'Oras': client ? client.oras : '',
+                    'Tip Serviciu': s.tip,
+                    'Data Expirare': formatDate(s.dataExpirare),
+                    'Zile Ramase': Math.abs(zileRamase),
+                    'Status': status,
+                    'Pret': s.pret + ' Lei'
+                };
+            });
+            
+            const ws = XLSX.utils.json_to_sheet(datePentruExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Expirari Servicii');
+            
+            XLSX.writeFile(wb, `expirari-servicii-${new Date().toISOString().split('T')[0]}.xlsx`);
+            
+            arataNotificare(`Export realizat cu succes! ${expirari.length} servicii exportate.`, 'success');
         }
 
         // Funcții pentru Rapoarte
@@ -3579,68 +2027,61 @@ ${generareMesajSMS(
             
             const containerRaport = document.getElementById('containerRaport');
             const titluRaport = document.getElementById('titluRaport');
-            const perioadaRaport = document.getElementById('perioadaRaport');
             const continutRaport = document.getElementById('continutRaport');
             
             containerRaport.style.display = 'block';
             
-            if (dataStart && dataEnd) {
-                perioadaRaport.textContent = `Perioada: ${formatDate(dataStart)} - ${formatDate(dataEnd)}`;
-            } else {
-                perioadaRaport.textContent = `Generat la: ${new Date().toLocaleDateString('ro-RO')}`;
-            }
+            let continut = '';
             
             switch (tipRaport) {
                 case 'lunar':
-                    genereazaRaportLunar(dataStart, dataEnd);
+                    titluRaport.textContent = 'Raport Lunar';
+                    continut = genereazaRaportLunar(dataStart, dataEnd);
                     break;
                 case 'trimestrial':
-                    genereazaRaportTrimestrial(dataStart, dataEnd);
+                    titluRaport.textContent = 'Raport Trimestrial';
+                    continut = genereazaRaportTrimestrial(dataStart, dataEnd);
                     break;
                 case 'anual':
-                    genereazaRaportAnual(dataStart, dataEnd);
+                    titluRaport.textContent = 'Raport Anual';
+                    continut = genereazaRaportAnual(dataStart, dataEnd);
                     break;
                 case 'expirari':
-                    genereazaRaportExpirari();
+                    titluRaport.textContent = 'Raport Expirări';
+                    continut = genereazaRaportExpirari();
                     break;
                 case 'clienti':
-                    genereazaRaportClienti();
-                    break;
-                case 'financiar':
-                    genereazaRaportFinanciar(dataStart, dataEnd);
+                    titluRaport.textContent = 'Raport Clienți';
+                    continut = genereazaRaportClienti();
                     break;
                 default:
-                    continutRaport.innerHTML = '<p>Selectați un tip de raport valid.</p>';
+                    continut = '<p>Selectați un tip de raport valid.</p>';
             }
+            
+            continutRaport.innerHTML = continut;
         }
 
         function genereazaRaportLunar(dataStart, dataEnd) {
-            const titluRaport = document.getElementById('titluRaport');
-            const continutRaport = document.getElementById('continutRaport');
-            
-            titluRaport.textContent = 'Raport Lunar';
+            const start = dataStart ? new Date(dataStart) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+            const end = dataEnd ? new Date(dataEnd) : new Date();
             
             const lucrariPeriada = lucrari.filter(l => {
                 const dataLucrare = new Date(l.dataProgramare);
-                const start = dataStart ? new Date(dataStart) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-                const end = dataEnd ? new Date(dataEnd) : new Date();
                 return dataLucrare >= start && dataLucrare <= end;
             });
             
             const totalIncasari = lucrariPeriada
                 .filter(l => l.status === 'finalizata')
-                .reduce((sum, l) => sum + parseFloat(l.pret.replace(' Lei', '') || 0), 0);
+                .reduce((sum, l) => sum + l.pret, 0);
             
-            const lucrariFinalizate = lucrariPeriada.filter(l => l.status === 'finalizata').length;
-            
-            continutRaport.innerHTML = `
+            return `
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number">${lucrariPeriada.length}</div>
                         <div class="stat-label">Total Lucrări</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-number">${lucrariFinalizate}</div>
+                        <div class="stat-number">${lucrariPeriada.filter(l => l.status === 'finalizata').length}</div>
                         <div class="stat-label">Finalizate</div>
                     </div>
                     <div class="stat-card">
@@ -3649,7 +2090,7 @@ ${generareMesajSMS(
                     </div>
                 </div>
                 
-                <h3 style="margin-top: 30px;">Detalii Lucrări</h3>
+                <h3>Detalii Lucrări</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -3669,7 +2110,7 @@ ${generareMesajSMS(
                                         <td>${formatDate(l.dataProgramare)}</td>
                                         <td>${client ? client.nume : 'Client necunoscut'}</td>
                                         <td>${l.serviciu}</td>
-                                        <td>${l.pret}</td>
+                                        <td>${l.pret} Lei</td>
                                         <td>${getStatusBadge(l.status)}</td>
                                     </tr>
                                 `;
@@ -3681,21 +2122,14 @@ ${generareMesajSMS(
         }
 
         function genereazaRaportTrimestrial(dataStart, dataEnd) {
-            genereazaRaportLunar(dataStart, dataEnd);
-            document.getElementById('titluRaport').textContent = 'Raport Trimestrial';
+            return genereazaRaportLunar(dataStart, dataEnd);
         }
 
         function genereazaRaportAnual(dataStart, dataEnd) {
-            genereazaRaportLunar(dataStart, dataEnd);
-            document.getElementById('titluRaport').textContent = 'Raport Anual';
+            return genereazaRaportLunar(dataStart, dataEnd);
         }
 
         function genereazaRaportExpirari() {
-            const titluRaport = document.getElementById('titluRaport');
-            const continutRaport = document.getElementById('continutRaport');
-            
-            titluRaport.textContent = 'Raport Expirări Servicii';
-            
             const expirari = servicii.map(s => {
                 const client = clienti.find(c => c.id === s.clientId);
                 const dataExpirare = new Date(s.dataExpirare);
@@ -3711,7 +2145,7 @@ ${generareMesajSMS(
             const expirate = expirari.filter(e => e.zileRamase < 0);
             const urgent = expirari.filter(e => e.zileRamase >= 0 && e.zileRamase <= 7);
             
-            continutRaport.innerHTML = `
+            return `
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number">${expirate.length}</div>
@@ -3724,7 +2158,7 @@ ${generareMesajSMS(
                 </div>
                 
                 ${expirate.length > 0 ? `
-                    <h3 style="color: #dc3545; margin-top: 30px;">Servicii Expirate</h3>
+                    <h3 style="color: #dc3545;">Servicii Expirate</h3>
                     <div class="table-responsive">
                         <table>
                             <thead>
@@ -3754,17 +2188,12 @@ ${generareMesajSMS(
         }
 
         function genereazaRaportClienti() {
-            const titluRaport = document.getElementById('titluRaport');
-            const continutRaport = document.getElementById('continutRaport');
-            
-            titluRaport.textContent = 'Raport Clienți';
-            
             const clientiCuStatistici = clienti.map(client => {
                 const serviciiClient = servicii.filter(s => s.clientId === client.id);
                 const lucrariClient = lucrari.filter(l => l.clientId === client.id);
                 const totalCheltuit = lucrariClient
                     .filter(l => l.status === 'finalizata')
-                    .reduce((sum, l) => sum + parseFloat(l.pret.replace(' Lei', '') || 0), 0);
+                    .reduce((sum, l) => sum + l.pret, 0);
                 
                 return {
                     ...client,
@@ -3774,7 +2203,7 @@ ${generareMesajSMS(
                 };
             }).sort((a, b) => b.totalCheltuit - a.totalCheltuit);
             
-            continutRaport.innerHTML = `
+            return `
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-number">${clienti.length}</div>
@@ -3786,7 +2215,7 @@ ${generareMesajSMS(
                     </div>
                 </div>
                 
-                <h3 style="margin-top: 30px;">Top Clienți</h3>
+                <h3>Top Clienți</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -3816,690 +2245,79 @@ ${generareMesajSMS(
             `;
         }
 
-        function genereazaRaportFinanciar(dataStart, dataEnd) {
-            const titluRaport = document.getElementById('titluRaport');
-            const continutRaport = document.getElementById('continutRaport');
-            
-            titluRaport.textContent = 'Raport Financiar';
-            
-            const lucrariGrupate = {};
-            const start = dataStart ? new Date(dataStart) : new Date(new Date().getFullYear(), 0, 1);
-            const end = dataEnd ? new Date(dataEnd) : new Date();
-            
-            lucrari.forEach(l => {
-                const dataLucrare = new Date(l.dataProgramare);
-                if (dataLucrare >= start && dataLucrare <= end && l.status === 'finalizata') {
-                    const luna = `${dataLucrare.getFullYear()}-${String(dataLucrare.getMonth() + 1).padStart(2, '0')}`;
-                    if (!lucrariGrupate[luna]) {
-                        lucrariGrupate[luna] = { total: 0, numar: 0 };
-                    }
-                    const pret = parseFloat(l.pret.replace(' Lei', '') || 0);
-                    lucrariGrupate[luna].total += pret;
-                    lucrariGrupate[luna].numar += 1;
-                }
-            });
-            
-            const luni = Object.keys(lucrariGrupate).sort();
-            const totalGeneral = luni.reduce((sum, luna) => sum + lucrariGrupate[luna].total, 0);
-            const mediaLunara = luni.length > 0 ? totalGeneral / luni.length : 0;
-            
-            continutRaport.innerHTML = `
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-number">${totalGeneral} Lei</div>
-                        <div class="stat-label">Total Încasări</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${Math.round(mediaLunara)} Lei</div>
-                        <div class="stat-label">Media Lunară</div>
-                    </div>
-                </div>
-                
-                <h3 style="margin-top: 30px;">Evoluție Lunară</h3>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Luna</th>
-                                <th>Nr. Lucrări</th>
-                                <th>Total Încasări</th>
-                                <th>Media/Lucrare</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${luni.map(luna => {
-                                const data = lucrariGrupate[luna];
-                                const [an, lunaNum] = luna.split('-');
-                                const numeLuna = new Date(an, parseInt(lunaNum) - 1).toLocaleDateString('ro-RO', { month: 'long', year: 'numeric' });
-                                return `
-                                    <tr>
-                                        <td><strong>${numeLuna}</strong></td>
-                                        <td>${data.numar}</td>
-                                        <td><strong>${data.total} Lei</strong></td>
-                                        <td>${Math.round(data.total / data.numar)} Lei</td>
-                                    </tr>
-                                `;
-                            }).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
-
         function exportRaportExcel() {
-            arataNotificare('Funcție în dezvoltare', 'info');
-        }
-
-        function exportRaportPDF() {
-            arataNotificare('Pentru export PDF, folosiți opțiunea Print (Ctrl+P) și selectați "Save as PDF"', 'info');
-            setTimeout(() => {
-                window.print();
-            }, 500);
-        }
-
-        function printeazaRaport() {
-            window.print();
-        }
-
-        // Funcții pentru Backup
-        async function backupManual() {
-            try {
-                arataNotificare('Se creează backup-ul...', 'info');
-                
-                const backup = {
-                    tip: 'manual',
-                    versiune: '2.0',
-                    dataBackup: new Date().toISOString(),
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    stats: {
-                        clienti: clienti.length,
-                        servicii: servicii.length,
-                        lucrari: lucrari.length,
-                        utilizatori: utilizatori.length
-                    },
-                    creatDe: {
-                        id: utilizatorCurent.id,
-                        nume: utilizatorCurent.nume,
-                        email: utilizatorCurent.email
-                    },
-                    date: {
-                        clienti: clienti,
-                        servicii: servicii,
-                        lucrari: lucrari,
-                        utilizatori: utilizatori,
-                        setari: setari
-                    }
-                };
-                
-                const docRef = await db.collection('backups').add(backup);
-                
-                await db.collection('system').doc('lastBackup').set({
-                    backupId: docRef.id,
-                    data: backup.dataBackup,
-                    tip: 'manual',
-                    creatDe: utilizatorCurent.nume
-                });
-                
-                localStorage.setItem(getStorageKey('lastBackup'), JSON.stringify({
-                    id: docRef.id,
-                    dataBackup: backup.dataBackup
-                }));
-                
-                arataNotificare('Backup salvat cu succes în cloud!', 'success');
-                afiseazaIstoricBackup();
-                verificaStatusBackup();
-                
-            } catch (error) {
-                console.error('Eroare backup:', error);
-                arataNotificare('Eroare la salvarea backup-ului: ' + error.message, 'error');
-            }
-        }
-
-        function descarcaBackup() {
-            const backup = {
-                versiune: '2.0',
-                dataBackup: new Date().toLocaleString('ro-RO'),
-                clienti: clienti,
-                servicii: servicii,
-                lucrari: lucrari,
-                utilizatori: utilizatori,
-                setari: setari
-            };
+            const tipRaport = document.getElementById('tipRaport').value;
+            let datePentruExport = [];
+            let numeFile = '';
             
-            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `backup-adinstalgaz-${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            
-            arataNotificare('Backup descărcat cu succes!', 'success');
-        }
-
-        async function restaureazaBackup() {
-            if (!confirm('ATENȚIE! Toate datele actuale vor fi înlocuite cu cele din backup. Continuați?')) {
-                return;
-            }
-            
-            try {
-                const backupsSnapshot = await db.collection('backups')
-                    .orderBy('timestamp', 'desc')
-                    .limit(10)
-                    .get();
-                
-                if (backupsSnapshot.empty) {
-                    arataNotificare('Nu există backup-uri disponibile!', 'warning');
-                    return;
-                }
-                
-                let optiuniBackup = '<select id="selectBackup" class="form-control">';
-                backupsSnapshot.forEach(doc => {
-                    const backup = doc.data();
-                    const data = new Date(backup.dataBackup).toLocaleString('ro-RO');
-                    optiuniBackup += `<option value="${doc.id}">
-                        ${data} - ${backup.tip} - 
-                        ${backup.stats.clienti} clienți, 
-                        ${backup.stats.servicii} servicii
-                    </option>`;
-                });
-                optiuniBackup += '</select>';
-                
-                const modal = document.getElementById('modalEdit');
-                const modalTitle = document.getElementById('modalTitle');
-                const modalBody = document.getElementById('modalBody');
-                
-                modalTitle.textContent = 'Selectează Backup pentru Restaurare';
-                modalBody.innerHTML = `
-                    <div class="form-group">
-                        <label>Alege backup-ul:</label>
-                        ${optiuniBackup}
-                    </div>
-                    <div class="alert alert-warning">
-                        <strong>Atenție!</strong><br>
-                        Această acțiune va înlocui TOATE datele curente!
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-danger" onclick="confirmaRestaurare()">
-                            Restaurează
-                        </button>
-                        <button class="btn btn-secondary" onclick="inchideModal()">
-                            Anulează
-                        </button>
-                    </div>
-                `;
-                
-                modal.style.display = 'block';
-                
-            } catch (error) {
-                console.error('Eroare listare backup-uri:', error);
-                arataNotificare('Eroare la accesarea backup-urilor!', 'error');
-            }
-        }
-
-        async function confirmaRestaurare() {
-            const backupId = document.getElementById('selectBackup').value;
-            
-            try {
-                arataNotificare('Se restaurează backup-ul...', 'info');
-                
-                const backupDoc = await db.collection('backups').doc(backupId).get();
-                
-                if (!backupDoc.exists) {
-                    throw new Error('Backup-ul nu mai există!');
-                }
-                
-                const backup = backupDoc.data();
-                
-                clienti = backup.date.clienti || [];
-                servicii = backup.date.servicii || [];
-                lucrari = backup.date.lucrari || [];
-                utilizatori = backup.date.utilizatori || [];
-                setari = backup.date.setari || setari;
-                
-                salveazaInLocalStorage();
-                
-                await db.collection('system_logs').add({
-                    actiune: 'restaurare_backup',
-                    backupId: backupId,
-                    utilizator: utilizatorCurent.nume,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                inchideModal();
-                arataNotificare('Backup restaurat cu succes!', 'success');
-                
-                setTimeout(() => {
-                    location.reload();
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Eroare restaurare:', error);
-                arataNotificare('Eroare la restaurare: ' + error.message, 'error');
-            }
-        }
-
-        function incarcaBackupFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const backup = JSON.parse(e.target.result);
-                    
-                    if (!backup.clienti || !backup.servicii || !backup.lucrari) {
-                        throw new Error('Format backup invalid!');
-                    }
-                    
-                    if (confirm(`Sigur doriți să restaurați acest backup din ${backup.dataBackup}?`)) {
-                        clienti = backup.clienti || [];
-                        servicii = backup.servicii || [];
-                        lucrari = backup.lucrari || [];
-                        utilizatori = backup.utilizatori || [];
-                        if (backup.setari) {
-                            setari = { ...setari, ...backup.setari };
-                        }
+            switch (tipRaport) {
+                case 'clienti':
+                    datePentruExport = clienti.map(client => {
+                        const serviciiClient = servicii.filter(s => s.clientId === client.id);
+                        const lucrariClient = lucrari.filter(l => l.clientId === client.id);
+                        const totalCheltuit = lucrariClient
+                            .filter(l => l.status === 'finalizata')
+                            .reduce((sum, l) => sum + l.pret, 0);
                         
-                        salveazaInLocalStorage();
-                        arataNotificare('Backup restaurat cu succes!', 'success');
-                        
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    }
-                } catch (error) {
-                    arataNotificare('Eroare la restaurarea backup-ului: ' + error.message, 'error');
-                }
-            };
-            
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        async function afiseazaIstoricBackup() {
-            const tbody = document.getElementById('istoricBackup');
-            
-            try {
-                const backupsSnapshot = await db.collection('backups')
-                    .orderBy('timestamp', 'desc')
-                    .limit(20)
-                    .get();
-                
-                let html = '';
-                backupsSnapshot.forEach(doc => {
-                    const backup = doc.data();
-                    const data = new Date(backup.dataBackup);
+                        return {
+                            'Nume': client.nume,
+                            'Telefon': client.telefon,
+                            'Email': client.email || '',
+                            'Adresa': client.adresa,
+                            'Oras': client.oras,
+                            'Nr Servicii': serviciiClient.length,
+                            'Nr Lucrari': lucrariClient.length,
+                            'Total Cheltuit': totalCheltuit + ' Lei'
+                        };
+                    });
+                    numeFile = 'raport-clienti';
+                    break;
                     
-                    html += `
-                        <tr>
-                            <td>${data.toLocaleString('ro-RO')}</td>
-                            <td><span class="badge badge-${backup.tip === 'manual' ? 'info' : 'success'}">${backup.tip}</span></td>
-                            <td>${backup.creatDe?.nume || 'System'}</td>
-                            <td>${backup.stats?.clienti || 0}</td>
-                            <td>${backup.stats?.servicii || 0}</td>
-                            <td>${backup.stats?.lucrari || 0}</td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" onclick="descarcaBackupDinCloud('${doc.id}')">
-                                    Descarcă
-                                </button>
-                                ${verificaPermisiuni('sterge') ? `
-                                    <button class="btn btn-danger btn-sm" onclick="stergeBackupDinCloud('${doc.id}')">
-                                        Șterge
-                                    </button>
-                                ` : ''}
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                tbody.innerHTML = html || '<tr><td colspan="7" style="text-align: center;">Nu există backup-uri</td></tr>';
-                
-            } catch (error) {
-                console.error('Eroare afișare istoric:', error);
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Eroare încărcare istoric</td></tr>';
+                case 'expirari':
+                    datePentruExport = servicii.map(s => {
+                        const client = clienti.find(c => c.id === s.clientId);
+                        const zileRamase = Math.ceil((new Date(s.dataExpirare) - new Date()) / (1000 * 60 * 60 * 24));
+                        const status = zileRamase < 0 ? 'EXPIRAT' : zileRamase <= 7 ? 'URGENT' : 'OK';
+                        
+                        return {
+                            'Client': client ? client.nume : 'Client necunoscut',
+                            'Telefon': client ? client.telefon : '',
+                            'Tip Serviciu': s.tip,
+                            'Data Expirare': formatDate(s.dataExpirare),
+                            'Zile Ramase': Math.abs(zileRamase),
+                            'Status': status,
+                            'Pret': s.pret + ' Lei'
+                        };
+                    });
+                    numeFile = 'raport-expirari';
+                    break;
+                    
+                default:
+                    datePentruExport = lucrari.map(l => {
+                        const client = clienti.find(c => c.id === l.clientId);
+                        return {
+                            'Client': client ? client.nume : 'Client necunoscut',
+                            'Serviciu': l.serviciu,
+                            'Data Programare': formatDate(l.dataProgramare),
+                            'Pret': l.pret + ' Lei',
+                            'Status': l.status
+                        };
+                    });
+                    numeFile = 'raport-lucrari';
             }
-        }
-
-        async function descarcaBackupDinCloud(backupId) {
-            try {
-                const doc = await db.collection('backups').doc(backupId).get();
-                
-                if (!doc.exists) {
-                    arataNotificare('Backup-ul nu mai există!', 'error');
-                    return;
-                }
-                
-                const backup = doc.data();
-                
-                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `backup-adinstalgaz-${backup.dataBackup.split('T')[0]}.json`;
-                link.click();
-                
-                arataNotificare('Backup descărcat!', 'success');
-                
-            } catch (error) {
-                console.error('Eroare descărcare:', error);
-                arataNotificare('Eroare la descărcare!', 'error');
-            }
-        }
-
-        function verificaStatusBackup() {
-            const backupStatusText = document.getElementById('backupStatusText');
-            const ultimulBackupInfo = document.getElementById('ultimulBackupInfo');
             
-            db.collection('system').doc('lastBackup').get()
-                .then(doc => {
-                    if (doc.exists) {
-                        const data = doc.data();
-                        backupStatusText.textContent = `Ultimul backup: ${new Date(data.data).toLocaleString('ro-RO')}`;
-                        ultimulBackupInfo.textContent = `Ultimul backup realizat: ${new Date(data.data).toLocaleString('ro-RO')}`;
-                    } else {
-                        backupStatusText.textContent = 'Nu există backup-uri';
-                        ultimulBackupInfo.textContent = 'Nu există backup-uri încă';
-                    }
-                })
-                .catch(error => {
-                    console.error('Eroare verificare backup:', error);
-                });
+            const ws = XLSX.utils.json_to_sheet(datePentruExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Raport');
+            
+            XLSX.writeFile(wb, `${numeFile}-${new Date().toISOString().split('T')[0]}.xlsx`);
+            
+            arataNotificare('Raport exportat cu succes în Excel!', 'success');
         }
 
         // Funcții pentru Setări
         function salveazaSetari() {
-            setari.numeCompanie = document.getElementById('numeCompanie').value;
-            setari.telefonCompanie = document.getElementById('telefonCompanie').value;
-            setari.emailCompanie = document.getElementById('emailCompanie').value;
-            setari.adresaCompanie = document.getElementById('adresaCompanie').value;
-            setari.notificariExpirari = document.getElementById('notificariExpirari').checked;
-            setari.zileNotificare = parseInt(document.getElementById('zileNotificare').value);
-            
-            salveazaInLocalStorage();
-            arataNotificare('Setări salvate cu succes!', 'success');
-        }
-
-        function resetareSetari() {
-            if (confirm('Sigur doriți să resetați toate setările la valorile implicite?')) {
-                setari = {
-                    numeCompanie: 'AdInstalGaz',
-                    telefonCompanie: '0762614401',
-                    emailCompanie: 'office@adinstalgaz.ro',
-                    adresaCompanie: '',
-                    notificariExpirari: true,
-                    zileNotificare: 7,
-                    salvareAutomata: true,
-                    intervalSalvare: 5,
-                    backupAutomat: true,
-                    oraBackup: '02:00',
-                    retentieBackup: 30,
-                    formatBackup: 'ambele'
-                };
-                
-                salveazaInLocalStorage();
-                incarcaSetariInFormular();
-                arataNotificare('Setări resetate la valorile implicite!', 'success');
-            }
-        }
-
-        function incarcaSetariInFormular() {
-            document.getElementById('numeCompanie').value = setari.numeCompanie || '';
-            document.getElementById('telefonCompanie').value = setari.telefonCompanie || '';
-            document.getElementById('emailCompanie').value = setari.emailCompanie || '';
-            document.getElementById('adresaCompanie').value = setari.adresaCompanie || '';
-            document.getElementById('notificariExpirari').checked = setari.notificariExpirari;
-            document.getElementById('zileNotificare').value = setari.zileNotificare;
-            
-            if (utilizatorCurent) {
-                document.getElementById('utilizatorConectat').value = utilizatorCurent.nume;
-                document.getElementById('rolUtilizator').value = utilizatorCurent.rol === 'administrator' ? 'Administrator' : 'Lucrător';
-            }
-        }
-
-        function deschideGestionareUtilizatori() {
-            if (!verificaPermisiuni('setari')) {
-                arataNotificare('Nu aveți permisiuni pentru această acțiune!', 'error');
-                return;
-            }
-            
-            const modal = document.getElementById('modalEdit');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            modalTitle.textContent = 'Gestionare Utilizatori';
-            
-            modalBody.innerHTML = `
-                <div style="margin-bottom: 20px;">
-                    <button class="btn btn-primary" onclick="adaugaUtilizatorNou()">
-                        Adaugă Utilizator
-                    </button>
-                </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nume</th>
-                                <th>Email</th>
-                                <th>Rol</th>
-                                <th>Telefon</th>
-                                <th>Acțiuni</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${utilizatori.map(u => `
-                                <tr>
-                                    <td><strong>${u.nume}</strong></td>
-                                    <td>${u.email}</td>
-                                    <td><span class="badge ${u.rol === 'administrator' ? 'badge-danger' : 'badge-info'}">${u.rol === 'administrator' ? 'Administrator' : 'Lucrător'}</span></td>
-                                    <td>${u.telefon || '-'}</td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" onclick="editeazaUtilizator(${u.id})">
-                                            Editează
-                                        </button>
-                                        ${u.id !== utilizatorCurent.id ? `
-                                            <button class="btn btn-danger btn-sm" onclick="stergeUtilizator(${u.id})">
-                                                Șterge
-                                            </button>
-                                        ` : ''}
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            
-            modal.style.display = 'block';
-        }
-
-        function adaugaUtilizatorNou() {
-            const modal = document.getElementById('modalEdit');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            modalTitle.textContent = 'Adaugă Utilizator Nou';
-            modalBody.innerHTML = `
-                <form onsubmit="salveazaUtilizatorNou(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Nume Complet*</label>
-                            <input type="text" id="numeUtilizatorNou" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email*</label>
-                            <input type="email" id="emailUtilizatorNou" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Telefon</label>
-                            <input type="tel" id="telefonUtilizatorNou">
-                        </div>
-                        <div class="form-group">
-                            <label>Rol*</label>
-                            <select id="rolUtilizatorNou" required>
-                                <option value="lucrator">Lucrător</option>
-                                <option value="administrator">Administrator</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">
-                            Salvează
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="deschideGestionareUtilizatori()">
-                            Înapoi
-                        </button>
-                    </div>
-                </form>
-            `;
-        }
-
-        function salveazaUtilizatorNou(event) {
-            event.preventDefault();
-            
-            const utilizatorNou = {
-                id: Date.now(),
-                nume: document.getElementById('numeUtilizatorNou').value,
-                email: document.getElementById('emailUtilizatorNou').value,
-                telefon: document.getElementById('telefonUtilizatorNou').value,
-                rol: document.getElementById('rolUtilizatorNou').value,
-                dataCreare: new Date().toISOString()
-            };
-            
-            if (utilizatori.find(u => u.email === utilizatorNou.email)) {
-                arataNotificare('Există deja un utilizator cu acest email!', 'error');
-                return;
-            }
-            
-            utilizatori.push(utilizatorNou);
-            salveazaInLocalStorage();
-            arataNotificare('Utilizator adăugat cu succes!', 'success');
-            deschideGestionareUtilizatori();
-        }
-
-        function editeazaUtilizator(id) {
-            const utilizator = utilizatori.find(u => u.id === id);
-            if (!utilizator) return;
-            
-            const modal = document.getElementById('modalEdit');
-            const modalTitle = document.getElementById('modalTitle');
-            const modalBody = document.getElementById('modalBody');
-            
-            modalTitle.textContent = 'Editare Utilizator';
-            modalBody.innerHTML = `
-                <form onsubmit="salveazaEditareUtilizator(event, ${id})">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Nume Complet*</label>
-                            <input type="text" id="editNumeUtilizator" value="${utilizator.nume}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email*</label>
-                            <input type="email" id="editEmailUtilizator" value="${utilizator.email}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Telefon</label>
-                            <input type="tel" id="editTelefonUtilizator" value="${utilizator.telefon || ''}">
-                        </div>
-                        <div class="form-group">
-                            <label>Rol*</label>
-                            <select id="editRolUtilizator" required ${utilizator.id === utilizatorCurent.id ? 'disabled' : ''}>
-                                <option value="lucrator" ${utilizator.rol === 'lucrator' ? 'selected' : ''}>Lucrător</option>
-                                <option value="administrator" ${utilizator.rol === 'administrator' ? 'selected' : ''}>Administrator</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="btn-group">
-                        <button type="submit" class="btn btn-primary">
-                            Salvează Modificări
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="deschideGestionareUtilizatori()">
-                            Înapoi
-                        </button>
-                    </div>
-                </form>
-            `;
-        }
-
-        function salveazaEditareUtilizator(event, id) {
-            event.preventDefault();
-            
-            const index = utilizatori.findIndex(u => u.id === id);
-            if (index === -1) return;
-            
-            utilizatori[index] = {
-                ...utilizatori[index],
-                nume: document.getElementById('editNumeUtilizator').value,
-                email: document.getElementById('editEmailUtilizator').value,
-                telefon: document.getElementById('editTelefonUtilizator').value,
-                rol: document.getElementById('editRolUtilizator').value || utilizatori[index].rol
-            };
-            
-            if (id === utilizatorCurent.id) {
-                utilizatorCurent = utilizatori[index];
-                localStorage.setItem('adinstalgaz_current_user', JSON.stringify(utilizatorCurent));
-                actualizareInterfataUtilizator();
-            }
-            
-            salveazaInLocalStorage();
-            arataNotificare('Utilizator actualizat cu succes!', 'success');
-            deschideGestionareUtilizatori();
-        }
-
-        function stergeUtilizator(id) {
-            if (!confirm('Sigur doriți să ștergeți acest utilizator?')) return;
-            
-            utilizatori = utilizatori.filter(u => u.id !== id);
-            salveazaInLocalStorage();
-            arataNotificare('Utilizator șters cu succes!', 'success');
-            deschideGestionareUtilizatori();
-        }
-
-        // Funcții pentru actualizare dropdown-uri
-        function actualizareDropdownClienti() {
-            const selectIds = ['clientServiciu', 'clientLucrare', 'clientDocument'];
-            
-            selectIds.forEach(selectId => {
-                const select = document.getElementById(selectId);
-                if (!select) return;
-                
-                const valoareCurenta = select.value;
-                
-                const clientiSortati = [...clienti].sort((a, b) => 
-                    a.nume.localeCompare(b.nume, 'ro')
-                );
-                
-                select.innerHTML = '<option value="">Selectează clientul</option>' +
-                    clientiSortati.map(c => 
-                        `<option value="${c.id}">${c.nume} - ${c.telefon} - ${c.oras || ''}</option>`
-                    ).join('');
-                
-                if (valoareCurenta) {
-                    select.value = valoareCurenta;
-                }
-            });
-        }
-
-        function actualizareDropdownLucratori() {
-            const selectIds = ['lucratorLucrare', 'editLucratorLucrare'];
-            
-            const lucratori = utilizatori.filter(u => 
-                u.rol === 'lucrator' || u.rol === 'lucrător' || 
-                u.rol === 'administrator' || u.rol === 'admin'
-            );
-            
-            selectIds.forEach(selectId => {
-                const select = document.getElementById(selectId);
-                if (!select) return;
-                
-                const valoareCurenta = select.value;
-                
-                select.innerHTML = '<option value="">Neatribuit</option>' +
-                    lucratori.map(u => 
-                        `<option value="${u.id}">${u.nume}${u.rol.includes('admin') ? ' (Admin)' : ''}</option>`
-                    ).join('');
-                
-                if (valoareCurenta) {
-                    select.value = valoareCurenta;
-                }
-            });
+            arataNotificare('Setările au fost salvate!', 'success');
         }
 
         // Funcții utilitare
@@ -4522,36 +2340,13 @@ ${generareMesajSMS(
 
         // Inițializare aplicație
         document.addEventListener('DOMContentLoaded', function() {
-            // Înregistrare Service Worker pentru PWA
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => console.log('Service Worker înregistrat'))
-                    .catch(error => console.log('Service Worker eroare:', error));
-            }
-            
-            // Încarcă date din localStorage
-            incarcaDinLocalStorage();
-            
             // Verifică autentificarea
             if (!verificaAutentificare()) {
                 document.getElementById('loginSection').style.display = 'flex';
                 document.getElementById('mainApp').style.display = 'none';
             } else {
                 actualizeazaDashboard();
-            }
-            
-            // Setare automată salvare
-            setInterval(() => {
-                if (utilizatorCurent && setari.salvareAutomata) {
-                    salveazaInLocalStorage();
-                }
-            }, setari.intervalSalvare * 60 * 1000);
-        });
-
-        // Previne închiderea accidentală
-        window.addEventListener('beforeunload', function (e) {
-            if (utilizatorCurent) {
-                salveazaInLocalStorage();
+                populeazaSelectClienti();
             }
         });
     </script>
