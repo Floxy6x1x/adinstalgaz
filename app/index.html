@@ -700,7 +700,7 @@
                 <div class="stat-card">
                     <i class="fas fa-euro-sign"></i>
                     <h3 id="venitLunar">0</h3>
-                    <p>Venit Lunar (€)</p>
+                    <p>Venit Lunar (LEI)</p>
                 </div>
             </div>
 
@@ -777,7 +777,7 @@
             <div class="services-grid">
                 <div class="service-card">
                     <h4><i class="fas fa-check-circle"></i> Verificare Instalație Gaz</h4>
-                    <div class="service-price">150 €</div>
+                    <div class="service-price">150 LEI</div>
                     <p>Verificare completă a instalației de gaz pentru siguranță și conformitate.</p>
                     <button class="btn btn-small btn-success" onclick="addServiceToClient('Verificare Instalație Gaz', 150)">
                         <i class="fas fa-plus"></i> Adaugă la Client
@@ -786,7 +786,7 @@
 
                 <div class="service-card">
                     <h4><i class="fas fa-tools"></i> Revizie Instalație Gaz</h4>
-                    <div class="service-price">250 €</div>
+                    <div class="service-price">250 LEI</div>
                     <p>Revizie detaliată și mentenanță preventivă a instalației de gaz.</p>
                     <button class="btn btn-small btn-success" onclick="addServiceToClient('Revizie Instalație Gaz', 250)">
                         <i class="fas fa-plus"></i> Adaugă la Client
@@ -795,7 +795,7 @@
 
                 <div class="service-card">
                     <h4><i class="fas fa-thermometer-half"></i> Verificare Centrală</h4>
-                    <div class="service-price">150 €</div>
+                    <div class="service-price">150 LEI</div>
                     <p>Verificare și testare funcționalitate centrală termică pe gaz.</p>
                     <button class="btn btn-small btn-success" onclick="addServiceToClient('Verificare Centrală', 150)">
                         <i class="fas fa-plus"></i> Adaugă la Client
@@ -804,7 +804,7 @@
 
                 <div class="service-card" style="border: 2px solid #ff6b35;">
                     <h4><i class="fas fa-fire"></i> 🔥 OFERTĂ: Instalații Gaz + Centrală</h4>
-                    <div class="service-price" style="color: #ff6b35;">250 €</div>
+                    <div class="service-price" style="color: #ff6b35;">250 LEI</div>
                     <p>Pachet complet: instalare și configurare sistem gaz cu centrală.</p>
                     <button class="btn btn-small" style="background: #ff6b35;" onclick="addServiceToClient('Instalații Gaz + Centrală', 250)">
                         <i class="fas fa-star"></i> Adaugă Oferta
@@ -1031,10 +1031,10 @@
                         <label>Tip Serviciu: *</label>
                         <select id="tipServiciu" required>
                             <option value="">Selectează serviciul</option>
-                            <option value="Verificare Instalație Gaz">Verificare Instalație Gaz - 150€</option>
-                            <option value="Revizie Instalație Gaz">Revizie Instalație Gaz - 250€</option>
-                            <option value="Verificare Centrală">Verificare Centrală - 150€</option>
-                            <option value="Instalații Gaz + Centrală">🔥 OFERTĂ: Instalații Gaz + Centrală - 250€</option>
+                            <option value="Verificare Instalație Gaz">Verificare Instalație Gaz - 150 LEI</option>
+                            <option value="Revizie Instalație Gaz">Revizie Instalație Gaz - 250 LEI</option>
+                            <option value="Verificare Centrală">Verificare Centrală - 150 LEI</option>
+                            <option value="Instalații Gaz + Centrală">🔥 OFERTĂ: Instalații Gaz + Centrală - 250 LEI</option>
                             <option value="Servicii de Urgență">Servicii de Urgență - La cerere</option>
                         </select>
                     </div>
@@ -1211,7 +1211,7 @@
         let backupTimer = null;
         let currentRaportData = null;
 
-        // Services pricing
+        // Services pricing (în LEI)
         const servicePrices = {
             'Verificare Instalație Gaz': 150,
             'Revizie Instalație Gaz': 250,
@@ -1872,7 +1872,7 @@
                         <div class="stat-card">
                             <i class="fas fa-euro-sign"></i>
                             <h3>${venitGenerat}</h3>
-                            <p>Venit generat (€)</p>
+                            <p>Venit generat (LEI)</p>
                         </div>
                     </div>
                     <div class="table-container">
@@ -1893,7 +1893,7 @@
                                     <tr>
                                         <td>${client.nume}</td>
                                         <td>${client.tipServiciu}</td>
-                                        <td>${servicePrices[client.tipServiciu] || 0}€</td>
+                                        <td>${servicePrices[client.tipServiciu] || 0} LEI</td>
                                         <td>${client.dataStartServiciu}</td>
                                         <td>${client.dataExpirare}</td>
                                         <td>${client.judet}</td>
@@ -1972,7 +1972,7 @@
                                         <td>${serviciu}</td>
                                         <td>${stats.count}</td>
                                         <td>${stats.venit}€</td>
-                                        <td>${servicePrices[serviciu] || 0}€</td>
+                                        <td>${servicePrices[serviciu] || 0} LEI</td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -2131,7 +2131,7 @@
                         'Telefon': client.telefon,
                         'Email': client.email || '',
                         'Serviciu': client.tipServiciu,
-                        'Preț': servicePrices[client.tipServiciu] || 0,
+                                                                'Preț': servicePrices[client.tipServiciu] || 0,
                         'Data Start': client.dataStartServiciu,
                         'Data Expirare': client.dataExpirare,
                         'Județ': client.judet,
