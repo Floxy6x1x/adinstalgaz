@@ -1,20 +1,109 @@
 {
-  "name": "AdInstalGaz Management",
+  "name": "AdInstalGaz - Sistem Profesional Management",
   "short_name": "AdInstalGaz",
-  "start_url": "./index.html",
+  "description": "Sistem complet de management pentru servicii instalații gaze - clienți, lucrări, SMS, rapoarte și backup cloud",
+  "start_url": "./",
   "display": "standalone",
-  "theme_color": "#2d2d2d",
-  "background_color": "#f5f5f5",
+  "orientation": "portrait-primary",
+  "theme_color": "#ed8936",
+  "background_color": "#4a5568",
+  "scope": "./",
+  
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
+    {
+      "src": "icon-512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  
+  "shortcuts": [
+    {
+      "name": "Clienți",
+      "short_name": "Clienți",
+      "description": "Gestionează clienții",
+      "url": "./?section=clienti",
+      "icons": [{ 
+        "src": "icon-192.png", 
+        "sizes": "192x192" 
+      }]
+    },
+    {
+      "name": "Lucrări",
+      "short_name": "Lucrări", 
+      "description": "Vezi lucrările tale",
+      "url": "./?section=lucrari",
+      "icons": [{ 
+        "src": "icon-192.png", 
+        "sizes": "192x192" 
+      }]
+    },
+    {
+      "name": "SMS Clienți",
+      "short_name": "SMS",
+      "description": "Trimite SMS notificări",
+      "url": "./?section=sms",
+      "icons": [{ 
+        "src": "icon-192.png", 
+        "sizes": "192x192" 
+      }]
+    },
+    {
+      "name": "Backup Cloud",
+      "short_name": "Backup",
+      "description": "Sincronizare Firebase",
+      "url": "./?section=backup", 
+      "icons": [{ 
+        "src": "icon-192.png", 
+        "sizes": "192x192" 
+      }]
+    }
+  ],
+  
+  "categories": [
+    "business",
+    "productivity", 
+    "utilities"
+  ],
+  
+  "screenshots": [
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "label": "AdInstalGaz Dashboard"
     }
-  ]
+  ],
+  
+  "features": [
+    "Cross Platform",
+    "fast",
+    "simple"
+  ],
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  },
+  
+  "protocol_handlers": [
+    {
+      "protocol": "tel",
+      "url": "./?call=%s"
+    }
+  ],
+  
+  "prefer_related_applications": false,
+  
+  "capture_links": "existing-client-navigate"
 }
