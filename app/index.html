@@ -4156,18 +4156,18 @@ self.addEventListener('fetch', (event) => {
     );
 });`;
                 
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                
-                navigator.serviceWorker.register(swUrl)
-                    .then(function(registration) {
-                        console.log('Service Worker registered: ', registration);
-                    })
-                    .catch(function(registrationError) {
-                        console.log('Service Worker registration failed: ', registrationError);
-                    });
-            });
-        }
+              if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js')
+      .then(function (registration) {
+        console.log('✅ Service Worker registered:', registration);
+      })
+      .catch(function (registrationError) {
+        console.log('❌ Service Worker registration failed:', registrationError);
+      });
+  });
+}
+
 
         // PWA Install Prompt
         window.addEventListener('beforeinstallprompt', function(e) {
