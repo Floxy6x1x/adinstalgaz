@@ -464,6 +464,11 @@
             background: white;
         }
 
+        .assignment-card.urgent {
+            border-color: #dc3545;
+            background: #ffe6e8;
+        }
+
         .assignment-header {
             display: flex;
             justify-content: space-between;
@@ -1063,6 +1068,18 @@
                             <option value="">Selectează lucrătorul...</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label>Data Programată:</label>
+                        <input type="date" id="dataProgramata" min="" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prioritate:</label>
+                        <select id="prioritateAsignare">
+                            <option value="Normală">Normală</option>
+                            <option value="Urgentă">Urgentă</option>
+                            <option value="Foarte Urgentă">Foarte Urgentă</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div id="clientInfoDisplay" class="client-info-display" style="display: none;">
@@ -1084,6 +1101,19 @@
             <div class="sms-panel">
                 <h2><i class="fas fa-sms"></i> Sistem SMS Notificări</h2>
                 <p>Numărul expeditor: <strong>0762 614 401</strong></p>
+                
+                <!-- SMS API Configuration -->
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <h4><i class="fas fa-key"></i> Configurare API smso.ro</h4>
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label style="color: white;">API Token:</label>
+                        <input type="password" id="smsApiToken" placeholder="Introdu API Token-ul de la smso.ro" 
+                               style="width: 100%; max-width: 400px;" onchange="updateSMSConfig()">
+                        <small style="color: rgba(255,255,255,0.8); display: block; margin-top: 5px;">
+                            Găsești token-ul în contul tău smso.ro → Setări → API
+                        </small>
+                    </div>
+                </div>
                 
                 <div class="sms-stats">
                     <div class="sms-stat-item">
@@ -1601,6 +1631,222 @@
     </script>
 
     <script>
+        // SMS Configuration - smso.ro
+        const SMS_CONFIG = {
+            apiToken: '', // Va fi completat de utilizator
+            baseUrl: 'https://app.smso.ro/api/v1/send',
+            sender: 'AdInstalGaz' // sau numărul de telefon
+        };
+
+        // Push Notification Functions
+        function sendPushNotificationToWorker(worker, assignment) {
+            if (!worker || !assignment) return;
+            
+            const notificationTitle = 'Lucrare Nouă Asignată!';
+            const notificationBody = `Client: ${assignment.clientNume}\nServiciu: ${assignment.tipServiciu}\nData: ${new Date(assignment.dataProgramata).toLocaleDateString('ro-RO')}`;
+            
+            // PWA Notification
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(notificationTitle, {
+                    body: notificationBody,
+                    icon: '/icon-192x192.png',
+                    badge: '/badge-72x72.png',
+                    vibrate: [200, 100, 200],
+                    tag: 'assignment-' + assignment.id,
+                    requireInteraction: true,
+                    actions: [
+                        { action: 'view', title: 'Vezi Detalii' },
+                        { action: 'accept', title: 'Accept' }
+                    ]
+                });
+            }
+            
+            // Firebase Cloud Messaging (pentru push pe telefon când app-ul e închis)
+            if (window.firebaseDb) {
+                // Salvează notificarea în Firebase pentru sincronizare
+                const setDoc = window.firebaseFunctions.setDoc;
+                const doc = window.firebaseFunctions.doc;
+                const notificationRef = doc(window.firebaseDb, 'notifications', Date.now().toString());
+                setDoc(notificationRef, {
+                    workerId: worker.id,
+                    workerEmail: worker.email,
+                    assignmentId: assignment.id,
+                    title: notificationTitle,
+                    body: notificationBody,
+                    createdAt: new Date().toISOString(),
+                    read: false
+                });
+            }
+        }
+
+        // Real SMS Function with smso.ro
+        async function sendRealSMS(phone, message) {
+            if (!SMS_CONFIG.apiToken) {
+                showAlert('API Token pentru SMS nu este configurat! Contactați administratorul.', 'warning');
+                return false;
+            }
+            
+            // Formatare număr telefon pentru România
+            let formattedPhone = phone.replace(/\s+/g, '').replace(/-/g, '');
+            if (formattedPhone.startsWith('0')) {
+                formattedPhone = '4' + formattedPhone; // Adaugă prefix România
+            }
+            
+            try {
+                const response = await fetch(SMS_CONFIG.baseUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + SMS_CONFIG.apiToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        to: [formattedPhone],
+                        body: message,
+                        from: SMS_CONFIG.sender
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.status === 'success') {
+                    console.log('SMS trimis cu succes:', result);
+                    return true;
+                } else {
+                    console.error('Eroare SMS:', result);
+                    showAlert('Eroare la trimiterea SMS: ' + (result.message || 'Eroare necunoscută'), 'danger');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Eroare trimitere SMS:', error);
+                showAlert('Eroare de conexiune la serviciul SMS', 'danger');
+                return false;
+            }
+        }
+
+        // Update SMS functions to use real SMS
+        async function sendIndividualSMS(clientId) {
+            const client = clientiData.find(function(c) { return c.id == clientId; });
+            if (!client) return;
+            
+            const message = `Buna ziua, ${getSalutation(client.nume)}!\n\n` +
+                `Va informam ca serviciul "${client.tipServiciu}" va expira la ${new Date(client.dataExpirare).toLocaleDateString('ro-RO')}.\n\n` +
+                `Pentru prelungire cu DISCOUNT 15%, sunati: 0762 614 401\n\n` +
+                `AdInstalGaz - Servicii profesionale`;
+            
+            const success = await sendRealSMS(client.telefon, message);
+            
+            if (success) {
+                showAlert('SMS trimis către ' + client.nume + ' (' + client.telefon + ')', 'success');
+                
+                // Update statistics
+                const currentSMSCount = parseInt(document.getElementById('smsTrimiese').textContent) || 0;
+                document.getElementById('smsTrimiese').textContent = currentSMSCount + 1;
+                
+                // Log SMS
+                const smsLog = JSON.parse(localStorage.getItem('smsLog')) || [];
+                smsLog.push({
+                    date: new Date().toISOString(),
+                    type: 'individual',
+                    clientId: client.id,
+                    clientName: client.nume,
+                    phone: client.telefon,
+                    message: message,
+                    status: 'sent'
+                });
+                localStorage.setItem('smsLog', JSON.stringify(smsLog));
+            }
+        }
+
+        async function sendNotificationSMS() {
+            const today = new Date();
+            const in3Days = new Date(today.getTime() + (3 * 24 * 60 * 60 * 1000));
+            
+            const expiringClients = clientiData.filter(function(client) {
+                const expireDate = new Date(client.dataExpirare);
+                return expireDate >= today && expireDate <= in3Days;
+            });
+            
+            if (expiringClients.length === 0) {
+                showAlert('Nu există clienți cu servicii care expiră în următoarele 3 zile.', 'info');
+                return;
+            }
+            
+            if (!confirm(`Sigur doriți să trimiteți ${expiringClients.length} SMS-uri de notificare?`)) {
+                return;
+            }
+            
+            let successCount = 0;
+            let failCount = 0;
+            
+            // Trimite SMS-uri cu delay pentru a nu supraîncărca API-ul
+            for (let i = 0; i < expiringClients.length; i++) {
+                const client = expiringClients[i];
+                const message = `Buna ziua!\n\nServiciu "${client.tipServiciu}" expira in 3 zile.\nPentru reinnoire cu DISCOUNT, sunati: 0762 614 401\n\nAdInstalGaz`;
+                
+                const success = await sendRealSMS(client.telefon, message);
+                if (success) {
+                    successCount++;
+                } else {
+                    failCount++;
+                }
+                
+                // Delay de 1 secundă între SMS-uri
+                if (i < expiringClients.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+            
+            // Update statistics
+            const currentSMSCount = parseInt(document.getElementById('smsTrimiese').textContent) || 0;
+            document.getElementById('smsTrimiese').textContent = currentSMSCount + successCount;
+            
+            showAlert(`✅ ${successCount} SMS-uri trimise cu succes! ${failCount > 0 ? `❌ ${failCount} erori.` : ''}`, 'success');
+            
+            // Log SMS activity
+            const smsLog = JSON.parse(localStorage.getItem('smsLog')) || [];
+            smsLog.push({
+                date: new Date().toISOString(),
+                type: 'bulk_notification',
+                totalSent: successCount,
+                totalFailed: failCount,
+                clients: expiringClients.map(function(c) { 
+                    return { id: c.id, nume: c.nume, telefon: c.telefon }; 
+                })
+            });
+            localStorage.setItem('smsLog', JSON.stringify(smsLog));
+        }
+
+        // Update SMS Configuration
+        function updateSMSConfig() {
+            const apiToken = document.getElementById('smsApiToken').value;
+            if (apiToken) {
+                SMS_CONFIG.apiToken = apiToken;
+                localStorage.setItem('smsApiToken', apiToken);
+                showAlert('API Token salvat cu succes!', 'success');
+            }
+        }
+
+        // Load saved SMS config on startup
+        function loadSMSConfig() {
+            const savedToken = localStorage.getItem('smsApiToken');
+            if (savedToken) {
+                SMS_CONFIG.apiToken = savedToken;
+                if (document.getElementById('smsApiToken')) {
+                    document.getElementById('smsApiToken').value = savedToken;
+                }
+            }
+        }
+
+        // Set minimum date for assignments
+        function setMinimumDate() {
+            const today = new Date().toISOString().split('T')[0];
+            const dataProgramataInput = document.getElementById('dataProgramata');
+            if (dataProgramataInput) {
+                dataProgramataInput.min = today;
+                dataProgramataInput.value = today;
+            }
+        }
+
         // Sync Modal Functions
         function openSyncModal() {
             document.getElementById('syncModal').classList.add('active');
@@ -2060,6 +2306,18 @@
                 
                 setupUserInterface();
                 loadDashboardData();
+                loadSMSConfig(); // Load SMS configuration
+                
+                // Request notification permission for PWA
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission().then(function(permission) {
+                        if (permission === 'granted') {
+                            showAlert('Notificările push sunt activate!', 'success');
+                        }
+                    });
+                } else if ('Notification' in window && Notification.permission === 'denied') {
+                    console.log('Notificările sunt blocate. Activați-le din setările browserului.');
+                }
                 
                 // Check for duplicates
                 setTimeout(function() {
@@ -2291,8 +2549,14 @@
                 }
             }
             if (sectionName === 'lucrari') loadLucrariContent();
-            if (sectionName === 'asignari') loadAssignmentsForAdmin();
-            if (sectionName === 'sms') loadSMSSection();
+            if (sectionName === 'asignari') {
+                loadAssignmentsForAdmin();
+                setMinimumDate();
+            }
+            if (sectionName === 'sms') {
+                loadSMSSection();
+                loadSMSConfig();
+            }
             if (sectionName === 'utilizatori') loadUsersSection();
             if (sectionName === 'backup') updateBackupStats();
         }
@@ -2647,13 +2911,16 @@
         function assignClientToWorker() {
             const clientId = document.getElementById('clientSelectForAssignment').value;
             const lucratorAsignat = document.getElementById('lucratorSelectForAssignment').value;
+            const dataProgramata = document.getElementById('dataProgramata').value;
+            const prioritate = document.getElementById('prioritateAsignare').value;
             
-            if (!clientId || !lucratorAsignat) {
-                showAlert('Vă rugăm să selectați clientul și lucrătorul!', 'warning');
+            if (!clientId || !lucratorAsignat || !dataProgramata) {
+                showAlert('Vă rugăm să completați toate câmpurile obligatorii!', 'warning');
                 return;
             }
             
             const client = clientiData.find(function(c) { return c.id == clientId; });
+            const lucrator = usersData.find(function(u) { return u.name === lucratorAsignat; });
             
             const assignment = {
                 id: Date.now(),
@@ -2665,14 +2932,21 @@
                 dataStart: client.dataStartServiciu,
                 dataExpirare: client.dataExpirare,
                 lucratorAsignat: lucratorAsignat,
+                lucratorEmail: lucrator ? lucrator.email : '',
                 status: 'Programată',
-                prioritate: 'Normală',
+                prioritate: prioritate,
                 dataAsignare: new Date().toISOString().split('T')[0],
+                dataProgramata: dataProgramata,
                 documente: []
             };
             
             assignmentsData.push(assignment);
             saveToLocalStorage();
+            
+            // Send push notification to worker
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+                sendPushNotificationToWorker(lucrator, assignment);
+            }
             
             // Sync to Firebase if connected
             if (window.firebaseDb) {
@@ -2693,11 +2967,13 @@
             // Reset form
             document.getElementById('clientSelectForAssignment').value = '';
             document.getElementById('lucratorSelectForAssignment').value = '';
+            document.getElementById('dataProgramata').value = '';
+            document.getElementById('prioritateAsignare').value = 'Normală';
             document.getElementById('clientInfoDisplay').style.display = 'none';
             
             loadAssignmentsDisplay();
             updateStats();
-            showAlert('Client asignat către ' + lucratorAsignat + ' cu succes!', 'success');
+            showAlert('Client asignat către ' + lucratorAsignat + ' pentru data de ' + new Date(dataProgramata).toLocaleDateString('ro-RO') + '!', 'success');
         }
 
         function loadAssignmentsDisplay() {
@@ -2710,7 +2986,8 @@
             
             container.innerHTML = '<h3>Asignări Existente</h3>' + 
                 assignmentsData.map(function(assignment, index) {
-                    return '<div class="assignment-card">' +
+                    const isPastDue = new Date(assignment.dataProgramata) < new Date() && assignment.status === 'Programată';
+                    return '<div class="assignment-card ' + (isPastDue ? 'urgent' : '') + '">' +
                         '<div class="assignment-header">' +
                         '<h4>' + assignment.tipServiciu + '</h4>' +
                         '<span class="assignment-status status-' + assignment.status.toLowerCase().replace(' ', '-') + '">' + assignment.status + '</span>' +
@@ -2719,7 +2996,11 @@
                         '<div class="detail-item"><i class="fas fa-user"></i><span><strong>Client:</strong> ' + assignment.clientNume + '</span></div>' +
                         '<div class="detail-item"><i class="fas fa-user-tie"></i><span><strong>Lucrător:</strong> ' + assignment.lucratorAsignat + '</span></div>' +
                         '<div class="detail-item"><i class="fas fa-calendar"></i><span><strong>Data Asignare:</strong> ' + assignment.dataAsignare + '</span></div>' +
+                        '<div class="detail-item"><i class="fas fa-calendar-check"></i><span><strong>Data Programată:</strong> ' + 
+                        (assignment.dataProgramata ? new Date(assignment.dataProgramata).toLocaleDateString('ro-RO') : 'Neprogramată') + 
+                        (isPastDue ? ' <span style="color: red;">(ÎNTÂRZIAT!)</span>' : '') + '</span></div>' +
                         '<div class="detail-item"><i class="fas fa-phone"></i><span><strong>Telefon:</strong> ' + assignment.clientTelefon + '</span></div>' +
+                        '<div class="detail-item"><i class="fas fa-exclamation-circle"></i><span><strong>Prioritate:</strong> ' + (assignment.prioritate || 'Normală') + '</span></div>' +
                         '</div>' +
                         '<div style="margin-top: 15px;">' +
                         '<button class="btn btn-small btn-danger" onclick="deleteAssignment(' + index + ')"><i class="fas fa-trash"></i> Șterge Asignare</button>' +
@@ -2746,10 +3027,18 @@
             if (userRole === 'admin') {
                 relevantAssignments = assignmentsData;
             } else {
-                // Lucrătorul vede DOAR lucrările asignate lui
+                // Lucrătorul vede DOAR lucrările asignate lui - FIXED pentru mobile
                 relevantAssignments = assignmentsData.filter(function(assignment) {
-                    return assignment.lucratorAsignat === currentUser.name;
+                    // Verifică dacă assignment și currentUser există
+                    if (!assignment || !currentUser) return false;
+                    // Compară și cu email pentru siguranță
+                    return assignment.lucratorAsignat === currentUser.name || 
+                           assignment.lucratorEmail === currentUser.email;
                 });
+                
+                // Debug pentru mobile
+                console.log('Current User:', currentUser);
+                console.log('Assignments found:', relevantAssignments.length);
             }
             
             if (relevantAssignments.length === 0) {
@@ -2758,7 +3047,8 @@
             }
             
             container.innerHTML = relevantAssignments.map(function(assignment, index) {
-                return '<div class="worker-assignment-card ' + (assignment.status === 'Finalizată' ? 'completed' : '') + '">' +
+                const isPastDue = assignment.dataProgramata && new Date(assignment.dataProgramata) < new Date() && assignment.status === 'Programată';
+                return '<div class="worker-assignment-card ' + (assignment.status === 'Finalizată' ? 'completed' : '') + (isPastDue ? ' urgent' : '') + '">' +
                     '<div class="assignment-header">' +
                     '<h4>' + assignment.tipServiciu + '</h4>' +
                     '<span class="assignment-status status-' + assignment.status.toLowerCase().replace(' ', '-') + '">' + assignment.status + '</span>' +
@@ -2767,16 +3057,24 @@
                     '<div class="detail-item"><i class="fas fa-user"></i><span><strong>Client:</strong> ' + assignment.clientNume + '</span></div>' +
                     '<div class="detail-item"><i class="fas fa-phone"></i><span><strong>Telefon:</strong> ' + assignment.clientTelefon + '</span></div>' +
                     '<div class="detail-item"><i class="fas fa-map-marker-alt"></i><span><strong>Adresă:</strong> ' + assignment.clientAdresa + '</span></div>' +
-                    '<div class="detail-item"><i class="fas fa-calendar-start"></i><span><strong>Data Start:</strong> ' + assignment.dataStart + '</span></div>' +
+                    '<div class="detail-item"><i class="fas fa-calendar-check"></i><span><strong>Data Programată:</strong> ' + 
+                    (assignment.dataProgramata ? new Date(assignment.dataProgramata).toLocaleDateString('ro-RO') : 'Neprogramată') + 
+                    (isPastDue ? ' <span style="color: red; font-weight: bold;">(ÎNTÂRZIAT!)</span>' : '') + '</span></div>' +
+                    '<div class="detail-item"><i class="fas fa-calendar-start"></i><span><strong>Data Start Serviciu:</strong> ' + assignment.dataStart + '</span></div>' +
                     '<div class="detail-item"><i class="fas fa-calendar-times"></i><span><strong>Data Expirare:</strong> ' + assignment.dataExpirare + '</span></div>' +
-                    '<div class="detail-item"><i class="fas fa-user-tie"></i><span><strong>Lucrător:</strong> ' + assignment.lucratorAsignat + '</span></div>' +
+                    '<div class="detail-item"><i class="fas fa-exclamation-circle"></i><span><strong>Prioritate:</strong> <strong style="color: ' + 
+                    (assignment.prioritate === 'Foarte Urgentă' ? 'red' : assignment.prioritate === 'Urgentă' ? 'orange' : 'green') + ';">' + 
+                    (assignment.prioritate || 'Normală') + '</strong></span></div>' +
+                    (userRole === 'admin' ? '<div class="detail-item"><i class="fas fa-user-tie"></i><span><strong>Lucrător:</strong> ' + assignment.lucratorAsignat + '</span></div>' : '') +
                     '</div>' +
                     '<div style="margin-top: 20px;">' +
                     '<h5>Documente Atașate</h5>' +
-                    '<div class="file-upload-area" style="padding: 15px;" onclick="selectFiles(' + assignment.id + ')">' +
+                    '<div class="file-upload-area" style="padding: 15px;">' +
+                    '<label for="fileInput_' + assignment.id + '" style="cursor: pointer; display: block; text-align: center;">' +
                     '<i class="fas fa-cloud-upload-alt" style="font-size: 24px; color: #ed8936;"></i>' +
-                    '<p style="margin: 10px 0; font-size: 14px;">Click pentru a adăuga documente</p>' +
-                    '<input type="file" id="fileInput_' + assignment.id + '" multiple accept="image/*,.pdf,.doc,.docx" style="display: none;" onchange="handleFileUpload(' + assignment.id + ', this.files)">' +
+                    '<p style="margin: 10px 0; font-size: 14px;">Click sau atingeți pentru a adăuga documente</p>' +
+                    '</label>' +
+                    '<input type="file" id="fileInput_' + assignment.id + '" multiple accept="image/*,.pdf,.doc,.docx" capture="environment" style="display: none;" onchange="handleFileUpload(' + assignment.id + ', this.files)">' +
                     '</div>' +
                     '<div id="uploadedFiles_' + assignment.id + '" class="uploaded-files">' +
                     (assignment.documente && assignment.documente.length > 0 ? 
@@ -2803,10 +3101,6 @@
                     '</div>' +
                     '</div>';
             }).join('');
-        }
-
-        function selectFiles(assignmentId) {
-            document.getElementById('fileInput_' + assignmentId).click();
         }
 
         function handleFileUpload(assignmentId, files) {
@@ -2842,6 +3136,7 @@
             });
         }
 
+        // Remove document from assignment
         function removeDocument(assignmentId, documentName) {
             const assignment = assignmentsData.find(function(a) { return a.id === assignmentId; });
             if (!assignment) return;
@@ -2857,14 +3152,50 @@
             if (!assignment) return;
             
             assignment.status = newStatus;
+            
             if (newStatus === 'Finalizată') {
                 assignment.dataFinalizare = new Date().toISOString().split('T')[0];
+                
+                // Actualizează automat data expirării clientului (+2 ani)
+                const client = clientiData.find(function(c) { return c.id == assignment.clientId; });
+                if (client) {
+                    const newStartDate = new Date();
+                    const newExpireDate = new Date();
+                    newExpireDate.setFullYear(newExpireDate.getFullYear() + 2);
+                    
+                    client.dataStartServiciu = newStartDate.toISOString().split('T')[0];
+                    client.dataExpirare = newExpireDate.toISOString().split('T')[0];
+                    
+                    // Actualizează și asignarea
+                    assignment.dataStart = client.dataStartServiciu;
+                    assignment.dataExpirare = client.dataExpirare;
+                    
+                    showAlert('✅ Lucrare finalizată! Serviciul clientului a fost prelungit automat cu 2 ani.', 'success');
+                }
             }
             
             saveToLocalStorage();
             loadLucrariContent();
             updateStats();
-            showAlert('Lucrarea a fost marcată ca ' + newStatus.toLowerCase() + '!', 'success');
+            
+            // Sync to Firebase
+            if (window.firebaseDb) {
+                const setDoc = window.firebaseFunctions.setDoc;
+                const doc = window.firebaseFunctions.doc;
+                
+                // Update assignment
+                const assignmentRef = doc(window.firebaseDb, 'assignments', assignment.id.toString());
+                setDoc(assignmentRef, assignment, { merge: true });
+                
+                // Update client if modified
+                if (newStatus === 'Finalizată' && assignment.clientId) {
+                    const client = clientiData.find(function(c) { return c.id == assignment.clientId; });
+                    if (client) {
+                        const clientRef = doc(window.firebaseDb, 'clienti', client.id.toString());
+                        setDoc(clientRef, client, { merge: true });
+                    }
+                }
+            }
         }
 
         // SMS Notification Functions
@@ -2929,59 +3260,6 @@
             } else {
                 return 'Dl ' + nume;
             }
-        }
-
-        function sendNotificationSMS() {
-            const today = new Date();
-            const in3Days = new Date(today.getTime() + (3 * 24 * 60 * 60 * 1000));
-            
-            const expiringClients = clientiData.filter(function(client) {
-                const expireDate = new Date(client.dataExpirare);
-                return expireDate >= today && expireDate <= in3Days;
-            });
-            
-            if (expiringClients.length === 0) {
-                showAlert('Nu există clienți cu servicii care expiră în următoarele 3 zile.', 'info');
-                return;
-            }
-            
-            // Simulate SMS sending
-            let successCount = 0;
-            expiringClients.forEach(function(client) {
-                // In a real implementation, you would integrate with an SMS API here
-                console.log('Sending SMS to ' + client.telefon + ' for ' + client.nume);
-                successCount++;
-            });
-            
-            // Update statistics
-            const currentSMSCount = parseInt(document.getElementById('smsTrimiese').textContent) || 0;
-            document.getElementById('smsTrimiese').textContent = currentSMSCount + successCount;
-            
-            showAlert(successCount + ' SMS-uri de notificare trimise cu succes!', 'success');
-            
-            // Log SMS activity
-            const smsLog = JSON.parse(localStorage.getItem('smsLog')) || [];
-            smsLog.push({
-                date: new Date().toISOString(),
-                type: 'notification',
-                count: successCount,
-                clients: expiringClients.map(function(c) { return { id: c.id, nume: c.nume, telefon: c.telefon }; })
-            });
-            localStorage.setItem('smsLog', JSON.stringify(smsLog));
-        }
-
-        function sendIndividualSMS(clientId) {
-            const client = clientiData.find(function(c) { return c.id == clientId; });
-            if (!client) return;
-            
-            // Simulate individual SMS sending
-            console.log('Sending individual SMS to ' + client.telefon + ' for ' + client.nume);
-            
-            showAlert('SMS trimis către ' + client.nume + ' (' + client.telefon + ')', 'success');
-            
-            // Update statistics
-            const currentSMSCount = parseInt(document.getElementById('smsTrimiese').textContent) || 0;
-            document.getElementById('smsTrimiese').textContent = currentSMSCount + 1;
         }
 
         function generateDiscountOffers() {
@@ -3057,17 +3335,23 @@
             const client = clientiData.find(function(c) { return c.id == clientId; });
             if (!client) return;
             
-            // Simulate discount SMS sending
-            console.log('Sending discount SMS to ' + client.telefon + ' for ' + client.nume);
+            // Use real SMS function
+            const message = `🎉 OFERTA EXCLUSIVA!\n\n` +
+                `Prelungire "${client.tipServiciu}" cu 15% REDUCERE!\n` +
+                `Valabil 7 zile.\n\n` +
+                `☎️ 0762 614 401\n` +
+                `AdInstalGaz`;
             
-            showAlert('Ofertă discount trimisă către ' + client.nume + '!', 'success');
-            
-            // Update statistics
-            const currentDiscounts = parseInt(document.getElementById('discounturiOferite').textContent) || 0;
-            document.getElementById('discounturiOferite').textContent = currentDiscounts + 1;
-            
-            const currentSMSCount = parseInt(document.getElementById('smsTrimiese').textContent) || 0;
-            document.getElementById('smsTrimiese').textContent = currentSMSCount + 1;
+            sendRealSMS(client.telefon, message).then(function(success) {
+                if (success) {
+                    // Update statistics
+                    const currentDiscounts = parseInt(document.getElementById('discounturiOferite').textContent) || 0;
+                    document.getElementById('discounturiOferite').textContent = currentDiscounts + 1;
+                    
+                    const currentSMSCount = parseInt(document.getElementById('smsTrimiese').textContent) || 0;
+                    document.getElementById('smsTrimiese').textContent = currentSMSCount + 1;
+                }
+            });
         }
 
         // Reports Functions
@@ -4071,14 +4355,17 @@
                 
                 setupUserInterface();
                 loadDashboardData();
+                loadSMSConfig(); // Load SMS configuration
                 
                 // Request notification permission for PWA
                 if ('Notification' in window && Notification.permission === 'default') {
                     Notification.requestPermission().then(function(permission) {
                         if (permission === 'granted') {
-                            showAlert('Notificările PWA sunt activate!', 'success');
+                            showAlert('Notificările push sunt activate!', 'success');
                         }
                     });
+                } else if ('Notification' in window && Notification.permission === 'denied') {
+                    console.log('Notificările sunt blocate. Activați-le din setările browserului.');
                 }
                 
                 // Check Firebase connection after a delay
