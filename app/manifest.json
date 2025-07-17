@@ -1,7 +1,7 @@
 {
   "name": "AdInstalGaz Management",
   "short_name": "AdInstalGaz",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "theme_color": "#2d2d2d",
   "background_color": "#f5f5f5",
