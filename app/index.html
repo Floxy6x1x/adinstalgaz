@@ -893,7 +893,8 @@
                 <strong>Lucrator:</strong> lucrator@adinstalgaz.ro / Lucrator123!
             </div>
         </div>
-  
+    </div>
+
     <!-- Dashboard -->
     <div id="dashboard" class="dashboard container">
         <!-- Header -->
@@ -1551,7 +1552,6 @@
         import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, setDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
-        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -1568,25 +1568,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         const storage = getStorage(app);
-        const functions = getFunctions(app);
-        async function trimiteSMSManual() {
-    const telefon = document.getElementById("telefon").value;
-    const mesaj = document.getElementById("mesaj").value;
-
-    const trimiteSMS = httpsCallable(functions, "trimiteSMS");
-
-    try {
-        const res = await trimiteSMS({ telefon, mesaj });
-        if (res.data.success) {
-            alert("✅ SMS trimis cu succes!");
-        } else {
-            alert("❌ Eroare: " + res.data.error);
-        }
-    } catch (err) {
-        alert("❌ Eroare generală: " + err.message);
-    }
-}
-
+        
         // Make Firebase available globally
         window.firebaseApp = app;
         window.firebaseDb = db;
@@ -4108,18 +4090,66 @@
         document.addEventListener('DOMContentLoaded', initializeApp);
 
         // PWA Service Worker Registration
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js')
-      .then(function (registration) {
-        console.log('✅ Service Worker registered:', registration);
-      })
-      .catch(function (registrationError) {
-        console.log('❌ Service Worker registration failed:', registrationError);
-      });
-  });
-}
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                const swCode = `
+const CACHE_NAME = 'adinstalgaz-v2';
+const urlsToCache = [
+    '/',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+];
 
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+    );
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+    self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request).then((response) => {
+            return response || fetch(event.request).then((fetchResponse) => {
+                return caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, fetchResponse.clone());
+                    return fetchResponse;
+                });
+            });
+        }).catch(() => {
+            return caches.match('/');
+        })
+    );
+});`;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then(function(registration) {
+                        console.log('Service Worker registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('Service Worker registration failed: ', registrationError);
+                    });
+            });
+        }
 
         // PWA Install Prompt
         window.addEventListener('beforeinstallprompt', function(e) {
