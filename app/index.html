@@ -2,36 +2,83 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AdInstalGaz - Sistem Profesional</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkFkSW5zdGFsR2F6IC0gU2lzdGVtIFByb2Zlc2lvbmFsIiwKICAic2hvcnRfbmFtZSI6ICJBZEluc3RhbEdheiIsCiAgImRlc2NyaXB0aW9uIjogIlNpc3RlbSBkZSBtYW5hZ2VtZW50IHBlbnRydSBzZXJ2aWNpaWxlIGluc3RhbGHIm2lpIGdhemUiLAogICJzdGFydF91cmwiOiAiLyIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzRhNTU2OCIsCiAgInRoZW1lX2NvbG9yIjogIiNlZDg5MzYiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlOemNpSUdobGFXZG9kRDBpTnpjaUlIWnBaWGRDYjNnOUlqQWdNQ0EzTnlBM055SWdabWxzYkQwaWJtOXVaU0lnZUcxc2JuTTlJbWgwZEhBNkx5OTNkM2N1ZHpNdWIzSm5Mekl3TURBdmMzWm5JaUErUEdOcGNtTnNaU0JqZUQwaU16Z3VOU0lnWTNrOUlqTTRMalVpSUhJOUlqSXpJaUJtYVd4c1BTSWpOakkzT1dVaUx6NEZhQzVGNGk5VGF5QnZjblE5SW1FNWVrOG5Qa3BUVVhON1kySnNSVkZJY1c1elpWOVJkamQrUEdGNVpqMGJBRFFFaElrRmdQTFVUYkhwZmRGNlpJZ25KQ1JBVFEwTkJkN1VyK2h0WT0sCiAgICAgICJzaXplcyI6ICIxOTJ4OTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUIzYVdSMGFEMGlOVEV5SWlCb1pXbG5hSFE5SWpVeE1pSWdkbWxsZDBKdmVEMGlNQ0F3SUFVMU1pQTFNVElpSUdacGJHdzlJbTV2Ym1VaUlIaHRiRzV6UFNKb2RIUndPaTh2ZDNkM0xuY3pMbTl5Wnk4eU1EQXdMM04yWnlJK1BHTnBjbU5zWlNCamVEMGlNalUySWlCamVUMGlNalUySWlCeVBTSTFNVGNpSUdacGJHdzlJaU0wWVRVMU5qZ2lMejREQ1d4aGRHZ2dZRDBpWDNVOUlrRnZURFRLSE5EU1dIcXVzdDBqdUZVanRoZlJDbHhPZGRzWkJaT1VqdHVKT0t6M1VLckVHRFhVdmpPZ2xaS0V3WFVEU2xGNDdLT1l4M09ldlZ0QTJUMzNSdjBGdWpCdW50Q3QwdlJVRkE1SUw1YjFVYkU2YVNwTWlMV1BSZFJaVEI5dFhkczZ0ZjUwRlZaUkdDb2VWR0R0Q1A2a3dBRkFEQ1c5QkJEd08xWGRyTUpXMENnWEVjUEFCRHp0UCtRK0o1MkVKUDBDUEVtRWVKZ2M5SmdDOUw2eCIsICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0KICA0Q24=">
+    <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#ed8936">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="AdInstalGaz">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- PWA Icons -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIyNTYiIGZpbGw9IiM0YTU1NjgiLz48cGF0aCBkPSJNMTkyIDM2OEwzMjAgMzY4TDMyMCAyNDBMMjU2IDI0MEwyNTYgMTc2TDE5MiAxNzZMMTkyIDI0MEwxMjggMjQwTDEyOCAzMDRMMTkyIDMwNEwxOTIgMzY4WiIgZmlsbD0iI2VkODkzNiIvPjwvc3ZnPg==">
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjU2IiBjeT0iMjU2IiByPSIyNTYiIGZpbGw9IiM0YTU1NjgiLz48cGF0aCBkPSJNMTkyIDM2OEwzMjAgMzY4TDMyMCAyNDBMMjU2IDI0MEwyNTYgMTc2TDE5MiAxNzZMMTkyIDI0MEwxMjggMjQwTDEyOCAzMDRMMTkyIDMwNEwxOTIgMzY4WiIgZmlsbD0iI2VkODkzNiIvPjwvc3ZnPg==">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQWRJbnN0YWxHYXogLSBTaXN0ZW0gUHJvZmVzaW9uYWwiLCJzaG9ydF9uYW1lIjoiQWRJbnN0YWxHYXoiLCJkZXNjcmlwdGlvbiI6IlNpc3RlbSBkZSBtYW5hZ2VtZW50IHBlbnRydSBzZXJ2aWNpaWxlIGluc3RhbGHIm2lpIGdhemUiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzRhNTU2OCIsInRoZW1lX2NvbG9yIjoiI2VkODkzNiIsIm9yaWVudGF0aW9uIjoicG9ydHJhaXQiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTlRFeUlpQm9aV2xuYUhROUlqVXhNaUlnZG1sbGQwSnZlRDBpTUNBd0lEVXhNaUExTVRJaUlHWnBiR3c5SW01dmJtVWlJSGh0Ykc1elBTSm9kSFJ3T2k4dmQzZDNMbmN6TG05eVp5OHlNREF3TDNOMlp5SStQR05wY21Oc1pTQmplRDBpTWpVMklpQmplVDBpTWpVMklpQnlQU0l5TlRZaUlHWnBiR3c5SWlNMFlUVTFOamdpTHo0OGNHRjBhQ0JrUFNKTk1Ua3lJRE0yT0V3ek1qQWdNelk0VERNeU1DQXlOREJNTWpVMklESTBNRXd5TlRZZ01UYzJUREU1TWlBeE56Wk1NVGt5SURJME1Fd3hNamdnTWpRd1RERXlPQ0F6TURSTUV6a3lJRE13TkV3eE9USWdNelk0V2lJZ1ptbHNiRDBpSTJWa09Ea3pOaUl2UGp3dmMzWm5QZz09Iiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    
+    <!-- External Resources -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overscroll-behavior: none;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
+        }
+
+        /* PWA Install Prompt */
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        .install-prompt button {
+            background: white;
+            color: #ed8936;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
         }
 
         /* Login Styles */
@@ -41,15 +88,22 @@
             align-items: center;
             min-height: 100vh;
             background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+            padding: 20px;
         }
 
         .login-box {
             background: white;
             padding: 40px;
-            border-radius: 15px;
+            border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 450px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .login-header {
@@ -84,8 +138,9 @@
             padding: 12px 15px;
             border: 2px solid #e1e5e9;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 16px; /* Prevents zoom on iOS */
             transition: border-color 0.3s;
+            -webkit-appearance: none;
         }
 
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
@@ -104,10 +159,15 @@
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn:hover {
             transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
         }
 
         .btn-secondary {
@@ -124,7 +184,7 @@
         }
 
         .btn-danger {
-            background: #dc3545;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
         }
 
         .btn-info {
@@ -145,6 +205,7 @@
 
         .dashboard.active {
             display: block;
+            animation: fadeIn 0.5s ease-out;
         }
 
         .header {
@@ -156,6 +217,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .header h1 {
@@ -167,6 +230,7 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .user-info {
@@ -199,6 +263,7 @@
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 500;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .nav-tabs li.active {
@@ -217,6 +282,7 @@
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .content-section.active {
@@ -238,6 +304,7 @@
             border-radius: 15px;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease-out;
         }
 
         .stat-card i {
@@ -261,6 +328,7 @@
             overflow-x: auto;
             border-radius: 10px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
@@ -308,16 +376,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .modal-content {
             background: white;
             padding: 30px;
             border-radius: 15px;
-            width: 90%;
+            width: 100%;
             max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
@@ -333,6 +409,8 @@
             font-size: 24px;
             cursor: pointer;
             color: #999;
+            padding: 5px;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .close:hover {
@@ -345,6 +423,12 @@
             border-radius: 8px;
             margin-bottom: 20px;
             border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .alert-success {
@@ -385,6 +469,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .assignment-status {
@@ -478,11 +564,14 @@
             padding: 30px;
             text-align: center;
             margin: 20px 0;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .file-upload-area:hover {
             border-color: #ed8936;
+            background-color: #fef3e8;
         }
 
         .file-upload-area.dragover {
@@ -502,6 +591,7 @@
             border: 1px solid #dee2e6;
             border-radius: 5px;
             margin-bottom: 10px;
+            gap: 10px;
         }
 
         .file-item img {
@@ -566,12 +656,13 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background-color: #28a745;
+            background-color: #718096;
             animation: pulse 2s infinite;
         }
 
         .status-dot.offline {
-            background-color: #dc3545;
+            background-color: #718096;
+            animation: none;
         }
 
         @keyframes pulse {
@@ -580,7 +671,16 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Responsive */
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        #firebaseSyncBtn:disabled i {
+            animation: rotate 1s linear infinite;
+        }
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -590,10 +690,32 @@
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .firebase-status {
+                font-size: 12px;
+            }
+
+            .nav-tabs {
+                padding: 15px;
             }
 
             .nav-tabs ul {
                 justify-content: center;
+            }
+
+            .nav-tabs li {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .content-section {
+                padding: 20px;
             }
 
             .form-grid {
@@ -607,10 +729,140 @@
             .assignment-details {
                 grid-template-columns: 1fr;
             }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .btn-small {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-card h3 {
+                font-size: 24px;
+            }
+
+            .stat-card p {
+                font-size: 14px;
+            }
+
+            /* Touch-friendly buttons */
+            .btn {
+                min-height: 44px;
+            }
+
+            .nav-tabs li {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        /* Sync Button Special */
+        #firebaseSyncBtn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #firebaseSyncBtn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        #firebaseSyncBtn:hover::before {
+            animation: shine 0.5s;
+        }
+
+        #cleanDuplicatesBtn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #cleanDuplicatesBtn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        #cleanDuplicatesBtn:hover::before {
+            animation: shine 0.5s;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(45deg) translateY(-100%); }
+            100% { transform: rotate(45deg) translateY(100%); }
+        }
+
+        /* iOS specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+
+            .modal {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+
+        /* Offline indicator */
+        .offline-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #dc3545;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            z-index: 2000;
+            display: none;
+        }
+
+        .offline-indicator.active {
+            display: block;
         }
     </style>
 </head>
 <body>
+    <!-- Offline Indicator -->
+    <div id="offlineIndicator" class="offline-indicator">
+        <i class="fas fa-wifi-slash"></i> Fără conexiune internet - Datele sunt salvate local
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div id="installPrompt" class="install-prompt" style="display: none;">
+        <i class="fas fa-download"></i>
+        <span>Instalează aplicația pentru acces rapid!</span>
+        <button onclick="installPWA()">Instalează</button>
+        <button onclick="dismissInstallPrompt()">Mai târziu</button>
+    </div>
+
     <!-- Login Screen -->
     <div id="loginScreen" class="login-container">
         <div class="login-box">
@@ -622,12 +874,12 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" required>
+                    <input type="email" id="email" required autocomplete="email">
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Parolă:</label>
-                    <input type="password" id="password" required>
+                    <input type="password" id="password" required autocomplete="current-password">
                 </div>
                 
                 <button type="submit" class="btn">
@@ -651,12 +903,18 @@
                 <h1><i class="fas fa-fire"></i> AdInstalGaz Pro</h1>
                 <div class="firebase-status">
                     <span class="status-dot" id="firebaseStatus"></span>
-                    <span id="firebaseStatusText">Conectat la Firebase</span>
+                    <span id="firebaseStatusText">Verificare conexiune...</span>
                     <span>|</span>
-                    <span id="lastBackup">Ultimul backup: Acum 5 min</span>
+                    <span id="lastBackup">Salvare automată activă</span>
                 </div>
             </div>
             <div class="header-actions">
+                <button id="cleanDuplicatesBtn" class="btn btn-small btn-danger" onclick="quickCleanDuplicates()" style="display: none;">
+                    <i class="fas fa-broom"></i> Curăță
+                </button>
+                <button id="firebaseSyncBtn" class="btn btn-small btn-success" onclick="openSyncModal()" style="display: none; background: linear-gradient(135deg, #28a745 0%, #218838 100%); animation: pulse 2s infinite;">
+                    <i class="fas fa-sync"></i> Sincronizare
+                </button>
                 <div class="user-info">
                     <i class="fas fa-user"></i>
                     <span id="userInfo">Loading...</span>
@@ -670,29 +928,29 @@
 
         <!-- Navigation -->
         <div class="nav-tabs">
-            <ul>
-                <li class="active" onclick="showSection('dashboard')">
+            <ul id="navTabs">
+                <li class="active" onclick="showSection('dashboard', event)">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
                 </li>
-                <li onclick="showSection('clienti')" id="navClienti">
+                <li onclick="showSection('clienti', event)" id="navClienti">
                     <i class="fas fa-users"></i> Clienți
                 </li>
-                <li onclick="showSection('lucrari')" id="navLucrari">
+                <li onclick="showSection('lucrari', event)" id="navLucrari">
                     <i class="fas fa-tasks"></i> Lucrări
                 </li>
-                <li onclick="showSection('asignari')" id="navAsignari">
+                <li onclick="showSection('asignari', event)" id="navAsignari">
                     <i class="fas fa-user-plus"></i> Asignări
                 </li>
-                <li onclick="showSection('sms')" id="navSMS">
+                <li onclick="showSection('sms', event)" id="navSMS">
                     <i class="fas fa-sms"></i> SMS Notificări
                 </li>
-                <li onclick="showSection('rapoarte')" id="navRapoarte">
+                <li onclick="showSection('rapoarte', event)" id="navRapoarte">
                     <i class="fas fa-chart-bar"></i> Rapoarte
                 </li>
-                <li onclick="showSection('utilizatori')" id="navUtilizatori">
+                <li onclick="showSection('utilizatori', event)" id="navUtilizatori">
                     <i class="fas fa-users-cog"></i> Utilizatori
                 </li>
-                <li onclick="showSection('backup')" id="navBackup">
+                <li onclick="showSection('backup', event)" id="navBackup">
                     <i class="fas fa-cloud"></i> Backup
                 </li>
             </ul>
@@ -737,8 +995,8 @@
 
         <!-- Clienți Section -->
         <div id="clientiSection" class="content-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2><i class="fas fa-users"></i> Gestionare Clienți</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h2><i class="fas fa-users"></i> Gestionare Clienți <span style="font-size: 16px; color: #666;">(' + clientiData.length + ' total)</span></h2>
                 <div>
                     <button class="btn btn-small btn-success" onclick="openModal('clientModal')" id="addClientBtn">
                         <i class="fas fa-plus"></i> Client Nou
@@ -772,7 +1030,7 @@
 
         <!-- Lucrări Section -->
         <div id="lucrariSection" class="content-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                 <h2><i class="fas fa-tasks"></i> <span id="lucrariTitle">Lucrările Mele</span></h2>
                 <div>
                     <button class="btn btn-small btn-warning" onclick="exportData('lucrari')">
@@ -923,7 +1181,7 @@
         <div id="utilizatoriSection" class="content-section">
             <h2><i class="fas fa-users-cog"></i> Gestionare Utilizatori</h2>
             
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                 <p style="color: #666;">Administrați conturile de utilizatori din sistem</p>
                 <button class="btn btn-small btn-success" onclick="openModal('userModal')">
                     <i class="fas fa-user-plus"></i> Utilizator Nou
@@ -977,43 +1235,47 @@
         <div id="backupSection" class="content-section">
             <h2><i class="fas fa-cloud"></i> Backup și Sincronizare</h2>
             
-            <!-- Backup Automat -->
+            <!-- Firebase Sync Section -->
             <div style="border: 2px solid #28a745; border-radius: 15px; padding: 25px; margin-bottom: 25px; background: linear-gradient(135deg, #e8f5e8 0%, #ffffff 100%);">
-                <h3><i class="fas fa-sync-alt"></i> Backup Automat Firebase</h3>
-                <div style="margin-bottom: 20px;">
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
-                        <button class="btn btn-success" onclick="activateAutoBackup()">
-                            <i class="fas fa-play"></i> Activează Backup Automat
-                        </button>
-                        <button class="btn btn-warning" onclick="performManualBackup()">
-                            <i class="fas fa-cloud-upload-alt"></i> Backup Manual Acum
-                        </button>
-                        <button class="btn btn-info" onclick="restoreFromFirebase()">
-                            <i class="fas fa-cloud-download-alt"></i> Restaurează din Firebase
-                        </button>
-                        <button class="btn btn-secondary" onclick="stopAutoBackup()">
-                            <i class="fas fa-stop"></i> Oprește Backup Automat
-                        </button>
-                    </div>
+                <h3><i class="fas fa-sync-alt"></i> Sincronizare Firebase</h3>
+                <div class="alert alert-success" style="margin-bottom: 20px;">
+                    <i class="fas fa-check-circle"></i> <strong>Firebase Activ:</strong> Sincronizare manuală disponibilă pentru a preveni duplicările.
                 </div>
                 
-                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #ed8936;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <button class="btn btn-success" onclick="syncToFirebase()">
+                        <i class="fas fa-cloud-upload-alt"></i> Încarcă în Firebase
+                    </button>
+                    <button class="btn btn-info" onclick="syncFromFirebase()">
+                        <i class="fas fa-cloud-download-alt"></i> Descarcă din Firebase
+                    </button>
+                    <button class="btn btn-warning" onclick="performMergeSync()">
+                        <i class="fas fa-code-branch"></i> Sincronizare Inteligentă
+                    </button>
+                    <button class="btn btn-danger" onclick="cleanFirebaseData()">
+                        <i class="fas fa-trash-restore"></i> Curăță Firebase
+                    </button>
+                </div>
+                
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #28a745;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                         <div>
-                            <strong>Status Backup:</strong><br>
-                            <span id="backupStatus" style="color: #28a745;">Inactiv</span>
+                            <strong>Status Firebase:</strong><br>
+                            <span id="firebaseBackupStatus" style="color: #28a745;">
+                                <i class="fas fa-check-circle"></i> Conectat
+                            </span>
                         </div>
                         <div>
-                            <strong>Ultimul Backup:</strong><br>
-                            <span id="ultimulBackup">Niciodată</span>
+                            <strong>Ultima Sincronizare:</strong><br>
+                            <span id="ultimaSincronizare">Verifică în header</span>
                         </div>
                         <div>
-                            <strong>Mărime Date:</strong><br>
-                            <span id="marimeBaza">Calculează...</span>
+                            <strong>Total Înregistrări:</strong><br>
+                            <span id="totalInregistrariFirebase">Calculează...</span>
                         </div>
                         <div>
-                            <strong>Sincronizare:</strong><br>
-                            <span id="syncStatus">Oprită</span>
+                            <strong>Mod Sincronizare:</strong><br>
+                            <span style="color: #ed8936;">Manual (Sigur)</span>
                         </div>
                     </div>
                 </div>
@@ -1059,30 +1321,16 @@
                 </div>
             </div>
 
-            <!-- Statistici Backup -->
-            <div style="border: 2px solid #6f42c1; border-radius: 15px; padding: 25px; background: linear-gradient(135deg, #f3f0ff 0%, #ffffff 100%);">
-                <h3><i class="fas fa-chart-pie"></i> Statistici Backup</h3>
-                
-                <div class="stats-grid">
-                    <div class="stat-card" style="background: linear-gradient(135deg, #68d391 0%, #38a169 100%);">
-                        <i class="fas fa-check-circle"></i>
-                        <h3 id="backupuriRealizate">0</h3>
-                        <p>Backup-uri Realizate</p>
-                    </div>
-                    <div class="stat-card" style="background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);">
-                        <i class="fas fa-database"></i>
-                        <h3 id="totalInregistrari">0</h3>
-                        <p>Total Înregistrări</p>
-                    </div>
-                    <div class="stat-card" style="background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3 id="eroriBackup">0</h3>
-                        <p>Erori Backup</p>
-                    </div>
-                    <div class="stat-card" style="background: linear-gradient(135deg, #718096 0%, #4a5568 100%);">
-                        <i class="fas fa-clock"></i>
-                        <h3 id="ultimaActivitate">-</h3>
-                        <p>Ultima Activitate</p>
+            <!-- Repair Data Section -->
+            <div style="border: 2px solid #dc3545; border-radius: 15px; padding: 25px; background: linear-gradient(135deg, #ffe6e8 0%, #ffffff 100%);">
+                <h3><i class="fas fa-tools"></i> Reparare Date Duplicate</h3>
+                <p style="margin-bottom: 15px;">Dacă aveți date duplicate din cauza sincronizării Firebase, folosiți această funcție pentru a le repara.</p>
+                <button class="btn btn-danger" onclick="removeDuplicates()">
+                    <i class="fas fa-broom"></i> Elimină Duplicate
+                </button>
+                <div id="duplicateStats" style="margin-top: 15px; display: none;">
+                    <div class="alert alert-info">
+                        <div id="duplicateResults"></div>
                     </div>
                 </div>
             </div>
@@ -1256,10 +1504,52 @@
         </div>
     </div>
 
+    <!-- Modal Sync -->
+    <div id="syncModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-sync"></i> Sincronizare Firebase</h3>
+                <span class="close" onclick="closeModal('syncModal')">&times;</span>
+            </div>
+            
+            <div style="padding: 20px;">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Alegeți modul de sincronizare dorit
+                </div>
+                
+                <div style="display: grid; gap: 20px; margin-top: 20px;">
+                    <button class="btn btn-success" onclick="performSync('upload')" style="padding: 20px;">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 24px;"></i><br>
+                        <strong>Încarcă în Firebase</strong><br>
+                        <small>Trimite datele locale către Firebase</small>
+                    </button>
+                    
+                    <button class="btn btn-info" onclick="performSync('download')" style="padding: 20px;">
+                        <i class="fas fa-cloud-download-alt" style="font-size: 24px;"></i><br>
+                        <strong>Descarcă din Firebase</strong><br>
+                        <small>Actualizează datele locale din Firebase</small>
+                    </button>
+                    
+                    <button class="btn btn-warning" onclick="performSync('merge')" style="padding: 20px;">
+                        <i class="fas fa-code-branch" style="font-size: 24px;"></i><br>
+                        <strong>Sincronizare Inteligentă</strong><br>
+                        <small>Îmbină datele locale cu cele din Firebase (Recomandat)</small>
+                    </button>
+                </div>
+                
+                <div id="syncStatus" style="margin-top: 20px; display: none;">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-spinner fa-spin"></i> Se procesează sincronizarea...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, onSnapshot, setDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
@@ -1298,14 +1588,132 @@
             onAuthStateChanged,
             ref,
             uploadBytes,
-            getDownloadURL
+            getDownloadURL,
+            setDoc,
+            query,
+            where
         };
 
         console.log("Firebase initialized successfully");
+        
+        // Enable Firebase sync flag
+        window.firebaseReady = true;
     </script>
 
     <script>
-        // User Management Functions (Admin Only) - PLASATE CORECT ÎN SCRIPT
+        // Sync Modal Functions
+        function openSyncModal() {
+            document.getElementById('syncModal').classList.add('active');
+        }
+
+        function performSync(mode) {
+            document.getElementById('syncStatus').style.display = 'block';
+            
+            switch(mode) {
+                case 'upload':
+                    syncToFirebase().then(() => {
+                        closeModal('syncModal');
+                    });
+                    break;
+                case 'download':
+                    syncFromFirebase().then(() => {
+                        closeModal('syncModal');
+                    });
+                    break;
+                case 'merge':
+                    performMergeSync().then(() => {
+                        closeModal('syncModal');
+                    });
+                    break;
+            }
+        }
+
+        async function performMergeSync() {
+            if (!window.firebaseDb || isSyncing) return;
+            
+            isSyncing = true;
+            updateFirebaseStatus('syncing');
+            
+            try {
+                const getDocs = window.firebaseFunctions.getDocs;
+                const collection = window.firebaseFunctions.collection;
+                const setDoc = window.firebaseFunctions.setDoc;
+                const doc = window.firebaseFunctions.doc;
+                
+                // Get Firebase data
+                const clientiSnapshot = await getDocs(collection(window.firebaseDb, 'clienti'));
+                const firebaseClients = new Map();
+                clientiSnapshot.forEach(function(docSnap) {
+                    const data = docSnap.data();
+                    firebaseClients.set(parseInt(docSnap.id), data);
+                });
+                
+                // Merge clients
+                const mergedClients = new Map();
+                
+                // Add all local clients
+                clientiData.forEach(client => {
+                    mergedClients.set(client.id, client);
+                });
+                
+                // Add Firebase clients that don't exist locally
+                firebaseClients.forEach((client, id) => {
+                    if (!mergedClients.has(id)) {
+                        mergedClients.set(id, client);
+                    }
+                });
+                
+                // Update local data
+                clientiData = Array.from(mergedClients.values());
+                
+                // Save everything back to Firebase
+                for (const client of clientiData) {
+                    const docRef = doc(window.firebaseDb, 'clienti', client.id.toString());
+                    await setDoc(docRef, {
+                        ...client,
+                        lastSync: new Date().toISOString(),
+                        syncedBy: currentUser.email
+                    }, { merge: true });
+                }
+                
+                saveToLocalStorage();
+                loadDashboardData();
+                loadClientiTable();
+                
+                updateFirebaseStatus('connected');
+                showAlert('Sincronizare inteligentă completă!', 'success');
+                
+            } catch (error) {
+                console.error('Merge sync error:', error);
+                updateFirebaseStatus('error');
+                showAlert('Eroare la sincronizare: ' + error.message, 'danger');
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        // Show sync button when Firebase is ready
+        function checkFirebaseConnection() {
+            if (window.firebaseReady && window.firebaseDb) {
+                if (userRole === 'admin') {
+                    document.getElementById('firebaseSyncBtn').style.display = 'inline-block';
+                    document.getElementById('cleanDuplicatesBtn').style.display = 'inline-block';
+                }
+                updateFirebaseStatus('connected');
+                
+                // Check last sync time
+                const lastSync = localStorage.getItem('lastSyncTime');
+                if (lastSync) {
+                    const syncDate = new Date(lastSync);
+                    document.getElementById('lastBackup').textContent = 'Ultima sincronizare: ' + syncDate.toLocaleTimeString();
+                }
+            } else if (userRole === 'admin') {
+                // Show clean button even without Firebase
+                document.getElementById('cleanDuplicatesBtn').style.display = 'inline-block';
+            }
+        }
+
+        // User Management Functions
         function loadUsersSection() {
             if (userRole !== 'admin') return;
             
@@ -1334,13 +1742,13 @@
             tableBody.innerHTML = '';
             
             usersData.forEach(function(user, index) {
-                const row = tableBody.insertRow();
                 const lastActivity = user.lastActivity ? 
                     new Date(user.lastActivity).toLocaleDateString() + ' ' + new Date(user.lastActivity).toLocaleTimeString() : 
                     'Niciodată';
                 const statusClass = user.status === 'active' ? 'status-activ' : 'status-expirat';
                 const statusText = user.status === 'active' ? 'Activ' : 'Dezactivat';
                 
+                row = tableBody.insertRow();
                 row.innerHTML = 
                     '<td><strong>' + user.name + '</strong></td>' +
                     '<td>' + user.email + '</td>' +
@@ -1544,6 +1952,8 @@
         let syncActive = false;
         let backupTimer = null;
         let currentEditingUserId = null;
+        let currentEditingClientIndex = null;
+        let deferredPrompt;
 
         // Services pricing (în LEI)
         const servicePrices = {
@@ -1586,8 +1996,43 @@
         // Initialize users on app start
         initializeUsers();
 
+        // Clean duplicates on app start if needed
+        function cleanInitialData() {
+            // Get unique clients
+            const uniqueClientsMap = new Map();
+            clientiData.forEach(function(client) {
+                if (!uniqueClientsMap.has(client.id)) {
+                    uniqueClientsMap.set(client.id, client);
+                }
+            });
+            
+            // Check for duplicates
+            if (uniqueClientsMap.size < clientiData.length) {
+                console.log('Found duplicate clients on startup, cleaning...');
+                clientiData = Array.from(uniqueClientsMap.values());
+                saveToLocalStorage();
+            }
+            
+            // Get unique assignments
+            const uniqueAssignmentsMap = new Map();
+            assignmentsData.forEach(function(assignment) {
+                if (!uniqueAssignmentsMap.has(assignment.id)) {
+                    uniqueAssignmentsMap.set(assignment.id, assignment);
+                }
+            });
+            
+            if (uniqueAssignmentsMap.size < assignmentsData.length) {
+                console.log('Found duplicate assignments on startup, cleaning...');
+                assignmentsData = Array.from(uniqueAssignmentsMap.values());
+                saveToLocalStorage();
+            }
+        }
+
+        // Clean data on startup
+        cleanInitialData();
+
         // Login Function
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const email = document.getElementById('email').value;
@@ -1616,17 +2061,149 @@
                 setupUserInterface();
                 loadDashboardData();
                 
-                // Initialize Firebase sync
-                if (window.firebaseDb) {
-                    startRealtimeSync();
-                    updateFirebaseStatus('connected');
-                }
+                // Check for duplicates
+                setTimeout(function() {
+                    const hasDuplicates = checkForDuplicates();
+                    if (hasDuplicates) {
+                        showAlert('⚠️ S-au detectat clienți duplicați! Folosiți butonul roșu "Curăță" din header pentru a elimina duplicatele.', 'warning');
+                    }
+                }, 500);
+                
+                // Check Firebase connection after a delay
+                setTimeout(function() {
+                    checkFirebaseConnection();
+                    const hasDuplicates = checkForDuplicates();
+                    if (window.firebaseDb && userRole === 'admin') {
+                        showAlert('Firebase conectat! Folosiți butonul verde "Sincronizare" pentru backup în cloud.', 'info');
+                    }
+                    if (hasDuplicates && userRole === 'admin') {
+                        setTimeout(function() {
+                            showAlert('⚠️ S-au detectat clienți duplicați! Folosiți butonul roșu "Curăță" din header.', 'warning');
+                        }, 2000);
+                    }
+                }, 1000);
                 
                 showAlert('Autentificare reușită!', 'success');
             } else {
                 showAlert('Email sau parolă incorectă sau cont dezactivat!', 'danger');
             }
         });              
+
+        async function cleanFirebaseData() {
+            if (!window.firebaseDb || !userRole === 'admin') return;
+            
+            if (!confirm('⚠️ ATENȚIE!\n\nAceasta va ȘTERGE TOATE datele din Firebase și va încărca doar datele locale curente.\n\nEste recomandat să faceți un backup înainte!\n\nContinuați?')) {
+                return;
+            }
+            
+            if (!confirm('⚠️ ULTIMA CONFIRMARE!\n\nChiar doriți să ștergeți TOATE datele din Firebase?\n\nAceastă acțiune NU poate fi anulată!')) {
+                return;
+            }
+            
+            updateFirebaseStatus('syncing');
+            
+            try {
+                const collection = window.firebaseFunctions.collection;
+                const getDocs = window.firebaseFunctions.getDocs;
+                const deleteDoc = window.firebaseFunctions.deleteDoc;
+                const doc = window.firebaseFunctions.doc;
+                
+                // Delete all clients from Firebase
+                const clientiSnapshot = await getDocs(collection(window.firebaseDb, 'clienti'));
+                const deletePromises = [];
+                clientiSnapshot.forEach(function(docSnapshot) {
+                    deletePromises.push(deleteDoc(doc(window.firebaseDb, 'clienti', docSnapshot.id)));
+                });
+                
+                // Delete all assignments from Firebase
+                const assignmentsSnapshot = await getDocs(collection(window.firebaseDb, 'assignments'));
+                assignmentsSnapshot.forEach(function(docSnapshot) {
+                    deletePromises.push(deleteDoc(doc(window.firebaseDb, 'assignments', docSnapshot.id)));
+                });
+                
+                // Wait for all deletions
+                await Promise.all(deletePromises);
+                
+                // Now upload clean local data
+                await syncToFirebase();
+                
+                showAlert('✅ Firebase a fost curățat și re-populat cu date locale curate!', 'success');
+                
+            } catch (error) {
+                console.error('Firebase clean error:', error);
+                updateFirebaseStatus('error');
+                showAlert('Eroare la curățarea Firebase: ' + error.message, 'danger');
+            }
+        }
+
+        // Quick clean duplicates from header
+        async function quickCleanDuplicates() {
+            if (!confirm('🧹 Curățare Rapidă Duplicate\n\nAceasta va elimina toate înregistrările duplicate păstrând doar prima apariție pentru fiecare client.\n\nContinuați?')) {
+                return;
+            }
+            
+            // Get unique clients by ID first, then by name+phone
+            const uniqueClientsMap = new Map();
+            const seenNamePhone = new Set();
+            
+            clientiData.forEach(function(client) {
+                // First pass: keep unique IDs
+                if (!uniqueClientsMap.has(client.id)) {
+                    uniqueClientsMap.set(client.id, client);
+                }
+            });
+            
+            // Second pass: remove duplicate name+phone combinations
+            const uniqueClients = [];
+            Array.from(uniqueClientsMap.values()).forEach(function(client) {
+                const key = client.nume + '|' + client.telefon;
+                if (!seenNamePhone.has(key)) {
+                    seenNamePhone.add(key);
+                    uniqueClients.push(client);
+                }
+            });
+            
+            // Get unique assignments
+            const uniqueAssignmentsMap = new Map();
+            assignmentsData.forEach(function(assignment) {
+                if (!uniqueAssignmentsMap.has(assignment.id)) {
+                    uniqueAssignmentsMap.set(assignment.id, assignment);
+                }
+            });
+            const uniqueAssignments = Array.from(uniqueAssignmentsMap.values());
+            
+            const clientDuplicates = clientiData.length - uniqueClients.length;
+            const assignmentDuplicates = assignmentsData.length - uniqueAssignments.length;
+            
+            if (clientDuplicates > 0 || assignmentDuplicates > 0) {
+                clientiData = uniqueClients;
+                assignmentsData = uniqueAssignments;
+                saveToLocalStorage();
+                
+                showAlert('✅ Curățare completă! Am eliminat ' + clientDuplicates + ' clienți duplicați și ' + assignmentDuplicates + ' asignări duplicate.', 'success');
+                
+                // Remove duplicate warning
+                checkForDuplicates();
+                
+                // Reload current view
+                loadDashboardData();
+                if (document.getElementById('clientiSection').classList.contains('active')) {
+                    loadClientiTable();
+                }
+                updateBackupStats();
+                
+                // Sync to Firebase if connected
+                if (window.firebaseDb && userRole === 'admin') {
+                    setTimeout(async function() {
+                        if (confirm('Doriți să sincronizați datele curățate cu Firebase?')) {
+                            await syncToFirebase();
+                        }
+                    }, 1000);
+                }
+            } else {
+                showAlert('Nu există date duplicate în sistem!', 'info');
+            }
+        }
 
         // Setup User Interface based on role
         function setupUserInterface() {
@@ -1639,6 +2216,15 @@
             document.getElementById('navRapoarte').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('navUtilizatori').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('navClienti').style.display = isAdmin ? 'block' : 'none';
+            
+            // Show sync and clean buttons only for admin
+            if (isAdmin) {
+                document.getElementById('cleanDuplicatesBtn').style.display = 'inline-block';
+                if (window.firebaseReady) {
+                    document.getElementById('firebaseSyncBtn').style.display = 'inline-block';
+                }
+            }
+            
             // Modify interface for workers
             if (!isAdmin) {
                 document.getElementById('lucrariTitle').textContent = 'Lucrările Mele';
@@ -1679,7 +2265,7 @@
         }
 
         // Navigation Functions
-        function showSection(sectionName) {
+        function showSection(sectionName, event) {
             document.querySelectorAll('.content-section').forEach(function(section) {
                 section.classList.remove('active');
             });
@@ -1688,13 +2274,27 @@
             });
             
             document.getElementById(sectionName + 'Section').classList.add('active');
-            event.target.classList.add('active');
+            if (event && event.target) {
+                if (event.target.tagName === 'I') {
+                    event.target.parentElement.classList.add('active');
+                } else {
+                    event.target.classList.add('active');
+                }
+            }
             
-            if (sectionName === 'clienti') loadClientiTable();
+            if (sectionName === 'clienti') {
+                loadClientiTable();
+                // Update client count in header
+                const clientHeader = document.querySelector('#clientiSection h2');
+                if (clientHeader) {
+                    clientHeader.innerHTML = '<i class="fas fa-users"></i> Gestionare Clienți <span style="font-size: 16px; color: #666;">(' + clientiData.length + ' total)</span>';
+                }
+            }
             if (sectionName === 'lucrari') loadLucrariContent();
             if (sectionName === 'asignari') loadAssignmentsForAdmin();
             if (sectionName === 'sms') loadSMSSection();
             if (sectionName === 'utilizatori') loadUsersSection();
+            if (sectionName === 'backup') updateBackupStats();
         }
 
         // Modal Functions
@@ -1707,12 +2307,16 @@
             document.getElementById(modalId).classList.remove('active');
             if (modalId === 'clientModal') {
                 document.getElementById('clientForm').reset();
+                currentEditingClientIndex = null;
+                document.getElementById('clientModalTitle').textContent = 'Client Nou';
             } else if (modalId === 'userModal') {
                 document.getElementById('userForm').reset();
                 document.getElementById('parolaUser').placeholder = '';
                 document.getElementById('parolaUser').required = true;
                 currentEditingUserId = null;
                 document.getElementById('userModalTitle').textContent = 'Utilizator Nou';
+            } else if (modalId === 'syncModal') {
+                document.getElementById('syncStatus').style.display = 'none';
             }
         }
 
@@ -1817,12 +2421,28 @@
             const tableBody = document.getElementById('clientiTable');
             tableBody.innerHTML = '';
             
+            // Track duplicates
+            const seenClients = new Set();
+            const duplicateIndices = new Set();
+            
             clientiData.forEach(function(client, index) {
+                const key = client.nume + '|' + client.telefon;
+                if (seenClients.has(key)) {
+                    duplicateIndices.add(index);
+                } else {
+                    seenClients.add(key);
+                }
+                
                 const expireDate = new Date(client.dataExpirare);
                 const isExpired = expireDate < new Date();
+                const isDuplicate = duplicateIndices.has(index);
                 
                 const row = tableBody.insertRow();
-                row.innerHTML = '<td>' + client.nume + '</td>' +
+                if (isDuplicate) {
+                    row.style.backgroundColor = '#ffe6e6';
+                }
+                
+                row.innerHTML = '<td>' + (isDuplicate ? '⚠️ ' : '') + client.nume + '</td>' +
                     '<td>' + client.telefon + '</td>' +
                     '<td>' + client.adresa + '</td>' +
                     '<td>' + client.tipServiciu + '</td>' +
@@ -1834,6 +2454,10 @@
                     '<button class="btn btn-small btn-danger" onclick="deleteClient(' + index + ')"><i class="fas fa-trash"></i></button>' +
                     '</td>';
             });
+            
+            if (duplicateIndices.size > 0 && userRole === 'admin') {
+                checkForDuplicates();
+            }
         }
 
         // Client Form Handler
@@ -1859,19 +2483,57 @@
                 tipServiciu: document.getElementById('tipServiciu').value,
                 dataStartServiciu: document.getElementById('dataStartServiciu').value,
                 dataExpirare: dataExpirare.toISOString().split('T')[0],
-                adresa: buildAddress(),
-                id: Date.now(),
-                createdAt: new Date().toISOString()
+                adresa: buildAddress()
             };
             
-            clientiData.push(clientData);
-            saveToLocalStorage();
-            await syncToFirebase('clienti', clientData);
+            if (currentEditingClientIndex !== null) {
+                // Edit existing client
+                clientData.id = clientiData[currentEditingClientIndex].id;
+                clientData.createdAt = clientiData[currentEditingClientIndex].createdAt;
+                clientiData[currentEditingClientIndex] = clientData;
+                showAlert('Client modificat cu succes!', 'success');
+            } else {
+                // Add new client - check for duplicates first
+                const isDuplicate = clientiData.some(function(client) {
+                    return client.nume === clientData.nume && client.telefon === clientData.telefon;
+                });
+                
+                if (isDuplicate) {
+                    if (!confirm('⚠️ ATENȚIE: Există deja un client cu același nume și telefon!\n\nDoriți să adăugați oricum?')) {
+                        return;
+                    }
+                }
+                
+                clientData.id = Date.now();
+                clientData.createdAt = new Date().toISOString();
+                clientiData.push(clientData);
+                showAlert('Client adăugat cu succes!', 'success');
+            }
             
+            saveToLocalStorage();
+            
+            // Sync to Firebase if connected
+            if (window.firebaseDb) {
+                try {
+                    const setDoc = window.firebaseFunctions.setDoc;
+                    const doc = window.firebaseFunctions.doc;
+                    const docRef = doc(window.firebaseDb, 'clienti', clientData.id.toString());
+                    await setDoc(docRef, {
+                        ...clientData,
+                        lastSync: new Date().toISOString(),
+                        syncedBy: currentUser.email
+                    });
+                } catch (error) {
+                    console.error('Firebase sync error:', error);
+                    // Continue even if Firebase fails
+                }
+            }
+            
+            currentEditingClientIndex = null;
+            document.getElementById('clientModalTitle').textContent = 'Client Nou';
             closeModal('clientModal');
             loadClientiTable();
             updateStats();
-            showAlert('Client adăugat cu succes!', 'success');
         });
 
         function buildAddress() {
@@ -1893,6 +2555,7 @@
             // Edit client functionality for admin only
             if (userRole !== 'admin') return;
             
+            currentEditingClientIndex = index;
             const client = clientiData[index];
             
             document.getElementById('numeClient').value = client.nume;
@@ -1913,12 +2576,25 @@
             openModal('clientModal');
         }
 
-        function deleteClient(index) {
+        async function deleteClient(index) {
             if (userRole !== 'admin') return;
             
             if (confirm('Sigur doriți să ștergeți acest client?')) {
+                const clientToDelete = clientiData[index];
                 clientiData.splice(index, 1);
                 saveToLocalStorage();
+                
+                // Delete from Firebase if connected
+                if (window.firebaseDb) {
+                    try {
+                        const deleteDoc = window.firebaseFunctions.deleteDoc;
+                        const doc = window.firebaseFunctions.doc;
+                        await deleteDoc(doc(window.firebaseDb, 'clienti', clientToDelete.id.toString()));
+                    } catch (error) {
+                        console.error('Firebase delete error:', error);
+                    }
+                }
+                
                 loadClientiTable();
                 updateStats();
                 showAlert('Client șters cu succes!', 'success');
@@ -1997,6 +2673,22 @@
             
             assignmentsData.push(assignment);
             saveToLocalStorage();
+            
+            // Sync to Firebase if connected
+            if (window.firebaseDb) {
+                try {
+                    const setDoc = window.firebaseFunctions.setDoc;
+                    const doc = window.firebaseFunctions.doc;
+                    const docRef = doc(window.firebaseDb, 'assignments', assignment.id.toString());
+                    setDoc(docRef, {
+                        ...assignment,
+                        lastSync: new Date().toISOString(),
+                        syncedBy: currentUser.email
+                    }).catch(error => console.error('Firebase sync error:', error));
+                } catch (error) {
+                    console.error('Firebase error:', error);
+                }
+            }
             
             // Reset form
             document.getElementById('clientSelectForAssignment').value = '';
@@ -2798,120 +3490,78 @@
             lastActivity: null
         };
 
-        function activateAutoBackup() {
-            if (autoBackupInterval) {
-                clearInterval(autoBackupInterval);
-            }
+        // Remove duplicates function
+        async function removeDuplicates() {
+            const duplicateStatsEl = document.getElementById('duplicateStats');
+            const duplicateResultsEl = document.getElementById('duplicateResults');
             
-            // Backup every 5 minutes (300000ms)
-            autoBackupInterval = setInterval(async function() {
-                await performManualBackup(true);
-            }, 300000);
-            
-            document.getElementById('backupStatus').textContent = 'Activ - Backup la 5 minute';
-            document.getElementById('backupStatus').style.color = '#28a745';
-            document.getElementById('syncStatus').textContent = 'Activă';
-            
-            showAlert('Backup automat activat! Backup la fiecare 5 minute.', 'success');
-            updateBackupStats();
-        }
-
-        function stopAutoBackup() {
-            if (autoBackupInterval) {
-                clearInterval(autoBackupInterval);
-                autoBackupInterval = null;
-            }
-            
-            document.getElementById('backupStatus').textContent = 'Oprit';
-            document.getElementById('backupStatus').style.color = '#dc3545';
-            document.getElementById('syncStatus').textContent = 'Oprită';
-            
-            showAlert('Backup automat oprit.', 'info');
-        }
-
-        async function performManualBackup(isAutomatic) {
-            if (typeof isAutomatic === 'undefined') isAutomatic = false;
-            
-            try {
-                // Simulate Firebase backup
-                if (window.firebaseDb) {
-                    await syncAllToFirebase('clienti', clientiData);
-                    await syncAllToFirebase('assignments', assignmentsData);
-                }
-                
-                const now = new Date();
-                document.getElementById('ultimulBackup').textContent = now.toLocaleString();
-                document.getElementById('lastBackup').textContent = 'Ultimul backup: ' + now.toLocaleTimeString();
-                
-                backupStats.totalBackups++;
-                backupStats.lastActivity = now.toLocaleString();
-                
-                updateBackupStats();
-                updateFirebaseStatus('connected');
-                
-                if (!isAutomatic) {
-                    showAlert('Backup manual realizat cu succes!', 'success');
-                }
-                
-            } catch (error) {
-                console.error('Backup failed:', error);
-                backupStats.errors++;
-                updateBackupStats();
-                updateFirebaseStatus('offline');
-                
-                if (!isAutomatic) {
-                    showAlert('Backup a eșuat! Verificați conexiunea.', 'danger');
-                }
-            }
-        }
-
-        async function restoreFromFirebase() {
-            if (!window.firebaseDb) {
-                showAlert('Firebase nu este disponibil!', 'warning');
+            if (!duplicateStatsEl || !duplicateResultsEl) {
+                showAlert('Eroare: Navigați la secțiunea Backup pentru a elimina duplicatele!', 'warning');
                 return;
             }
             
-            if (!confirm('Sigur doriți să restaurați din Firebase? Toate datele locale vor fi suprascrise!')) {
-                return;
-            }
+            duplicateStatsEl.style.display = 'block';
             
-            try {
-                const getDocs = window.firebaseFunctions.getDocs;
-                const collection = window.firebaseFunctions.collection;
-                
-                // Restore clients
-                const clientiSnapshot = await getDocs(collection(window.firebaseDb, 'clienti'));
-                const firebaseClients = [];
-                clientiSnapshot.forEach(function(doc) {
-                    firebaseClients.push({ id: doc.id, ...doc.data() });
-                });
-                
-                // Restore assignments
-                const assignmentsSnapshot = await getDocs(collection(window.firebaseDb, 'assignments'));
-                const firebaseAssignments = [];
-                assignmentsSnapshot.forEach(function(doc) {
-                    firebaseAssignments.push({ id: doc.id, ...doc.data() });
-                });
-                
-                if (firebaseClients.length > 0) {
-                    clientiData = firebaseClients;
+            // Get unique clients by ID first, then by name+phone
+            const uniqueClientsMap = new Map();
+            const seenNamePhone = new Set();
+            
+            clientiData.forEach(function(client) {
+                // First pass: keep unique IDs
+                if (!uniqueClientsMap.has(client.id)) {
+                    uniqueClientsMap.set(client.id, client);
                 }
-                
-                if (firebaseAssignments.length > 0) {
-                    assignmentsData = firebaseAssignments;
+            });
+            
+            // Second pass: remove duplicate name+phone combinations
+            const uniqueClients = [];
+            Array.from(uniqueClientsMap.values()).forEach(function(client) {
+                const key = client.nume + '|' + client.telefon;
+                if (!seenNamePhone.has(key)) {
+                    seenNamePhone.add(key);
+                    uniqueClients.push(client);
                 }
-                
+            });
+            
+            // Get unique assignments
+            const uniqueAssignmentsMap = new Map();
+            assignmentsData.forEach(function(assignment) {
+                if (!uniqueAssignmentsMap.has(assignment.id)) {
+                    uniqueAssignmentsMap.set(assignment.id, assignment);
+                }
+            });
+            const uniqueAssignments = Array.from(uniqueAssignmentsMap.values());
+            
+            const clientDuplicates = clientiData.length - uniqueClients.length;
+            const assignmentDuplicates = assignmentsData.length - uniqueAssignments.length;
+            
+            if (clientDuplicates > 0 || assignmentDuplicates > 0) {
+                clientiData = uniqueClients;
+                assignmentsData = uniqueAssignments;
                 saveToLocalStorage();
+                
+                // Sync cleaned data to Firebase if connected
+                if (window.firebaseDb && userRole === 'admin' && confirm('Doriți să sincronizați datele curățate cu Firebase?')) {
+                    await syncToFirebase();
+                }
+                
+                duplicateResultsEl.innerHTML = 
+                    '<strong>✅ Curățare completă!</strong><br>' +
+                    '🔸 ' + clientDuplicates + ' clienți duplicați eliminați<br>' +
+                    '🔸 ' + assignmentDuplicates + ' asignări duplicate eliminate<br>' +
+                    '<strong>📊 Date finale:</strong> ' + clientiData.length + ' clienți, ' + assignmentsData.length + ' asignări';
+                
+                showAlert('Datele duplicate au fost eliminate cu succes!', 'success');
+                loadDashboardData();
                 loadClientiTable();
-                loadLucrariContent();
-                updateStats();
                 updateBackupStats();
+                checkForDuplicates();
+            } else {
+                duplicateResultsEl.innerHTML = 
+                    '<strong>✅ Nu s-au găsit date duplicate!</strong><br>' +
+                    '📊 Baza de date este curată: ' + clientiData.length + ' clienți, ' + assignmentsData.length + ' asignări';
                 
-                showAlert('Date restaurate din Firebase cu succes!', 'success');
-                
-            } catch (error) {
-                console.error('Restore failed:', error);
-                showAlert('Restaurarea din Firebase a eșuat!', 'danger');
+                showAlert('Nu există date duplicate în sistem!', 'info');
             }
         }
 
@@ -2921,9 +3571,11 @@
                 version: '1.0',
                 clienti: clientiData,
                 assignments: assignmentsData,
+                users: usersData,
                 stats: {
                     totalClients: clientiData.length,
                     totalAssignments: assignmentsData.length,
+                    totalUsers: usersData.length,
                     exportedBy: currentUser.name
                 }
             };
@@ -3027,6 +3679,9 @@
                     if (confirm('Sigur doriți să restaurați din acest backup? Datele curente vor fi suprascrise!')) {
                         clientiData = backupData.clienti;
                         assignmentsData = backupData.assignments;
+                        if (backupData.users) {
+                            usersData = backupData.users;
+                        }
                         
                         saveToLocalStorage();
                         loadClientiTable();
@@ -3046,49 +3701,21 @@
             reader.readAsText(file);
         }
 
-        async function syncAllToFirebase(collectionName, dataArray) {
-            if (!window.firebaseDb) return;
-            
-            try {
-                const addDoc = window.firebaseFunctions.addDoc;
-                const collection = window.firebaseFunctions.collection;
-                const getDocs = window.firebaseFunctions.getDocs;
-                const deleteDoc = window.firebaseFunctions.deleteDoc;
-                const doc = window.firebaseFunctions.doc;
-                
-                // Clear existing documents
-                const existingDocs = await getDocs(collection(window.firebaseDb, collectionName));
-                for (const docSnapshot of existingDocs.docs) {
-                    await deleteDoc(doc(window.firebaseDb, collectionName, docSnapshot.id));
-                }
-                
-                // Add new documents
-                for (const item of dataArray) {
-                    await addDoc(collection(window.firebaseDb, collectionName), item);
-                }
-                
-                console.log('All data synced to ' + collectionName);
-            } catch (error) {
-                console.error('Sync all to Firebase failed:', error);
-                throw error;
-            }
-        }
-
         function updateBackupStats() {
             const dataSize = JSON.stringify(clientiData).length + JSON.stringify(assignmentsData).length;
             const sizeKB = (dataSize / 1024).toFixed(2);
             
-            document.getElementById('marimeBaza').textContent = sizeKB + ' KB';
             document.getElementById('backupTotalClienti').textContent = clientiData.length;
             document.getElementById('backupTotalAsignari').textContent = assignmentsData.length;
             document.getElementById('backupMarimeJSON').textContent = sizeKB + ' KB';
             document.getElementById('ultimaSalvareLocala').textContent = localStorage.getItem('ultimaSalvareLocala') || 'Niciodată';
             
-            // Update statistics cards
-            document.getElementById('backupuriRealizate').textContent = backupStats.totalBackups;
-            document.getElementById('totalInregistrari').textContent = clientiData.length + assignmentsData.length;
-            document.getElementById('eroriBackup').textContent = backupStats.errors;
-            document.getElementById('ultimaActivitate').textContent = backupStats.lastActivity || '-';
+            // Update Firebase stats
+            document.getElementById('totalInregistrariFirebase').textContent = (clientiData.length + assignmentsData.length + usersData.length);
+            const lastSync = localStorage.getItem('lastSyncTime');
+            if (lastSync) {
+                document.getElementById('ultimaSincronizare').textContent = new Date(lastSync).toLocaleString();
+            }
         }
 
         function exportData(type) {
@@ -3146,75 +3773,207 @@
             showAlert('Export ' + type + ' realizat cu succes!', 'success');
         }
 
-        // Firebase Sync Functions
-        async function syncToFirebase(collectionName, data) {
-            if (!window.firebaseDb) return;
+        // Firebase sync functions - FIXED to prevent duplicates
+        let isSyncing = false;
+        let lastSyncTime = null;
+
+        async function syncToFirebase() {
+            if (!window.firebaseDb || isSyncing) return;
+            
+            isSyncing = true;
+            updateFirebaseStatus('syncing');
             
             try {
-                const addDoc = window.firebaseFunctions.addDoc;
                 const collection = window.firebaseFunctions.collection;
-                await addDoc(collection(window.firebaseDb, collectionName), data);
-                console.log('Data synced to ' + collectionName);
+                const getDocs = window.firebaseFunctions.getDocs;
+                const setDoc = window.firebaseFunctions.setDoc;
+                const doc = window.firebaseFunctions.doc;
+                
+                let successCount = 0;
+                let errorCount = 0;
+                
+                // Sync clients - use client ID as document ID to prevent duplicates
+                for (const client of clientiData) {
+                    try {
+                        const docRef = doc(window.firebaseDb, 'clienti', client.id.toString());
+                        await setDoc(docRef, {
+                            ...client,
+                            lastSync: new Date().toISOString(),
+                            syncedBy: currentUser.email
+                        }, { merge: true });
+                        successCount++;
+                    } catch (error) {
+                        console.error('Error syncing client:', error);
+                        errorCount++;
+                    }
+                }
+                
+                // Sync assignments - use assignment ID as document ID
+                for (const assignment of assignmentsData) {
+                    try {
+                        const docRef = doc(window.firebaseDb, 'assignments', assignment.id.toString());
+                        await setDoc(docRef, {
+                            ...assignment,
+                            lastSync: new Date().toISOString(),
+                            syncedBy: currentUser.email
+                        }, { merge: true });
+                        successCount++;
+                    } catch (error) {
+                        console.error('Error syncing assignment:', error);
+                        errorCount++;
+                    }
+                }
+                
+                // Sync users
+                for (const user of usersData) {
+                    try {
+                        const docRef = doc(window.firebaseDb, 'users', user.id.toString());
+                        await setDoc(docRef, {
+                            ...user,
+                            lastSync: new Date().toISOString()
+                        }, { merge: true });
+                        successCount++;
+                    } catch (error) {
+                        console.error('Error syncing user:', error);
+                        errorCount++;
+                    }
+                }
+                
+                lastSyncTime = new Date();
+                document.getElementById('lastBackup').textContent = 'Ultima sincronizare: ' + lastSyncTime.toLocaleTimeString();
+                localStorage.setItem('lastSyncTime', lastSyncTime.toISOString());
+                
+                updateFirebaseStatus('connected');
+                
+                if (errorCount > 0) {
+                    showAlert('Sincronizare parțială: ' + successCount + ' înregistrări salvate, ' + errorCount + ' erori.', 'warning');
+                } else {
+                    showAlert('✅ Sincronizare completă! ' + successCount + ' înregistrări salvate în Firebase.', 'success');
+                }
+                
             } catch (error) {
-                console.error('Sync to Firebase failed:', error);
+                console.error('Firebase sync error:', error);
+                updateFirebaseStatus('error');
+                showAlert('Eroare la sincronizare: ' + error.message, 'danger');
+            } finally {
+                isSyncing = false;
             }
         }
 
-        function startRealtimeSync() {
-            if (!window.firebaseDb || !syncActive) return;
+        async function syncFromFirebase() {
+            if (!window.firebaseDb || isSyncing) return;
+            
+            isSyncing = true;
+            updateFirebaseStatus('syncing');
             
             try {
-                const onSnapshot = window.firebaseFunctions.onSnapshot;
+                const getDocs = window.firebaseFunctions.getDocs;
                 const collection = window.firebaseFunctions.collection;
                 
-                onSnapshot(collection(window.firebaseDb, 'clienti'), function(snapshot) {
-                    const firebaseClients = [];
-                    snapshot.forEach(function(doc) {
-                        firebaseClients.push({ id: doc.id, ...doc.data() });
-                    });
-                    
-                    if (firebaseClients.length > 0) {
-                        clientiData = firebaseClients;
-                        saveToLocalStorage();
-                        loadClientiTable();
-                        updateStats();
+                // Get clients from Firebase
+                const clientiSnapshot = await getDocs(collection(window.firebaseDb, 'clienti'));
+                const firebaseClients = [];
+                clientiSnapshot.forEach(function(doc) {
+                    const data = doc.data();
+                    // Ensure ID is preserved and valid
+                    const clientData = {
+                        ...data,
+                        id: parseInt(doc.id) || data.id || Date.now() + Math.random()
+                    };
+                    // Validate required fields
+                    if (clientData.nume && clientData.telefon) {
+                        firebaseClients.push(clientData);
                     }
-                    
-                    document.getElementById('lastBackup').textContent = 'Ultimul sync: ' + new Date().toLocaleTimeString();
                 });
                 
-                onSnapshot(collection(window.firebaseDb, 'assignments'), function(snapshot) {
-                    const firebaseAssignments = [];
-                    snapshot.forEach(function(doc) {
-                        firebaseAssignments.push({ id: doc.id, ...doc.data() });
+                // Get assignments from Firebase
+                const assignmentsSnapshot = await getDocs(collection(window.firebaseDb, 'assignments'));
+                const firebaseAssignments = [];
+                assignmentsSnapshot.forEach(function(doc) {
+                    const data = doc.data();
+                    firebaseAssignments.push({
+                        ...data,
+                        id: parseInt(doc.id) || data.id
                     });
-                    
-                    if (firebaseAssignments.length > 0) {
-                        assignmentsData = firebaseAssignments;
-                        saveToLocalStorage();
-                        loadLucrariContent();
-                        updateStats();
-                    }
                 });
+                
+                // Get users from Firebase
+                const usersSnapshot = await getDocs(collection(window.firebaseDb, 'users'));
+                const firebaseUsers = [];
+                usersSnapshot.forEach(function(doc) {
+                    const data = doc.data();
+                    firebaseUsers.push({
+                        ...data,
+                        id: parseInt(doc.id) || data.id
+                    });
+                });
+                
+                // Update local data
+                if (firebaseClients.length > 0) {
+                    clientiData = firebaseClients;
+                }
+                if (firebaseAssignments.length > 0) {
+                    assignmentsData = firebaseAssignments;
+                }
+                if (firebaseUsers.length > 0) {
+                    usersData = firebaseUsers;
+                }
+                
+                saveToLocalStorage();
+                loadDashboardData();
+                loadClientiTable();
+                loadLucrariContent();
+                updateBackupStats();
+                
+                lastSyncTime = new Date();
+                document.getElementById('lastBackup').textContent = 'Ultima sincronizare: ' + lastSyncTime.toLocaleTimeString();
                 
                 updateFirebaseStatus('connected');
+                showAlert('Date actualizate din Firebase!', 'success');
+                
             } catch (error) {
-                console.error('Realtime sync failed:', error);
-                updateFirebaseStatus('offline');
+                console.error('Firebase sync error:', error);
+                updateFirebaseStatus('error');
+                showAlert('Eroare la sincronizare: ' + error.message, 'danger');
+            } finally {
+                isSyncing = false;
             }
+        }
+
+        // NO REALTIME SYNC - Only manual sync to prevent duplicates
+        function startRealtimeSync() {
+            // DISABLED - Use manual sync buttons instead
+            return;
         }
 
         // Firebase Status Management
         function updateFirebaseStatus(status) {
             const statusDot = document.getElementById('firebaseStatus');
             const statusText = document.getElementById('firebaseStatusText');
+            const syncButton = document.getElementById('firebaseSyncBtn');
             
-            if (status === 'connected') {
-                statusDot.classList.remove('offline');
-                statusText.textContent = 'Conectat la Firebase';
-            } else {
-                statusDot.classList.add('offline');
-                statusText.textContent = 'Offline - Date locale';
+            switch(status) {
+                case 'connected':
+                    statusDot.style.backgroundColor = '#28a745';
+                    statusDot.classList.remove('offline');
+                    statusText.textContent = 'Firebase Conectat';
+                    if (syncButton) syncButton.disabled = false;
+                    break;
+                case 'syncing':
+                    statusDot.style.backgroundColor = '#ffc107';
+                    statusText.textContent = 'Se sincronizează...';
+                    if (syncButton) syncButton.disabled = true;
+                    break;
+                case 'error':
+                    statusDot.style.backgroundColor = '#dc3545';
+                    statusDot.classList.add('offline');
+                    statusText.textContent = 'Eroare sincronizare';
+                    if (syncButton) syncButton.disabled = false;
+                    break;
+                default:
+                    statusDot.style.backgroundColor = '#718096';
+                    statusText.textContent = 'Date Salvate Local';
+                    if (syncButton) syncButton.disabled = false;
             }
         }
 
@@ -3229,6 +3988,72 @@
         function logout() {
             localStorage.removeItem('currentUser');
             location.reload();
+        }
+
+        // PWA Functions
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(function(choiceResult) {
+                    if (choiceResult.outcome === 'accepted') {
+                        showAlert('Aplicația va fi instalată!', 'success');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installPrompt').style.display = 'none';
+                });
+            }
+        }
+
+        function dismissInstallPrompt() {
+            document.getElementById('installPrompt').style.display = 'none';
+        }
+
+        // Check for duplicates
+        function checkForDuplicates() {
+            const seenClients = new Set();
+            let duplicateCount = 0;
+            
+            clientiData.forEach(function(client) {
+                const key = client.nume + '|' + client.telefon;
+                if (seenClients.has(key)) {
+                    duplicateCount++;
+                } else {
+                    seenClients.add(key);
+                }
+            });
+            
+            if (duplicateCount > 0 && userRole === 'admin') {
+                const cleanBtn = document.getElementById('cleanDuplicatesBtn');
+                if (cleanBtn) {
+                    cleanBtn.innerHTML = '<i class="fas fa-broom"></i> Curăță (' + duplicateCount + ')';
+                    cleanBtn.style.background = 'linear-gradient(135deg, #dc3545 0%, #bd2130 100%)';
+                    cleanBtn.style.animation = 'pulse 1s infinite';
+                }
+                
+                // Add warning to header if not exists
+                const header = document.querySelector('.header h1');
+                if (header && !document.getElementById('duplicateWarning')) {
+                    const warning = document.createElement('span');
+                    warning.id = 'duplicateWarning';
+                    warning.innerHTML = '⚠️ ' + duplicateCount + ' duplicate';
+                    header.appendChild(warning);
+                }
+                
+                return true;
+            } else {
+                // Remove warning if no duplicates
+                const warning = document.getElementById('duplicateWarning');
+                if (warning) warning.remove();
+                
+                const cleanBtn = document.getElementById('cleanDuplicatesBtn');
+                if (cleanBtn) {
+                    cleanBtn.innerHTML = '<i class="fas fa-broom"></i> Curăță';
+                    cleanBtn.style.background = '';
+                    cleanBtn.style.animation = '';
+                }
+                
+                return false;
+            }
         }
 
         // Initialize App
@@ -3256,15 +4081,8 @@
                     });
                 }
                 
-                setTimeout(function() {
-                    if (window.firebaseDb) {
-                        syncActive = true;
-                        updateFirebaseStatus('connected');
-                        startRealtimeSync();
-                    } else {
-                        updateFirebaseStatus('offline');
-                    }
-                }, 1000);
+                // Check Firebase connection after a delay
+                setTimeout(checkFirebaseConnection, 1000);
             }
         }
 
@@ -3274,167 +4092,99 @@
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                const swCode = 'const CACHE_NAME = \'adinstalgaz-v1\';const urlsToCache = [\'/\',\'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css\',\'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js\',\'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js\'];self.addEventListener(\'install\', (event) => {event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache)));});self.addEventListener(\'fetch\', (event) => {event.respondWith(caches.match(event.request).then((response) => {if (response) {return response;}return fetch(event.request);}));});';
+                const swCode = `
+const CACHE_NAME = 'adinstalgaz-v2';
+const urlsToCache = [
+    '/',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+    'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+];
+
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
+    );
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+    self.clients.claim();
+});
+
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request).then((response) => {
+            return response || fetch(event.request).then((fetchResponse) => {
+                return caches.open(CACHE_NAME).then((cache) => {
+                    cache.put(event.request, fetchResponse.clone());
+                    return fetchResponse;
+                });
+            });
+        }).catch(() => {
+            return caches.match('/');
+        })
+    );
+});`;
                 
                 const blob = new Blob([swCode], { type: 'application/javascript' });
                 const swUrl = URL.createObjectURL(blob);
                 
                 navigator.serviceWorker.register(swUrl)
                     .then(function(registration) {
-                        console.log('SW registered: ', registration);
-                        
-                        // Show install prompt for PWA
-                        let deferredPrompt;
-                        window.addEventListener('beforeinstallprompt', function(e) {
-                            e.preventDefault();
-                            deferredPrompt = e;
-                            
-                            // Show custom install button
-                            if (currentUser) {
-                                const installBtn = document.createElement('button');
-                                installBtn.textContent = '📱 Instalează App';
-                                installBtn.className = 'btn btn-small btn-info';
-                                installBtn.style.marginLeft = '10px';
-                                installBtn.onclick = function() {
-                                    deferredPrompt.prompt();
-                                    deferredPrompt.userChoice.then(function(choiceResult) {
-                                        if (choiceResult.outcome === 'accepted') {
-                                            showAlert('Aplicația va fi instalată!', 'success');
-                                        }
-                                        deferredPrompt = null;
-                                        installBtn.remove();
-                                    });
-                                };
-                                
-                                const headerActions = document.querySelector('.header-actions');
-                                if (headerActions) {
-                                    headerActions.insertBefore(installBtn, headerActions.lastElementChild);
-                                }
-                            }
-                        });
+                        console.log('Service Worker registered: ', registration);
                     })
                     .catch(function(registrationError) {
-                        console.log('SW registration failed: ', registrationError);
+                        console.log('Service Worker registration failed: ', registrationError);
                     });
             });
         }
 
+        // PWA Install Prompt
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (currentUser) {
+                document.getElementById('installPrompt').style.display = 'flex';
+            }
+        });
+
+        // Network status
+        window.addEventListener('online', function() {
+            document.getElementById('offlineIndicator').classList.remove('active');
+        });
+
+        window.addEventListener('offline', function() {
+            document.getElementById('offlineIndicator').classList.add('active');
+        });
+
         // Auto-save every 30 seconds
-        setInterval(saveToLocalStorage, 30000);
+        setInterval(function() {
+            saveToLocalStorage();
+            // Update last save time
+            const now = new Date();
+            document.getElementById('lastBackup').textContent = 'Ultima salvare: ' + now.toLocaleTimeString();
+        }, 30000);
 
-        // Sample data for testing
+        // Load data from Excel if present
         if (clientiData.length === 0) {
-            clientiData = [
-                {
-                    id: 1,
-                    nume: "Ion Popescu",
-                    telefon: "0721234567",
-                    email: "ion.popescu@email.com",
-                    judet: "Teleorman",
-                    oras: "Alexandria",
-                    strada: "Str. Mihai Viteazu",
-                    numar: "15",
-                    bloc: "A1",
-                    scara: "B",
-                    etaj: "2",
-                    apartament: "12",
-                    tipServiciu: "Verificare Instalație Gaz",
-                    dataStartServiciu: "2023-01-15",
-                    dataExpirare: "2025-01-15",
-                    adresa: "Str. Mihai Viteazu 15, bl. A1, sc. B, et. 2, ap. 12, Alexandria, Teleorman",
-                    createdAt: "2023-01-15T10:00:00Z"
-                },
-                {
-                    id: 2,
-                    nume: "Maria Ionescu",
-                    telefon: "0731234567",
-                    email: "maria.ionescu@email.com",
-                    judet: "Teleorman",
-                    oras: "Rosiori de Vede",
-                    strada: "Str. Libertății",
-                    numar: "22",
-                    bloc: "",
-                    scara: "",
-                    etaj: "",
-                    apartament: "",
-                    tipServiciu: "Instalații Gaz + Centrală",
-                    dataStartServiciu: "2023-03-10",
-                    dataExpirare: "2025-03-10",
-                    adresa: "Str. Libertății 22, Rosiori de Vede, Teleorman",
-                    createdAt: "2023-03-10T14:30:00Z"
-                },
-                {
-                    id: 3,
-                    nume: "Gheorghe Dumitrescu",
-                    telefon: "0741234567",
-                    email: "gheorghe.dumitrescu@email.com",
-                    judet: "Teleorman",
-                    oras: "Alexandria",
-                    strada: "Str. Cuza Vodă",
-                    numar: "8",
-                    bloc: "B2",
-                    scara: "A",
-                    etaj: "1",
-                    apartament: "5",
-                    tipServiciu: "Servicii de Urgență",
-                    dataStartServiciu: "2024-12-15",
-                    dataExpirare: "2026-12-15",
-                    adresa: "Str. Cuza Vodă 8, bl. B2, sc. A, et. 1, ap. 5, Alexandria, Teleorman",
-                    createdAt: "2024-12-15T09:15:00Z"
-                }
-            ];
-            saveToLocalStorage();
-        }
-
-        if (assignmentsData.length === 0) {
-            assignmentsData = [
-                {
-                    id: 1001,
-                    clientId: 1,
-                    clientNume: "Ion Popescu",
-                    clientTelefon: "0721234567",
-                    clientAdresa: "Str. Mihai Viteazu 15, bl. A1, sc. B, et. 2, ap. 12, Alexandria, Teleorman",
-                    tipServiciu: "Verificare Instalație Gaz",
-                    dataStart: "2023-01-15",
-                    dataExpirare: "2025-01-15",
-                    lucratorAsignat: "Ion Popescu",
-                    status: "În progres",
-                    prioritate: "Normală",
-                    dataAsignare: "2023-01-15",
-                    documente: []
-                },
-                {
-                    id: 1002,
-                    clientId: 2,
-                    clientNume: "Maria Ionescu",
-                    clientTelefon: "0731234567",
-                    clientAdresa: "Str. Libertății 22, Rosiori de Vede, Teleorman",
-                    tipServiciu: "Instalații Gaz + Centrală",
-                    dataStart: "2023-03-10",
-                    dataExpirare: "2025-03-10",
-                    lucratorAsignat: "Ion Popescu",
-                    status: "Finalizată",
-                    prioritate: "Normală",
-                    dataAsignare: "2023-03-10",
-                    documente: []
-                },
-                {
-                    id: 1003,
-                    clientId: 3,
-                    clientNume: "Gheorghe Dumitrescu",
-                    clientTelefon: "0741234567",
-                    clientAdresa: "Str. Cuza Vodă 8, bl. B2, sc. A, et. 1, ap. 5, Alexandria, Teleorman",
-                    tipServiciu: "Servicii de Urgență",
-                    dataStart: "2024-12-15",
-                    dataExpirare: "2026-12-15",
-                    lucratorAsignat: "Ion Popescu",
-                    status: "În progres",
-                    prioritate: "Urgentă",
-                    dataAsignare: "2024-12-15",
-                    documente: []
-                }
-            ];
-            saveToLocalStorage();
+            // Check if there's data from the Excel file
+            const xlsxClientsData = JSON.parse(localStorage.getItem('xlsxClientsData') || '[]');
+            if (xlsxClientsData.length > 0) {
+                clientiData = xlsxClientsData;
+                saveToLocalStorage();
+            }
         }
     </script>
 </body>
