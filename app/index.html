@@ -1599,7 +1599,7 @@
         
         // SMS Configuration - smso.ro cu NUMĂRUL PĂSTRAT
         const SMS_CONFIG = {
-    apiToken: 'phtu......5YMX', // API token-ul tău COMPLET (înlocuiește cu toate cifrele)
+    apiToken: 'phtuEVY4nJEXI5Zl3vz81xQq58Wi6LOYE3tW5YMX', // API token-ul tău COMPLET (înlocuiește cu toate cifrele)
     baseUrl: 'https://app.smso.ro/api/v1/send',
     
     // IMPORTANT: Pentru API smso.ro trebuie numărul înregistrat!
@@ -1731,65 +1731,60 @@ Mulțumim pentru încredere!`;
 
         // API SMS prin smso.ro (PĂSTREAZĂ NUMĂRUL)
         async function sendSMSViaAPI(phone, message) {
-            if (!SMS_CONFIG.apiToken) {
-                console.error('SMS API Token lipsește');
-                return false;
-            }
-            
-            // Formatare telefon (PĂSTREAZĂ LOGICA EXISTENTĂ)
-            let formattedPhone = phone.replace(/[\s\-\(\)]/g, '');
-            if (formattedPhone.startsWith('0')) {
-                formattedPhone = '4' + formattedPhone;
-            }
-            
-            try {
-                const response = await fetch(SMS_CONFIG.baseUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + SMS_CONFIG.apiToken,
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        to: [formattedPhone],
-                        body: message,
-                        from: SMS_CONFIG.sender // 👈 FOLOSEȘTE NUMĂRUL PĂSTRAT!
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok && (result.success || result.status === 'success')) {
-                    return true;
-                } else {
-                    console.error('SMS API Error:', result);
-                    return false;
-                }
-            } catch (error) {
-                console.error('SMS Network Error:', error);
-                return false;
-            }
+    try {
+        if (!SMS_CONFIG.apiToken) {
+            console.error('SMS API Token lipsește');
+            throw new Error('API token lipsește din configurare');
         }
 
-        // Update status SMS automat
-        function updateAutoSMSStatus(active = null) {
-            const statusEl = document.getElementById('autoSMSStatus');
-            const statusTextEl = document.getElementById('autoSMSStatusText');
-            
-            if (!statusEl || !statusTextEl) return;
-            
-            if (active === null) {
-                active = !!SMS_CONFIG.apiToken;
-            }
-            
-            if (active) {
-                statusEl.className = 'auto-sms-status';
-                statusTextEl.innerHTML = `Activ - verificare la fiecare 24h, trimite cu ${SMS_CONFIG.daysBeforeExpiry} zile înainte (${SMS_CONFIG.sender})`;
-            } else {
-                statusEl.className = 'auto-sms-status inactive';
-                statusTextEl.innerHTML = 'Inactiv - configurați API Token pentru activare automată';
-            }
+        // Formatare telefon (adaptată pentru smso.ro)
+        let formattedPhone = phone.replace(/[\s\-\(\)]/g, '');
+        if (formattedPhone.startsWith('0')) {
+            formattedPhone = '+4' + formattedPhone;
+        } else if (!formattedPhone.startsWith('+')) {
+            formattedPhone = '+40' + formattedPhone;
         }
+
+        // Construiește URL pentru smso.ro (bypass CORS)
+        const smsUrl = new URL('https://app.smso.ro/api/v1/send');
+        smsUrl.searchParams.append('to', formattedPhone);
+        smsUrl.searchParams.append('body', message);
+        smsUrl.searchParams.append('sender', SMS_CONFIG.apiSender);
+        smsUrl.searchParams.append('apiKey', SMS_CONFIG.apiToken);
+
+        // Confirmă cu utilizatorul
+        const userConfirm = confirm(
+            `Se va deschide o pagină pentru trimiterea SMS-ului.\n\n` +
+            `Destinație: ${formattedPhone}\n` +
+            `Mesaj: ${message}\n\n` +
+            `Continui?`
+        );
+        
+        if (userConfirm) {
+            // Deschide în tab nou (bypass CORS)
+            const newWindow = window.open(smsUrl.toString(), '_sms_window', 'width=600,height=400');
+            
+            if (newWindow) {
+                // Închide tab-ul după 4 secunde
+                setTimeout(() => {
+                    try { newWindow.close(); } catch (e) {}
+                }, 4000);
+                
+                return true; // compatibil cu codul existent
+            } else {
+                console.error('Pop-up blocat');
+                return false;
+            }
+        } else {
+            console.log('Trimitere anulată de utilizator');
+            return false;
+        }
+
+    } catch (error) {
+        console.error('SMS Error:', error);
+        return false;
+    }
+}
 
         // =====================================
         // 🔔 2. FIREBASE REAL-TIME SYNC FIX
