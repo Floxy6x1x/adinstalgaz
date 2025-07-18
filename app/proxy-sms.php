@@ -22,16 +22,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     
+    // Formatează datele pentru API-ul smso.ro
+    $apiKey = $input['api_key'] ?? '';
+    $smsData = [
+        'to' => $input['to'] ?? '',
+        'body' => $input['message'] ?? $input['body'] ?? '',
+        'sender' => $input['from'] ?? $input['sender'] ?? '+40769551010'
+    ];
+    
     // Inițializează cURL pentru a trimite cererea către API-ul real
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'https://app.smso.ro/api/v1/send');
     curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($input));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($smsData)); // form data, nu JSON!
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
+        'X-Authorization: ' . $apiKey,  // API key în header!
+        'Content-Type: application/x-www-form-urlencoded',
         'User-Agent: SMS-Proxy/1.0'
     ]);
     
