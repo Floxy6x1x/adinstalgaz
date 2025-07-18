@@ -1599,12 +1599,16 @@
         
         // SMS Configuration - smso.ro cu NUMĂRUL PĂSTRAT
         const SMS_CONFIG = {
-            apiToken: '', // Va fi completat de utilizator
-            baseUrl: 'https://app.smso.ro/api/v1/send',
-            sender: '0762614401', // 👈 NUMĂRUL PĂSTRAT!
-            autoCheckInterval: 24 * 60 * 60 * 1000, // 24 ore check automat
-            daysBeforeExpiry: 2 // SMS cu 2 zile înainte
-        };
+    apiToken: 'phtu......5YMX', // API token-ul tău COMPLET (înlocuiește cu toate cifrele)
+    baseUrl: 'https://app.smso.ro/api/v1/send',
+    
+    // IMPORTANT: Pentru API smso.ro trebuie numărul înregistrat!
+    apiSender: '+40769551010',   // 👈 NUMĂRUL ÎNREGISTRAT la smso.ro (pentru API)
+    displaySender: '0762614401', // 👈 NUMĂRUL FIRMEI (pentru afișare în aplicație)
+    
+    autoCheckInterval: 24 * 60 * 60 * 1000, // 24 ore check automat
+    daysBeforeExpiry: 2 // SMS cu 2 zile înainte
+};
 
         // Global Variables (PĂSTRATE TOATE)
         let clientiData = JSON.parse(localStorage.getItem('clientiData')) || [];
